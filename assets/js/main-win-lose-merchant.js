@@ -131,14 +131,12 @@
     </div>`;
   }
 
-  /* The provider's own drill-down: the page the sibling Provider Report's row action opens
-     (`provider-detail.html` — Provider Details: this provider's rows per brand for the range,
-     with its own date control). It carries the range actually in effect. It is a BO-shell page
-     and needs the Accounting Report permission — see DESIGN.md for the contract. */
+  /* The provider's own report: the Report workspace's Provider Report tab (`main_provider_report.html`),
+     opened filtered to this provider - the page reads `providerCode` into its search box and takes the
+     range from the URL. That page's own rows still drill on to Provider Details. */
   function providerReportUrl(p) {
-    const u = new URL('provider-detail.html', location.href);
+    const u = new URL('main_provider_report.html', location.href);
     u.searchParams.set('providerCode', p.code || '');
-    if (p.name && p.name !== p.code) u.searchParams.set('providerName', p.name);
     if (from) u.searchParams.set('from', from);
     if (to) u.searchParams.set('to', to);
     return u.toString();

@@ -7100,50 +7100,45 @@ card, its box exactly the panel's (254..1544 at 1568).
 Re-measured after: 1568 / 1280 / 1024 / 768 / 390, both themes — no horizontal overflow, no page errors,
 `doubleFrame: false`, the tiles and the card flush with the heading row's edges at every width, and the edge
 states (no params, unknown `brandId`, API error, a 61-character merchant name, a suspended merchant, a merchant
-with no provider rows) each render one clean message. #### The provider row's eye: one provider's own report (2026-10-09, owner: "这些 provider 我有没有办法就是单独看他们的 merchant report？")
+with no provider rows) each render one clean message. #### The provider row's eye: that provider, in the Provider Report (2026-10-09, owner: "Merchant Report 点击游戏 > 跳转去Provider Report（链接BO）")
 
-The provider table's rows are data only, and drilling from one of them is the same gesture the merchant row already
-has: an `Action` column with the family's eye (`.mad-icon-btn` inside `.mre-actions mad-actions`, 40x40) linking
-to **`provider-detail.html`** — the Provider Details page the sibling Provider Report's row action opens, so the
-two reports drill to the same place. The link carries `providerCode`, `providerName` and the `from`/`to` actually
-in effect; that page reads all four (`provider-detail-executive.js` takes its range from the URL and keeps it in
-sync), renders its own date control, and lists the provider's rows per brand (Intra-Range Turnover / Payable
-Amount / Balance Due / Settlement Period / Status). The subtable grew one column (8 total; `colgroup` +
-`wlm-col-action` at 64px) and the empty-state colspans moved 7 -> 8.
+The provider table's rows are data only; drilling from one is the same gesture the merchant row already has - an
+`Action` column with the family's eye (`.mad-icon-btn` inside `.mre-actions mad-actions`, 40x40). The first cut
+pointed it at `provider-detail.html` (Provider Details), which is what the Provider Report's *own* row action
+opens; the owner's answer was "加载的页面不对". The destination is this workspace's **Provider Report** tab,
+`main_provider_report.html`, so the second drill-down of the report pair lands on the report tab exactly as the
+first one (the merchant eye) lands on the merchant page.
 
-It is an anchor, not a button + `location.href` — middle-click works, and the family's `.mad-icon-btn` paints it
-(measured: 40x40, `#57534E`, no underline, amber hover). Only `text-decoration:none` is this page's.
+The subtable grew one column (8 total; `colgroup` + `wlm-col-action` at 64px) and the empty-state colspans moved
+7 -> 8. The eye is an anchor, not a button + `location.href`, so middle-click works; the family's `.mad-icon-btn`
+paints it (measured 40x40, `#57534E`, no underline, amber hover) and only `text-decoration:none` is this page's.
+The link carries `providerCode` and the `from`/`to` in effect.
 
-**The first cut bounced the owner off the page, and the fix is one auth rule plus one label.**
-`provider-detail.html`'s access was the **Accounting Report** menu (`auth.js`: it inherits
-`main-accounting-report.html`), while this page inherits the Report workspace — and the owner's MAIN account
-holds the Report menus and not the accounting one. Measured before the fix, with their menu shape: the eye
-landed on `main-dashboard.html` (the landing page), the same bounce `enforcePageAccess` gives any page the menus
-do not cover. Now:
+**The Provider Report had to learn two things to be a link target**, both small and both in
+`main-provider-report.js` (loaded by four pages, so its pin moved on all four):
 
-- `enforcePageAccess` lets `provider-detail.html` in through **either** entry — the report tabs (Win/Lose Report,
-  `win-lose-report.html`, Provider Report, and the merchant drill-down) or the accounting menu, which keeps the
-  BO path unchanged. Measured after: the same account lands on `PG Soft — Provider Details` with the range
-  `01/10/2026 - 09/10/2026` and the two brands that use PGS, zero page errors.
-- The page's own way back had the same hole: its crumb is `[←] Provider Settlement > <provider>`
-  (`main-accounting-report.html`), which that account cannot open either. `provider-detail-executive.js` now
-  picks the crumb's first link, the back button and the no-`providerCode` fall-back from the account's menus —
-  "Provider Settlement" when it holds that menu (BO behaviour, measured unchanged), **"Provider Report"** when it
-  only holds the report — so the label always names the page it opens.
-- `sidebarActivePage()` lights whichever of the two rows the account holds, so the rail is never dark on a page
-  reached from it (measured: "Provider Report" lit for the report account, "Provider Settlement" for the
-  accounting one, nothing for an account with neither).
+- `?providerCode=` pre-fills its provider search box (`#mreSearchInput`) - the same client-side filter the
+  operator can clear - and puts the status pill on **All** rather than leaving the default Active, so a provider
+  that is not Active cannot land on an empty table.
+- `from`/`to` in the URL become the picker's range (`setupDatePicker`); without them it opens on today, as it
+  always has, and the preset highlight is only cleared when the range really came from a link.
 
-The destination is still a **BO-shell page** (`data-bo-shell="bo"`, charcoal + amber, its own rail), which the
-Main portal is allowed to serve (`menu-management.html` is such a page) and which therefore reads as the same
-family as this one. That was the trade accepted when the alternative — a Main-panel provider page mirroring the
-merchant one — was declined.
+Measured (1568 light, the owner's account shape, stub data): the eye on `brandId=1` carries
+`main_provider_report.html?providerCode=PGS&from=2026-01-01&to=2026-12-31`; the landing shows the Provider Report
+tab active, search `PGS`, pill **All (3)**, range `01 Jan 2026 - 31 Dec 2026`, and "Showing 1 to 1 of 1
+providers" - the single PG Soft row - with the rail lit on Provider Report and zero page errors.
 
-Measured (1568 light, root account, stub API): the two provider rows each carry
-`provider-detail.html?providerCode=PGS&providerName=PG+Soft&from=2026-10-01&to=2026-10-09`; clicking the first
-lands on `PG Soft — Provider Details` with the range `01/10/2026 - 09/10/2026` and two brand rows (Aurora Play,
-Nova Casino). Rows are 61px now against 54.1 before — the 40px well sets the row (the list's own rows are 53px
-with the same well), and no width overflows at 1568 / 1280 / 1024 / 768 / 390 in either mode.
+**`provider-detail.html` is still the Provider Report's own row drill-down, and its access was fixed in the same
+pass.** It inherits the *Accounting Report* menu in `auth.js` while this workspace holds the *Report* menus, and
+the owner's account has the latter only: measured before, opening it landed on `main-dashboard.html`.
+`enforcePageAccess` now admits it through either entry (the report tabs or the accounting menu - the BO path is
+unchanged), `sidebarActivePage()` lights whichever of the two rows the account actually holds, and
+`provider-detail-executive.js` derives its crumb's first link, its back button and its no-`providerCode`
+fall-back from the same menus ("Provider Settlement" for the accounting audience, "Provider Report" for the
+report one), so the label always names the page it opens.
+
+Rows are 61px now against 54.1 before - the 40px well sets the row (the list's own rows are 53px with the same
+well) - and no width overflows at 1568 / 1280 / 1024 / 768 / 390 in either mode.
 
 **Known, not introduced here:** every Main panel page's
 `h1` overflows its `.user-title-wrap` at 390px and slides under the action buttons (measured on

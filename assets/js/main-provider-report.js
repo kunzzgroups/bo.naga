@@ -861,9 +861,14 @@ function setRange(a,b,preset){
   renderCalendar();
 }
 function setupDatePicker(){
-  const [a,b]=presetRange('today');
+  /* A link may carry the range it was opened with (the Win/Lose merchant page's provider rows
+     do); without one the picker opens on today, as it always has. */
+  const linked=new URLSearchParams(location.search),lf=linked.get('from'),lt=linked.get('to');
+  const ranged=!!(lf&&lt);
+  const [da,db]=presetRange('today');
+  const a=ranged?lf:da,b=ranged?lt:db;
   pickerState.view=new Date(a+'T00:00:00');
-  setRange(a,b,'today');
+  setRange(a,b,ranged?'':'today');
   $('reportDateTrigger').addEventListener('click',e=>{e.stopPropagation();$('reportRangePicker').classList.toggle('show');pickerState.mode='days';renderCalendar();});
   if(window.__boMrePickerClick) document.removeEventListener('click',window.__boMrePickerClick);
   window.__boMrePickerClick=e=>{const rp=$('reportRangePicker');if(rp&&e.target&&e.target.closest&&!e.target.closest('.ref-range-wrap')) rp.classList.remove('show');};
@@ -903,6 +908,15 @@ function setupDatePicker(){
 BO_AUTH.requireLogin();
 setupTabs();
 setupFilters();
+/* A link with ?providerCode= - the Win/Lose merchant page's provider rows - opens this report
+   already filtered to that provider: the same field the search box drives, and on the All pill,
+   so a provider that is not Active cannot land on an empty table. */
+const linkedProvider=new URLSearchParams(location.search).get('providerCode')||'';
+if(linkedProvider){
+  if($('mreSearchInput')) $('mreSearchInput').value=linkedProvider;
+  statusPill='all';
+  document.querySelectorAll('[data-mre-status]').forEach(b=>b.classList.toggle('is-active',b.getAttribute('data-mre-status')==='all'));
+}
 setupDatePicker();
 setupSettlement();
 setupHistory();
