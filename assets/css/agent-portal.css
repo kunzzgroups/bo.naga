@@ -2517,3 +2517,74 @@ html:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.ag
 html:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern .table-card .bo-range-field{
   width:100%!important;max-width:100%!important;min-width:0!important;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   P45 - agent-products gets the players page's footer and pager
+
+   Owner: "缺了一个pagination设计统一". The page had no pagination at all: pagination-standardizer.js
+   only upgrades a footer that already exists (it looks for an existing shell with buttons), it does not
+   build one, and this page shipped without any - thirty fixture rows all rendered on one page.
+
+   So the players page's footer is added to the card, markup for markup (Show [n] entries / the centred
+   "Showing x to y of z" / the pager), and the paging is client side exactly as there: loadProducts()
+   fills a cache and renderProductRows() renders the current slice, so changing page never refetches.
+   The detail link now carries the range actually in effect rather than the raw field, which matters now
+   that an empty field means the all-time range sent to the API.
+
+   Every value below is the one the players page measures, including the app-wide .page-btn recipe the
+   pager buttons use (idle #F3F4F6/#9CA3AF, hover #E5E7EB/#374151, current the amber gradient with
+   #D97706 border and white text, disabled #F3F4F6/#9CA3AF at opacity 1; dark idle #383A46/#A1A1AA,
+   hover #444654/#E7E5E4, current #F59E0B border with #2A2C36 text, disabled #2A2C36/#52525B).
+   ------------------------------------------------------------------------------------------------ */
+html:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern .table-card > .agent-table-footer{
+  flex:0 0 auto!important;height:64px!important;min-height:0!important;padding:14px 16px!important;
+  display:flex!important;align-items:center!important;gap:12px!important;
+  background:#FFF8EB!important;border-top:1px solid #EADCC8!important;color:#57534E!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern .table-card > .agent-table-footer{
+  background:#383A46!important;border-top-color:rgba(255,255,255,.14)!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern .table-card > .agent-table-footer > .agent-page-size{
+  flex:0 0 auto!important;display:flex!important;align-items:center!important;gap:6px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern .table-card > .agent-table-footer > .agent-page-size select{
+  flex:0 0 auto!important;width:auto!important;min-width:68px!important;max-width:96px!important;
+  height:36px!important;font-size:13px!important;font-weight:700!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern .table-card > .agent-table-footer > #agentProductsShowing{
+  flex:1 1 auto!important;text-align:center!important;font-size:13px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern .table-card > .agent-table-footer > .agent-pagination{
+  flex:0 0 auto!important;display:flex!important;align-items:center!important;gap:6px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern #agentProductPagination button{
+  background:#F3F4F6!important;border:1px solid transparent!important;color:#9CA3AF!important;
+  border-radius:8px!important;height:36px!important;min-height:36px!important;font-size:13px!important;font-weight:700!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern #agentProductPagination button:not(.active):hover{
+  background:#E5E7EB!important;color:#374151!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern #agentProductPagination button.active{
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%)!important;
+  border:1px solid #D97706!important;color:#FFFFFF!important;
+  box-shadow:0 1px 2px rgba(180,83,9,.3),inset 0 1px 0 rgba(255,255,255,.35)!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern #agentProductPagination button:disabled{
+  background:#F3F4F6!important;color:#9CA3AF!important;opacity:1!important;cursor:not-allowed!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern #agentProductPagination button{
+  background:#383A46!important;border:1px solid rgba(255,255,255,.12)!important;color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern #agentProductPagination button:not(.active):hover{
+  background:#444654!important;border-color:rgba(255,255,255,.18)!important;color:#E7E5E4!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern #agentProductPagination button.active{
+  border-color:#F59E0B!important;color:#2A2C36!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.35),0 0 0 1px rgba(245,158,11,.35),0 2px 10px rgba(245,158,11,.28)!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern #agentProductPagination button:disabled{
+  background:#2A2C36!important;border-color:rgba(255,255,255,.06)!important;color:#52525B!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="products"].agent-report-body.agent-modern .table-card > .agent-table-footer .rounded-select-wrap .rounded-select-menu{
+  top:auto!important;bottom:100%!important;margin:0 0 6px 0!important;
+}
