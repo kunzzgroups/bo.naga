@@ -156,28 +156,31 @@
   }
 
   function toTsv(lines) {
-    return lines.map((row) => row.map((v) => String(v ?? '')).join('\t')).join('\n');
+    return lines.map((row) => row.map((v) => {
+      const s = String(v ?? '');
+      if (/[\t\n\r"]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+      return s;
+    }).join('\t')).join('\r\n');
   }
 
   function toCsv(lines) {
-    return lines.map((row) => row.map((v) => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
+    return lines.map((row) => row.map((v) => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\r\n');
   }
 
   async function copyText(text) {
-    try {
+    if (navigator.clipboard?.writeText) {
       await navigator.clipboard.writeText(text);
-      return true;
-    } catch (e) {
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
-      const ok = document.execCommand('copy');
-      ta.remove();
-      return ok;
+      return;
     }
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
   }
 
   function flashCopyBtn(btn, ok) {
@@ -194,7 +197,13 @@
   }
 
   async function copyForExcel(btn) {
-    flashCopyBtn(btn, await copyText(toTsv(excelRows())));
+    try {
+      await copyText(toTsv(excelRows()));
+      flashCopyBtn(btn, true);
+    } catch (e) {
+      console.error(e);
+      flashCopyBtn(btn, false);
+    }
   }
 
   function downloadCsv() {
@@ -202,7 +211,7 @@
       ['Provider', 'Total Bet', 'Valid Bet', 'Total In', 'Total Out', 'Win/Lose', 'Share %'],
       ...providers.map((p) => [p.code || p.name || '', p.totalBet, p.validBet, p.totalIn, p.totalOut, p.winLose, p.share.toFixed(2)])
     ];
-    const blob = new Blob([toCsv(lines)], { type: 'text/csv;charset=utf-8' });
+    const blob = new Blob(['\ufeff' + toCsv(lines)], { type: 'text/csv;charset=utf-8' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `provider-consumption-${merchant?.code || brandId || 'merchant'}-${from}-${to}.csv`;
@@ -234,7 +243,14 @@
   function renderSummary() {
     const box = $('wlmSummary');
     if (!box) return;
-    if (!merchant) { box.innerHTML = ''; return; }
+    /* No merchant (no `brandId`, or one the directory does not know) leaves no tiles to show;
+       the strip keeps its 14px/4px padding as an empty band otherwise (measured 18px tall). */
+    if (!merchant) {
+      box.style.display = 'none';
+      box.innerHTML = '';
+      return;
+    }
+    box.style.display = '';
     box.innerHTML = [
       summaryCard('Total Bet', money(merchant.totalBet), txnHint(merchant.txns)),
       summaryCard('Total ValidBet', money(merchant.validBet), validRateHint(merchant)),

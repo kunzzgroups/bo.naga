@@ -7040,6 +7040,53 @@ account whose menus carry the report renders it; a MAIN account whose menus do n
 `main-profile.html`. The page is in the SPA manifest (all five markers), so a rail click may swap into it; the
 eye itself is a JS navigation and the back link is not in `LINKS`, so both are ordinary page loads.
 
-**This page's panel hugs its content.** `.mad-panel` is `flex:1` so the list's footer sits on the frame's
-bottom edge; the drill-down's table is as long as the merchant has providers, so its panel is `flex:0 0 auto`
-instead of stretching to the viewport with a blank half under the table.
+**This page's panel hugs its content, and contributes nothing to the paint.** `.mad-panel` is `flex:1` so the
+list's footer sits on the frame's bottom edge; the drill-down's table is as long as the merchant has providers,
+so its panel is `flex:0 0 auto` instead of stretching to the viewport with a blank half under the table.
+
+#### Refinement pass — what the review measured, and what it changed
+
+The first cut shipped with the panel painting its own card (`#FFF8EB` + `#EADCC8` hairline, `flex:1`) around
+the breakdown block, which paints the same card (radius 14, same fills, plus the amber accent bar): two
+identical frames one inside the other, measured `doubleFrame: true` at every width and in both modes. The panel
+is a transparent wrapper now — `border:0 / background:transparent` — and the breakdown is the page's single
+card, its box exactly the panel's (254..1544 at 1568).
+
+- **The override had to out-rank, not merely load later.** The family paints `.mre-panel` at (0,4,2) with
+  `!important` in both modes (`main-report-charcoal.css` 4275 / 4300). A `(0,2,1) + !important` attempt was
+  silently beaten and the double frame stayed; the rule now carries the page's three body classes plus the
+  access-page `:is()` — (0,5,2).
+- **The KPI strip was inset 16px from the row above.** `main-provider-report-executive.css:720` gives
+  `.mre-history-kpis` `padding:14px 16px 4px` for its own page, where the strip sits inside a panel; here the
+  strip is a direct child of the workspace, so its tiles measured x=270 against a heading row at x=254.
+  `padding:0` on this page lines the tiles up with the row and the card.
+- **The status chip's own rules were dead.** The markup carried `mad-status is-active` without the page's
+  `wlm-status`, so the family's table pill painted it (24px, radius 999, `#D1FAE5`) and every `.wlm-status`
+  rule in the page sheet was a no-op. The chip now keeps that family pill, and the period chip was changed to
+  match it exactly (24px tall, radius 999, 11.5px/700) instead of the 28px/8px box it had: two chips on one row
+  should not disagree about their radius. The dead tint rules were deleted rather than left as no-ops.
+- **Five tiles at 390px measured 58px wide**, labels stacked four lines deep. Two columns at ≤600px (176px
+  tiles). The family's own strip has a `grid-template-columns:1fr` collapse at ≤1000px
+  (`main-provider-report-executive.css:729`), but the later family sheet re-states the 5-column grid without a
+  media query, so that collapse never applies anywhere today — worth its own decision, not touched here.
+- **The back link could not be made full-width on a phone.** `main-admin-detail-executive.css` pins every
+  `.mad-btn` to `width:auto!important`, so a plain `width:100%` is a no-op — measured 113px at 390px, and the
+  sibling's own `.mprr-back` mobile rule (`main-merchant-profit-record.css:546`) is that same no-op today.
+  `width:100%!important` + `justify-content:center` at ≤600px; from 768px up the link stays the content-width
+  113x36 button flush with the row's right edge (gap 19px = the row's 18px padding + 1px border).
+- **No merchant, no strip.** With no `brandId`, an unknown one, or a failed request, the strip stayed as an
+  18px empty band (its own padding). `renderSummary()` hides it; the page then reads: heading row, card with
+  the message, and nothing else.
+- **The two file actions match the list's contract again.** The TSV/CSV writer was simplified when the code
+  moved onto the page; it is back to CRLF lines, tab/newline/quote escaping and a UTF-8 BOM on the download,
+  so an Excel paste behaves exactly as it did from the list's inline block. Verified with the document focused
+  (`navigator.clipboard.writeText` refuses an unfocused document — headless starts unfocused, which is what the
+  first "Copy failed" measurement was).
+
+Re-measured after: 1568 / 1280 / 1024 / 768 / 390, both themes — no horizontal overflow, no page errors,
+`doubleFrame: false`, the tiles and the card flush with the heading row's edges at every width, and the edge
+states (no params, unknown `brandId`, API error, a 61-character merchant name, a suspended merchant, a merchant
+with no provider rows) each render one clean message. **Known, not introduced here:** every Main panel page's
+`h1` overflows its `.user-title-wrap` at 390px and slides under the action buttons (measured on
+`main-win-lose-report.html`, `main-merchant-balance.html`, `main-merchant-transactions.html` and this page
+alike) — a shell condition, for the shell's own pass.

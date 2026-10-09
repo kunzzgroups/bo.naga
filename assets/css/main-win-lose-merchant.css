@@ -21,7 +21,7 @@ body.main-win-lose-merchant-page .wlm-head{
   margin-bottom:16px;
   min-width:0;
   border:1px solid #EADCC8;
-  border-radius:16px;
+  border-radius:14px;
   background:var(--bo-surface,#FFF8EB);
   box-shadow:var(--bo-shadow,0 1px 2px rgba(60,48,32,.06));
 }
@@ -39,21 +39,15 @@ body.main-win-lose-merchant-page .wlm-meta{
 }
 body.main-win-lose-merchant-page .wlm-period{
   display:inline-flex;align-items:center;gap:8px;
-  height:28px;padding:0 10px;
-  border:1px solid #EADCC8;border-radius:8px;background:#FFF8EB;
-  color:#57534E;font-size:12px;font-weight:700;white-space:nowrap;
+  height:24px;padding:0 10px;
+  border:1px solid #EADCC8;border-radius:999px;background:#FFF8EB;
+  color:#57534E;font-size:11.5px;font-weight:700;white-space:nowrap;
 }
 body.main-win-lose-merchant-page .wlm-currency{
   font-size:12px;font-weight:800;letter-spacing:.02em;color:#57534E;
 }
 body.main-win-lose-merchant-page .wlm-status{
-  height:28px;padding:0 10px;border-radius:8px;
-}
-body.main-win-lose-merchant-page .wlm-status.is-active{
-  background:rgba(18,183,106,.12);color:#027A48;
-}
-body.main-win-lose-merchant-page .wlm-status.is-suspended{
-  background:#FEF3F2;color:#B42318;
+  height:24px;border-radius:999px;
 }
 
 body.main-win-lose-merchant-page .wlm-back{
@@ -67,11 +61,29 @@ body.main-win-lose-merchant-page .wlm-back{
   white-space:nowrap;
 }
 
-body.main-win-lose-merchant-page .wlm-kpis{margin-bottom:16px}
-/* The list's panel is the frame (`flex:1`, so the table's footer sits on the bottom edge);
-   this page's table is as long as the merchant has providers, so the card hugs it instead
-   of stretching to the viewport and leaving a blank half. */
-body.main-win-lose-merchant-page .mre-panel{padding:16px 18px 18px;flex:0 0 auto;min-height:0}
+body.main-win-lose-merchant-page .wlm-kpis{
+  /* The provider sheet's strip sits inside a padded panel (14px/16px) so its tiles are inset;
+     here the strip is a direct child of the workspace, and the tiles must line up with the
+     heading row above and the card below — measured before: tiles at x=270 against a row at
+     x=254. */
+  padding:0!important;
+  margin:0 0 16px!important;
+}
+/* The panel is the workspace frame on the list (`.mad-panel` is flex:1 there, because the
+   list's footer sits on the frame's bottom edge). This page's single card is the breakdown
+   block, so the panel contributes nothing to the paint — before this, two identical frames
+   (same #FFF8EB, same #EADCC8 hairline) sat one inside the other.
+   The family paints `.mre-panel` at (0,4,2) with `!important` in both modes
+   (main-report-charcoal.css 4275 / 4300), so this has to out-rank it, not merely load later:
+   a (0,2,1) + `!important` attempt lost and the double frame stayed. */
+body.main-win-lose-merchant-page.main-win-lose-page.main-admin-detail-page:is([data-access-page="main_report"]) .mre-panel{
+  padding:0;
+  flex:0 0 auto;
+  min-height:0;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
 
 /* The list indents the breakdown under the merchant row it came from (38px past the mark);
    on its own page the block starts at the panel's edge. */
@@ -80,21 +92,21 @@ body.main-win-lose-merchant-page .wl-breakdown{margin:0}
 html[data-bo-theme="dark"] body.main-win-lose-merchant-page .wlm-head{
   border-color:rgba(255,255,255,.14);
   background:var(--bo-surface,#2A2C36);
-  box-shadow:none;
+  box-shadow:var(--bo-shadow,none);
 }
 html[data-bo-theme="dark"] body.main-win-lose-merchant-page .wlm-period{
   border-color:rgba(255,255,255,.14);background:#2A2C36;color:#D4D4D8;
 }
 html[data-bo-theme="dark"] body.main-win-lose-merchant-page .wlm-currency{color:#D4D4D8}
-html[data-bo-theme="dark"] body.main-win-lose-merchant-page .wlm-status.is-active{
-  background:rgba(18,183,106,.16);color:#6CE9A6;
-}
-html[data-bo-theme="dark"] body.main-win-lose-merchant-page .wlm-status.is-suspended{
-  background:rgba(239,51,64,.16);color:#FF8A90;
-}
 
-@media (max-width:900px){
+@media (max-width:600px){
   body.main-win-lose-merchant-page .wlm-head{padding:14px}
-  body.main-win-lose-merchant-page .wlm-meta{margin-left:0}
-  body.main-win-lose-merchant-page .wlm-back{width:100%}
+  body.main-win-lose-merchant-page .wlm-meta{margin-left:0;width:100%}
+  /* Five tiles at 390px measured 58px wide — labels stacked four lines deep. Two columns
+     keep the value readable on a phone. */
+  body.main-win-lose-merchant-page .wlm-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  /* `main-admin-detail-executive.css` pins every `.mad-btn` to `width:auto!important`, so a
+     plain `width:100%` here is a no-op (measured: the link stayed 113px wide at 390). The
+     sibling's own `.mprr-back` mobile rule is that no-op today. */
+  body.main-win-lose-merchant-page .wlm-back{width:100%!important;justify-content:center}
 }
