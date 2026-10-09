@@ -7100,7 +7100,41 @@ card, its box exactly the panel's (254..1544 at 1568).
 Re-measured after: 1568 / 1280 / 1024 / 768 / 390, both themes — no horizontal overflow, no page errors,
 `doubleFrame: false`, the tiles and the card flush with the heading row's edges at every width, and the edge
 states (no params, unknown `brandId`, API error, a 61-character merchant name, a suspended merchant, a merchant
-with no provider rows) each render one clean message. #### The merchant name is not a link (2026-10-09, owner: "我点击名字会去到 merchant management的页面 不应该吧？ 麻烦帮我去除这个功能")
+with no provider rows) each render one clean message. #### Provider Report: the row's name is not a link, and its eye opens a Merchant List page (2026-10-09, owner: "这个页面的也把名字能点的功能去除 并且在最后一排添加action 眼睛 期望跳转页面Provider Report 点击 眼睛 > 跳转去Merchant List 独立页面")
+
+`main_provider_report.html` (Provider Management) carried main's related link on the provider cell
+(`data-report-provider-link` -> `main-merchant-detail.html?providerCode=…`, a page that ignores the parameter);
+its rows had no action of their own. Now: the name is text, and a seventh **Action** column carries the family eye.
+
+- **The eye** opens the new `main-provider-merchant-list.html?providerCode=…&providerName=…&category=…&from=&to=&currency=&back=`
+  (title "Merchant List") — the Provider Report read the other way round: one provider, its merchants, with the
+  report's own money columns. `Back to list` returns to the report with its range (and to whatever `back` names -
+  the eye passes the report's own URL, `?merchant=…` included).
+- **The data is one call, not a second source**: the same `/admin/main/reports/provider-settlement` the report reads.
+  Its `brands` rows are one per (merchant, provider), so filtering by `providerCode` and grouping by `brandId` gives
+  turnover / house result (Gross Amount) / brandCharge (Merchant Receivable) / providerPayableShare (Pay to Provider) /
+  platformMargin (Company Margin) / betCount per merchant. The header's tiles use the report's own aggregated
+  `providers` row for that code, so the two pages cannot disagree. The report's Merchant panel's extra columns
+  (Bonus / Net Profit / Active Players) are **deliberately absent**: they come from another endpoint and are only
+  per merchant, so they would not be this provider's share of them.
+- **Measured** (stub API, 1568): the provider table's `data-report-provider-link` is gone, clicking the name stays on
+  `/main_provider_report.html?from=…&to=…`, the eye's href carries the provider and the range; landing, identity reads
+  "PG Soft #PGS / Slots · 3 merchants", five tiles, rows = that provider's three merchants only (a merchant that uses
+  another provider but not this one is excluded), the row eye carries `back` to this page; Back to list returns to the
+  report with `from`/`to` intact. Edge states: unknown `providerCode`, no `providerCode`, and the API error each render
+  one message with the strip hidden. 1568 / 1280 / 1024 / 768 / 390 x light+dark: no page-level horizontal overflow,
+  0 page errors, no double frame. Column widths re-balanced 22/12/15×4 -> 20/12/15×4/8 in
+  `main-provider-report-executive.css`, because the fixed layout summed to 100% over six columns and a seventh would
+  have been laid out at zero; the eye's seat in its cell (12px padding, left-aligned in ~101px) is the same as the
+  Win/Lose list's Action column, measured on both.
+- **The chain unwinds one step at a time**: the merchant page (`main-win-lose-merchant.js`) now honours a `back`
+  parameter the same way the BO provider page does, so Provider Report -> Merchant List -> a merchant -> Back lands
+  back on the Merchant List, and its own Back to list then reaches the report. Without `back` it still goes to the
+  Win/Lose list with `pill`/`tier`/`status`/`q` (measured, unchanged).
+- `main-provider-merchant-list.html` is in the SPA manifest (markers copied from its twin), `auth.js` lets either report
+  tab open it and lights the rail row the account holds, and its pins are stamped like every other page's.
+
+#### The merchant name is not a link (2026-10-09, owner: "我点击名字会去到 merchant management的页面 不应该吧？ 麻烦帮我去除这个功能")
 
 main's "Add related link for each report" (6365af53, Wang Zai) had put a `data-report-merchant-link` on the Win/Lose list's merchant
 cell, so clicking a merchant's *name* jumped to `main_merchant_report.html?merchant=…` — while this workspace's own

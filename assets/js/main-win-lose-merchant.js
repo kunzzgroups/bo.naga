@@ -53,8 +53,17 @@
 
   /* The way back is the way in: the list reads from/to (main-exec-date-range.js reads them
      from the URL) and the four filters below, so the operator lands on the rows the eye was
-     clicked on rather than on the list's defaults. */
+     clicked on rather than on the list's defaults. A `back` parameter wins - it is the page
+     that linked here (the Provider Report's merchant list, whose own eye opens this page), so
+     each step of the chain unwinds one at a time. */
   function backHref() {
+    const back = params.get('back') || '';
+    if (back && /^[^:]*\.html(\?|$)/.test(back)) {
+      try {
+        const u = new URL(back, location.href);
+        if (u.origin === location.origin) return u.toString();
+      } catch (e) { /* fall through to the list */ }
+    }
     const u = new URL('main-win-lose-report.html', location.href);
     if (from) u.searchParams.set('from', from);
     if (to) u.searchParams.set('to', to);

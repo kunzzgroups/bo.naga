@@ -283,6 +283,22 @@ function distributeProviderRows(){
   trs.forEach(tr=>{tr.style.height=each+'px';});
 }
 
+/* The row's action: this provider's merchant list (main-provider-merchant-list.html) - the
+   merchants this provider earns for, carrying the range and this page as the way back. It is
+   the same eye the Win/Lose list carries; the provider's *name* is text again (owner, on the
+   provider report: "这个页面的也把名字能点的功能去除 并且在最后一排添加action 眼睛"). */
+function merchantListUrl(r){
+  const u=new URL('main-provider-merchant-list.html',location.href);
+  u.searchParams.set('providerCode',r.code||'');
+  if(r.name) u.searchParams.set('providerName',r.name);
+  if(r.categoryLabel&&r.categoryLabel!=='—') u.searchParams.set('category',r.categoryLabel);
+  u.searchParams.set('from',$('reportDateFrom').value||'');
+  u.searchParams.set('to',$('reportDateTo').value||'');
+  u.searchParams.set('currency',currencyLabel());
+  u.searchParams.set('back',location.pathname+location.search);
+  return u.toString();
+}
+
 function renderProviders(){
   const tbody=$('providerReportRows');
   const pager=$('mrePager');
@@ -307,7 +323,7 @@ function renderProviders(){
 
   if(!rows.length){
     clearProviderRowStretch();
-    tbody.innerHTML='<tr><td colspan="6" class="mad-empty">No provider report data for this date range.</td></tr>';
+    tbody.innerHTML='<tr><td colspan="7" class="mad-empty">No provider report data for this date range.</td></tr>';
     return;
   }
 
@@ -315,12 +331,15 @@ function renderProviders(){
     const codeLabel=r.code?('#'+r.code):'';
     return `<tr>
       <td><div class="mre-provider"><span class="mre-mark${r.mark}">${esc(r.initials)}</span>
-        <div class="mre-provider-copy" data-report-provider-link="${esc(r.code)}"><b>${esc(r.name)}</b>${codeLabel?`<span class="mre-code">${esc(codeLabel)}</span>`:''}</div></div></td>
+        <div class="mre-provider-copy"><b>${esc(r.name)}</b>${codeLabel?`<span class="mre-code">${esc(codeLabel)}</span>`:''}</div></div></td>
       <td class="mre-category">${esc(r.categoryLabel||'—')}</td>
       <td class="mre-num">${amountHtml(r.gross)}</td>
       <td class="mre-num">${money(r.payable)}</td>
       <td class="mre-num">${amountHtml(r.margin)}</td>
       <td class="mre-num">${money(r.receivable)}</td>
+      <td><div class="mre-actions mad-actions">
+        <a class="mad-icon-btn mre-provider-open" href="${esc(merchantListUrl(r))}" title="View merchant list" aria-label="View merchant list"><i class="bi bi-eye" aria-hidden="true"></i></a>
+      </div></td>
     </tr>`;
   }).join('');
 
@@ -688,7 +707,7 @@ async function load(){const loadSeq=++providerReportLoadSeq;
     currentBrands=[];
     updateCounts();
     const tbody=$('providerReportRows');
-    if(tbody) tbody.innerHTML=`<tr><td colspan="6" class="mad-empty text-danger">${esc((/failed to fetch|networkerror|load failed/i.test(String(e.message||''))?'Unable to reach server. Start local API on :8080 or open the BO on the same host as /api.':e.message)||'Unable to load provider report')}</td></tr>`;
+    if(tbody) tbody.innerHTML=`<tr><td colspan="7" class="mad-empty text-danger">${esc((/failed to fetch|networkerror|load failed/i.test(String(e.message||''))?'Unable to reach server. Start local API on :8080 or open the BO on the same host as /api.':e.message)||'Unable to load provider report')}</td></tr>`;
     const info=$('mreTableInfo');
     if(info) info.textContent='Showing 0 to 0 of 0 providers';
     const pager=$('mrePager');
@@ -807,15 +826,6 @@ function setupFilters(){
   });
   $('reportExport')?.addEventListener('click',exportCsv);
   $('reportSyncLabel')?.addEventListener('click',()=>{load();});
-  if(window.__boMreMerchantListClick) document.removeEventListener('click',window.__boMreMerchantListClick);
-  window.__boMreMerchantListClick=e=>{
-    const link=e.target.closest('[data-report-provider-link]');
-    if(!link || !link.closest('#providerReportRows')) return;
-    const u=new URL('main-merchant-detail.html',location.href);
-    u.searchParams.set('providerCode',link.getAttribute('data-report-provider-link'));
-    location.href=u.toString();
-  };
-  document.addEventListener('click',window.__boMreMerchantListClick);
   if(window.__boMreHistoryClick) document.removeEventListener('click',window.__boMreHistoryClick);
   window.__boMreHistoryClick=e=>{
     const view=e.target.closest('[data-mre-view]');

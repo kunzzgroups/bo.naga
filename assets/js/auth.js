@@ -105,6 +105,8 @@
     if(p==='main-merchant-balance.html' || p==='main-merchant-transactions.html') return 'main_merchant_report.html';
     // The merchant drill-down of the Win/Lose Report lights the same rail row its list does.
     if(p==='main-win-lose-merchant.html') return 'main-win-lose-report.html';
+    // So does the provider drill-down of the Provider Report (its merchant list).
+    if(p==='main-provider-merchant-list.html') return 'main_provider_report.html';
     if(p==='casino-provider-winloss-report.html'){
       /* The BO Report module's Provider Win/Loss page, also reached from the Main panel's
          provider rows. Light the row the account actually holds: its own BO menu when it has
@@ -716,8 +718,10 @@
       // URL between the two does not make the other tab disappear or redirect away.
       // The merchant drill-down (main-win-lose-merchant.html) is that workspace's third
       // page: it has no menu row of its own, and whoever can open either tab can open it -
-      // same shape as brand-detail.html's inheritance above.
-      if(!allowed && (currentFile() === 'main-win-lose-report.html' || currentFile() === 'win-lose-report.html' || currentFile() === 'main_provider_report.html' || currentFile() === 'main-win-lose-merchant.html')){
+      // same shape as brand-detail.html's inheritance above. The provider report's own
+      // drill-down (main-provider-merchant-list.html, the row eye's merchant list) inherits
+      // the same way.
+      if(!allowed && (currentFile() === 'main-win-lose-report.html' || currentFile() === 'win-lose-report.html' || currentFile() === 'main_provider_report.html' || currentFile() === 'main-win-lose-merchant.html' || currentFile() === 'main-provider-merchant-list.html')){
         allowed = menus.some(function(m){
           const file = String(m.url || '').split('/').pop().split('?')[0].toLowerCase();
           const key = String(m.menuKey || '').toLowerCase();
@@ -734,7 +738,7 @@
         allowed = menus.some(function(m){
           const file = String(m.url || '').split('/').pop().split('?')[0].toLowerCase();
           const key = String(m.menuKey || '').toLowerCase();
-          return file === 'main-win-lose-report.html' || file === 'win-lose-report.html' || file === 'main_provider_report.html' || file === 'main-win-lose-merchant.html' || file === 'main-accounting-report.html' || key === 'main_provider_report' || key === 'main_win_lose_report' || key === 'main_accounting_report';
+          return file === 'main-win-lose-report.html' || file === 'win-lose-report.html' || file === 'main_provider_report.html' || file === 'main-win-lose-merchant.html' || file === 'main-provider-merchant-list.html' || file === 'main-accounting-report.html' || key === 'main_provider_report' || key === 'main_win_lose_report' || key === 'main_accounting_report';
         });
       }
       /* The BO Report module's Provider Win/Loss page is the other end of the merchant page's
@@ -746,7 +750,7 @@
         allowed = menus.some(function(m){
           const file = String(m.url || '').split('/').pop().split('?')[0].toLowerCase();
           const key = String(m.menuKey || '').toLowerCase();
-          return file === 'casino-provider-winloss-report.html' || file === 'main-win-lose-report.html' || file === 'win-lose-report.html' || file === 'main_provider_report.html' || file === 'main-win-lose-merchant.html' || key === 'main_provider_report' || key === 'main_win_lose_report';
+          return file === 'casino-provider-winloss-report.html' || file === 'main-win-lose-report.html' || file === 'win-lose-report.html' || file === 'main_provider_report.html' || file === 'main-win-lose-merchant.html' || file === 'main-provider-merchant-list.html' || key === 'main_provider_report' || key === 'main_win_lose_report';
         });
       }
       /* Online Users belongs to the Member module. Its menu row is ROOT-configured and the BO
