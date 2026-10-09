@@ -1,0 +1,114 @@
+/* Provider Report — the merchant list drill-down (one provider's merchants).
+
+   The provider rows' eye opens this page (main-provider-merchant-list.html?providerCode=…&from=…);
+   it is the Provider Report read the other way round: identity, period, the provider's totals
+   strip and the merchant table. `Back to list` is the family's ghost button at the right end of
+   that row — the same fill the report's own controls carry.
+
+   Loaded after the family sheets: `.mre-*` comes from main-provider-report-executive.css,
+   `.mmr-mark` / `.mmr-merchant-copy` / `.wl-breakdown*` / `.wl-subtable` / `.wl-excel-btn` from
+   main-win-lose-report.css and main-report-charcoal-content.css, where both modes are already
+   stated. This file adds only what those cannot know — the heading row and the columns that
+   belong to this page alone. Its twin is main-win-lose-merchant.css (merchant -> providers). */
+
+body.main-provider-merchant-page .pml-head{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px 18px;
+  padding:16px 18px;
+  margin-bottom:16px;
+  min-width:0;
+  border:1px solid #EADCC8;
+  border-radius:14px;
+  background:var(--bo-surface,#FFF8EB);
+  box-shadow:var(--bo-shadow,0 1px 2px rgba(60,48,32,.06));
+}
+
+body.main-provider-merchant-page .pml-identity{
+  display:flex;align-items:center;gap:10px;min-width:0;flex:0 1 auto;
+}
+body.main-provider-merchant-page .pml-identity .mmr-merchant-copy b{white-space:normal}
+
+/* Period + currency, pushed to the right of the identity; the back link takes the last seat,
+   which is where the family keeps a list's back control. */
+body.main-provider-merchant-page .pml-meta{
+  display:flex;align-items:center;flex-wrap:wrap;gap:10px;
+  margin-left:auto;min-width:0;
+}
+body.main-provider-merchant-page .pml-period{
+  display:inline-flex;align-items:center;gap:8px;
+  height:24px;padding:0 10px;
+  border:1px solid #EADCC8;border-radius:999px;background:#FFF8EB;
+  color:#57534E;font-size:11.5px;font-weight:700;white-space:nowrap;
+}
+body.main-provider-merchant-page .pml-currency{
+  font-size:12px;font-weight:800;letter-spacing:.02em;color:#57534E;
+}
+
+body.main-provider-merchant-page .pml-back{
+  flex:0 0 auto;
+  display:inline-flex!important;align-items:center;justify-content:center;gap:8px;
+  height:36px!important;min-height:36px!important;
+  padding:0 14px!important;
+  border-radius:8px;
+  font-size:12.5px!important;font-weight:700!important;
+  text-decoration:none!important;
+  white-space:nowrap;
+}
+
+body.main-provider-merchant-page .pml-kpis{
+  /* The report's strip sits inside a padded panel (14px/16px) so its tiles are inset; here the
+     strip is a direct child of the workspace and its tiles must line up with the heading row
+     above and the card below. */
+  padding:0!important;
+  margin:0 0 16px!important;
+}
+/* The single card is the frame: two identical cream frames one inside the other were the
+   reviewer's "卡中卡" finding on the twin page. The family paints `.mre-panel` with
+   `!important` (main-report-charcoal.css 4275 / 4300), so this has to out-rank it. */
+body.main-provider-merchant-page.main-win-lose-page.main-admin-detail-page:is([data-access-page="main_provider_report"]) .mre-panel{
+  padding:0;
+  flex:0 0 auto;
+  min-height:0;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+body.main-provider-merchant-page .wl-breakdown{margin:0}
+
+/* A detail page scrolls as a page: the frame is the scroll container, like the other Main
+   detail pages. `.report-content` / `.mre-workspace` are `overflow:hidden` with `flex:1`;
+   without this a provider with many merchants is clipped with nothing to scroll. */
+body.main-provider-merchant-page .report-content{overflow-y:auto}
+
+/* Eight columns, so the block's own 880px floor (main-win-lose-report.css:438) is not enough
+   for the money columns; measured, 960 is the width at which the row still reads on one line
+   and the block stops scrolling sideways at 1280. */
+body.main-provider-merchant-page .pml-table{min-width:960px}
+body.main-provider-merchant-page .pml-table .pml-col-bets{width:110px}
+body.main-provider-merchant-page .pml-table .pml-col-action{width:64px}
+/* The anchor wears the family's eye geometry (`.mad-actions > .mad-icon-btn`); only the
+   underline is this page's to remove. */
+body.main-provider-merchant-page .pml-merchant-open{text-decoration:none!important}
+
+html[data-bo-theme="dark"] body.main-provider-merchant-page .pml-head{
+  border-color:rgba(255,255,255,.14);
+  background:var(--bo-surface,#2A2C36);
+  box-shadow:var(--bo-shadow,none);
+}
+html[data-bo-theme="dark"] body.main-provider-merchant-page .pml-period{
+  border-color:rgba(255,255,255,.14);background:#2A2C36;color:#D4D4D8;
+}
+html[data-bo-theme="dark"] body.main-provider-merchant-page .pml-currency{color:#D4D4D8}
+
+@media (max-width:600px){
+  body.main-provider-merchant-page .pml-head{padding:14px}
+  body.main-provider-merchant-page .pml-meta{margin-left:0;width:100%}
+  /* Five tiles at 390px stack four lines deep in one column; two keep the value readable. */
+  body.main-provider-merchant-page .pml-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  /* `main-admin-detail-executive.css` pins every `.mad-btn` to `width:auto!important`, so a
+     plain `width:100%` is a no-op. */
+  body.main-provider-merchant-page .pml-back{width:100%!important;justify-content:center}
+}

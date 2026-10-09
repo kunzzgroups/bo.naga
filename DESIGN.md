@@ -7012,7 +7012,7 @@ The merchant row's action was a chevron in the Merchant cell that expanded the p
 row. It is now the family eye in a last `Action` column (the sibling report pages' recipe: `mad-icon-btn` inside
 `mre-actions mad-actions`, 40x40, radius 8), and the click leaves the list for
 **`main-win-lose-merchant.html`** — the same breakdown as a page: identity · period · status · currency in a
-heading row, the five totals as `.mre-history-kpis` tiles, then the provider table with its Copy for Excel / CSV
+heading row, the five totals as `.mre-history-kpis` tiles, then the provider table with its Copy report / CSV
 actions. Files: `assets/js/main-win-lose-merchant.js`, `assets/css/main-win-lose-merchant.css`.
 
 **`Back to list` is the family's own recipe, and it sits where BO puts it.** The link is the last child of the
@@ -7100,7 +7100,82 @@ card, its box exactly the panel's (254..1544 at 1568).
 Re-measured after: 1568 / 1280 / 1024 / 768 / 390, both themes — no horizontal overflow, no page errors,
 `doubleFrame: false`, the tiles and the card flush with the heading row's edges at every width, and the edge
 states (no params, unknown `brandId`, API error, a 61-character merchant name, a suspended merchant, a merchant
-with no provider rows) each render one clean message. #### The provider row's eye: that provider, in the BO's Provider Win/Loss report (2026-10-09, owner: "Merchant Report 点击游戏 > 跳转去Provider Report（链接BO）", then "因为我要去细看provider下面的merchant的game report")
+with no provider rows) each render one clean message. #### Provider Report: the row's name is not a link, and its eye opens a Merchant List page (2026-10-09, owner: "这个页面的也把名字能点的功能去除 并且在最后一排添加action 眼睛 期望跳转页面Provider Report 点击 眼睛 > 跳转去Merchant List 独立页面")
+
+`main_provider_report.html` (Provider Management) carried main's related link on the provider cell
+(`data-report-provider-link` -> `main-merchant-detail.html?providerCode=…`, a page that ignores the parameter);
+its rows had no action of their own. Now: the name is text, and a seventh **Action** column carries the family eye.
+
+- **The eye** opens the new `main-provider-merchant-list.html?providerCode=…&providerName=…&category=…&from=&to=&currency=&back=`
+  (title "Merchant List") — the Provider Report read the other way round: one provider, its merchants, with the
+  report's own money columns. `Back to list` returns to the report with its range (and to whatever `back` names -
+  the eye passes the report's own URL, `?merchant=…` included).
+- **The data is one call, not a second source**: the same `/admin/main/reports/provider-settlement` the report reads.
+  Its `brands` rows are one per (merchant, provider), so filtering by `providerCode` and grouping by `brandId` gives
+  turnover / house result (Gross Amount) / brandCharge (Merchant Receivable) / providerPayableShare (Pay to Provider) /
+  platformMargin (Company Margin) / betCount per merchant. The header's tiles use the report's own aggregated
+  `providers` row for that code, so the two pages cannot disagree. The report's Merchant panel's extra columns
+  (Bonus / Net Profit / Active Players) are **deliberately absent**: they come from another endpoint and are only
+  per merchant, so they would not be this provider's share of them.
+- **Measured** (stub API, 1568): the provider table's `data-report-provider-link` is gone, clicking the name stays on
+  `/main_provider_report.html?from=…&to=…`, the eye's href carries the provider and the range; landing, identity reads
+  "PG Soft #PGS / Slots · 3 merchants", five tiles, rows = that provider's three merchants only (a merchant that uses
+  another provider but not this one is excluded), the row eye carries `back` to this page; Back to list returns to the
+  report with `from`/`to` intact. Edge states: unknown `providerCode`, no `providerCode`, and the API error each render
+  one message with the strip hidden. 1568 / 1280 / 1024 / 768 / 390 x light+dark: no page-level horizontal overflow,
+  0 page errors, no double frame. Column widths re-balanced 22/12/15×4 -> 20/12/15×4/8 in
+  `main-provider-report-executive.css`, because the fixed layout summed to 100% over six columns and a seventh would
+  have been laid out at zero; the eye's seat in its cell (12px padding, left-aligned in ~101px) is the same as the
+  Win/Lose list's Action column, measured on both.
+- **The merchant row's eye opens the merchant's own Provider Report - a page of its own**
+  (`main-merchant-provider-report.html` + `assets/js/main-merchant-provider-report.js` +
+  `assets/css/main-merchant-provider-report.css`), the exact mirror of this list: identity (merchant, tier,
+  provider count), period pill, currency, `Back to list` at the right end, five tiles and the report's table read
+  per provider - Provider | Game Category | Turnover | Gross Amount | Merchant Receivable | Pay to Provider |
+  Company Margin | Bets | Action, with Copy report / CSV. Its row eye continues the chain into the BO's
+  Provider Win/Loss for that provider, carrying this page as its `back`.
+  The owner rejected the two stop-gaps before it, in order: the shared tabbed report
+  (`main_provider_report.html?merchant=…`: "怎么是跳去main的provider report？") and then this branch's
+  Win/Lose merchant page - what they asked for is "merchant 的 provider report … 单独的". Measured on Aurora Play:
+  identity "Aurora Play #MC001 / Tier 3 Standard · 2 providers", tiles -3,500 gross / 22,200 payable (1.98% of
+  turnover) / +4,500 margin / +4,300 receivable / 2 providers - 13,211 bets, and the two provider rows
+  (PG Soft 700,000 turnover / -12,000 gross / 3,400 / 14,000 / +2,800 / 9,000; SBOBET 420,000 / +8,500 / 900 /
+  8,200 / +1,700 / 4,211) whose sums are the tiles. `Back to list` returns to the Merchant List with its state,
+  which then returns to the report. Edge state (no `brandId`) renders one message with the strip hidden.
+  1568 / 1280 / 1024 / 768 / 390 x light+dark: no page-level overflow, 0 page errors, no double frame.
+- **The clipboard button says "Copy report", and the paste starts at the table** (owner: "把copy for excel的字句 改为
+  copy report" then, on the pasted sheet, "这个被框中的部分我不要被copy到"). All three drill-down pages of the family carry
+  the same label and the same shape: the `Period / … / Currency` prelude that used to head the copy is gone, so the
+  first pasted row is the table's own header, and the values are rounded to two decimals on the way out
+  (`n2`) - the page's own sums are floats, so a total had pasted as 519.5799999999999 against the page's 519.58
+  (measured). The CSV download already had no prelude and now rounds the same way. Measured after: the Win/Lose
+  merchant page pastes `Provider | Total Bet | Total ValidBet | Total In | Total Out | Win/Lose` then the rows and a
+  clean `Total 519.58 …`, the Merchant List `Merchant | Merchant Code | Turnover | …`, the merchant Provider Report
+  `Provider | Provider Code | Game Category | …`; 0 page errors.
+  **`providerCode` is not carried** from the list into this page: the merchant's whole provider line is the point
+  of it, and on the tabbed page pre-filling the search box had filtered the table to one provider while the tiles
+  stayed merchant-wide (measured: tiles 22,200 against a 14,000 table).
+- The merchant page (`main-win-lose-merchant.js`) still honours a `back` parameter the same way the BO provider page
+  does, so any link into it can unwind one step at a time; without `back` it goes to the Win/Lose list with
+  `pill`/`tier`/`status`/`q` (measured, unchanged).
+- `main-provider-merchant-list.html` is in the SPA manifest (markers copied from its twin), `auth.js` lets either report
+  tab open it and lights the rail row the account holds, and its pins are stamped like every other page's.
+
+#### The merchant name is not a link (2026-10-09, owner: "我点击名字会去到 merchant management的页面 不应该吧？ 麻烦帮我去除这个功能")
+
+main's "Add related link for each report" (6365af53, Wang Zai) had put a `data-report-merchant-link` on the Win/Lose list's merchant
+cell, so clicking a merchant's *name* jumped to `main_merchant_report.html?merchant=…` — while this workspace's own
+gesture for that row is the **eye** in the Action column. The owner hit the name by accident and asked for it to go. The
+attribute and its click branch are gone from `main-win-lose-report.js`; the list now reads: the name is text, the eye is
+the action. Measured: clicking the name stays on `/main-win-lose-report.html?from=…&to=…`, clicking the eye opens
+`main-win-lose-merchant.html?brandId=…`.
+
+**The same commit's related links on three other pages are left alone** (they are another developer's work on pages the
+owner has not asked about): `main_merchant_report.html` merchant name -> `main_provider_report.html?merchant=…`,
+`main_provider_report.html` provider name -> `main-merchant-detail.html?providerCode=…`, and `main-merchant-detail.html`'s merchant code ->
+`main_provider_report.html?merchant=…`. They are one clause each if the owner wants the same treatment there.
+
+#### The provider row's eye: that provider, in the BO's Provider Win/Loss report (2026-10-09, owner: "Merchant Report 点击游戏 > 跳转去Provider Report（链接BO）", then "因为我要去细看provider下面的merchant的game report")
 
 Three destinations were tried before this one landed: `provider-detail.html` (Provider Details), then the Main workspace's
 Provider Report tab. The owner's answer to the second was "你应该去拿bo的

@@ -876,3 +876,25 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-report-exec-page .wl
   background:#D97706!important;
   background-color:#D97706!important;
 }
+
+/* Seven columns now: the Action column carries the row's eye that opens
+   main-provider-merchant-list.html (owner: "在最后一排添加action 眼睛 期望跳转页面Provider Report 点击
+   眼睛 > 跳转去Merchant List 独立页面"). The fixed layout above sums to 100% over six columns, so a
+   seventh would be laid out at zero width - re-balanced here: 20 + 12 + 4x15 + 8. */
+body.main-report-exec-page .mre-table thead th:nth-child(1),
+body.main-report-exec-page .mre-table tbody td:nth-child(1){width:20%}
+body.main-report-exec-page .mre-table thead th:nth-child(2),
+body.main-report-exec-page .mre-table tbody td:nth-child(2){width:12%}
+body.main-report-exec-page .mre-table thead th:nth-child(3),
+body.main-report-exec-page .mre-table tbody td:nth-child(3),
+body.main-report-exec-page .mre-table thead th:nth-child(4),
+body.main-report-exec-page .mre-table tbody td:nth-child(4),
+body.main-report-exec-page .mre-table thead th:nth-child(5),
+body.main-report-exec-page .mre-table tbody td:nth-child(5),
+body.main-report-exec-page .mre-table thead th:nth-child(6),
+body.main-report-exec-page .mre-table tbody td:nth-child(6){width:15%}
+body.main-report-exec-page .mre-table thead th:nth-child(7),
+body.main-report-exec-page .mre-table tbody td:nth-child(7){width:8%}
+/* The anchor wears the family's eye geometry (`.mad-actions > .mad-icon-btn`); only the
+   underline is this page's to remove. */
+body.main-report-exec-page .mre-provider-open{text-decoration:none!important}

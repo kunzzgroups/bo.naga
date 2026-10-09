@@ -481,7 +481,7 @@
         <td>
           <div class="wl-merchant">
             <span class="mmr-mark${r.mark}">${esc(r.initials)}</span>
-            <div class="mmr-merchant-copy" data-report-merchant-link="${esc(String(r.id||r.code||''))}">
+            <div class="mmr-merchant-copy">
               <b>${esc(r.name)}${codeLabel ? ` <span class="mmr-code">${esc(codeLabel)}</span>` : ''}</b>
               <small>${esc(r.tierLabel)}</small>
             </div>
@@ -667,16 +667,6 @@
     });
 
     $('wlRows')?.addEventListener('click', (e) => {
-      /* main's related link (row template carries data-report-merchant-link): the merchant cell
-         opens the merchant report page. Kept alongside this branch's eye, which opens the
-         merchant's provider-consumption drill-down. */
-      const merchantLink = e.target.closest('[data-report-merchant-link]');
-      if (merchantLink) {
-        const u = new URL('main_merchant_report.html', location.href);
-        u.searchParams.set('merchant', merchantLink.getAttribute('data-report-merchant-link'));
-        location.href = u.toString();
-        return;
-      }
       const btn = e.target.closest('[data-wl-open]');
       if (!btn) return;
       e.preventDefault();

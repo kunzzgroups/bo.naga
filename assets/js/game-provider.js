@@ -1,9 +1,15 @@
+(function () {
+/* This media-URL helper (added at column 0 by main's "Fixed game provider ui bugs", b4cc4b3a) lives
+   inside the wrapper on purpose: at column 0 the file no longer *looked* wrapped to
+   scripts/check-global-collisions.js, whose line scan then read the six column-0 `const`s below -
+   which are genuinely inside this IIFE - as globals, and failed the guard for every commit in the
+   repo (measured on origin/main itself). Inside, the file starts with `(function () {` and ends with
+   `})();`, which is the shape that test wants; nothing else changes. */
 function normalizeProviderMediaUrl(value) {
   if (typeof value !== 'string') return value;
   return value.replace(/^(https?:)?\/\/static\.titanxgaming\.com(?=[:/?#]|$)/i,
     (_, scheme) => (scheme || 'https:') + '//static.titanx7.com');
 }
-(function () {
 function adminApi(pathKey) { return API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS[pathKey]; }
 function escapeHtml(value) { return String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
 function statusPill(value) { const active = Number(value) === 1; return `<span class="slider-pill ${active ? 'active' : 'inactive'}"><i class="bi ${active ? 'bi-check-circle' : 'bi-pause-circle'}"></i>${active ? 'Active' : 'Inactive'}</span>`; }
