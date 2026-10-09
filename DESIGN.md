@@ -7100,7 +7100,62 @@ card, its box exactly the panel's (254..1544 at 1568).
 Re-measured after: 1568 / 1280 / 1024 / 768 / 390, both themes — no horizontal overflow, no page errors,
 `doubleFrame: false`, the tiles and the card flush with the heading row's edges at every width, and the edge
 states (no params, unknown `brandId`, API error, a 61-character merchant name, a suspended merchant, a merchant
-with no provider rows) each render one clean message. #### The status pills' counts are never a colour of their own (2026-10-09, owner: "你知道我色盲 就不要为难我啦 你看 为什么maintenance （0)有颜色？ 与左右显示的不一样")
+with no provider rows) each render one clean message. #### The merchant drill-down can move its own dates now (2026-10-09, owner: "Merchant report小眼睛>Provider Consumption 页面不能改date Range要退回母级页面才能修改日期")
+
+`main-win-lose-merchant.html` showed the range as a read-only pill, so a different period meant going back to the list,
+changing it there and coming back. The pill is replaced by the family's own date field
+(`.field.ref-date-field.mre-date-field.main-exec-date-field` + `MAIN_DATE_RANGE.init({prefix:'wlm'})`, the same
+component and the same 8 presets / calendar the list uses), and the page's `from`/`to` are `let` now.
+
+On a change the page keeps itself in step: it re-runs `load()` with the new range, rewrites the address bar
+(`history.replaceState`, so a refresh or a shared link carries the period) and re-derives `Back to list` - which is
+the point of a drill-down: the range you set here is the range the list comes back to. The +1-day convention on the
+request's `to` is the list's own (`main-provider-report.js:62`).
+
+Measured (stub API): the field renders `01/10/2026 - 09/10/2026` from the carried URL and is 260x36; opening it shows
+the 8 presets and a 42-cell calendar with the range highlighted; picking This Week moves the label to
+`04/10/2026 - 10/10/2026`, the URL to `…&from=2026-10-04&to=2026-10-10`, the request to
+`provider-settlement?from=2026-10-04&to=2026-10-11` (the +1), re-renders the rows, and rewrites Back to list to
+`main-win-lose-report.html?from=2026-10-04&to=2026-10-10&pill=active`. 1568/1280/1024/768/390 x light+dark: no page
+overflow, the row wraps below 1024 (the field is 260px wide, as on the list) and stacks at 390, 0 page errors. The
+dead `.wlm-period` rules were removed with the pill.
+
+#### All three drill-down pages carry the range field (owner: "这个页面也要啊 日期选项")
+
+The Merchant List (`main-provider-merchant-list.html`) and the merchant's Provider Report
+(`main-merchant-provider-report.html`) now carry the same date field as the merchant drill-down, with prefixes
+`pml` / `mpr` - same component, same eight presets, same 260x36 seat in the heading row, same URL contract. The
+dead `.pml-period` / `.mpr-period` rules went with the pills.
+
+Their `backHref()` now applies the current `from`/`to` to whatever it returns, so a period set on one of these
+pages travels up the chain: measured, picking Last Month on the Merchant List moved its own URL to
+`…&from=2026-09-01&to=2026-09-30`, re-queried `provider-settlement?from=2026-09-01&to=2026-10-01` (the +1 day) and
+rewrote Back to list to `main_provider_report.html?from=2026-09-01&to=2026-09-30`; the merchant Provider Report did
+the same one level deeper, its Back landing on the Merchant List with the new range. The owner had also shown the
+merchant drill-down still on a pill - that page had been given the field in the previous commit; the pin moves with
+it, so a refresh (Ctrl+F5 if a cached page holds the old script) shows it. 0 page errors on all three.
+
+#### The count under a money value carries no unit word (2026-10-09, owner: "bo和main的 txns字符需要移除")
+
+The small count under Total In (Win/Lose list, merchant report) and beside Total Bet (the merchant drill-down's
+KPI) said "2,541 txns"; the BO's agent performance report put " tx" under Deposit / Withdraw
+(`agent-performance-report.js:39`). The number stays, the word goes - on both panels:
+
+- `main-win-lose-report.js`, `main-merchant-report.js`, `main-win-lose-merchant.js` -> the sub-line is the bare
+  count (`2,541`)
+- `assets/js/agent-performance-report.js` -> `RM 1,250.50` over `7` instead of `7 tx`
+
+**Then the counts themselves went too** (owner: "txns的小数字也要去除 刚刚都没有去除完整 main的report也是"): the sub-line under
+Total In (list + merchant report), the count beside Total Bet (the drill-down's KPI), and the Deposit / Withdraw
+counts on the BO agent report are no longer rendered at all - the cell is the money alone. Measured with stubs: the
+Win/Lose list and the merchant report have no `.mmr-stack small` in their rows, the drill-down's Total Bet tile
+carries no note, the BO page's Deposit / Withdraw cells read `RM 0.00` / `RM 1,250.50` / `RM 300.00` with no
+sub-lines, and 0 page errors on all four. Nothing else in the tree
+carries the word (`grep -rn "txns"` over every shipped .html/.js/.css now only matches the variable names
+`txns`/`txnCount`, which are never printed). **The first sweep missed the BO one** because the search was piped
+through `head` - the lesson is in the count: a truncated grep is not a search.
+
+#### The status pills' counts are never a colour of their own (2026-10-09, owner: "你知道我色盲 就不要为难我啦 你看 为什么maintenance （0)有颜色？ 与左右显示的不一样")
 
 On the provider report the Maintenance pill's count carried `is-warn-count`, which this file had mapped to the
 amber-deep attention role (and the dark twin in `main-merchant-report-executive.css:17-20` to `#F79009`). The

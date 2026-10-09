@@ -20,7 +20,7 @@
 <link href="assets/css/bo-account-chip.css?v=c8730135" rel="stylesheet"/>
 <link href="assets/css/main-report-charcoal.css?v=f20bf566" rel="stylesheet"/>
 <link href="assets/css/main-report-charcoal-content.css?v=5ba7ca02" rel="stylesheet"/>
-<link href="assets/css/main-win-lose-merchant.css?v=7711e357" rel="stylesheet"/>
+<link href="assets/css/main-win-lose-merchant.css?v=03181217" rel="stylesheet"/>
 <link href="assets/css/bo-input-fill.css?v=1ab80f49" rel="stylesheet"/>
 <link href="assets/css/main-mobile-responsive.css?v=9022ed30" rel="stylesheet">
 <link href="assets/css/bo-table-zebra.css?v=7860fc7a" rel="stylesheet"/>
@@ -69,7 +69,47 @@
       </div>
     </div>
     <div class="wlm-meta">
-      <span class="wlm-period" id="wlmPeriod"><i class="bi bi-calendar3" aria-hidden="true"></i><span id="wlmPeriodText">—</span></span>
+      <!-- The range is editable here, not only on the list (owner: "Merchant report小眼睛>Provider
+           Consumption 页面不能改date Range要退回母级页面才能修改日期"). Same field, same component and
+           the same URL contract as the parent list, so a range set here is the range the list
+           comes back to. -->
+      <div class="field ref-date-field mre-date-field main-mod-date main-exec-date-field wlm-date-field">
+        <input type="hidden" id="wlmFrom"/>
+        <input type="hidden" id="wlmTo"/>
+        <div class="ref-range-wrap">
+          <button class="ref-range-trigger mre-date-trigger" id="wlmDateTrigger" type="button" aria-label="Select date range" aria-expanded="false">
+            <span class="ref-range-icon"><i class="bi bi-calendar3"></i></span>
+            <span id="wlmDateLabel">Select date range</span>
+            <i class="bi bi-chevron-down ms-auto"></i>
+          </button>
+          <div class="ref-range-picker" id="wlmRangePicker">
+            <div class="ref-range-presets">
+              <button data-wlm-preset="today" type="button">Today</button>
+              <button data-wlm-preset="yesterday" type="button">Yesterday</button>
+              <button data-wlm-preset="thisWeek" type="button">This Week</button>
+              <button data-wlm-preset="lastWeek" type="button">Last Week</button>
+              <button data-wlm-preset="thisMonth" type="button">This Month</button>
+              <button data-wlm-preset="lastMonth" type="button">Last Month</button>
+              <button data-wlm-preset="thisYear" type="button">This Year</button>
+              <button data-wlm-preset="lastYear" type="button">Last Year</button>
+            </div>
+            <div class="ref-range-calendar">
+              <div class="ref-cal-head">
+                <button id="wlmCalPrev" type="button"><i class="bi bi-chevron-left"></i></button>
+                <button class="ref-head-pick" id="wlmCalMonth" type="button"></button>
+                <button class="ref-head-pick" id="wlmCalYear" type="button"></button>
+                <button id="wlmCalNext" type="button"><i class="bi bi-chevron-right"></i></button>
+              </div>
+              <div class="ref-cal-month-grid" id="wlmCalMonthGrid"></div>
+              <div class="ref-cal-year-grid" id="wlmCalYearGrid"></div>
+              <div class="ref-cal-day-view" id="wlmCalDayView">
+                <div class="ref-cal-week"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+                <div class="ref-cal-days" id="wlmCalDays"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <span class="mad-status is-active" id="wlmStatus"><i aria-hidden="true"></i><span id="wlmStatusText">—</span></span>
       <span class="wlm-currency mre-cur-label" id="wlmCurrency">(MYR)</span>
     </div>
@@ -136,7 +176,8 @@
 <script src="assets/js/currency-runtime.js?v=b63c89fb"></script>
 <script src="assets/js/reports.js?v=a96450f8"></script>
 <script src="assets/js/auth.js?v=8c4968dc"></script>
-<script src="assets/js/main-win-lose-merchant.js?v=9dfff7bc"></script>
+<script src="assets/js/main-exec-date-range.js?v=c48bd797"></script>
+<script src="assets/js/main-win-lose-merchant.js?v=a85eb506"></script>
 <script src="assets/js/bo-ui-standard.js?v=890f213b"></script>
 <script src="assets/js/bo-theme.js?v=d78603d9"></script>
 <script src="assets/js/bo-account-chip.js?v=57839162"></script>

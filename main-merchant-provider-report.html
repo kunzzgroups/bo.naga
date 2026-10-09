@@ -20,7 +20,7 @@
 <link href="assets/css/bo-account-chip.css?v=c8730135" rel="stylesheet"/>
 <link href="assets/css/main-report-charcoal.css?v=f20bf566" rel="stylesheet"/>
 <link href="assets/css/main-report-charcoal-content.css?v=5ba7ca02" rel="stylesheet"/>
-<link href="assets/css/main-merchant-provider-report.css?v=b59c3dc9" rel="stylesheet"/>
+<link href="assets/css/main-merchant-provider-report.css?v=209e6317" rel="stylesheet"/>
 <link href="assets/css/bo-input-fill.css?v=1ab80f49" rel="stylesheet"/>
 <link href="assets/css/main-mobile-responsive.css?v=9022ed30" rel="stylesheet">
 <link href="assets/css/bo-table-zebra.css?v=7860fc7a" rel="stylesheet"/>
@@ -73,7 +73,45 @@
       </div>
     </div>
     <div class="mpr-meta">
-      <span class="mpr-period" id="mprPeriod"><i class="bi bi-calendar3" aria-hidden="true"></i><span id="mprPeriodText">—</span></span>
+      <!-- The range is editable here too, the same way as its twins: pick a period and this page re-queries,
+           the address bar follows, and Back to list carries it up the chain. -->
+      <div class="field ref-date-field mre-date-field main-mod-date main-exec-date-field mpr-date-field">
+        <input type="hidden" id="mprFrom"/>
+        <input type="hidden" id="mprTo"/>
+        <div class="ref-range-wrap">
+          <button class="ref-range-trigger mre-date-trigger" id="mprDateTrigger" type="button" aria-label="Select date range" aria-expanded="false">
+            <span class="ref-range-icon"><i class="bi bi-calendar3"></i></span>
+            <span id="mprDateLabel">Select date range</span>
+            <i class="bi bi-chevron-down ms-auto"></i>
+          </button>
+          <div class="ref-range-picker" id="mprRangePicker">
+            <div class="ref-range-presets">
+              <button data-mpr-preset="today" type="button">Today</button>
+              <button data-mpr-preset="yesterday" type="button">Yesterday</button>
+              <button data-mpr-preset="thisWeek" type="button">This Week</button>
+              <button data-mpr-preset="lastWeek" type="button">Last Week</button>
+              <button data-mpr-preset="thisMonth" type="button">This Month</button>
+              <button data-mpr-preset="lastMonth" type="button">Last Month</button>
+              <button data-mpr-preset="thisYear" type="button">This Year</button>
+              <button data-mpr-preset="lastYear" type="button">Last Year</button>
+            </div>
+            <div class="ref-range-calendar">
+              <div class="ref-cal-head">
+                <button id="mprCalPrev" type="button"><i class="bi bi-chevron-left"></i></button>
+                <button class="ref-head-pick" id="mprCalMonth" type="button"></button>
+                <button class="ref-head-pick" id="mprCalYear" type="button"></button>
+                <button id="mprCalNext" type="button"><i class="bi bi-chevron-right"></i></button>
+              </div>
+              <div class="ref-cal-month-grid" id="mprCalMonthGrid"></div>
+              <div class="ref-cal-year-grid" id="mprCalYearGrid"></div>
+              <div class="ref-cal-day-view" id="mprCalDayView">
+                <div class="ref-cal-week"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+                <div class="ref-cal-days" id="mprCalDays"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <span class="mpr-currency mre-cur-label" id="mprCurrency">(MYR)</span>
     </div>
     <a class="mad-btn mad-btn-ghost mpr-back" id="mprBack" href="main_provider_report.html"><i class="bi bi-arrow-left" aria-hidden="true"></i> Back to list</a>
@@ -140,7 +178,8 @@
 <script src="assets/js/currency-runtime.js?v=b63c89fb"></script>
 <script src="assets/js/reports.js?v=a96450f8"></script>
 <script src="assets/js/auth.js?v=8c4968dc"></script>
-<script src="assets/js/main-merchant-provider-report.js?v=14afcb3d"></script>
+<script src="assets/js/main-exec-date-range.js?v=c48bd797"></script>
+<script src="assets/js/main-merchant-provider-report.js?v=fc49a93b"></script>
 <script src="assets/js/bo-ui-standard.js?v=890f213b"></script>
 <script src="assets/js/bo-theme.js?v=d78603d9"></script>
 <script src="assets/js/bo-account-chip.js?v=57839162"></script>
