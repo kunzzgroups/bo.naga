@@ -7120,6 +7120,34 @@ the 8 presets and a 42-cell calendar with the range highlighted; picking This We
 overflow, the row wraps below 1024 (the field is 260px wide, as on the list) and stacks at 390, 0 page errors. The
 dead `.wlm-period` rules were removed with the pill.
 
+#### The agent bonus page's tables are tabs, in the BO/Main module row's own design (2026-10-10, owner: "要给每个table 分tab" then "像bo/main的tab页面设计" / "参考bo的设计排版")
+
+`agent-bonus.html` stacked three blocks - the campaigns table, a half-width claims table and the promotion overview -
+so the reader had to scan all three to find the one they wanted. They are tabs now, one table per tab:
+
+- The row is **`bo-module-tabs.css` itself**, not a second copy of its look: `<div class="bo-module-tabs agent-bonus-tabs"
+  role="tablist">` with text-only `.bo-module-tab` buttons and `is-active` on the current one - the sheet the sibling
+  agent pages already link. Measured on the active tab: colour `rgb(24,25,28)`, `font-weight:800`, a
+  `2px rgb(217,119,6)` underline, row height 48. The first attempt used the portal's own `.agent-detail-tabs` pills;
+  the owner asked for the BO/Main row instead, and this is the same row the BO module pages carry.
+- It sits **directly under the page header**, first in `.report-content`, which is where the module sheet's own
+  header says the row belongs ("on the content container's own left edge"). The sheet states `margin:0` because the
+  BO pages it lives on are flex columns that supply their own gap; this page's column is `display:block` (measured:
+  the row sat flush on the KPI strip, gap 0), so `body.agent-modern .agent-bonus-tabs{margin-bottom:16px}` states it
+  here - the portal's own rhythm on this page (15/16px). Two classes on purpose: `bo-module-tabs.css` is linked after
+  `agent-portal.css`, so a single-class rule lost to its `margin:0`.
+- Panels: `.agent-bonus-panel{display:none}` / `.is-active{display:block}` in agent-portal.css; the switcher
+  (`agent-portal.js` -> `initBonusTabs()`) marks the tab and shows its panel, and every renderer keeps writing into
+  its own tbody whether or not its panel is visible. Measured: load shows campaigns only; clicking Recent Claims and
+  Overview moves both the `is-active` mark and the visible panel; 2 campaign rows and 2 claim rows stay painted;
+  0 page errors.
+- Fixed while measuring: `agent-portal.js`'s profile-menu handler referenced an undeclared `wrap`, so **every click**
+  on an agent page threw `ReferenceError: wrap is not defined`. The container is resolved per click now and an absent
+  menu (the portal's top chip is a plain link) is a no-op.
+- Reported, not touched: the agent portal's shell keeps a 230px `margin-left` on `.report-main` at 390px width, so
+  the content is squeezed into a 160px column. Measured identically on an untouched agent page
+  (`agent-players.html`), so it is the portal shell, not this page - one for its own task.
+
 #### All three drill-down pages carry the range field (owner: "这个页面也要啊 日期选项")
 
 The Merchant List (`main-provider-merchant-list.html`) and the merchant's Provider Report
