@@ -311,6 +311,20 @@ function promoDate(v){if(!v)return '-';const d=new Date(v);return Number.isNaN(d
    underline. One panel per table (`data-bonus-panel`), the first open on load. The rows themselves are
    unaffected: each renderer keeps writing into its own tbody, visible or not. */
 function initBonusTabs(){
+  /* `bo-ui-standard.js:sizeNativeSelect` sizes a select to its widest option + 54px, which does not count the
+     native arrow, so "All Statuses" rendered as "All St...". The BO pins its own --bo-select-width for the same
+     reason; this one field takes an explicit width after that script has run. */
+  function pinStatusWidth(){
+    const st=$('agentBonusStatus');if(!st)return;
+    const wrap=st.closest('.bo-filter-select-item');
+    [st,wrap,st.closest('.field')].forEach(function(el){
+      if(!el)return;
+      el.style.setProperty('width','160px','important');
+      el.style.setProperty('min-width','160px','important');
+      el.style.setProperty('flex','0 0 160px','important');
+    });
+  }
+  window.addEventListener('load',pinStatusWidth);
   const tabs=[...document.querySelectorAll('[data-bonus-section]')];
   const panels=[...document.querySelectorAll('.agent-bonus-panel')];
   if(!tabs.length||!panels.length)return;
@@ -327,10 +341,47 @@ function initBonusTabs(){
 }
 
 function renderPromotionOverview(items){const target=$('agentPromotionOverview');if(!target)return;const sums={};let total=0;(items||[]).forEach(x=>{const k=promoTypeLabel(x.type||'Promotion'),v=Number(x.agentDeduction||0);sums[k]=(sums[k]||0)+v;total+=v});const rows=Object.entries(sums).sort((a,b)=>b[1]-a[1]).slice(0,4);target.innerHTML=`<div class="agent-promo-donut"><div><strong>${promoMoney(total)}</strong><small>Total Agent Deduction</small></div></div><div class="agent-promo-legend">${rows.map(([k,v],i)=>`<div><span class="agent-promo-dot dot-${i+1}"></span><b>${esc(k)}</b><em>${promoMoney(v)}${total>0?` (${(v/total*100).toFixed(1)}%)`:''}</em></div>`).join('')||'<div class="table-empty">No promotion deduction in this period.</div>'}</div>`}
-function renderPromotionCampaigns(d){const rows=(d.campaigns||[]).filter(meaningfulCampaign);const tbody=$('agentCampaignRows');if(tbody)tbody.innerHTML=rows.map(x=>`<tr><td><b>${esc(x.name||'-')}</b><small class="agent-promo-cell-sub">${esc(x.code||'')}</small></td><td><span class="agent-promo-type">${esc(promoTypeLabel(x.type))}</span></td><td><span class="agent-status ${promoStatus(x)==='Active'?'':'inactive'}">${promoStatus(x)}</span></td><td>${promoDate(x.startAt)} -<br>${promoDate(x.endAt)}</td><td>${promoMoney(x.totalReward)}</td><td>${num(x.playersClaimed)}</td><td>${num(x.totalClaims)}</td><td class="agent-negative">${promoMoney(x.agentDeduction)}</td><td><button class="agent-view-btn" type="button" data-promo-id="${x.id}">View Details</button></td></tr>`).join('')||'<tr><td colspan="9" class="table-empty">No campaigns found for this period.</td></tr>';
- const meta=$('agentCampaignMeta');if(meta)meta.textContent=`Showing 1 to ${rows.length} of ${rows.length} campaigns`;
- document.querySelectorAll('[data-promo-id]').forEach(b=>b.onclick=()=>openPromotionDetail(Number(b.dataset.promoId)));
+/* The campaigns table pages client-side, on the family's own ladder (`paintPager` on the performance
+   page is the same markup: First / Prev / window / Next / Last, the ends disabled on a single page -
+   the owner asked for that ladder there: "当前页面好像没有设计到 页数器"). `-` is the family default
+   page of 10, `all` shows everything. */
+let promoCampaignRows=[],promoCampaignPage=1;
+function promoCampaignSize(){
+  const v=$('agentCampaignSize')?$('agentCampaignSize').value:'-';
+  if(String(v).toLowerCase()==='all')return 0;
+  const n=Number(v);
+  return n>0?n:10;
 }
+function promoCampaignPager(pages){
+  const el=$('agentCampaignPager');
+  if(!el)return;
+  let html=`<button ${promoCampaignPage<=1?'disabled':''} data-promo-page="1" title="First page"><i class="bi bi-chevron-double-left"></i></button>`
+    +`<button ${promoCampaignPage<=1?'disabled':''} data-promo-page="${promoCampaignPage-1}" title="Previous page"><i class="bi bi-chevron-left"></i></button>`;
+  for(let i=1;i<=pages;i++){
+    if(pages>7&&i>2&&i<pages-1&&Math.abs(i-promoCampaignPage)>1){if(i===3)html+='<button disabled>...</button>';continue}
+    html+=`<button class="${i===promoCampaignPage?'active':''}" data-promo-page="${i}">${i}</button>`;
+  }
+  html+=`<button ${promoCampaignPage>=pages?'disabled':''} data-promo-page="${promoCampaignPage+1}" title="Next page"><i class="bi bi-chevron-right"></i></button>`
+    +`<button ${promoCampaignPage>=pages?'disabled':''} data-promo-page="${pages}" title="Last page"><i class="bi bi-chevron-double-right"></i></button>`;
+  el.innerHTML=html;
+}
+function paintPromotionCampaigns(){
+  const tbody=$('agentCampaignRows');
+  if(!tbody)return;
+  const size=promoCampaignSize();
+  const total=promoCampaignRows.length;
+  const pages=size?Math.max(1,Math.ceil(total/size)):1;
+  promoCampaignPage=Math.max(1,Math.min(promoCampaignPage,pages));
+  const start=size?(promoCampaignPage-1)*size:0;
+  const slice=size?promoCampaignRows.slice(start,start+size):promoCampaignRows;
+  tbody.innerHTML=slice.map(promoCampaignRowHtml).join('')||'<tr><td colspan="9" class="table-empty">No campaigns found for this period.</td></tr>';
+  const meta=$('agentCampaignMeta');
+  if(meta)meta.textContent=total?('Showing '+num(start+1)+' to '+num(start+slice.length)+' of '+num(total)+' campaign'+(total===1?'':'s')):'Showing 0 campaigns';
+  promoCampaignPager(pages);
+  document.querySelectorAll('[data-promo-id]').forEach(b=>b.onclick=()=>openPromotionDetail(Number(b.dataset.promoId)));
+}
+function promoCampaignRowHtml(x){return `<tr><td><b>${esc(x.name||'-')}</b><small class="agent-promo-cell-sub">${esc(x.code||'')}</small></td><td><span class="agent-promo-type">${esc(promoTypeLabel(x.type))}</span></td><td><span class="agent-status ${promoStatus(x)==='Active'?'':'inactive'}">${promoStatus(x)}</span></td><td>${promoDate(x.startAt)} -<br>${promoDate(x.endAt)}</td><td>${promoMoney(x.totalReward)}</td><td>${num(x.playersClaimed)}</td><td>${num(x.totalClaims)}</td><td class="agent-negative">${promoMoney(x.agentDeduction)}</td><td><button class="agent-view-btn agent-view-eye" type="button" data-promo-id="${x.id}" title="View campaign details" aria-label="View campaign details"><i class="bi bi-eye" aria-hidden="true"></i></button></td></tr>`;}
+function renderPromotionCampaigns(d){const all=(d.campaigns||[]).filter(meaningfulCampaign);promoCampaignRows=all;promoCampaignPage=1;paintPromotionCampaigns();}
 function renderRecentClaims(d){const rows=(d.recentClaims||[]).filter(x=>x.claimTime||x.playerId||x.playerName||Number(x.reward||0)!==0||Number(x.agentDeduction||0)!==0);const tbody=$('agentRecentClaimRows');if(tbody)tbody.innerHTML=rows.slice(0,5).map(x=>`<tr><td>${esc(x.playerId||'-')}</td><td>${esc(x.playerName||'-')}</td><td>${esc(x.campaignName||'-')}</td><td>${esc(shortDateTime(x.claimTime))}</td><td>${promoMoney(x.reward)}</td><td class="agent-negative">${promoMoney(x.agentDeduction)}</td></tr>`).join('')||'<tr><td colspan="6" class="table-empty">No claims for this period.</td></tr>'}
 function openPromotionDetail(id){const x=(promotionCache?.campaigns||[]).find(r=>Number(r.id)===Number(id));if(!x)return;const m=$('agentPromoModal');if(!m)return;$('agentPromoModalTitle').textContent=x.name||'Campaign Details';$('agentPromoModalBody').innerHTML=`<div class="agent-promo-detail-grid"><div><span>Campaign Type</span><b>${esc(promoTypeLabel(x.type))}</b></div><div><span>Status</span><b>${promoStatus(x)}</b></div><div><span>Period</span><b>${promoDate(x.startAt)} - ${promoDate(x.endAt)}</b></div><div><span>Players Claimed</span><b>${num(x.playersClaimed)}</b></div><div><span>Total Claims</span><b>${num(x.totalClaims)}</b></div><div><span>Agent Deduction</span><b class="agent-negative">${promoMoney(x.agentDeduction)}</b></div></div>`;if(m)m.hidden=false;document.body.classList.add('agent-modal-open')}
 function closePromotionDetail(){const m=$('agentPromoModal');if(m)m.hidden=true;document.body.classList.remove('agent-modal-open')}
@@ -347,7 +398,7 @@ if(_rSearch)_rSearch.addEventListener('input',function(){clearTimeout(_rDeb);_rD
    range look dead, so it is bound explicitly here. */
 ['agentReportFrom','agentReportTo'].forEach(function(id){const e=$(id);if(e)e.addEventListener('change',function(){loadReports().then(_reAfter);});});
 const _rReset=$('agentReportReset');if(_rReset)_rReset.onclick=function(){['agentReportPlayerSearch','agentReportProvider','agentReportGame','agentReportFrom','agentReportTo'].forEach(function(id){if($(id))$(id).value='';});loadReports().then(_reAfter);};
-if(page==='reports'){await loadReports();reportPage=1;providerPage=1;renderReportPanes();}if(page==='player_game_report'){await loadPlayerGameReport();gameReportPage=1;renderGameReportPaging();const gps=$('agentGameReportPageSize');if(gps){gps.onchange=function(){gameReportSize=Number(gps.value)||10;gameReportPage=1;renderGameReportPaging()}}}if(page==='withdraw'){ensureRange('agentSettlementFrom','agentSettlementTo');await loadBankAccounts();$('agentSettlementRefresh').onclick=loadSettlement;$('agentSettlementSubmit').onclick=submitSettlement;if($('agentSettlementAmount'))$('agentSettlementAmount').addEventListener('input',updateWithdrawSummary);if($('withdrawAllBtn'))$('withdrawAllBtn').onclick=()=>{const gross=Number(lastSettlementReport?.availableCommission??lastSettlementReport?.agentProfit??0),pending=(settlementsCache||[]).filter(x=>['PENDING','APPROVED'].includes(String(x.settlementStatus||'').toUpperCase())).reduce((a,x)=>a+Number(x.requestedAmount||0),0),max=Math.max(0,gross-pending);$('agentSettlementAmount').value=max.toFixed(2);updateWithdrawSummary()};if($('withdrawRemark'))$('withdrawRemark').addEventListener('input',()=>{if($('withdrawRemarkCount'))$('withdrawRemarkCount').textContent=String($('withdrawRemark').value.length)});if($('agentAddBankAccount'))$('agentAddBankAccount').onclick=()=>{clearBankForm();openBankModal()};if($('agentManageBankAccounts'))$('agentManageBankAccounts').onclick=openBankModal;if($('agentBankModalClose'))$('agentBankModalClose').onclick=closeBankModal;if($('agentBankModal'))$('agentBankModal').addEventListener('click',e=>{if(e.target===$('agentBankModal'))closeBankModal()});if($('agentBankAccountForm'))$('agentBankAccountForm').onsubmit=saveBankAccount;if($('agentBankFormReset'))$('agentBankFormReset').onclick=clearBankForm;if($('agentPayoutAccount'))$('agentPayoutAccount').onchange=renderBankAccounts;if($('withdrawHistoryStatus'))$('withdrawHistoryStatus').onchange=renderWithdrawHistory;await loadSettlement();}if(page==='finance'){ensureRange('agentWalletFrom','agentWalletTo');$('agentWalletSearch').onclick=loadFinance;$('agentWalletReset').onclick=()=>{$('agentWalletType').value='';$('agentWalletKeyword').value='';$('agentWalletFrom').value=today();$('agentWalletTo').value=today();loadFinance()};$('agentReimburseSubmit').onclick=submitReimbursement;await loadFinance();}if(page==='bonus'){initBonusTabs();ensureRange('agentBonusFrom','agentBonusTo');/* The filter row has no Search / Reset buttons any more (owner: "再把reset 和搜索按键去除"): every
+if(page==='reports'){await loadReports();reportPage=1;providerPage=1;renderReportPanes();}if(page==='player_game_report'){await loadPlayerGameReport();gameReportPage=1;renderGameReportPaging();const gps=$('agentGameReportPageSize');if(gps){gps.onchange=function(){gameReportSize=Number(gps.value)||10;gameReportPage=1;renderGameReportPaging()}}}if(page==='withdraw'){ensureRange('agentSettlementFrom','agentSettlementTo');await loadBankAccounts();$('agentSettlementRefresh').onclick=loadSettlement;$('agentSettlementSubmit').onclick=submitSettlement;if($('agentSettlementAmount'))$('agentSettlementAmount').addEventListener('input',updateWithdrawSummary);if($('withdrawAllBtn'))$('withdrawAllBtn').onclick=()=>{const gross=Number(lastSettlementReport?.availableCommission??lastSettlementReport?.agentProfit??0),pending=(settlementsCache||[]).filter(x=>['PENDING','APPROVED'].includes(String(x.settlementStatus||'').toUpperCase())).reduce((a,x)=>a+Number(x.requestedAmount||0),0),max=Math.max(0,gross-pending);$('agentSettlementAmount').value=max.toFixed(2);updateWithdrawSummary()};if($('withdrawRemark'))$('withdrawRemark').addEventListener('input',()=>{if($('withdrawRemarkCount'))$('withdrawRemarkCount').textContent=String($('withdrawRemark').value.length)});if($('agentAddBankAccount'))$('agentAddBankAccount').onclick=()=>{clearBankForm();openBankModal()};if($('agentManageBankAccounts'))$('agentManageBankAccounts').onclick=openBankModal;if($('agentBankModalClose'))$('agentBankModalClose').onclick=closeBankModal;if($('agentBankModal'))$('agentBankModal').addEventListener('click',e=>{if(e.target===$('agentBankModal'))closeBankModal()});if($('agentBankAccountForm'))$('agentBankAccountForm').onsubmit=saveBankAccount;if($('agentBankFormReset'))$('agentBankFormReset').onclick=clearBankForm;if($('agentPayoutAccount'))$('agentPayoutAccount').onchange=renderBankAccounts;if($('withdrawHistoryStatus'))$('withdrawHistoryStatus').onchange=renderWithdrawHistory;await loadSettlement();}if(page==='finance'){ensureRange('agentWalletFrom','agentWalletTo');$('agentWalletSearch').onclick=loadFinance;$('agentWalletReset').onclick=()=>{$('agentWalletType').value='';$('agentWalletKeyword').value='';$('agentWalletFrom').value=today();$('agentWalletTo').value=today();loadFinance()};$('agentReimburseSubmit').onclick=submitReimbursement;await loadFinance();}if(page==='bonus'){initBonusTabs();$('agentCampaignSize')?.addEventListener('change',()=>{promoCampaignPage=1;paintPromotionCampaigns()});$('agentCampaignPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-promo-page]');if(!b||b.disabled)return;promoCampaignPage=Number(b.dataset.promoPage)||1;paintPromotionCampaigns()});ensureRange('agentBonusFrom','agentBonusTo');/* The filter row has no Search / Reset buttons any more (owner: "再把reset 和搜索按键去除"): every
    control applies itself - selects and dates on `change`, the keyword after a 400ms pause or on
    Enter, the same shape agent-performance-report.js uses. Clearing a control IS the reset: the
    option lists and an emptied box carry their own "All". */['agentBonusStatus','agentBonusType','agentBonusFrom','agentBonusTo'].forEach(id=>{const el=$(id);if(el)el.addEventListener('change',loadBonus)});(function(){const el=$('agentBonusSearchText');if(!el)return;let t=0;el.addEventListener('input',()=>{clearTimeout(t);t=setTimeout(loadBonus,400)});el.addEventListener('keydown',e=>{if(e.key==='Enter'){clearTimeout(t);loadBonus()}})})();if($('agentPromotionExport'))$('agentPromotionExport').onclick=exportPromotionCsv;if($('agentPromoModalClose'))$('agentPromoModalClose').onclick=closePromotionDetail;if($('agentPromoModal'))$('agentPromoModal').onclick=e=>{if(e.target===$('agentPromoModal'))closePromotionDetail()};await loadBonus();}if(page==='profile')initProfile();   /* the password form now lives on the profile page under id="password" (BO's layout), so initPassword() runs here too - it self-guards on the form's existence. */if(page==='profile'||page==='password')initPassword();}catch(e){if(/Unauthorized|disabled/i.test(e.message)){localStorage.removeItem('agent_token');location.href='agent-login.html';}else await dialog.alert(e.message,{title:'Unable to Load',type:'error'});}})();

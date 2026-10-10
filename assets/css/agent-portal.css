@@ -1048,7 +1048,10 @@ body.agent-modern .agent-promotion-filter{--bo-select-width:140px;--bo-filter-in
 /* The content-sizing script measures the option text and writes the column width inline, but it does not
    reserve the chevron's gutter - "All Statuses" came out as "All St…" in the 120px it wrote. The row gives
    that gutter back (the chevron sits at the right edge), so the measured width fits what it measured. */
-body.agent-modern .agent-promotion-filter select{padding-right:26px!important}
+/* The sizing script (`bo-ui-standard.js:sizeNativeSelect`, widest label + 54px) does not count the
+   chevron's gutter, so "All Statuses" ellipsised in the width it wrote (92px of text room in 120).
+   18px is enough for the 16px glyph and gives the text back the rest. */
+body.agent-modern .agent-promotion-filter select{padding-right:18px!important}
 body.agent-modern .agent-promotion-filter .field>label:not(.bo-search-control){display:none!important}
 /* The frame and the trigger are painted by the site-wide filter standard (`bo-filter-standard.css`:
    `#EADCC8`, four `:not(#…)` steps) while the selects take `--bo-field-border` (`#DCC9A8`) - so one row
@@ -2788,4 +2791,51 @@ html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="player_ga
 html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .agent-back-to-list:focus-visible{
   background-image:linear-gradient(180deg,#444654 0%,#383A46 100%)!important;
   border-color:#F59E0B!important;color:#FFFFFF!important;
+}
+
+/* The table's action is the family's eye, not a text button (owner: "去除多余的设计 让当前改动页面统一设计").
+   Same seat and geometry as the BO/Main tables' row eye; `.agent-view-btn`'s own frame is dropped for it. */
+.agent-view-btn.agent-view-eye{width:30px;padding:0;justify-content:center;border-color:transparent;background:transparent;color:#57534E}
+.agent-view-btn.agent-view-eye:hover{border-color:transparent;background:rgba(217,119,6,.10);color:#B45309}
+
+/* This page's filter row is the sibling agent pages' own markup (`referral-filter-grid bo-filter-row
+   agent-standard-filter` with labels, inside the table card - agent-bet-report.html / agent-products.html),
+   so its geometry is the filter standard's: the date trigger 390px, the search frame 260px, the selects sized
+   to their widest option by `bo-ui-standard.js:sizeNativeSelect` - the same mix of frame and control borders
+   the BO's own provider-bet-report.html paints. Only the chevron gutter that script does not count is
+   restated here, or "All Statuses" ellipsises in the width it writes. Scoped by this page's own body class. */
+body.agent-promotion-page .agent-standard-filter select{padding-right:18px!important}
+/* provider-bet-report.html shows no field titles: bo-filter-standard.css hides them there, so this page hides
+   them too (the labels stay in the markup for aria). The two selects carry their own width the way the BO pins
+   --bo-select-width, so nothing is ellipsised ("All St...") and the sizing script leaves them alone. */
+body.agent-promotion-page .agent-standard-filter .field > label{display:none!important}
+/* `bo-ui-standard.js:sizeNativeSelect` sizes a select to its widest option + 54px, which does not count the
+   native arrow, so "All Statuses" came out "All St...". The BO pins its own --bo-select-width for the same
+   reason; this page gives that one field the room instead. Type is untouched - its option text is short. */
+body.agent-promotion-page .agent-standard-filter .agent-status-field{flex:0 0 160px!important;width:160px!important;min-width:160px!important}
+body.agent-promotion-page .agent-standard-filter .agent-status-field select{width:160px!important}
+
+/* agentBonusCardRing - the BO's border system for this page, audited against provider-bet-report.html
+   (computed values, light): its `.table-card` is a hairline ring and not a box, its pager buttons are a grey
+   chip with a transparent border (#F3F4F6 / 8px / 36px), and its row controls carry no accent frame. This page
+   had three extra border designs of its own - a bordered round card, bordered white pager buttons and an amber
+   eye - so it looked nothing like the reference. Same escalation as the sibling pages' footer rules above, which
+   is what makes these stick. */
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card{
+  border:0!important;border-radius:0!important;box-shadow:0 0 0 1px rgba(24,25,28,.03)!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] #agentCampaignPager button{
+  background:#F3F4F6!important;border:1px solid transparent!important;color:#9CA3AF!important;
+  border-radius:8px!important;height:36px!important;min-height:36px!important;min-width:36px!important;
+  font-size:13px!important;font-weight:700!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] #agentCampaignPager button.active,
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] #agentCampaignPager button[aria-current="page"]{
+  background:rgba(217,119,6,.16)!important;color:#B45309!important;border-color:rgba(217,119,6,.3)!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-view-btn.agent-view-eye{
+  border-color:transparent!important;background:transparent!important;box-shadow:none!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card .filter-card{
+  border:0!important;box-shadow:none!important;
 }

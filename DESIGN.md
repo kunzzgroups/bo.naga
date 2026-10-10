@@ -7140,7 +7140,27 @@ portal's own titles were still on two fields while the rest had none.
 - The earlier attempt to set the columns (`width:140px!important` at five and then seven `:not(#…)` steps, and
   `--bo-select-width` at the row) is removed: inline `!important` beats any sheet, so those rules were dead.
 
-#### …and the filters apply themselves (2026-10-10, owner: "再把reset 和搜索按键去除 也确保以上功能都能使用")
+#### …and the campaigns table pages (2026-10-10, owner: "这里的设计还需要优化一下 然后再给我安排pagination设计")
+
+The campaigns table loaded every campaign into one tbody with only a "Showing N campaigns" line. It carries the
+family's own footer now - `Show <size> entries` on the left, the count in the middle, and the ladder on the right -
+and pages client-side:
+
+- Markup in `agent-bonus.html`: `#agentCampaignSize` (`-`/10/20/50/100/all, `-` being the family's default of 10),
+  `#agentCampaignMeta`, and `<nav class="agent-pagination" id="agentCampaignPager">`. The ladder's buttons are the
+  `.smart-page` ones `bo-charcoal-legacy.css` already styles on both this page and the performance page.
+- `agent-portal.js`: `paintPromotionCampaigns()` slices the filtered rows, paints the count
+  ("Showing 11 to 20 of 25 campaigns") and renders the ladder - First / Prev / window / Next / Last with the ends
+  disabled on a single page, the same `paintPager` the performance page uses (the owner asked for that ladder there:
+  "当前页面好像没有设计到 页数器"). `renderPromotionCampaigns` now only stores the filtered rows and resets to page 1,
+  so any filter change starts at the top.
+- Measured with a stub of 25 campaigns: page 1 = 10 rows, "Showing 1 to 10 of 25 campaigns", ladder `[1] 2 3` with
+  First/Prev disabled; page 2 = rows 11-20 with `[2]` lit; page 3 = 5 rows with Next/Last disabled; size 20 = 20 rows
+  and 2 pages; a filter change returns to page 1. 0 page errors.
+- Same pass, the owner's "去除多余的设计": the blue "How Promotion Deduction Works" call-out is gone (the BO's page
+  carries no such strip) and the row action is the family's eye instead of a "View Details" text button.
+
+ (2026-10-10, owner: "再把reset 和搜索按键去除 也确保以上功能都能使用")
 
 The Reset / Search pair is gone from the filter row; each control applies itself, which is what the BO's own report
 pages do (`agent-performance-report.js`: selects and dates on `change`, the keyword after a 400ms pause or on Enter).
@@ -7379,3 +7399,26 @@ support - now unused by this page, but that report is linkable with a provider a
 `h1` overflows its `.user-title-wrap` at 390px and slides under the action buttons (measured on
 `main-win-lose-report.html`, `main-merchant-balance.html`, `main-merchant-transactions.html` and this page
 alike) — a shell condition, for the shell's own pass.
+
+
+### agent-bonus.html filter row and borders - audited against the BO (2026-10)
+
+The row is `provider-bet-report.html`'s own markup (`filter-card > user-search-grid bo-filter-row`), so its
+geometry is the filter standard's: no field titles, date range 390px, search 260px, selects at the BO's control
+height. `bo-filter-standard.css` paints the date trigger and the search frame `#EADCC8` while
+`bo-field-standard.css` paints selects `#DCC9A8` - two border colours in one row that are the BO's own, so this
+page does not unify them any more.
+
+Three border designs the page had invented are gone, replaced by the BO's computed recipes (measured on
+provider-bet-report.html, light):
+
+- `.agent-promo-campaign-card`: the BO's `.table-card` is a hairline ring and not a box -
+  `border:0; border-radius:0; box-shadow:0 0 0 1px rgba(24,25,28,.03)`. The filter row inside it keeps no frame.
+- `#agentCampaignPager button`: the BO's pager chip - `background:#F3F4F6; border:1px solid transparent;
+  border-radius:8px; height:36px` (the same rule the sibling `#agentReportsPagination button` already carried).
+- `.agent-view-eye`: the amber frame is dropped; the row eye is frameless like the BO's row controls.
+
+The status select is re-pinned to 160px: `bo-ui-standard.js:sizeNativeSelect` sizes it to its widest option +
+54px, which does not count the native arrow, so "All Statuses" rendered as "All St..." - the BO pins
+`--bo-select-width` on its own selects for the same reason. The pin is re-applied from the field's own
+MutationObserver because the script also re-measures on every `change` and whenever the table re-renders.
