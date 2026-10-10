@@ -3026,3 +3026,29 @@ html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="provider_
 html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .agent-context-row h2{
   color:#F5F5F4!important;
 }
+
+/* "I don't want that weird border" (owner) - the drill-down pages stacked three frames inside each other:
+   the card (1px #EADCC8, radius 8), the context strip (its own 1px on all four sides, square) and the table
+   wrapper (1px #EADCC8 with radius 14). The generic `.table-card` rule in reports-dashboard-original.css:1148
+   and whatever paints the strip are what the overrides below answer. One frame now: the card, with a hairline
+   under the strip where the reference pages have theirs. Same shape the BO/Main view pages use - and the same
+   shape agent-bonus.html already has. */
+html:not(#bo-charcoal-off) body[data-agent-page="provider_detail"].agent-report-body.agent-modern .table-card > .user-toolbar,
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .user-toolbar{
+  border:0!important;border-bottom:1px solid #EADCC8!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="provider_detail"].agent-report-body.agent-modern .table-card,
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card{
+  border:1px solid #EADCC8!important;border-radius:8px!important;padding:0!important;
+  box-shadow:0 5px 18px rgba(217,119,6,.035)!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="provider_detail"].agent-report-body.agent-modern .table-card > .table-wrap,
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .table-wrap,
+html:not(#bo-charcoal-off) body[data-agent-page="provider_detail"].agent-report-body.agent-modern .table-card > .agent-table-footer,
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .agent-table-footer{
+  border:0!important;border-radius:0!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .agent-table-footer{
+  border-top:1px solid #EADCC8!important;
+}
