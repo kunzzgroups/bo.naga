@@ -380,12 +380,16 @@ function promoRowHeight(size){
 function promoCampaignPager(pages){
   const el=$('agentCampaignPager');
   if(!el)return;
-  let html=`<button ${promoCampaignPage<=1?'disabled':''} data-promo-page="1">Previous</button>`;
+  /* index.html's own ladder (owner's choice): first / prev / numbers with an ellipsis run / next / last, all
+     icon buttons. The icons are pointer-events:none in CSS so a click on the glyph still lands on the button. */
+  let html=`<button ${promoCampaignPage<=1?'disabled':''} data-promo-page="1" title="First page" aria-label="First page"><i class="bi bi-chevron-double-left" aria-hidden="true"></i></button>`
+    +`<button ${promoCampaignPage<=1?'disabled':''} data-promo-page="${promoCampaignPage-1}" title="Previous page" aria-label="Previous page"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>`;
   for(let i=1;i<=pages;i++){
-    if(pages>7&&i>2&&i<pages-1&&Math.abs(i-promoCampaignPage)>1){if(i===3)html+='<button disabled>...</button>';continue}
-    html+=`<button class="${i===promoCampaignPage?'active':''}" data-promo-page="${i}">${i}</button>`;
+    if(pages>7&&i>2&&i<pages-1&&Math.abs(i-promoCampaignPage)>1){if(i===3)html+='<button disabled class="dots" aria-hidden="true">\u2026</button>';continue}
+    html+=`<button class="${i===promoCampaignPage?'active':''}" data-promo-page="${i}" title="Page ${i}" aria-label="Page ${i}">${i}</button>`;
   }
-  html+=`<button ${promoCampaignPage>=pages?'disabled':''} data-promo-page="${pages}">Next</button>`;
+  html+=`<button ${promoCampaignPage>=pages?'disabled':''} data-promo-page="${promoCampaignPage+1}" title="Next page" aria-label="Next page"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>`
+    +`<button ${promoCampaignPage>=pages?'disabled':''} data-promo-page="${pages}" title="Last page" aria-label="Last page"><i class="bi bi-chevron-double-right" aria-hidden="true"></i></button>`;
   el.innerHTML=html;
 }
 function paintPromotionCampaigns(){

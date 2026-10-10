@@ -7494,3 +7494,13 @@ cannot expand"*.
 - the auto page size now leaves **120px under the card** (`innerHeight - 128`): the page-size control is a
   native select sitting at the bottom of a page that deliberately does not scroll, so its popup had nowhere to
   open downwards and appeared clipped.
+
+
+### agent-bonus.html: pager switched to index.html's icon ladder (2026-10)
+
+Asked to choose between the two references' pagers, the owner picked `index.html`'s. `promoCampaignPager` now
+renders first / previous / page numbers with a single `...` run when there are more than seven / next / last, all
+as icon buttons on a 36px square (`#F3F4F6`, radius 8), the current page solid amber, disabled ends muted. The
+glyphs carry `pointer-events:none` so a click on the `<i>` still lands on its button, which keeps the existing
+delegated `[data-promo-page]` handler working without touching it. Verified: page 2 and 3 render their rows, the
+last page disables next/last, and the page-size change still resets to page 1.
