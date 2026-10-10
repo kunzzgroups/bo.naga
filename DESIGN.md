@@ -7945,3 +7945,31 @@ alone deliberately, since main is the reference.
 
 Lesson: never remove "everything after marker X" from a file other people also append to. Diff against
 `origin/main` and delete only the lines this branch added.
+
+
+### Restoring the whole of this branch's work (2026-10)
+
+The owner: *"it is not just that page - everything I had fixed before is broken now."* Right. The previous commit
+replaced `agent-portal.css` with "main's content plus only the blocks this branch adds", choosing those blocks with
+a keyword filter. Ten blocks - about 25KB - failed that filter and were dropped, so the Promotion page and the
+other pages it styled lost their rules. Deriving "which of my rules matter" from selectors was the mistake; the
+file is the record, so the fix is to restore it, not to re-derive it.
+
+`assets/css/agent-portal.css` is now:
+
+    this branch's file as it was (all of the work)
+    + the rules main has that it lacked (8 blocks, ~40KB), appended last
+
+The second half matters because this branch last merged main *before* main gained the date-control rules; that is
+why the dashboard and players date ranges broke when the work was missing, and why both halves are needed rather
+than either one. The appended half carries a comment saying why it is there, so a later "delete the tail" pass
+cannot silently take main's rules with it again.
+
+One page-scoped rule was added on top: main hides the players page's range title through a `label > span` selector
+which this branch's legacy `.agent-player-filters label{display:block}` out-ranks, so the title came back; it is
+hidden explicitly now, matching what main shows.
+
+Verified after the restore: the Promotion filter row is the approved one (selects 160/145, date 390, search 260)
+with its five-step ladder and no console errors; the rail flyout opens on hover, stays open across the gap and a
+real click lands on `/agent-wallet.html` on all eight agent pages; the dashboard and players date controls match
+main; the game-report strip keeps `PLAYER / 0137126066` aligned with the first column; guards clean.
