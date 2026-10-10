@@ -7945,3 +7945,78 @@ alone deliberately, since main is the reference.
 
 Lesson: never remove "everything after marker X" from a file other people also append to. Diff against
 `origin/main` and delete only the lines this branch added.
+
+
+### Restoring the whole of this branch's work (2026-10)
+
+The owner: *"it is not just that page - everything I had fixed before is broken now."* Right. The previous commit
+replaced `agent-portal.css` with "main's content plus only the blocks this branch adds", choosing those blocks with
+a keyword filter. Ten blocks - about 25KB - failed that filter and were dropped, so the Promotion page and the
+other pages it styled lost their rules. Deriving "which of my rules matter" from selectors was the mistake; the
+file is the record, so the fix is to restore it, not to re-derive it.
+
+`assets/css/agent-portal.css` is now:
+
+    this branch's file as it was (all of the work)
+    + the rules main has that it lacked (8 blocks, ~40KB), appended last
+
+The second half matters because this branch last merged main *before* main gained the date-control rules; that is
+why the dashboard and players date ranges broke when the work was missing, and why both halves are needed rather
+than either one. The appended half carries a comment saying why it is there, so a later "delete the tail" pass
+cannot silently take main's rules with it again.
+
+One page-scoped rule was added on top: main hides the players page's range title through a `label > span` selector
+which this branch's legacy `.agent-player-filters label{display:block}` out-ranks, so the title came back; it is
+hidden explicitly now, matching what main shows.
+
+Verified after the restore: the Promotion filter row is the approved one (selects 160/145, date 390, search 260)
+with its five-step ladder and no console errors; the rail flyout opens on hover, stays open across the gap and a
+real click lands on `/agent-wallet.html` on all eight agent pages; the dashboard and players date controls match
+main; the game-report strip keeps `PLAYER / 0137126066` aligned with the first column; guards clean.
+
+
+### The rule-level merge that ends this (2026-10)
+
+Two cleanups in a row damaged this sheet, in opposite directions: deleting a tail took main's rules with it (the
+dashboard/players date ranges), and restoring the whole branch file brought back my superseded rail overrides (the
+Finance sidebar). Both times the unit of work was a *comment block*, and comment blocks here mix page rules with
+rail rules - so keeping a block kept what had to go, and dropping one dropped what had to stay.
+
+`assets/css/agent-portal.css` is now produced by a **rule-level** merge:
+
+    every `selector { declarations }` of origin/main, verbatim
+    + this branch's own rules whose selectors do NOT touch the rail or the date controls
+
+The exclusion list is `report-sidebar | .report-nav | nav-group | agent-nav- | bo-flyout | bo-range-field |
+agent-player-filters | agent-head-actions` - i.e. everything main owns and the shell sheets drive. Measured result:
+**893 of main's rules + 84 page rules**, and `check-shell-drift` reports main's own baseline again (2615), which is
+the check that says no shell metric of mine is left in this sheet.
+
+State afterwards: the flyout panel is the shell's (340x108, `position:fixed`, x = rail.right + 6, rows 42px, labels
+13px, the open row lit by the shell), the Promotion filter row is the approved one (selects 160/145, date 390,
+search 260) with its five-step ladder, the dashboard and players date controls behave exactly as main, and the
+game-report strip still reads `PLAYER / 0137126066` aligned with its first column.
+
+If this sheet needs changing again: `git diff origin/main -- assets/css/agent-portal.css` and change only the lines
+that belong to this branch. Never delete a tail, and never re-derive "which of my rules matter" from a keyword scan.
+
+
+### Dropping my rail overrides by provenance, not by selectors (2026-10)
+
+Three attempts at this file failed, each for the same underlying reason: deciding "which rules are mine" without
+asking git. A tail deletion took main's rules with it; a restore brought my superseded rail overrides back; a
+rule-level regeneration stripped comments and `@media` structure and broke every page's design.
+
+The pass that worked: start from the state that has all of this session's work plus main's rules, then drop a
+comment block **only when every selector in it is a rail selector AND none of its rules exist in `origin/main`** -
+provenance first, selectors only as a secondary filter. 24 blocks went; then the rule sets were compared and the
+11 rules of main's that the drop had taken were re-appended verbatim.
+
+Verified: **0 of main's 891 rules are missing**, `check-shell-drift` clean, and - the step that had been skipped
+all along - every page was looked at: the Promotion page (tabs, KPI strip, filter row with the 25-campaign table,
+amber dot pills, bold money, the five-step ladder), My Players (pills, search, date trigger with no title, All VIP,
+table, footer), the dashboard (topbar date with no title, panels, Quick Access) and Finance - Withdraw (cards,
+form, notes, history band with its own filter row) all render as designed.
+
+The rule before touching this sheet: change it with git as the reference (`git diff origin/main -- <file>`), never
+by pattern-matching my own comments.
