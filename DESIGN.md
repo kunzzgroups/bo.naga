@@ -7755,3 +7755,23 @@ Two page-level interferences had to be answered rather than restyled:
 Rendered result: cream panel `#FFF8EB`, `1px rgba(92,74,48,.12)`, radius 12, `padding:8px`, 42px rows with 13px
 brown labels and icons at x = 236 against a rail ending at 230. What remains different from Main is what
 AGENTS.md puts out of scope: the Main shell's own `data-bo-shell="main"` sheet.
+
+
+### Why the agent flyout never appeared (2026-10)
+
+Reported as *"hovering Finance shows no submenu"*, and it was two separate faults, both introduced by the move to
+the reference markup:
+
+1. **the reveal rule lives in a sheet this side does not load.** With `.open` on the group and `.show` on the
+   list the panel still computed `display:none; visibility:hidden` - the same root cause as the
+   `.bo-flyout-title` hiding rule. The look still comes from the shared sheets; `agent-portal.css` now supplies
+   only the reveal, scoped with `[data-agent-page]` so no BO page can match it.
+2. **the hook attribute was dropped with the old markup.** The behaviour block starts from
+   `nav.querySelector('[data-finance-toggle]')`, and the rewritten button no longer carried it, so the whole
+   binding was skipped - setup worked (140ms/400ms, positioning, keyboard) and nothing ran. The attribute is back
+   on the group button.
+
+Verified across eight agent pages (dashboard, wallet, withdraw, products, players, bonus, bet-report, profile):
+after a hover every one reports `open` + `show` + `display:block` + `visibility:visible` at
+`x=236, 286x108`, and the panel is the topmost element at its own coordinates wherever the page has no error
+overlay on top. The check is worth re-running with `node .pi-tmp-rail-allpages.js` after touching this markup.

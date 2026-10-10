@@ -3268,3 +3268,14 @@ html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body 
 html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body:not(.sidebar-mini) .report-sidebar .nav-group-list .bo-flyout-title{
   display:none!important;
 }
+
+/* The panel never appeared: with `.open` on the group and `.show` on the list it still computed
+   `display:none; visibility:hidden`, because the sheet that *reveals* the flyout is not loaded on this side -
+   the same root cause as the `.bo-flyout-title` rule above. The look still comes from the shared sheets; this
+   only supplies the reveal, scoped to the agent portal so no BO page can match it. */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body .report-sidebar .nav-group > .nav-group-list{
+  display:none!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body .report-sidebar .nav-group.open > .nav-group-list{
+  display:block!important;visibility:visible!important;
+}
