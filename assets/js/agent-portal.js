@@ -62,7 +62,12 @@ nav.innerHTML=html;const ft=nav.querySelector('[data-finance-toggle]');if(ft){
     if(!p.grp)return;
     clearTimeout(openTimer);clearTimeout(closeTimer);
     p.grp.classList.remove('open');
-    if(p.list)p.list.classList.remove('show');
+    if(p.list){
+      p.list.classList.remove('show');
+      p.list.style.removeProperty('display');
+      p.list.style.removeProperty('visibility');
+      p.list.style.removeProperty('opacity');
+    }
     if(p.btn){p.btn.setAttribute('aria-expanded','false');if(!onPage())p.btn.classList.remove('active');}
     if(openGroup===p.grp)openGroup=null;
   };
@@ -75,7 +80,16 @@ nav.innerHTML=html;const ft=nav.querySelector('[data-finance-toggle]');if(ft){
       if(!isDesktop())return;
       place(p.grp);
       p.grp.classList.add('open');
-      if(p.list)p.list.classList.add('show');
+      if(p.list){
+        p.list.classList.add('show');
+        /* Inline !important, deliberately: something in the loaded sheets keeps this list hidden with an
+           !important rule of its own (a stylesheet !important out-ranks a plain inline style), and the owner's
+           DevTools showed the group .open with correct inline coordinates and nothing on screen. These three
+           properties are the whole of "visible"; hideNow removes them again. */
+        p.list.style.setProperty('display','block','important');
+        p.list.style.setProperty('visibility','visible','important');
+        p.list.style.setProperty('opacity','1','important');
+      }
       if(p.btn){p.btn.classList.add('active');p.btn.setAttribute('aria-expanded','true');}
       openGroup=p.grp;
       /* the row can still be mid-layout when the delay expires (the panel measured y=84, up in the topbar,
@@ -121,7 +135,11 @@ nav.innerHTML=html;const ft=nav.querySelector('[data-finance-toggle]');if(ft){
   window.addEventListener('resize',function(){if(openGroup)place(openGroup);});
   if(onPage()){
     const g=nav.querySelector('.nav-group');
-    if(g){g.classList.add('open');const p=parts(g);if(p.list)p.list.classList.add('show');
+    if(g){g.classList.add('open');const p=parts(g);
+      if(p.list){p.list.classList.add('show');
+        p.list.style.setProperty('display','block','important');
+        p.list.style.setProperty('visibility','visible','important');
+        p.list.style.setProperty('opacity','1','important');}
       if(p.btn){p.btn.classList.add('active');p.btn.setAttribute('aria-expanded','true');}openGroup=g;}
   }
 }}if($('agentSidebarIdentity'))$('agentSidebarIdentity').textContent=(profile.code||'Agent')+' · '+Number(profile.commissionPercent||0).toFixed(2)+'%';const sf=$('agentSidebarFooter');if(sf)sf.innerHTML=`<div class="bo-sidebar-account-footer"><a class="bo-sidebar-logout" href="#logout" data-agent-logout><i class="bi bi-box-arrow-right"></i><span>Logout</span></a></div>`;if($('agentTopProfile'))$('agentTopProfile').innerHTML=agentProfileHtml();bindProfileMenu();

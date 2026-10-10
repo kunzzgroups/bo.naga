@@ -7809,3 +7809,19 @@ one robustness change made:
 A measurement trap worth recording: with an error modal up, the panel's measured rect read `y=84` while its
 inline `top` was the correct `256px`. The modal's backdrop carries a transform, and a transformed ancestor
 re-anchors `position:fixed`. Checks on these pages must either avoid the modal or assert the inline values.
+
+
+### Forcing the flyout visible (2026-10)
+
+The owner's DevTools settled it: `.nav-group.agent-finance-group.open` with
+`.nav-group-list.show` and inline `left:236px; top:301px`, and still nothing painted. With the DOM and the
+coordinates provably right, the only thing left is a stylesheet keeping the list hidden - and a stylesheet
+`!important` out-ranks a plain inline style (the mirror image of the earlier trap where our `!important` beat the
+script's inline coordinates).
+
+So `show()` now writes the three properties that mean "visible" as **inline `!important`**
+(`display:block`, `visibility:visible`, `opacity:1`), which no sheet can out-rank, and `hideNow()` removes them.
+The same is applied to the group that starts open on the finance/withdraw pages.
+
+Verified: computed `visibility:visible`, `opacity:1` and the inline values present at every one of the eight agent
+pages after a hover.
