@@ -376,8 +376,10 @@ function promoCampaignSize(){
   if(v==='all')return 0;
   const n=Number(v);
   if(n>0)return n;
-  /* "-" is the auto option: the row count comes from the free space, and 120px are left under the card so the
-     page-size dropdown (a native select at the bottom of the page) has room to open downwards. */
+  /* "-" is the auto option: the row count comes from the free space so the table fills the window down to an
+     small margin, the way index.html's card reaches the bottom edge. 40px is what sits below the card itself:
+     its own 16px margin-bottom plus the 16px padding-bottom on `section.report-content` (which is also an
+     `overflow:auto` box, so anything past it puts a scrollbar on the inner frame) plus an 8px breathing space. */
   const wrap=document.querySelector('.agent-promo-campaign-card > .table-wrap');
   const foot=document.querySelector('.agent-promo-campaign-card > .agent-table-footer');
   if(!wrap)return 10;
@@ -385,7 +387,7 @@ function promoCampaignSize(){
   const rowH=row?Math.round(row.getBoundingClientRect().height):66;
   const top=wrap.getBoundingClientRect().top;
   const footH=foot?Math.round(foot.getBoundingClientRect().height):65;
-  const avail=(window.innerHeight-128)-top-47-footH;
+  const avail=(window.innerHeight-40)-top-47-footH;
   return Math.max(5,Math.floor(avail/Math.max(24,rowH)));
 }
 function promoRowHeight(size){
@@ -395,7 +397,7 @@ function promoRowHeight(size){
   if(!wrap||!size)return 0;
   const top=wrap.getBoundingClientRect().top;
   const footH=foot?Math.round(foot.getBoundingClientRect().height):65;
-  const avail=(window.innerHeight-128)-top-47-footH;
+  const avail=(window.innerHeight-40)-top-47-footH;
   return Math.max(40,Math.floor(avail/size));
 }
 function promoCampaignPager(pages){

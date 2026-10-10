@@ -7523,3 +7523,16 @@ the existing `change` wiring are untouched; the options set its value and dispat
 Verified (headless, 1568x770, 25-campaign stub): menu hidden on load, opens above its button
 (`aboveButton: true`, 6 options), choosing 20 repaints 20 rows, syncs the button label, moves the `is-active`
 class and updates "Showing 1 to 20 of 25 campaigns"; 0 console errors.
+
+
+### agent-bonus.html: the empty strip under the card (2026-10)
+
+*"The bottom of my page is still a big empty area"*. It was self-inflicted: the auto page size worked from
+`innerHeight - 128`, because the 120px under the card existed to give the **native** page-size popup room to
+open downwards. Once that control became a drop-up, the reserve was nothing but an empty strip.
+
+It is now `innerHeight - 40`, which is what actually sits below the card: its own `margin-bottom:16px` plus the
+`padding-bottom:16px` on `section.report-content` (that element is also an `overflow:auto` frame, so anything
+past it does not scroll the page but puts a scrollbar on the inner frame). Verified in the auto (`-`) state at
+1568x930: `documentElement.scrollHeight == innerHeight` (778) - no page scrollbar - with the card ending 48px
+above the bottom edge, the same order as index.html's own gap.
