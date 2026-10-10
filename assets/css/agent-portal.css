@@ -2838,9 +2838,9 @@ html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-c
   border:0!important;border-radius:0!important;margin:0!important;
 }
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card .report-table thead th{
-  background:#FFE8CC!important;color:#6B360C!important;font-size:12px!important;font-weight:700!important;
-  text-transform:none!important;height:47px!important;
-  padding:14px 12px!important;border-bottom:1px solid #EADCC8!important;
+  background:#FFE8CC!important;color:#6B360C!important;font-size:11px!important;font-weight:700!important;
+  text-transform:uppercase!important;letter-spacing:.03em!important;height:40px!important;
+  padding:10px 12px!important;border-bottom:1px solid #EADCC8!important;
 }
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .agent-table-footer{
   display:flex!important;align-items:center!important;justify-content:space-between!important;
