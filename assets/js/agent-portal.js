@@ -325,6 +325,27 @@ function initBonusTabs(){
     });
   }
   window.addEventListener('load',pinStatusWidth);
+  /* The page-size control is a native select sitting at the bottom of a page that deliberately does not scroll:
+     its popup is browser UI, opens downwards and fell off the window, so the options could not be reached. It is
+     replaced by a small list that opens *upwards*; the hidden select stays the state holder so
+     promoCampaignSize() and the existing change wiring are untouched. */
+  (function(){
+    const btn=$('agentCampaignSizeBtn'),menu=$('agentCampaignSizeMenu'),sel=$('agentCampaignSize'),label=$('agentCampaignSizeLabel');
+    if(!btn||!menu||!sel)return;
+    const close=function(){menu.hidden=true;btn.setAttribute('aria-expanded','false');};
+    btn.addEventListener('click',function(e){e.stopPropagation();const open=menu.hidden;menu.hidden=!open;btn.setAttribute('aria-expanded',open?'true':'false');});
+    menu.querySelectorAll('[data-size]').forEach(function(o){
+      o.addEventListener('click',function(){
+        sel.value=o.dataset.size;
+        menu.querySelectorAll('[data-size]').forEach(x=>x.classList.toggle('is-active',x===o));
+        if(label)label.textContent=o.textContent.trim();
+        close();
+        sel.dispatchEvent(new Event('change',{bubbles:true}));
+      });
+    });
+    document.addEventListener('click',function(e){if(!menu.hidden&&!e.target.closest('.agent-size-picker'))close();});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+  })();
   /* the auto page size follows the window, so the footer stays inside the viewport without a scrollbar */
   let _reBonus=null;
   window.addEventListener('resize',function(){clearTimeout(_reBonus);_reBonus=setTimeout(function(){if(page==='bonus')paintPromotionCampaigns();},150);});

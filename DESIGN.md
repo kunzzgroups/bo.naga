@@ -7504,3 +7504,22 @@ as icon buttons on a 36px square (`#F3F4F6`, radius 8), the current page solid a
 glyphs carry `pointer-events:none` so a click on the `<i>` still lands on its button, which keeps the existing
 delegated `[data-promo-page]` handler working without touching it. Verified: page 2 and 3 render their rows, the
 last page disables next/last, and the page-size change still resets to page 1.
+
+
+### agent-bonus.html: the page-size control is a custom drop-up (2026-10)
+
+*"Show entries still cannot expand"* - the third report of the same symptom, and the earlier two fixes
+(pagination-standardizer.js's mirror select, then the removed `overflow:hidden`) were not the cause. The control
+was a **native `<select>`**, so its popup is browser UI, outside the page: it opened *downwards* from a control
+that sits at the bottom edge of a page which deliberately never scrolls, so the options fell off the window and
+only the first row (`-`) was visible. No CSS can move or clip that popup.
+
+`index.html` avoids native selects for exactly this control - it uses the `.rounded-select-wrap` component - so
+this page now uses the same idea, scoped to itself: a `.agent-size-btn` that toggles `.agent-size-menu`, which is
+absolutely positioned with `bottom: calc(100% + 6px)` so it always opens **upwards** into the table. The native
+`<select id="agentCampaignSize">` stays in the DOM, `hidden`, as the state holder, so `promoCampaignSize()` and
+the existing `change` wiring are untouched; the options set its value and dispatch a bubbling `change`.
+
+Verified (headless, 1568x770, 25-campaign stub): menu hidden on load, opens above its button
+(`aboveButton: true`, 6 options), choosing 20 repaints 20 rows, syncs the button label, moves the `is-active`
+class and updates "Showing 1 to 20 of 25 campaigns"; 0 console errors.
