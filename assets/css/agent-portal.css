@@ -2815,47 +2815,51 @@ body.agent-promotion-page .agent-standard-filter .field > label{display:none!imp
 body.agent-promotion-page .agent-standard-filter .agent-status-field{flex:0 0 160px!important;width:160px!important;min-width:160px!important}
 body.agent-promotion-page .agent-standard-filter .agent-status-field select{width:160px!important}
 
-/* agentBonusAutoLayout - the card frame, audited against provider-bet-report.html's computed values and its
-   rendered screenshot: the table card there is a hairline ring with a square corner and no padding, the filter
-   row is a bordered box of its own inset inside it (radius 16px), the table itself draws no frame, and the
-   footer is one flex row separated by a top border. This page had the filter's table and footer nested inside
-   the filter card and an 18px card padding, so two contours met at the corner and the footer wrapped. */
+/* agentBonusMP - the content area re-styled to main-merchant-profit.html's own computed values (the Main
+   panel's shell itself stays out of scope: AGENTS.md forbids unifying the Main panel with the BO / agent shell).
+   Measured there, light: the filter strip is flat inside the card (#FFF8EB, padding 14px 16px, no frame of its
+   own), the table head is transparent with #3F3F46 12px/700 labels at 47px, the footer is a flex row with a top
+   hairline, and the pager is text buttons - #F3F4F6 / #9CA3AF / radius 8 / 36px / 0 16px padding - not chevrons. */
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card{
-  border:0!important;border-radius:0!important;padding:0!important;
-  box-shadow:0 0 0 1px rgba(24,25,28,.03)!important;
+  border:1px solid #EADCC8!important;border-radius:8px!important;padding:0!important;
+  box-shadow:0 5px 18px rgba(217,119,6,.035)!important;
 }
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .filter-card{
-  border:1px solid #EADCC8!important;border-radius:16px!important;margin:12px!important;box-shadow:none!important;
+  border:0!important;border-radius:0!important;margin:0!important;padding:14px 16px!important;
+  box-shadow:none!important;background:#FFF8EB!important;
 }
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .table-wrap{
   border:0!important;border-radius:0!important;margin:0!important;
 }
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card .report-table thead th{
+  background:transparent!important;color:#3F3F46!important;font-size:12px!important;font-weight:700!important;
+  text-transform:uppercase!important;letter-spacing:.04em!important;height:47px!important;
+  padding:14px 12px!important;border-bottom:1px solid #EADCC8!important;
+}
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .agent-table-footer{
   display:flex!important;align-items:center!important;justify-content:space-between!important;
-  gap:12px!important;padding:14px 16px!important;border-top:1px solid #EADCC8!important;
+  gap:12px!important;padding:14px 16px!important;background:#FFF8EB!important;
+  border-top:1px solid #EADCC8!important;
 }
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .agent-table-footer > .agent-page-size{
   display:flex!important;align-items:center!important;gap:6px!important;white-space:nowrap!important;flex:0 0 auto!important;
-}
-html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .agent-table-footer > .agent-page-size select{
-  width:68px!important;height:36px!important;
 }
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .agent-table-footer > #agentCampaignMeta{
   flex:1 1 auto!important;text-align:center!important;font-size:13px!important;
 }
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .agent-table-footer > .agent-pagination{
-  flex:0 0 auto!important;display:flex!important;align-items:center!important;gap:6px!important;
+  flex:0 0 auto!important;display:flex!important;align-items:center!important;gap:8px!important;
 }
-
-/* the BO pager chip + a frameless row eye (restored after the card rewrite) */
-html:not(#bo-charcoal-off) body[data-agent-page="bonus"] #agentCampaignPager button{
-  background:#F3F4F6!important;border:1px solid transparent!important;color:#9CA3AF!important;
-  border-radius:8px!important;height:36px!important;min-height:36px!important;min-width:36px!important;
-  font-size:13px!important;font-weight:700!important;
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .agent-table-footer > .agent-pagination button{
+  background:#F3F4F6!important;border:0!important;color:#9CA3AF!important;border-radius:8px!important;
+  height:36px!important;min-height:36px!important;padding:0 16px!important;font-size:13px!important;
+  font-weight:700!important;min-width:0!important;
 }
-html:not(#bo-charcoal-off) body[data-agent-page="bonus"] #agentCampaignPager button.active,
-html:not(#bo-charcoal-off) body[data-agent-page="bonus"] #agentCampaignPager button[aria-current="page"]{
-  background:rgba(217,119,6,.16)!important;color:#B45309!important;border-color:rgba(217,119,6,.3)!important;
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .agent-table-footer > .agent-pagination button.active{
+  background:#F59E0B!important;color:#FFFFFF!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .agent-table-footer > .agent-pagination button[disabled]{
+  background:#F3F4F6!important;color:#D4D4D8!important;opacity:1!important;
 }
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-view-btn.agent-view-eye{
   border-color:transparent!important;background:transparent!important;box-shadow:none!important;

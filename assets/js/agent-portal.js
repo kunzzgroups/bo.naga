@@ -355,14 +355,12 @@ function promoCampaignSize(){
 function promoCampaignPager(pages){
   const el=$('agentCampaignPager');
   if(!el)return;
-  let html=`<button ${promoCampaignPage<=1?'disabled':''} data-promo-page="1" title="First page"><i class="bi bi-chevron-double-left"></i></button>`
-    +`<button ${promoCampaignPage<=1?'disabled':''} data-promo-page="${promoCampaignPage-1}" title="Previous page"><i class="bi bi-chevron-left"></i></button>`;
+  let html=`<button ${promoCampaignPage<=1?'disabled':''} data-promo-page="1">Previous</button>`;
   for(let i=1;i<=pages;i++){
     if(pages>7&&i>2&&i<pages-1&&Math.abs(i-promoCampaignPage)>1){if(i===3)html+='<button disabled>...</button>';continue}
     html+=`<button class="${i===promoCampaignPage?'active':''}" data-promo-page="${i}">${i}</button>`;
   }
-  html+=`<button ${promoCampaignPage>=pages?'disabled':''} data-promo-page="${promoCampaignPage+1}" title="Next page"><i class="bi bi-chevron-right"></i></button>`
-    +`<button ${promoCampaignPage>=pages?'disabled':''} data-promo-page="${pages}" title="Last page"><i class="bi bi-chevron-double-right"></i></button>`;
+  html+=`<button ${promoCampaignPage>=pages?'disabled':''} data-promo-page="${pages}">Next</button>`;
   el.innerHTML=html;
 }
 function paintPromotionCampaigns(){

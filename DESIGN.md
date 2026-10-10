@@ -7430,3 +7430,24 @@ The status select is re-pinned to 160px: `bo-ui-standard.js:sizeNativeSelect` si
 54px, which does not count the native arrow, so "All Statuses" rendered as "All St..." - the BO pins
 `--bo-select-width` on its own selects for the same reason. The pin is re-applied from the field's own
 MutationObserver because the script also re-measures on every `change` and whenever the table re-renders.
+
+
+### agent-bonus.html content area aligned to main-merchant-profit.html (2026-10)
+
+The owner asked for the page to look like `main-merchant-profit.html` (Merchant Profit). Its **shell** is out of
+scope - AGENTS.md forbids unifying the Main panel with the BO / agent shell - so the alignment covers the
+content-area components, measured on the reference (light):
+
+| component | Merchant Profit (measured) | this page before | now |
+| --- | --- | --- | --- |
+| filter strip | flat inside the card: `#FFF8EB`, `padding:14px 16px`, no frame | inset rounded box with its own border | the reference |
+| table head | transparent, `#3F3F46`, 12px/700, 47px, `padding:14px 12px` | amber `#FFE8CC` fill, 44px | the reference |
+| footer | flex row, `padding:14px 16px`, `border-top:1px solid #EADCC8`, `#FFF8EB` | same shape, kept | aligned |
+| pager | text buttons - `Previous / 1 2 / Next`, `#F3F4F6`, `#9CA3AF`, radius 8, 36px, `0 16px`, active solid amber | 36px chevron chips (`« ‹ 1 2 › »`) | text buttons |
+
+The pager markup is built in `agent-portal.js:promoCampaignPager`; the rest is one scoped block in
+`assets/css/agent-portal.css` (`body[data-agent-page="bonus"]`), per the spec's "scope changes to
+Promotion-specific selectors".
+
+Still open from the spec: the statistics-card details, the tab metrics (47px vs 48px) and the 1366/1440/1920
+responsive pass.
