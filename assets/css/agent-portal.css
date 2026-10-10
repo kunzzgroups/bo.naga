@@ -3052,3 +3052,16 @@ html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-repo
 html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .agent-table-footer{
   border-top:1px solid #EADCC8!important;
 }
+
+/* The strip must never be the thing that gives when the window is short: `.table-card` on these pages is a
+   locked flex column that fills the viewport (agent-portal.css ~2723), so the strip's `flex:0 1 auto` let it be
+   squeezed and its value line spilled under the table header - which reads as the text being cut in half.
+   min-height plus flex:0 0 auto keeps the strip whole and lets the table take the pressure instead. */
+html:not(#bo-charcoal-off) body[data-agent-page="provider_detail"].agent-report-body.agent-modern .table-card > .user-toolbar,
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .user-toolbar{
+  flex:0 0 auto!important;min-height:65px!important;overflow:visible!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="provider_detail"].agent-report-body.agent-modern .agent-context-row,
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .agent-context-row{
+  flex:0 0 auto!important;min-height:18px!important;
+}

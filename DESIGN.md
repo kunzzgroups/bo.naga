@@ -7579,3 +7579,16 @@ wanted, and the provider page's button is bound by id in its own inline script, 
 The period comes from the URL in both cases - the provider page already printed it, the game report page now
 does too. Verified: label/period/value render with those values, the back control measures 36px / radius 8 /
 `1px #DCC9A8` with the text "Back to list", and neither page scrolls.
+
+
+### The drill-down strip could be squeezed until its text was cut (2026-10)
+
+*The value line reads as cut in half under the table header.* These two pages make `.table-card` a locked flex
+column that fills the viewport (agent-portal.css ~2723: `flex:1 1 auto; min-height:0; overflow:hidden`), and the
+strip's computed `flex` was `0 1 auto` - the `1` let the strip shrink when the window was short, so the value
+line spilled out of the strip and the table header's opaque band covered its lower half.
+
+The strip is now `flex:0 0 auto` with `min-height:65px` and `overflow:visible`, and its value row carries a
+`min-height`, so the pressure goes to the table (which already scrolls inside the card) instead of the strip.
+Verified in a deliberately short window (1568x560, innerHeight ~408): strip height 65, content not clipped,
+`documentElement.scrollHeight == innerHeight`, value and period fully inside the strip.
