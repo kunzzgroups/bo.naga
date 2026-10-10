@@ -8045,3 +8045,21 @@ are layout metrics the drift guard polices on shell selectors.
 Verified by rendering the collapsed rail: light computes `linear-gradient(135deg,#FFF8EF…)`, `#9A3412`, radius
 10px, the inset ring plus shadow and a 3px `#FBBF24 -> #D97706` bar; dark computes the `.20 -> .10` amber gradient
 with `#FBBF24` and the same bar. Screenshot: `.pi-tmp-wl-eye/mini-light.png`.
+
+
+### Finance - Wallet: the same language as the rest (2026-10)
+
+`agent-wallet.html` (runtime `data-agent-page="finance"`) was the last agent page still built its own way:
+
+- **the filter row showed its field titles** (Date Range / Type / Search, 13px each) because the rule hiding them
+  lives in `bo-filter-standard.css`, which no agent page loads. Titles hidden, so the row is one 66px line
+  (it measured 86px with them).
+- **it filtered through Reset / Search buttons.** Every other page here - and the owner's own instruction for the
+  Promotion page - has the controls apply themselves: selects and dates on `change`, the keyword after a 400ms
+  pause or on Enter, and clearing a control is the reset. The two buttons are gone and the wiring now matches.
+  Verified: 1 request on load, 1 per select change, 1 after the keyword pause.
+- **each card drew two frames** (`.table-card` plus the `.table-wrap` inside it, radius 8 inside radius 14). One
+  frame now, like the drill-down pages.
+- **the card titles were cream `.user-badge` pills** sitting on a full-width header band - a sticker in a band.
+  They are plain icon + bold title with a hairline under the band now, the shape the drill-down strips use. Form
+  labels inside the cards are untouched (they are a form, not a filter row).
