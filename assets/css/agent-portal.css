@@ -2822,7 +2822,14 @@ body.agent-promotion-page .agent-standard-filter .agent-status-field select{widt
    hairline, and the pager is text buttons - #F3F4F6 / #9CA3AF / radius 8 / 36px / 0 16px padding - not chevrons. */
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card{
   border:1px solid #EADCC8!important;border-radius:8px!important;padding:0!important;
-  box-shadow:0 5px 18px rgba(217,119,6,.035)!important;
+  box-shadow:0 5px 18px rgba(217,119,6,.035)!important;overflow:hidden!important;
+}
+/* "页面 fixed 死，不要有 scroll": merchant-profit fits its viewport (scrollHeight == clientHeight at 1568x770).
+   This page carries a statistics strip the reference keeps in its topbar, so the table region is capped instead
+   and scrolls inside the card - the page itself never grows a scrollbar. 430px is the chain above the table:
+   topbar 64 + tab row 48 + statistics strip 130 + filter strip 65 + footer 65 + the gaps between them. */
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .table-wrap{
+  max-height:calc(100vh - 430px)!important;min-height:220px!important;overflow:auto!important;
 }
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .filter-card{
   border:0!important;border-radius:0!important;margin:0!important;padding:14px 16px!important;

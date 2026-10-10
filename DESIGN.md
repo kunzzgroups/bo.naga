@@ -7451,3 +7451,17 @@ Promotion-specific selectors".
 
 Still open from the spec: the statistics-card details, the tab metrics (47px vs 48px) and the 1366/1440/1920
 responsive pass.
+
+
+### agent-bonus.html: the card frame is visible and the page does not scroll (2026-10)
+
+Two follow-ups from the owner on the Merchant Profit alignment:
+
+1. *"the design inside the box is gone"* - the card had been switched to the BO's hairline ring
+   (`0 0 0 1px rgba(24,25,28,.03)`), which is invisible at this background, so the filter strip and the table
+   read as one flat field. The card carries `1px solid #EADCC8` again (the reference's own border).
+2. *"the page must be fixed, no scroll"* - measured on `main-merchant-profit.html` at 1568x770:
+   `scrollHeight == clientHeight`, no page scrollbar. That page keeps its summary in the topbar; this one carries
+   a statistics strip, so the **table region** is capped with `max-height: calc(100vh - 430px)` and scrolls
+   inside the card. 430px is the chain above it: topbar 64 + tab row 48 + statistics 130 + filter strip 65 +
+   footer 65 + the gaps between them. The page itself never grows a scrollbar at desktop sizes.
