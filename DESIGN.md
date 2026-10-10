@@ -7616,3 +7616,26 @@ report page had not - both do now (`margin:0!important`).
 
 Verified: `margin-bottom: 0px`, gap between the strip and the first header cell `0px`, the header's offset from
 the card's top fell from 80px to 66px, and nothing else moved (strip 65px, no clipping, no page scrollbar).
+
+
+### agent rail: the Finance group in the Main panel's shape (2026-10)
+
+*"The expanded Wallet/Withdraw is ugly - unify it like Main."* The open group was plain indented text with the
+current row painted as a **solid amber block**: `bo-charcoal-agent.css:462` sets
+`linear-gradient(204deg,#D97706,#D97706)!important` on `.agent-nav-sub .agent-nav-subitem.active` (dark theme
+`:1192`, #F59E0B; agent-portal.css:754 has the older blue version underneath).
+
+It is now a panel of plain rows, the shape the Main rail shows in the owner's screenshot:
+
+| | value |
+| --- | --- |
+| panel | `#FFFDF8`, `1px solid #EADCC8`, radius 12, `padding:6px`, soft shadow, indented 10px |
+| row | 38px, radius 8, transparent, `#3F3F46`, 13px/600, 16px icon in `#A8A29E` |
+| row hover | `#F7EFE2` |
+| current row | **tint** `rgba(217,119,6,.14)` with `#B45309` text and **no** background-image |
+
+The current row is a tint rather than a filled slab - which is also the right call for a colour-blind read.
+Dark theme mirrors it (`#2A2C36` panel, `rgba(255,255,255,.06)` hover, `rgba(245,158,11,.18)` current).
+
+Verified: panel background/border/radius/padding, 38px rows, and the current row computing to
+`background-image: none` with the amber tint; no console errors.

@@ -3090,3 +3090,47 @@ html:not(#bo-charcoal-off) body[data-agent-page="provider_detail"].agent-report-
 html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .user-toolbar{
   margin:0!important;
 }
+/* agentRailSubmenu - the agent rail's Finance group, restyled in the Main panel's shape (owner: "the expanded
+   Wallet/Withdraw is ugly, unify it like main"). Today the open group is plain indented text and the current row
+   is a *solid amber block* - `bo-charcoal-agent.css:462` paints
+   `linear-gradient(204deg,#D97706,#D97706)!important` on `.agent-nav-subitem.active` (dark: #F59E0B at :1192).
+   Main renders a light rounded panel of plain rows, so: a panel (#FFFDF8, 1px #EADCC8, radius 12, soft shadow),
+   rows at 38px with a muted icon, hover a warm tint, and the current row a **tint** of amber with amber text -
+   no filled block, which also suits the colour-blind read (no colour-only signal, and no solid slab). */
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-group .agent-nav-sub{
+  display:grid!important;gap:2px!important;background:#FFFDF8!important;border:1px solid #EADCC8!important;
+  border-radius:12px!important;padding:6px!important;margin:2px 0 6px 10px!important;
+  box-shadow:0 6px 16px rgba(60,48,32,.06)!important;
+}
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem{
+  min-height:38px!important;height:38px!important;padding:0 10px!important;border-radius:8px!important;
+  background:transparent!important;background-image:none!important;color:#3F3F46!important;
+  font-size:13px!important;font-weight:600!important;box-shadow:none!important;gap:10px!important;
+}
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem i{
+  font-size:16px!important;color:#A8A29E!important;
+}
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem:hover{
+  background:#F7EFE2!important;background-image:none!important;color:#18191C!important;
+}
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem.active,
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem.active:hover{
+  background:rgba(217,119,6,.14)!important;background-image:none!important;color:#B45309!important;
+  box-shadow:none!important;
+}
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem.active i{
+  color:#B45309!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-group .agent-nav-sub{
+  background:#2A2C36!important;border-color:rgba(255,255,255,.08)!important;box-shadow:none!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem{
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem:hover{
+  background:rgba(255,255,255,.06)!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem.active,
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem.active:hover{
+  background:rgba(245,158,11,.18)!important;background-image:none!important;color:#F5B44A!important;
+}
