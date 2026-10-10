@@ -3142,7 +3142,11 @@ html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-group{
   position:relative!important;
 }
 html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-group > .agent-nav-sub{
-  position:absolute!important;left:calc(100% + 40px)!important;top:0!important;z-index:60!important;
+  /* the script sets left/top on every open (left = sidebar.right + 6), the way reports.js positions the
+     Main rail's panels */
+  /* left/top carry no !important: the script writes them inline on every open, and an !important here
+     would win over the inline style and park the panel off-screen. */
+  position:fixed!important;left:-9999px;top:0;z-index:60!important;
   width:320px!important;margin:0!important;padding:10px!important;
   background:#FFFFFF!important;background-image:none!important;
   border:0!important;border-radius:12px!important;

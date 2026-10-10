@@ -29,11 +29,51 @@ function bindProfileMenu(){const btn=document.querySelector('[data-agent-profile
    chip is a plain link now, agentProfileHtml above, so there is no menu to close either). The
    container is resolved per click and an absent menu is a no-op. */
 document.addEventListener('click',e=>{const wrap=$('agentTopProfile');if(wrap&&menu&&!wrap.contains(e.target))menu.classList.remove('show');if(side&&!side.contains(e.target)){sideMenu?.classList.remove('show');side.classList.remove('open');side.setAttribute('aria-expanded','false')}});document.querySelectorAll('[data-agent-logout]').forEach(a=>a.onclick=e=>{e.preventDefault();localStorage.removeItem('agent_token');location.href='agent-login.html'});}
-async function initShell(){try{profile=await api('/agent/me');const allowed=new Set(profile.portalMenuKeys||['dashboard']);const required=permissionKey(page);if(!UTILITY.has(page)&&!allowed.has(required)){location.href=menuHref([...allowed][0]||'dashboard');return false;}const nav=$('agentPortalNav');if(nav){let html='';for(const x of MENU){const pk=permissionKey(x[0]);if(!allowed.has(pk))continue;const navActive=x[0]===page||(x[0]==='products'&&page==='provider_detail')||(x[0]==='reports'&&page==='player_game_report');html+=`<a class="report-nav-item ${navActive?'active':''}" href="${x[3]}"><i class="bi ${x[2]}"></i><span>${x[1]}</span></a>`;}const financeVisible=allowed.has('wallet')||allowed.has('settlement');if(financeVisible){const active=['finance','withdraw'].includes(page);html+=`<div class="agent-nav-group ${active?'open':''}"><button type="button" class="report-nav-item agent-nav-parent" data-finance-toggle><i class="bi bi-wallet2"></i><span>Finance</span><i class="bi bi-chevron-down agent-nav-chevron"></i></button><div class="agent-nav-sub">${allowed.has('wallet')?`<a class="report-nav-item agent-nav-subitem ${page==='finance'?'active':''}" href="agent-wallet.html"><i class="bi bi-wallet2"></i><span>Wallet</span></a>`:''}${allowed.has('settlement')?`<a class="report-nav-item agent-nav-subitem ${page==='withdraw'?'active':''}" href="agent-withdraw.html"><i class="bi bi-cash-stack"></i><span>Withdraw</span></a>`:''}</div></div>`;}nav.innerHTML=html;const ft=nav.querySelector('[data-finance-toggle]');if(ft){const grp=ft.closest('.agent-nav-group');const onPage=()=>page==='finance'||page==='withdraw';/* Main highlights the whole row whose flyout is open, exactly like the current page's row, so the parent
-   borrows the rail's own active recipe instead of a second one. */
-const open=()=>{grp.classList.add('open');ft.classList.add('active');};const close=()=>{grp.classList.remove('open');if(!onPage())ft.classList.remove('active');};ft.onclick=()=>{grp.classList.contains('open')?close():open();};/* Main opens its sidebar groups on hover, not on a click (owner), so the flyout follows the pointer; the
-   click stays for touch and keyboard, and focusin/focusout keep it reachable without a mouse. */
-grp.addEventListener('mouseenter',open);grp.addEventListener('mouseleave',close);grp.addEventListener('focusin',open);grp.addEventListener('focusout',e=>{if(!grp.contains(e.relatedTarget))close();});if(onPage()){grp.classList.add('open');ft.classList.add('active');}}}if($('agentSidebarIdentity'))$('agentSidebarIdentity').textContent=(profile.code||'Agent')+' · '+Number(profile.commissionPercent||0).toFixed(2)+'%';const sf=$('agentSidebarFooter');if(sf)sf.innerHTML=`<div class="bo-sidebar-account-footer"><a class="bo-sidebar-logout" href="#logout" data-agent-logout><i class="bi bi-box-arrow-right"></i><span>Logout</span></a></div>`;if($('agentTopProfile'))$('agentTopProfile').innerHTML=agentProfileHtml();bindProfileMenu();
+async function initShell(){try{profile=await api('/agent/me');const allowed=new Set(profile.portalMenuKeys||['dashboard']);const required=permissionKey(page);if(!UTILITY.has(page)&&!allowed.has(required)){location.href=menuHref([...allowed][0]||'dashboard');return false;}const nav=$('agentPortalNav');if(nav){let html='';for(const x of MENU){const pk=permissionKey(x[0]);if(!allowed.has(pk))continue;const navActive=x[0]===page||(x[0]==='products'&&page==='provider_detail')||(x[0]==='reports'&&page==='player_game_report');html+=`<a class="report-nav-item ${navActive?'active':''}" href="${x[3]}"><i class="bi ${x[2]}"></i><span>${x[1]}</span></a>`;}const financeVisible=allowed.has('wallet')||allowed.has('settlement');if(financeVisible){const active=['finance','withdraw'].includes(page);html+=`<div class="agent-nav-group ${active?'open':''}"><button type="button" class="report-nav-item agent-nav-parent" data-finance-toggle><i class="bi bi-wallet2"></i><span>Finance</span><i class="bi bi-chevron-down agent-nav-chevron"></i></button><div class="agent-nav-sub">${allowed.has('wallet')?`<a class="report-nav-item agent-nav-subitem ${page==='finance'?'active':''}" href="agent-wallet.html"><i class="bi bi-wallet2"></i><span>Wallet</span></a>`:''}${allowed.has('settlement')?`<a class="report-nav-item agent-nav-subitem ${page==='withdraw'?'active':''}" href="agent-withdraw.html"><i class="bi bi-cash-stack"></i><span>Withdraw</span></a>`:''}</div></div>`;}nav.innerHTML=html;const ft=nav.querySelector('[data-finance-toggle]');if(ft){const grp=ft.closest('.agent-nav-group');const sub=grp.querySelector('.agent-nav-sub');
+  const rail=$('reportSidebar');
+  const onPage=()=>page==='finance'||page==='withdraw';
+  /* The Main rail's flyout behaviour, taken from reports.js (its bindings run at DOMContentLoaded, before this
+     rail exists, so they never reach it): hover opens after a 140ms intent delay, leaving schedules a close
+     400ms later so the pointer can cross the gap into the panel (entering it cancels that close), a click must
+     NOT pin the group on desktop (reports.js:223), and the panel is positioned by script with
+     left = sidebar.right + 6. */
+  const isDesktop=()=>window.innerWidth>=992;
+  let openTimer=0,closeTimer=0;
+  const place=function(){
+    if(!sub||!rail)return;
+    const sr=rail.getBoundingClientRect();const br=ft.getBoundingClientRect();
+    sub.style.left=Math.max(8,Math.round(sr.right+6))+'px';
+    sub.style.top=Math.round(br.top)+'px';
+  };
+  const hideNow=function(){
+    clearTimeout(openTimer);clearTimeout(closeTimer);
+    grp.classList.remove('open');ft.setAttribute('aria-expanded','false');
+    if(!onPage())ft.classList.remove('active');
+  };
+  const show=function(){
+    clearTimeout(closeTimer);clearTimeout(openTimer);
+    openTimer=setTimeout(function(){
+      if(!isDesktop())return;
+      place();
+      grp.classList.add('open');ft.classList.add('active');ft.setAttribute('aria-expanded','true');
+    },140);
+  };
+  const hide=function(){clearTimeout(openTimer);clearTimeout(closeTimer);closeTimer=setTimeout(hideNow,400);};
+  const toggle=function(){
+    if(grp.classList.contains('open')){hideNow();return;}
+    place();grp.classList.add('open');ft.classList.add('active');ft.setAttribute('aria-expanded','true');
+  };
+  if(window.matchMedia('(hover: hover)').matches){
+    grp.addEventListener('mouseenter',show);
+    grp.addEventListener('mouseleave',hide);
+    if(sub){sub.addEventListener('mouseenter',show);sub.addEventListener('mouseleave',hide);}
+  }else{
+    ft.onclick=function(e){e.preventDefault();toggle();};
+  }
+  ft.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}});
+  window.addEventListener('resize',function(){if(grp.classList.contains('open'))place();});
+  if(onPage()){grp.classList.add('open');ft.classList.add('active');}
+}}if($('agentSidebarIdentity'))$('agentSidebarIdentity').textContent=(profile.code||'Agent')+' · '+Number(profile.commissionPercent||0).toFixed(2)+'%';const sf=$('agentSidebarFooter');if(sf)sf.innerHTML=`<div class="bo-sidebar-account-footer"><a class="bo-sidebar-logout" href="#logout" data-agent-logout><i class="bi bi-box-arrow-right"></i><span>Logout</span></a></div>`;if($('agentTopProfile'))$('agentTopProfile').innerHTML=agentProfileHtml();bindProfileMenu();
  /* The rail's own toggle, in the BO's slot: .report-brand holds the label and this button, laid out
      space-between (see the parity sheet), and it stays visible when the rail is collapsed - which is
      what BO does (measured: BO's topbar has NO hamburger; its rail keeps one at 42x42 in both

@@ -7692,3 +7692,34 @@ agent-portal.css:1712 and friends) and adds `.agent-nav-group.open` / `.active`:
 Verified: with the group hovered open the row computes `rgb(245,235,220)` with
 `rgb(217,119,6) 4px 0 0 0 inset`, the flyout sits 29px clear of the rail at 320x130 with 52px rows and
 `#8A5A2B` / `#A9743F` label and icon, and the group still opens on hover and closes on leave.
+
+
+### Auditing the Main rail's group flyout, then re-doing the agent's (2026-10)
+
+Audit (`assets/js/reports.js`, which every agent page also loads):
+
+- markup is `.nav-group` > `.nav-group-btn` (level 1) + `.nav-group-list` (level 2); the open state is
+  `.open` on the group plus `.show` on the list (`reports.js:83-88` re-opens the section that holds the current
+  page).
+- **hover, not click**: `mouseenter` opens after a **140ms intent delay**, `mouseleave` schedules a close
+  **400ms** later so the pointer can cross the gap into the panel, and entering the panel cancels that close
+  (`reports.js:147-214`). On desktop a click deliberately does not pin the group (`reports.js:223`, "Desktop
+  flyouts are hover-only. Clicking the parent should not pin the submenu").
+- **the panel is positioned by script**: `positionSidebarFlyout()` sets `left = max(8, sidebarRect.right + 6)`
+  and the row's top, only at `innerWidth >= 992` (`reports.js:91-135`), and the previous flyout is hidden for a
+  frame while a new one opens (`bo-flyout-instant-hide`).
+- `BO_SIDEBAR.closeAllFlyouts()` is the shared close API.
+
+These bindings run at `DOMContentLoaded`, before the agent rail exists (it is built after `/me` returns), so none
+of it reached the agent portal - which is why the agent's own ad-hoc toggle never behaved like Main.
+
+The agent rail now implements the same mechanism in `agent-portal.js`, for exactly this one group: intent delay
+140ms, close grace 400ms (cancelled by entering the panel), clicks only toggle where `(hover: hover)` is false
+(touch), keyboard Enter/Space toggles, and the panel is `position:fixed` with `left = sidebar.right + 6` written
+inline on every open. One trap worth recording: the CSS for that panel must not carry `!important` on `left`/`top`,
+or the inline positioning is ignored and the panel parks off-screen.
+
+Verified: at 120ms after `mouseenter` the group is still closed; opened it reports the panel at
+`x = 236` against a rail ending at 230 (the reference's own `+6`); 150ms after `mouseleave` it is still open, and
+closed after the grace. Panel 320x130, rows 52px, labels `#8A5A2B`, icons `#A9743F`, and the open row carries the
+rail's `#F5EBDC` fill with an inset `#D97706` bar.
