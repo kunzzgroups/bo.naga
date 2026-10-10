@@ -7561,3 +7561,21 @@ Two CSS details worth recording: an older rule (agent-portal.css ~2724) pins the
 `padding:14px 16px` and a longer class chain, so the new rule repeats that chain and adds `.user-toolbar` to
 out-rank it; and moving the padding from the `<h2>` onto the strip makes `PLAYER` line up with the table's first
 column (its cells are inset 12px - measured: label x 262 == first header text x 262).
+
+
+### The two drill-down strips are one component now (2026-10)
+
+`agent-player-game-report.html` and `agent-provider-detail.html` each had their own version of the strip above
+their table - the first a 13px h2 with the report name glued to the player id, the second a 28px h2 with a muted
+date line and a `.clean-btn` "Back". Both now render the same three parts:
+
+    LABEL           11px / 700 / uppercase / .03em / #78716C
+    VALUE  period   15px / 800 / #18191C   +  13px #78716C
+                    36px house back control at the right
+
+`.agent-back-to-list` stopped being page-scoped (nine selector chains broadened from
+`body[data-agent-page="player_game_report"]` to `body[data-agent-page]`): the class only exists where it is
+wanted, and the provider page's button is bound by id in its own inline script, so swapping its class was safe.
+The period comes from the URL in both cases - the provider page already printed it, the game report page now
+does too. Verified: label/period/value render with those values, the back control measures 36px / radius 8 /
+`1px #DCC9A8` with the text "Back to list", and neither page scrolls.
