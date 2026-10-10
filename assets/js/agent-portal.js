@@ -35,55 +35,95 @@ async function initShell(){try{profile=await api('/agent/me');const allowed=new 
 (allowed.has('wallet')?`<a class="report-sub ${page==='finance'?'active':''}" href="agent-wallet.html"><i class="bi bi-wallet2 me-2"></i>Wallet</a>`:'')+
 (allowed.has('settlement')?`<a class="report-sub ${page==='withdraw'?'active':''}" href="agent-withdraw.html"><i class="bi bi-cash-stack me-2"></i>Withdraw</a>`:'')+
 `</div></div>`;}
-nav.innerHTML=html;const ft=nav.querySelector('[data-finance-toggle]');if(ft){const grp=ft.closest('.nav-group');const list=grp.querySelector('.nav-group-list');
-  const rail=$('reportSidebar');
-  const onPage=()=>page==='finance'||page==='withdraw';
-  /* Same mechanism as the Main rail (reports.js:91-232): hover opens after a 140ms intent delay, leaving
-     schedules a 400ms close that entering the panel cancels, a desktop click must not pin the group, and the
-     panel is positioned by script at left = sidebar.right + 6. The markup is the reference's own, so the look
-     comes from the same shell stylesheets. */
+nav.innerHTML=html;const ft=nav.querySelector('[data-finance-toggle]');if(ft){
+  /* Delegated, like auth.js's own bindDynamicSidebarEvents for this rail: the nav is rebuilt by initShell (and
+     can be rebuilt again by a menu refresh), so listeners hung on the group element disappear with it, and a
+     listener on the row misses a pointer that lands on a child (the icon or the label). The handlers therefore
+     live on the document and resolve the group per event. The behaviour itself is the Main rail's
+     (reports.js:91-232): 140ms intent delay before opening, a 400ms close grace that entering the panel cancels,
+     hover bound unconditionally (the pointer-capability query lies on touch laptops), a click fallback for
+     pointer-less devices, and the panel positioned at left = sidebar.right + 6. */
   const isDesktop=()=>window.innerWidth>=992;
-  let openTimer=0,closeTimer=0;
-  const place=function(){
-    if(!list||!rail)return;
-    const sr=rail.getBoundingClientRect();const br=ft.getBoundingClientRect();
-    list.style.left=Math.max(8,Math.round(sr.right+6))+'px';
-    list.style.top=Math.round(br.top)+'px';
+  const onPage=()=>page==='finance'||page==='withdraw';
+  let openGroup=null,openTimer=0,closeTimer=0;
+  const parts=function(g){
+    if(!g)return {};
+    return {grp:g,btn:g.querySelector('.nav-group-btn'),list:g.querySelector('.nav-group-list')};
   };
-  const hideNow=function(){
+  const place=function(g){
+    const p=parts(g),rail=$('reportSidebar');
+    if(!p.list||!rail||!p.btn)return;
+    const sr=rail.getBoundingClientRect(),br=p.btn.getBoundingClientRect();
+    p.list.style.left=Math.max(8,Math.round(sr.right+6))+'px';
+    p.list.style.top=Math.round(br.top)+'px';
+  };
+  const hideNow=function(g){
+    const p=parts(g||openGroup);
+    if(!p.grp)return;
     clearTimeout(openTimer);clearTimeout(closeTimer);
-    grp.classList.remove('open');ft.setAttribute('aria-expanded','false');
-    if(list)list.classList.remove('show');
-    if(!onPage())ft.classList.remove('active');
+    p.grp.classList.remove('open');
+    if(p.list)p.list.classList.remove('show');
+    if(p.btn){p.btn.setAttribute('aria-expanded','false');if(!onPage())p.btn.classList.remove('active');}
+    if(openGroup===p.grp)openGroup=null;
   };
-  const show=function(){
+  const show=function(g){
+    const p=parts(g);
+    if(!p.grp)return;
+    if(openGroup&&openGroup!==p.grp)hideNow(openGroup);
     clearTimeout(closeTimer);clearTimeout(openTimer);
     openTimer=setTimeout(function(){
       if(!isDesktop())return;
-      place();
-      grp.classList.add('open');ft.classList.add('active');ft.setAttribute('aria-expanded','true');
-      if(list)list.classList.add('show');
+      place(p.grp);
+      p.grp.classList.add('open');
+      if(p.list)p.list.classList.add('show');
+      if(p.btn){p.btn.classList.add('active');p.btn.setAttribute('aria-expanded','true');}
+      openGroup=p.grp;
+      /* the row can still be mid-layout when the delay expires (the panel measured y=84, up in the topbar,
+         and was covered) - re-place once the browser has laid this frame out */
+      requestAnimationFrame(function(){place(p.grp);});
     },140);
   };
-  const hide=function(){clearTimeout(openTimer);clearTimeout(closeTimer);closeTimer=setTimeout(hideNow,400);};
-  const toggle=function(){
-    if(grp.classList.contains('open')){hideNow();return;}
-    place();grp.classList.add('open');ft.classList.add('active');ft.setAttribute('aria-expanded','true');
-    if(list)list.classList.add('show');
+  const scheduleHide=function(g){
+    clearTimeout(openTimer);clearTimeout(closeTimer);
+    closeTimer=setTimeout(function(){hideNow(g);},400);
   };
-  /* Hover is bound unconditionally: `matchMedia('(hover: hover)')` reports false on machines whose primary
-     pointer is judged to be touch (a Windows laptop with a touchscreen, say), and gating the hover bindings on
-     it left those users with no way to open the panel - a real mouse still fires mouseenter either way. The
-     click stays as the fallback for genuinely pointer-less devices. */
-  grp.addEventListener('mouseenter',show);
-  grp.addEventListener('mouseleave',hide);
-  if(list){list.addEventListener('mouseenter',show);list.addEventListener('mouseleave',hide);}
-  if(!window.matchMedia('(hover: hover)').matches){
-    ft.onclick=function(e){e.preventDefault();toggle();};
+  const groupOf=function(node){
+    return node&&node.closest?node.closest('.report-sidebar .nav-group'):null;
+  };
+  document.addEventListener('mouseover',function(e){
+    const g=groupOf(e.target);
+    if(!g||g===openGroup)return;
+    show(g);
+  });
+  document.addEventListener('mouseout',function(e){
+    const g=groupOf(e.target);
+    if(!g||g!==openGroup)return;
+    const to=e.relatedTarget,p=parts(g);
+    if(to&&(g.contains(to)||(p.list&&p.list.contains(to))))return;
+    scheduleHide(g);
+  });
+  document.addEventListener('click',function(e){
+    const g=groupOf(e.target);
+    if(!g)return;
+    const onBtn=e.target.closest&&e.target.closest('.nav-group-btn');
+    if(!onBtn)return;
+    if(window.matchMedia('(hover: hover)').matches&&openGroup===g)return;
+    e.preventDefault();
+    if(g.classList.contains('open'))hideNow(g);else show(g);
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Enter'&&e.key!==' ')return;
+    const g=groupOf(e.target);
+    if(!g||!e.target.closest('.nav-group-btn'))return;
+    e.preventDefault();
+    if(g.classList.contains('open'))hideNow(g);else show(g);
+  });
+  window.addEventListener('resize',function(){if(openGroup)place(openGroup);});
+  if(onPage()){
+    const g=nav.querySelector('.nav-group');
+    if(g){g.classList.add('open');const p=parts(g);if(p.list)p.list.classList.add('show');
+      if(p.btn){p.btn.classList.add('active');p.btn.setAttribute('aria-expanded','true');}openGroup=g;}
   }
-  ft.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}});
-  window.addEventListener('resize',function(){if(grp.classList.contains('open'))place();});
-  if(onPage()){grp.classList.add('open');ft.classList.add('active');if(list)list.classList.add('show');}
 }}if($('agentSidebarIdentity'))$('agentSidebarIdentity').textContent=(profile.code||'Agent')+' · '+Number(profile.commissionPercent||0).toFixed(2)+'%';const sf=$('agentSidebarFooter');if(sf)sf.innerHTML=`<div class="bo-sidebar-account-footer"><a class="bo-sidebar-logout" href="#logout" data-agent-logout><i class="bi bi-box-arrow-right"></i><span>Logout</span></a></div>`;if($('agentTopProfile'))$('agentTopProfile').innerHTML=agentProfileHtml();bindProfileMenu();
  /* The rail's own toggle, in the BO's slot: .report-brand holds the label and this button, laid out
      space-between (see the parity sheet), and it stays visible when the rail is collapsed - which is

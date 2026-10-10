@@ -7791,3 +7791,21 @@ panel at `x=236`, `286x108`, `display:block`, `visibility:visible`.
 
 Lesson for this rail: do not use a pointer-capability media query to decide whether to *bind* a listener; use it
 only to decide which extra affordance to add.
+
+
+### The flyout bindings are delegated now (2026-10)
+
+Reported twice as *"hovering Finance shows nothing"* while every check here passed. Two causes were ruled out and
+one robustness change made:
+
+- the pointer-capability gate (`matchMedia('(hover: hover)')`) around the hover bindings is gone: it reports
+  false on machines whose primary pointer is judged to be touch, and those users got no hover at all. Hover is
+  bound unconditionally; the click fallback stays for pointer-less devices.
+- the listeners moved from the group element to the **document**, resolved per event through
+  `closest('.report-sidebar .nav-group')` - the same delegation `auth.js` uses for this rail. Listeners hung on
+  the element disappear whenever the nav is rebuilt, and a listener on the row alone misses a pointer that lands
+  on a child (the icon or the label).
+
+A measurement trap worth recording: with an error modal up, the panel's measured rect read `y=84` while its
+inline `top` was the correct `256px`. The modal's backdrop carries a transform, and a transformed ancestor
+re-anchors `position:fixed`. Checks on these pages must either avoid the modal or assert the inline values.
