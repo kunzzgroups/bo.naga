@@ -7825,3 +7825,23 @@ The same is applied to the group that starts open on the finance/withdraw pages.
 
 Verified: computed `visibility:visible`, `opacity:1` and the inline values present at every one of the eight agent
 pages after a hover.
+
+
+### The agent flyout: matching Main's metrics, reachable, hovering (2026-10)
+
+Three follow-ups, all measured:
+
+- **the panel is anchored to its row now.** `position:fixed` + script coordinates was re-anchored by a transformed
+  ancestor and parked ~170px above its group (the owner's arrow). As an absolute child of the group it travels
+  with the row; the script no longer computes anything. Verified `aligned: true` on eight pages, i.e. the panel's
+  top equals its row's top.
+- **the metrics are Main's**: `320px` wide (shared component: 286), rows `52px` (42), labels `15px/700` (13/600),
+  icons `18px` (13), `gap:0`, `padding:10px`. Two leftovers were found by dumping the panel's children: the
+  `.bo-flyout-title` was still rendering whenever the body carried `sidebar-mini` (the rail reports
+  `data-bo-mini-hover`), and every row carried `margin: 2px 0` - together the empty band in the owner's crop.
+  Panel: **320x126** (Main's 124 plus a 1px border top and bottom).
+- **it is reachable and it highlights**: the panel clears the rail by a few pixels, and the pointer crossing that
+  gap used to land on the content frame, so the 400ms grace was all the user had to reach the panel - a
+  transparent `::before` bridge spans the gap so the pointer never leaves a hover target. The row hover
+  (`#F7EFE2`) and the active row (amber tint) are pinned with the same chain, since stronger sheet rules were
+  winning.

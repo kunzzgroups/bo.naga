@@ -3279,3 +3279,63 @@ html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body 
 html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body .report-sidebar .nav-group.open > .nav-group-list{
   display:block!important;visibility:visible!important;
 }
+
+/* The panel is anchored to its own row. It had been `position:fixed` with script-written viewport coordinates
+   (the way reports.js positions the Main rail's panels), but the agent rail carries a transform somewhere up the
+   tree, and a transformed ancestor re-anchors `position:fixed` - the panel landed ~170px above its group (the
+   owner's arrow screenshot). As an absolute child of the group it travels with the row, whatever the ancestors
+   do, and the script no longer needs to compute anything. This has to out-rank whatever the shell sets, hence
+   the id-guard chain: `left: calc(100% + 6px)` is the same gap reports.js writes as sidebar.right + 6. */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body .report-sidebar .nav-group > .nav-group-list{
+  position:absolute!important;left:calc(100% + 16px)!important;top:0!important;
+}
+/* +16, not +6: 100% is the *group's* width and the group sits inside the rail's 10px padding, so +16 lands
+   the panel 6px clear of the rail's own edge - the gap reports.js computes as sidebar.right + 6. */
+
+/* The panel's metrics, taken from the Main rail's own flyout (the owner's side-by-side crops): a 320px panel,
+   52px rows, 15px/700 labels, 18px icons and a 14px icon-label gap. The shared component renders 286x108 with
+   42px rows and 13px/600 text, and `.bo-flyout-title` was still taking up room whenever the body also carried
+   `sidebar-mini` (the rail reports data-bo-mini-hover), which is what left the empty band under the rows. */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body .report-sidebar .nav-group > .nav-group-list{
+  width:320px!important;padding:10px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body .report-sidebar .nav-group-list .bo-flyout-title{
+  display:none!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body .report-sidebar .nav-group-list .report-sub{
+  height:52px!important;min-height:52px!important;padding:0 14px!important;gap:14px!important;
+  font-size:15px!important;font-weight:700!important;border-radius:8px!important;color:#8A5A2B!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body .report-sidebar .nav-group-list .report-sub i{
+  font-size:18px!important;color:#A9743F!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body .report-sidebar .nav-group-list .report-sub:hover{
+  background:#F7EFE2!important;color:#18191C!important;
+}
+
+/* Pointing at the sub-items: the panel sits a few pixels clear of the rail, and the pointer crossing that gap
+   lands on the content frame, so the 400ms grace was all the time the user had to reach the panel. A transparent
+   bridge fills the gap, so the pointer never leaves a hover target, and the row hover is pinned here too (a
+   stronger sheet rule was winning). `gap:0` removes the 8px the shared component left under the second row -
+   that is the empty band in the owner's crop. */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body .report-sidebar .nav-group > .nav-group-list{
+  gap:0!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body .report-sidebar .nav-group > .nav-group-list::before{
+  content:"";position:absolute;left:-24px;top:0;bottom:0;width:24px;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body .report-sidebar .nav-group-list .report-sub:hover,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body .report-sidebar .nav-group-list .report-sub:focus-visible{
+  background:#F7EFE2!important;color:#18191C!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body .report-sidebar .nav-group-list .report-sub.active,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body .report-sidebar .nav-group-list .report-sub.active:hover{
+  background:rgba(217,119,6,.14)!important;color:#B45309!important;
+}
+
+/* The last 8px of the panel's empty band: each row carries `margin: 2px 0` from the shared component (2 + 2 per
+   row, two rows). With the margin gone the panel is 104 + 20 = 124px tall, which is the height Main's own
+   flyout has for two rows. */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body .report-sidebar .nav-group-list .report-sub{
+  margin:0!important;
+}

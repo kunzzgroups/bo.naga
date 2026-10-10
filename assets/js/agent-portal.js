@@ -50,13 +50,6 @@ nav.innerHTML=html;const ft=nav.querySelector('[data-finance-toggle]');if(ft){
     if(!g)return {};
     return {grp:g,btn:g.querySelector('.nav-group-btn'),list:g.querySelector('.nav-group-list')};
   };
-  const place=function(g){
-    const p=parts(g),rail=$('reportSidebar');
-    if(!p.list||!rail||!p.btn)return;
-    const sr=rail.getBoundingClientRect(),br=p.btn.getBoundingClientRect();
-    p.list.style.left=Math.max(8,Math.round(sr.right+6))+'px';
-    p.list.style.top=Math.round(br.top)+'px';
-  };
   const hideNow=function(g){
     const p=parts(g||openGroup);
     if(!p.grp)return;
@@ -78,7 +71,6 @@ nav.innerHTML=html;const ft=nav.querySelector('[data-finance-toggle]');if(ft){
     clearTimeout(closeTimer);clearTimeout(openTimer);
     openTimer=setTimeout(function(){
       if(!isDesktop())return;
-      place(p.grp);
       p.grp.classList.add('open');
       if(p.list){
         p.list.classList.add('show');
@@ -94,7 +86,6 @@ nav.innerHTML=html;const ft=nav.querySelector('[data-finance-toggle]');if(ft){
       openGroup=p.grp;
       /* the row can still be mid-layout when the delay expires (the panel measured y=84, up in the topbar,
          and was covered) - re-place once the browser has laid this frame out */
-      requestAnimationFrame(function(){place(p.grp);});
     },140);
   };
   const scheduleHide=function(g){
@@ -132,7 +123,6 @@ nav.innerHTML=html;const ft=nav.querySelector('[data-finance-toggle]');if(ft){
     e.preventDefault();
     if(g.classList.contains('open'))hideNow(g);else show(g);
   });
-  window.addEventListener('resize',function(){if(openGroup)place(openGroup);});
   if(onPage()){
     const g=nav.querySelector('.nav-group');
     if(g){g.classList.add('open');const p=parts(g);
