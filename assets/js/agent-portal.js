@@ -355,9 +355,8 @@ function promoCampaignSize(){
   if(v==='all')return 0;
   const n=Number(v);
   if(n>0)return n;
-  /* "-" is the auto option (the BO's and the siblings' own default): as many rows as fit between the table's
-     head and the card's footer, so the page never needs a scrollbar and pagination stays the only way to move
-     through the rows. Row height is read off the first row once one exists, 66px until then. */
+  /* "-" is the auto option: the row count comes from the free space, and 120px are left under the card so the
+     page-size dropdown (a native select at the bottom of the page) has room to open downwards. */
   const wrap=document.querySelector('.agent-promo-campaign-card > .table-wrap');
   const foot=document.querySelector('.agent-promo-campaign-card > .agent-table-footer');
   if(!wrap)return 10;
@@ -365,8 +364,18 @@ function promoCampaignSize(){
   const rowH=row?Math.round(row.getBoundingClientRect().height):66;
   const top=wrap.getBoundingClientRect().top;
   const footH=foot?Math.round(foot.getBoundingClientRect().height):65;
-  const avail=(window.innerHeight-8)-top-47-footH;
+  const avail=(window.innerHeight-128)-top-47-footH;
   return Math.max(5,Math.floor(avail/Math.max(24,rowH)));
+}
+function promoRowHeight(size){
+  /* the rows share the free space equally, so every row is the same height whatever the data does */
+  const wrap=document.querySelector('.agent-promo-campaign-card > .table-wrap');
+  const foot=document.querySelector('.agent-promo-campaign-card > .agent-table-footer');
+  if(!wrap||!size)return 0;
+  const top=wrap.getBoundingClientRect().top;
+  const footH=foot?Math.round(foot.getBoundingClientRect().height):65;
+  const avail=(window.innerHeight-128)-top-47-footH;
+  return Math.max(40,Math.floor(avail/size));
 }
 function promoCampaignPager(pages){
   const el=$('agentCampaignPager');
@@ -382,7 +391,9 @@ function promoCampaignPager(pages){
 function paintPromotionCampaigns(){
   const tbody=$('agentCampaignRows');
   if(!tbody)return;
-  const size=promoCampaignSize();
+  const size=promoCampaignSize();const rowH=promoRowHeight(size);
+  const _card=document.querySelector('.agent-promo-campaign-card');
+  if(_card)_card.style.setProperty('--bonus-row-h',(rowH||66)+'px');
   const total=promoCampaignRows.length;
   const pages=size?Math.max(1,Math.ceil(total/size)):1;
   promoCampaignPage=Math.max(1,Math.min(promoCampaignPage,pages));

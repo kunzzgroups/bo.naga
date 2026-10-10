@@ -2882,3 +2882,19 @@ html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-c
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card tbody td:nth-child(4){
   white-space:nowrap!important;
 }
+
+/* "行高要根据屏幕定死，不根据 table 里的数据" (owner): every row takes --bonus-row-h, which agent-portal.js
+   computes from the free space (free / page size), and the cells clamp their content instead of growing. */
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card tbody tr{
+  height:var(--bonus-row-h,66px)!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card tbody td{
+  height:var(--bonus-row-h,66px)!important;max-height:var(--bonus-row-h,66px)!important;
+  overflow:hidden!important;vertical-align:middle!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card tbody td:first-child{
+  white-space:nowrap!important;text-overflow:ellipsis!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card tbody td .agent-promo-cell-sub{
+  display:block!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}

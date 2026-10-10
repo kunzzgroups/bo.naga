@@ -7480,3 +7480,17 @@ always inside the viewport, and the page never grows a scrollbar - which is what
 The table head also lost the `text-transform:uppercase` this page had added: the reference labels are Title
 Case (`Date`, `Merchant`, ...) at 12px/700 in `#3F3F46`. Rows were tightened from 96px to ~65px (the period
 column no longer wraps on a `<br>`; cell padding 9px) so a normal window fits five to eight rows.
+
+
+### agent-bonus.html: row height from the screen, and room under the card for the size dropdown (2026-10)
+
+Owner: *"the row height must be fixed by the screen, not by the data in the table"* and *"Show entries still
+cannot expand"*.
+
+- `--bonus-row-h` (set by `agent-portal.js:promoRowHeight` = free space / page size) drives `tbody tr` and
+  `tbody td` height with `overflow:hidden`, and the name cell clamps with an ellipsis: every row is the same
+  height whatever the campaign name or period does. The wrapper is pinned to `pageSize x rowH` so a short last
+  page cannot collapse the card either.
+- the auto page size now leaves **120px under the card** (`innerHeight - 128`): the page-size control is a
+  native select sitting at the bottom of a page that deliberately does not scroll, so its popup had nowhere to
+  open downwards and appeared clipped.
