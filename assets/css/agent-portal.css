@@ -3287,10 +3287,10 @@ html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body 
    do, and the script no longer needs to compute anything. This has to out-rank whatever the shell sets, hence
    the id-guard chain: `left: calc(100% + 6px)` is the same gap reports.js writes as sidebar.right + 6. */
 html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body .report-sidebar .nav-group > .nav-group-list{
-  position:absolute!important;left:calc(100% + 16px)!important;top:0!important;
+  position:absolute!important;left:calc(100% + 36px)!important;top:0!important;
 }
-/* +16, not +6: 100% is the *group's* width and the group sits inside the rail's 10px padding, so +16 lands
-   the panel 6px clear of the rail's own edge - the gap reports.js computes as sidebar.right + 6. */
+/* +36, not +6: 100% is the *group's* width and the group sits inside the rail's 10px padding, so +36 lands
+   the panel ~26px clear of the rail's own edge - the spacing the Main rail's flyout has. */
 
 /* The panel's metrics, taken from the Main rail's own flyout (the owner's side-by-side crops): a 320px panel,
    52px rows, 15px/700 labels, 18px icons and a 14px icon-label gap. The shared component renders 286x108 with

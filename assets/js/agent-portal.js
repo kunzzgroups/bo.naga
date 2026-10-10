@@ -97,7 +97,15 @@ nav.innerHTML=html;const ft=nav.querySelector('[data-finance-toggle]');if(ft){
   };
   document.addEventListener('mouseover',function(e){
     const g=groupOf(e.target);
-    if(!g||g===openGroup)return;
+    if(!g)return;
+    if(g===openGroup){
+      /* Still inside the open group (the pointer moved from the row into the panel, or between its rows).
+         This branch must cancel the pending close: returning silently left the 400ms timer scheduled by the
+         mouseout on the row, so the panel disappeared before the user could reach it - "I cannot click Wallet".
+         The panel is a child of the group, so moving onto it fires mouseover, not mouseout, for the group. */
+      clearTimeout(closeTimer);
+      return;
+    }
     show(g);
   });
   document.addEventListener('mouseout',function(e){

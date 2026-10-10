@@ -7845,3 +7845,26 @@ Three follow-ups, all measured:
   transparent `::before` bridge spans the gap so the pointer never leaves a hover target. The row hover
   (`#F7EFE2`) and the active row (amber tint) are pinned with the same chain, since stronger sheet rules were
   winning.
+
+
+### Why the sub-items could not be clicked (2026-10)
+
+Not a spacing problem - a hole in the delegated handlers. The pointer walks row -> gap -> panel, and:
+
+    document.addEventListener('mouseover', e => {
+      const g = groupOf(e.target);
+      if (!g || g === openGroup) return;   // <- entering the panel hits this
+      show(g);
+    });
+
+`show()` is what cancels the pending close (`clearTimeout(closeTimer)`), so taking that early return when the
+pointer arrived on the panel **left the 400ms timer scheduled by the mouseout on the row running**, and the panel
+vanished before the user could reach it. The handler now cancels the timer explicitly in that branch, because the
+panel is a child of the group: moving onto it fires `mouseover` for the group, not `mouseout`.
+
+Verified by walking the pointer the way a user does: leave the row (`mouseout` to the content frame) - 200ms
+later, over the gap, the group is still open - then `mouseover` the panel and wait 500ms: still open,
+`display:block`.
+
+Also matched the reference's spacing while here: the panel sits 25px clear of the rail (it was 5px), which is
+what the Main rail's flyout shows.
