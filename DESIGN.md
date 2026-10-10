@@ -7545,3 +7545,19 @@ both carried the tab's name (`Promotion - Campaigns`) even while Recent Claims w
 static markup in `<header class="report-topbar"><h1>` and `<title>` - no script touches them. Both are now
 `Promotion`; the module tab row is what names the section. Verified: after clicking the Recent Claims tab the
 heading still reads "Promotion" with that tab active.
+
+
+### agent-player-game-report.html: the drill-down context strip (2026-10)
+
+The strip above the table read `0137126066 Game Bet Report` - the player id glued to a report name the topbar
+already shows, with no hierarchy. `loadPlayerGameReport` built it as `username + ' Game Bet Report'`; the markup
+is `<div class="user-toolbar"><h2 id="agentGameReportTitle">` plus the back control.
+
+Now: the strip carries a label over a value - `PLAYER` (11px/700 uppercase, `.03em` tracking, `#78716C`) over the
+id (15px/800 `#18191C`) - which is the label/value hierarchy index.html uses on its cards. The script sets the id
+only. The back control keeps its seat at the right.
+
+Two CSS details worth recording: an older rule (agent-portal.css ~2724) pins the same id at 13px/700 with its own
+`padding:14px 16px` and a longer class chain, so the new rule repeats that chain and adds `.user-toolbar` to
+out-rank it; and moving the padding from the `<h2>` onto the strip makes `PLAYER` line up with the table's first
+column (its cells are inset 12px - measured: label x 262 == first header text x 262).

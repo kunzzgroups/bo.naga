@@ -2966,3 +2966,28 @@ html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-size-opt:hover{b
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-size-opt.is-active{
   background:rgba(217,119,6,.16)!important;color:#B45309!important;
 }
+
+/* The drill-down context strip named the player *and* repeated the report name the topbar already carries
+   ("0137126066 Game Bet Report"). It now reads as a label over a value, the hierarchy index.html uses for its
+   card labels - 11px uppercase #78716C over a 15px/800 value - with the back control keeping its seat at the
+   right. The older rule at line ~2724 pins the same id at 13px/700 with its own 14px 16px padding and a longer
+   class chain, so this one repeats that chain and adds `.user-toolbar`; the padding moves to the strip so the
+   label lines up with the table's first column (its cells are inset 12px). */
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .user-toolbar{
+  padding:14px 12px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .user-toolbar .agent-context{
+  display:flex!important;flex-direction:column!important;gap:2px!important;min-width:0!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .user-toolbar .agent-context-label{
+  font-size:11px!important;font-weight:700!important;text-transform:uppercase!important;letter-spacing:.03em!important;
+  color:#78716C!important;line-height:1!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .user-toolbar #agentGameReportTitle{
+  font-size:15px!important;font-weight:800!important;color:#18191C!important;line-height:1.2!important;
+  margin:0!important;padding:0!important;letter-spacing:0!important;
+  overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .user-toolbar #agentGameReportTitle{
+  color:#F5F5F4!important;
+}
