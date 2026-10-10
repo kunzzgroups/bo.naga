@@ -71,11 +71,14 @@ nav.innerHTML=html;const ft=nav.querySelector('[data-finance-toggle]');if(ft){co
     place();grp.classList.add('open');ft.classList.add('active');ft.setAttribute('aria-expanded','true');
     if(list)list.classList.add('show');
   };
-  if(window.matchMedia('(hover: hover)').matches){
-    grp.addEventListener('mouseenter',show);
-    grp.addEventListener('mouseleave',hide);
-    if(list){list.addEventListener('mouseenter',show);list.addEventListener('mouseleave',hide);}
-  }else{
+  /* Hover is bound unconditionally: `matchMedia('(hover: hover)')` reports false on machines whose primary
+     pointer is judged to be touch (a Windows laptop with a touchscreen, say), and gating the hover bindings on
+     it left those users with no way to open the panel - a real mouse still fires mouseenter either way. The
+     click stays as the fallback for genuinely pointer-less devices. */
+  grp.addEventListener('mouseenter',show);
+  grp.addEventListener('mouseleave',hide);
+  if(list){list.addEventListener('mouseenter',show);list.addEventListener('mouseleave',hide);}
+  if(!window.matchMedia('(hover: hover)').matches){
     ft.onclick=function(e){e.preventDefault();toggle();};
   }
   ft.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}});

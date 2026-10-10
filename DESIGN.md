@@ -7775,3 +7775,19 @@ Verified across eight agent pages (dashboard, wallet, withdraw, products, player
 after a hover every one reports `open` + `show` + `display:block` + `visibility:visible` at
 `x=236, 286x108`, and the panel is the topmost element at its own coordinates wherever the page has no error
 overlay on top. The check is worth re-running with `node .pi-tmp-rail-allpages.js` after touching this markup.
+
+
+### The hover bindings were gated on a media query that lies on touch-capable machines (2026-10)
+
+*"Where is it?"* - the panel opened in every headless check but not for the owner. The bindings sat inside
+`if (window.matchMedia('(hover: hover)').matches)`, and that query reports **false** when the primary pointer is
+judged to be touch - a Windows laptop with a touchscreen, for instance. On such a machine the portal bound only
+the click fallback and **never bound hover at all**, so hovering Finance did nothing while this environment
+(headless, `hover: true`) worked.
+
+Hover is now bound unconditionally - a real mouse fires `mouseenter` regardless of the media query - and the
+click fallback stays for genuinely pointer-less devices. Re-verified on all eight agent pages: hover opens the
+panel at `x=236`, `286x108`, `display:block`, `visibility:visible`.
+
+Lesson for this rail: do not use a pointer-capability media query to decide whether to *bind* a listener; use it
+only to decide which extra affordance to add.
