@@ -3220,3 +3220,28 @@ html:not(#bo-charcoal-off) body.agent-modern.agent-report-body:not(.sidebar-mini
 
 /* Main's flyout has no border at all - the shadow alone separates it - and its rows are 52px in a 320px panel
    (124px for two rows plus 10px padding). The gap from the rail is 20px. */
+
+/* The flyout's labels are the rail's own warm brown, the way Main's panel reads (icons and labels the same
+   tone), rather than near-black. */
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem{
+  color:#8A5A2B!important;
+}
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem i{
+  color:#A9743F!important;
+}
+
+/* The rail's active recipe (cream #F5EBDC + an inset orange bar) is written for the <a> rows, and the rules
+   that own `.agent-nav-parent` (agent-portal.css:1712 and friends) carry a six-class chain of their own - so
+   this repeats that chain and adds `.agent-nav-group.open` / `.active` to out-rank it. It is the same treatment
+   Main gives the row whose flyout is open. */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-group.open > .agent-nav-parent,
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-parent.active{
+  background:#F5EBDC!important;background-image:none!important;color:#18191C!important;
+  box-shadow:inset 4px 0 0 0 #D97706!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-group.open > .agent-nav-parent .agent-nav-chevron{
+  color:#D97706!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-group.open > .agent-nav-parent{
+  background:rgba(255,255,255,.08)!important;color:#F5F5F4!important;
+}

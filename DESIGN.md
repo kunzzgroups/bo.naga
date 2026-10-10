@@ -7676,3 +7676,19 @@ Two traps this pass hit, both worth remembering for this rail:
   plus 10px padding), **no border at all** (the shadow alone separates it, was `1px #EFE3D2`), a 20px offset from
   the nav item which lands the panel 29px clear of the rail's edge (Main's own gap is 27px), radius 12,
   `0 20px 48px rgba(60,48,32,.18)`.
+
+
+### agent rail: the row whose flyout is open takes the rail's active treatment (2026-10)
+
+Main highlights the whole row whose panel is open exactly like the current page's row, and that was the piece
+still missing here. The parent button is a `<button>`, and the rail's active recipe is written for its `<a>` rows,
+so carrying `active` alone only changed the text colour - the fill and the left bar never came.
+
+Both now come from one rule that repeats the chain the `.agent-nav-parent` rules own
+(`html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav`,
+agent-portal.css:1712 and friends) and adds `.agent-nav-group.open` / `.active`: `#F5EBDC`, dark text,
+`box-shadow: inset 4px 0 0 0 #D97706`, with the chevron turning amber.
+
+Verified: with the group hovered open the row computes `rgb(245,235,220)` with
+`rgb(217,119,6) 4px 0 0 0 inset`, the flyout sits 29px clear of the rail at 320x130 with 52px rows and
+`#8A5A2B` / `#A9743F` label and icon, and the group still opens on hover and closes on leave.
