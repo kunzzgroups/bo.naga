@@ -389,6 +389,10 @@ function paintPromotionCampaigns(){
   const start=size?(promoCampaignPage-1)*size:0;
   const slice=size?promoCampaignRows.slice(start,start+size):promoCampaignRows;
   tbody.innerHTML=slice.map(promoCampaignRowHtml).join('')||'<tr><td colspan="9" class="table-empty">No campaigns found for this period.</td></tr>';
+  /* a short last page must not shorten the table (owner): keep the wrapper at a full page of rows */
+  const _wrap=tbody.closest('.table-wrap');
+  if(_wrap){const _r=tbody.querySelector('tr');const _rh=_r?Math.round(_r.getBoundingClientRect().height):66;
+    _wrap.style.minHeight=(size?size*_rh:0)+'px';}
   const meta=$('agentCampaignMeta');
   if(meta)meta.textContent=total?('Showing '+num(start+1)+' to '+num(start+slice.length)+' of '+num(total)+' campaign'+(total===1?'':'s')):'Showing 0 campaigns';
   promoCampaignPager(pages);

@@ -2822,7 +2822,7 @@ body.agent-promotion-page .agent-standard-filter .agent-status-field select{widt
    hairline, and the pager is text buttons - #F3F4F6 / #9CA3AF / radius 8 / 36px / 0 16px padding - not chevrons. */
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card{
   border:1px solid #EADCC8!important;border-radius:8px!important;padding:0!important;
-  box-shadow:0 5px 18px rgba(217,119,6,.035)!important;overflow:hidden!important;
+  box-shadow:0 5px 18px rgba(217,119,6,.035)!important;
 }
 /* "table 不能 scroll，要符合 pagination" (owner): no inner scrollbar either - the page size adapts to the
    space instead (agent-portal.js:promoCampaignSize returns the auto count for the "-" option, recomputed on
@@ -2838,7 +2838,7 @@ html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-c
   border:0!important;border-radius:0!important;margin:0!important;
 }
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card .report-table thead th{
-  background:transparent!important;color:#3F3F46!important;font-size:12px!important;font-weight:700!important;
+  background:#FFE8CC!important;color:#6B360C!important;font-size:12px!important;font-weight:700!important;
   text-transform:none!important;height:47px!important;
   padding:14px 12px!important;border-bottom:1px solid #EADCC8!important;
 }
