@@ -3065,3 +3065,18 @@ html:not(#bo-charcoal-off) body[data-agent-page="provider_detail"].agent-report-
 html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .agent-context-row{
   flex:0 0 auto!important;min-height:18px!important;
 }
+
+/* Uppercase 11px text was clipped across its cap height: the label sat in a `line-height:1` box, and the table
+   head on these pages is uppercase too, so both lost the top of their glyphs while the (mixed-case) row text
+   stayed whole. Line-height headroom fixes it; the boxes themselves were never too short. */
+html:not(#bo-charcoal-off) body[data-agent-page="provider_detail"].agent-report-body.agent-modern .agent-context-label,
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .agent-context-label{
+  line-height:1.4!important;padding-top:1px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="provider_detail"].agent-report-body.agent-modern .table-card .report-table thead th,
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card .report-table thead th{
+  line-height:1.4!important;overflow:visible!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="provider_detail"].agent-report-body.agent-modern .agent-context{
+  overflow:visible!important;
+}

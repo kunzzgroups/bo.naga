@@ -7592,3 +7592,15 @@ The strip is now `flex:0 0 auto` with `min-height:65px` and `overflow:visible`, 
 `min-height`, so the pressure goes to the table (which already scrolls inside the card) instead of the strip.
 Verified in a deliberately short window (1568x560, innerHeight ~408): strip height 65, content not clipped,
 `documentElement.scrollHeight == innerHeight`, value and period fully inside the strip.
+
+
+### Uppercase label and table head: line-height headroom (2026-10)
+
+The owner's screenshot showed the uppercase label (`PROVIDER`) and the (also uppercase) table head cut across
+their tops while the mixed-case row text stayed whole - the signature of tight line boxes over uppercase glyphs
+rather than a shifted box. Both now carry `line-height:1.4` (15.4px on an 11px font) and the label a 1px top
+pad, and neither they nor their parents clip (`overflow:visible`).
+
+Honest note: the clip census (every element whose `scrollHeight` exceeds `clientHeight` while its `overflow` is
+hidden/clip) reports an empty list in this environment, so the reported clipping could not be reproduced here -
+worth remembering if it comes back, together with browser zoom as a candidate cause of sub-pixel cap clipping.
