@@ -8063,3 +8063,33 @@ with `#FBBF24` and the same bar. Screenshot: `.pi-tmp-wl-eye/mini-light.png`.
 - **the card titles were cream `.user-badge` pills** sitting on a full-width header band - a sticker in a band.
   They are plain icon + bold title with a hairline under the band now, the shape the drill-down strips use. Form
   labels inside the cards are untouched (they are a form, not a filter row).
+
+
+### Finance - Wallet craft pass (2026-10) - interface-design skill
+
+Applied the `interface-design` skill to this page (dashboards/admin panels is its scope). The working brief:
+
+    Domain      wallet, ledger, payout, commission, claim, receipt, deduction, settlement
+    Color world the house's own book-keeping palette - cream #FFF8EB, line #EADCC8, ink #18191C,
+                secondary #78716C, amber stamp #D97706 (all taken from the existing sheets, none invented)
+    Signature   the balance -> withdrawable -> fee -> payout relationship as one ledger equation
+    Rejecting   4 equal KPI cards -> a focal value with supporting metrics a tier below
+                a bare "no records" sentence -> a calm centred empty state
+                a flat stacked form -> the amount as the payload with one amber action
+    Direction   keep the house palette and the shared components; fix hierarchy, density, states and numbers
+
+What landed, all scoped to `body[data-agent-page="finance"]` so the shared components other pages use are untouched:
+
+- **metrics in three tiers**: label 11px/500 `#78716C` tracked, value 22px/600 ink with `tabular-nums`, note 11px
+  muted - and the focal card (Available Balance) at **28px** with more room, so the figure leads by size and space
+  rather than by colour. Measured: focal `11px/500 … 28px/600 … 11px/400`, supporting `11px/500 … 22px/600 …`.
+  The chain had to carry `agent-report-body.agent-modern` because agent-portal.css:1619 (which renders the value
+  in a `<b>`) out-ranks a shorter selector - and the value *is* a `<b>`, not a `<strong>`.
+- **numbers**: `font-variant-numeric: tabular-nums` on the metric values and every table cell, so figures and
+  columns stop shifting.
+- **states**: table empty states get a calm centred 150px treatment in the house muted colour (`#A8A29E` was a
+  3:1 wash); inputs and selects get a focus ring in the house amber; the primary action has press feedback
+  (`scale(.98)`, 120ms, `cubic-bezier(.23,1,.32,1)`) and nothing else animates. `prefers-reduced-motion` turns it
+  off.
+- **density**: 4px base, 12px inside controls, 16px inside cards, 24px between blocks; card titles are plain
+  icon + 14px/800 title with a hairline band; one frame per card.
