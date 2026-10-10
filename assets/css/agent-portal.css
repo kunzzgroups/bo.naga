@@ -3249,3 +3249,22 @@ html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern 
 html[data-bo-theme="dark"]:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav .agent-nav-group.open > .agent-nav-parent{
   background:rgba(255,255,255,.08)!important;color:#F5F5F4!important;
 }
+
+/* The Finance group is now the reference's own markup (.nav-group / .nav-group-btn / .nav-group-list /
+   .bo-flyout-title / .report-sub), so its look comes from the shared shell sheets. Two page-level
+   interferences had to be answered, not restyled:
+
+   1. the portal's own `.report-nav a` rules push a row's label to the far right (they lay the rail rows out
+      space-between), so the panel's rows rendered icon-left / label-right;
+   2. `.bo-flyout-title` is the panel's heading for the *collapsed* rail, and the rule that hides it elsewhere
+      lives in bo-global-quicknav.css, which this side does not load. */
+html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body .report-sidebar .nav-group-list .report-sub{
+  display:flex!important;align-items:center!important;justify-content:flex-start!important;
+  gap:10px!important;width:100%!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body .report-sidebar .nav-group-list .report-sub i{
+  flex:0 0 auto!important;margin:0!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page].agent-modern.agent-report-body:not(.sidebar-mini) .report-sidebar .nav-group-list .bo-flyout-title{
+  display:none!important;
+}

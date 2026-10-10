@@ -7723,3 +7723,35 @@ Verified: at 120ms after `mouseenter` the group is still closed; opened it repor
 `x = 236` against a rail ending at 230 (the reference's own `+6`); 150ms after `mouseleave` it is still open, and
 closed after the grace. Panel 320x130, rows 52px, labels `#8A5A2B`, icons `#A9743F`, and the open row carries the
 rail's `#F5EBDC` fill with an inset `#D97706` bar.
+
+
+### The real unification: use the reference markup, not a re-styled copy (2026-10)
+
+The audit (`auth.js:1242-1247` + `reports.js`) shows how the Main rail's groups are built: **fixed markup plus the
+shared shell stylesheets**, never a per-page restyle.
+
+    <div class="nav-group open" data-menu-group="...">
+      <button type="button" class="nav-group-btn" aria-expanded="true">
+        <span><i class="bi ... me-2"></i>Title</span><i class="bi bi-chevron-down"></i>
+      </button>
+      <div class="nav-group-list show">
+        <div class="bo-flyout-title">Title</div>
+        <a class="report-sub [active]" href="..."><i class="bi ... me-2"></i>Label</a>
+      </div>
+    </div>
+
+The agent rail's Finance group now emits exactly that (the previous `.agent-nav-*` classes are gone from the JS, so
+every bespoke rule written for them is inert and the look comes from the shared sheets). The behaviour stays in
+`agent-portal.js` with the reference's own mechanism (140ms intent delay, 400ms close grace, hover-only on
+desktop, `left = sidebar.right + 6`).
+
+Two page-level interferences had to be answered rather than restyled:
+
+1. the portal's `.report-nav a` rules lay the rail rows out space-between, which pushed the panel's labels to the
+   far right - the panel's rows are pinned back to `justify-content:flex-start` with a 10px gap;
+2. `.bo-flyout-title` is the collapsed rail's panel heading; the rule that hides it elsewhere lives in
+   `bo-global-quicknav.css`, which this side does not load, so it is hidden here for the expanded rail.
+
+Rendered result: cream panel `#FFF8EB`, `1px rgba(92,74,48,.12)`, radius 12, `padding:8px`, 42px rows with 13px
+brown labels and icons at x = 236 against a rail ending at 230. What remains different from Main is what
+AGENTS.md puts out of scope: the Main shell's own `data-bo-shell="main"` sheet.
