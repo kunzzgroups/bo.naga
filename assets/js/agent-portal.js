@@ -32,8 +32,8 @@ document.addEventListener('click',e=>{const wrap=$('agentTopProfile');if(wrap&&m
 async function initShell(){try{profile=await api('/agent/me');const allowed=new Set(profile.portalMenuKeys||['dashboard']);const required=permissionKey(page);if(!UTILITY.has(page)&&!allowed.has(required)){location.href=menuHref([...allowed][0]||'dashboard');return false;}const nav=$('agentPortalNav');if(nav){let html='';for(const x of MENU){const pk=permissionKey(x[0]);if(!allowed.has(pk))continue;const navActive=x[0]===page||(x[0]==='products'&&page==='provider_detail')||(x[0]==='reports'&&page==='player_game_report');html+=`<a class="report-nav-item ${navActive?'active':''}" href="${x[3]}"><i class="bi ${x[2]}"></i><span>${x[1]}</span></a>`;}const financeVisible=allowed.has('wallet')||allowed.has('settlement');if(financeVisible){const active=['finance','withdraw'].includes(page);html+=`<div class="nav-group agent-finance-group ${active?'open':''}" data-menu-group="finance">`+
 `<button type="button" class="nav-group-btn" data-finance-toggle aria-expanded="${active?'true':'false'}"><span><i class="bi bi-wallet2 me-2"></i>Finance</span><i class="bi bi-chevron-down"></i></button>`+
 `<div class="nav-group-list ${active?'show':''}"><div class="bo-flyout-title">Finance</div>`+
-(allowed.has('wallet')?`<a class="report-sub ${page==='finance'?'active':''}" href="agent-wallet.html"><i class="bi bi-wallet2 me-2"></i>Wallet</a>`:'')+
-(allowed.has('settlement')?`<a class="report-sub ${page==='withdraw'?'active':''}" href="agent-withdraw.html"><i class="bi bi-cash-stack me-2"></i>Withdraw</a>`:'')+
+(allowed.has('wallet')?`<a class="report-sub ${page==='finance'?'active':''}" href="agent-wallet.html" data-menu-key="wallet"><span><i class="bi bi-wallet2 me-2"></i>Wallet</span></a>`:'')+
+(allowed.has('settlement')?`<a class="report-sub ${page==='withdraw'?'active':''}" href="agent-withdraw.html" data-menu-key="withdraw"><span><i class="bi bi-cash-stack me-2"></i>Withdraw</span></a>`:'')+
 `</div></div>`;}
 nav.innerHTML=html;const ft=nav.querySelector('[data-finance-toggle]');if(ft){
   /* Delegated, like auth.js's own bindDynamicSidebarEvents for this rail: the nav is rebuilt by initShell (and
@@ -50,17 +50,27 @@ nav.innerHTML=html;const ft=nav.querySelector('[data-finance-toggle]');if(ft){
     if(!g)return {};
     return {grp:g,btn:g.querySelector('.nav-group-btn'),list:g.querySelector('.nav-group-list')};
   };
+  /* auth.js:positionSidebarFlyout writes two custom properties on the group and the shell sheet
+     (bo-global-quicknav.css) consumes them with position:fixed!important - the panel's top is the row's top,
+     its left is the rail's right edge + 6, and its height is capped to the room below. */
+  const placeFlyout=function(g){
+    const p=parts(g),rail=$('reportSidebar');
+    if(!p.btn||!p.list||!rail)return;
+    const sr=rail.getBoundingClientRect(),br=p.btn.getBoundingClientRect();
+    const left=Math.max(8,Math.round(sr.right+6));
+    let top=Math.round(br.top);
+    const room=window.innerHeight-top-12,cap=Math.max(160,Math.min(Math.round(window.innerHeight*0.62),room));
+    if(top+cap>window.innerHeight-12)top=Math.max(12,window.innerHeight-cap-12);
+    g.style.setProperty('--bo-sidebar-flyout-left',left+'px');
+    g.style.setProperty('--bo-sidebar-flyout-top',top+'px');
+    g.style.setProperty('--bo-sidebar-flyout-max',cap+'px');
+  };
   const hideNow=function(g){
     const p=parts(g||openGroup);
     if(!p.grp)return;
     clearTimeout(openTimer);clearTimeout(closeTimer);
-    p.grp.classList.remove('open');
-    if(p.list){
-      p.list.classList.remove('show');
-      p.list.style.removeProperty('display');
-      p.list.style.removeProperty('visibility');
-      p.list.style.removeProperty('opacity');
-    }
+    p.grp.classList.remove('bo-flyout-hover','open');
+    if(p.list)p.list.classList.remove('show');
     if(p.btn){p.btn.setAttribute('aria-expanded','false');if(!onPage())p.btn.classList.remove('active');}
     if(openGroup===p.grp)openGroup=null;
   };
@@ -71,21 +81,16 @@ nav.innerHTML=html;const ft=nav.querySelector('[data-finance-toggle]');if(ft){
     clearTimeout(closeTimer);clearTimeout(openTimer);
     openTimer=setTimeout(function(){
       if(!isDesktop())return;
-      p.grp.classList.add('open');
-      if(p.list){
-        p.list.classList.add('show');
-        /* Inline !important, deliberately: something in the loaded sheets keeps this list hidden with an
-           !important rule of its own (a stylesheet !important out-ranks a plain inline style), and the owner's
-           DevTools showed the group .open with correct inline coordinates and nothing on screen. These three
-           properties are the whole of "visible"; hideNow removes them again. */
-        p.list.style.setProperty('display','block','important');
-        p.list.style.setProperty('visibility','visible','important');
-        p.list.style.setProperty('opacity','1','important');
-      }
-      if(p.btn){p.btn.classList.add('active');p.btn.setAttribute('aria-expanded','true');}
+      /* The original rail's flag is `.bo-flyout-hover` (auth.js:openSidebarFlyoutOnHover). reports.css:7296 hides
+         every `.nav-group:not(.bo-flyout-hover) > .nav-group-list` with display:none / visibility:hidden /
+         pointer-events:none, all !important - so the panel can only be opened by that class. Opening it with
+         `.open` + inline !important overrides (what this did before) paints the panel but leaves
+         pointer-events:none in force: visible, and the pointer falls through it onto the table beneath. */
+      p.grp.classList.add('bo-flyout-hover','open');
+      if(p.list)p.list.classList.add('show');
+      if(p.btn)p.btn.setAttribute('aria-expanded','true');
+      placeFlyout(p.grp);
       openGroup=p.grp;
-      /* the row can still be mid-layout when the delay expires (the panel measured y=84, up in the topbar,
-         and was covered) - re-place once the browser has laid this frame out */
     },140);
   };
   const scheduleHide=function(g){
@@ -131,15 +136,11 @@ nav.innerHTML=html;const ft=nav.querySelector('[data-finance-toggle]');if(ft){
     e.preventDefault();
     if(g.classList.contains('open'))hideNow(g);else show(g);
   });
-  if(onPage()){
-    const g=nav.querySelector('.nav-group');
-    if(g){g.classList.add('open');const p=parts(g);
-      if(p.list){p.list.classList.add('show');
-        p.list.style.setProperty('display','block','important');
-        p.list.style.setProperty('visibility','visible','important');
-        p.list.style.setProperty('opacity','1','important');}
-      if(p.btn){p.btn.classList.add('active');p.btn.setAttribute('aria-expanded','true');}openGroup=g;}
-  }
+  /* No default-open on the group's own pages. The original rail marks the current section with `.open` /
+     `.show` (the template above does that) and leaves the panel hidden - reports.css hides every
+     `.nav-group:not(.bo-flyout-hover) > .nav-group-list` - while the parent row is lit by the shell's
+     `:has(.report-sub.active)`. Adding `.bo-flyout-hover` here pinned the panel open over the page of the
+     link just clicked, with the pointer long gone. */
 }}if($('agentSidebarIdentity'))$('agentSidebarIdentity').textContent=(profile.code||'Agent')+' · '+Number(profile.commissionPercent||0).toFixed(2)+'%';const sf=$('agentSidebarFooter');if(sf)sf.innerHTML=`<div class="bo-sidebar-account-footer"><a class="bo-sidebar-logout" href="#logout" data-agent-logout><i class="bi bi-box-arrow-right"></i><span>Logout</span></a></div>`;if($('agentTopProfile'))$('agentTopProfile').innerHTML=agentProfileHtml();bindProfileMenu();
  /* The rail's own toggle, in the BO's slot: .report-brand holds the label and this button, laid out
      space-between (see the parity sheet), and it stays visible when the rail is collapsed - which is

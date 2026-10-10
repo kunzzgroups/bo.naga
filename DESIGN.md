@@ -7868,3 +7868,49 @@ later, over the gap, the group is still open - then `mouseover` the panel and wa
 
 Also matched the reference's spacing while here: the panel sits 25px clear of the rail (it was 5px), which is
 what the Main rail's flyout shows.
+
+
+### The agent rail flyout: the actual root cause (2026-10)
+
+Three sessions of patches went into this before the source was read properly. The answer was in the files that
+already existed, and none of it was a spacing, timing or z-index problem:
+
+1. **The open flag is `.bo-flyout-hover`, not `.open`/`.show`.** `reports.css:7295` (and the copy in
+   `reports-dashboard-original.css:5491`):
+
+       .report-sidebar .report-nav > .nav-group:not(.bo-flyout-hover) > .nav-group-list{
+         display:none!important; opacity:0!important; visibility:hidden!important; pointer-events:none!important;
+         transition:none!important; transform:none!important;
+       }
+
+   `auth.js:openSidebarFlyoutOnHover` adds exactly that class. The agent portal was opening its panel with
+   `.open`, so it was fighting this rule: first the panel never appeared at all, and once it was forced visible
+   with inline `!important` the fourth declaration still applied - **painted, but `pointer-events:none`, so the
+   pointer fell through it onto the table below.** That is the readout the owner captured: the Wallet link
+   computing `pointer-events: none`. Nothing in a headless run reproduced it because the empty stub page happened
+   to be matched by the portal's own override instead.
+
+2. **The agent pages never loaded `bo-global-quicknav.css`.** BO/Main pages get it injected by `auth.js`; the agent
+   pages do not load `auth.js` at all, so the sheet that positions the panel
+   (`position:fixed!important; left:var(--bo-sidebar-flyout-left); top:var(--bo-sidebar-flyout-top)`) was absent.
+   It is now linked in the head of all eleven agent pages, and `placeFlyout()` writes the two custom properties
+   plus the height cap, exactly as `auth.js:positionSidebarFlyout` does.
+
+3. **The sub-item markup has to be the reference's.** `menuLinkHtml` emits
+   `<a class="report-sub"><span><i class="bi … me-2"></i>Label</span></a>`, and `reports.css:49` sets
+   `justify-content:space-between` on `.report-nav a` - so with a bare text node for the label the icon and text
+   were pushed to opposite ends. With the `<span>` wrapper it lays out correctly, unchanged from Main.
+
+4. **No default-open on the group's own pages.** Marking the current section with `.bo-flyout-hover` pinned the
+   panel over the page of the link just clicked, pointer long gone. The shell only needs `.open`/`.show` there;
+   the parent row is lit by its `:has(.report-sub.active)` rule.
+
+Everything this session had written to force the panel open (its own `.agent-nav-*` component, sizes, a bridge,
+inline `!important` reveals) was removed - 14KB of CSS - because all of it existed to fight rule 1. What is left
+behind is the reference markup, the reference flag and the reference sheet.
+
+Verified with a real CDP pointer (not synthetic events) on all eight agent pages at 1698x790 / dpr 1.125: hover
+opens the panel, it is level with its row, the pointer crosses into it, the group stays open while the pointer
+rests on Wallet, and a real click lands on `/agent-wallet.html`. Also verified: dark theme, a 1000px window, and
+the landing state on `agent-wallet.html` / `agent-withdraw.html` (row lit via `:has(.report-sub.active)`, panel
+closed).
