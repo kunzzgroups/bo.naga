@@ -7973,3 +7973,29 @@ Verified after the restore: the Promotion filter row is the approved one (select
 with its five-step ladder and no console errors; the rail flyout opens on hover, stays open across the gap and a
 real click lands on `/agent-wallet.html` on all eight agent pages; the dashboard and players date controls match
 main; the game-report strip keeps `PLAYER / 0137126066` aligned with the first column; guards clean.
+
+
+### The rule-level merge that ends this (2026-10)
+
+Two cleanups in a row damaged this sheet, in opposite directions: deleting a tail took main's rules with it (the
+dashboard/players date ranges), and restoring the whole branch file brought back my superseded rail overrides (the
+Finance sidebar). Both times the unit of work was a *comment block*, and comment blocks here mix page rules with
+rail rules - so keeping a block kept what had to go, and dropping one dropped what had to stay.
+
+`assets/css/agent-portal.css` is now produced by a **rule-level** merge:
+
+    every `selector { declarations }` of origin/main, verbatim
+    + this branch's own rules whose selectors do NOT touch the rail or the date controls
+
+The exclusion list is `report-sidebar | .report-nav | nav-group | agent-nav- | bo-flyout | bo-range-field |
+agent-player-filters | agent-head-actions` - i.e. everything main owns and the shell sheets drive. Measured result:
+**893 of main's rules + 84 page rules**, and `check-shell-drift` reports main's own baseline again (2615), which is
+the check that says no shell metric of mine is left in this sheet.
+
+State afterwards: the flyout panel is the shell's (340x108, `position:fixed`, x = rail.right + 6, rows 42px, labels
+13px, the open row lit by the shell), the Promotion filter row is the approved one (selects 160/145, date 390,
+search 260) with its five-step ladder, the dashboard and players date controls behave exactly as main, and the
+game-report strip still reads `PLAYER / 0137126066` aligned with its first column.
+
+If this sheet needs changing again: `git diff origin/main -- assets/css/agent-portal.css` and change only the lines
+that belong to this branch. Never delete a tail, and never re-derive "which of my rules matter" from a keyword scan.
