@@ -2824,12 +2824,11 @@ html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-c
   border:1px solid #EADCC8!important;border-radius:8px!important;padding:0!important;
   box-shadow:0 5px 18px rgba(217,119,6,.035)!important;overflow:hidden!important;
 }
-/* "页面 fixed 死，不要有 scroll": merchant-profit fits its viewport (scrollHeight == clientHeight at 1568x770).
-   This page carries a statistics strip the reference keeps in its topbar, so the table region is capped instead
-   and scrolls inside the card - the page itself never grows a scrollbar. 430px is the chain above the table:
-   topbar 64 + tab row 48 + statistics strip 130 + filter strip 65 + footer 65 + the gaps between them. */
+/* "table 不能 scroll，要符合 pagination" (owner): no inner scrollbar either - the page size adapts to the
+   space instead (agent-portal.js:promoCampaignSize returns the auto count for the "-" option, recomputed on
+   resize), so pagination is the only way to move through the rows and the footer stays on screen. */
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .table-wrap{
-  max-height:calc(100vh - 430px)!important;min-height:220px!important;overflow:auto!important;
+  max-height:none!important;overflow:visible!important;
 }
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .filter-card{
   border:0!important;border-radius:0!important;margin:0!important;padding:14px 16px!important;
@@ -2840,7 +2839,7 @@ html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-c
 }
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card .report-table thead th{
   background:transparent!important;color:#3F3F46!important;font-size:12px!important;font-weight:700!important;
-  text-transform:uppercase!important;letter-spacing:.04em!important;height:47px!important;
+  text-transform:none!important;height:47px!important;
   padding:14px 12px!important;border-bottom:1px solid #EADCC8!important;
 }
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .agent-table-footer{
@@ -2870,4 +2869,16 @@ html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-c
 }
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-view-btn.agent-view-eye{
   border-color:transparent!important;background:transparent!important;box-shadow:none!important;
+}
+
+/* row density: merchant-profit's rows are ~65px (one line per cell). This table's period column wrapped onto two
+   lines and the name stacked its code, which pushed a row to 96px and left only five rows above the fold. */
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card tbody td{
+  padding-top:9px!important;padding-bottom:9px!important;font-size:13px!important;line-height:1.35!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card tbody td .agent-promo-cell-sub{
+  font-size:11px!important;line-height:1.2!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card tbody td:nth-child(4){
+  white-space:nowrap!important;
 }

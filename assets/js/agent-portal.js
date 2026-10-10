@@ -325,6 +325,9 @@ function initBonusTabs(){
     });
   }
   window.addEventListener('load',pinStatusWidth);
+  /* the auto page size follows the window, so the footer stays inside the viewport without a scrollbar */
+  let _reBonus=null;
+  window.addEventListener('resize',function(){clearTimeout(_reBonus);_reBonus=setTimeout(function(){if(page==='bonus')paintPromotionCampaigns();},150);});
   const tabs=[...document.querySelectorAll('[data-bonus-section]')];
   const panels=[...document.querySelectorAll('.agent-bonus-panel')];
   if(!tabs.length||!panels.length)return;
@@ -347,10 +350,23 @@ function renderPromotionOverview(items){const target=$('agentPromotionOverview')
    page of 10, `all` shows everything. */
 let promoCampaignRows=[],promoCampaignPage=1;
 function promoCampaignSize(){
-  const v=$('agentCampaignSize')?$('agentCampaignSize').value:'-';
-  if(String(v).toLowerCase()==='all')return 0;
+  const sel=$('agentCampaignSize');
+  const v=sel?sel.value:'';
+  if(v==='all')return 0;
   const n=Number(v);
-  return n>0?n:10;
+  if(n>0)return n;
+  /* "-" is the auto option (the BO's and the siblings' own default): as many rows as fit between the table's
+     head and the card's footer, so the page never needs a scrollbar and pagination stays the only way to move
+     through the rows. Row height is read off the first row once one exists, 66px until then. */
+  const wrap=document.querySelector('.agent-promo-campaign-card > .table-wrap');
+  const foot=document.querySelector('.agent-promo-campaign-card > .agent-table-footer');
+  if(!wrap)return 10;
+  const row=document.querySelector('.agent-promo-campaign-card tbody tr');
+  const rowH=row?Math.round(row.getBoundingClientRect().height):66;
+  const top=wrap.getBoundingClientRect().top;
+  const footH=foot?Math.round(foot.getBoundingClientRect().height):65;
+  const avail=(window.innerHeight-8)-top-47-footH;
+  return Math.max(5,Math.floor(avail/Math.max(24,rowH)));
 }
 function promoCampaignPager(pages){
   const el=$('agentCampaignPager');
@@ -378,7 +394,7 @@ function paintPromotionCampaigns(){
   promoCampaignPager(pages);
   document.querySelectorAll('[data-promo-id]').forEach(b=>b.onclick=()=>openPromotionDetail(Number(b.dataset.promoId)));
 }
-function promoCampaignRowHtml(x){return `<tr><td><b>${esc(x.name||'-')}</b><small class="agent-promo-cell-sub">${esc(x.code||'')}</small></td><td><span class="agent-promo-type">${esc(promoTypeLabel(x.type))}</span></td><td><span class="agent-status ${promoStatus(x)==='Active'?'':'inactive'}">${promoStatus(x)}</span></td><td>${promoDate(x.startAt)} -<br>${promoDate(x.endAt)}</td><td>${promoMoney(x.totalReward)}</td><td>${num(x.playersClaimed)}</td><td>${num(x.totalClaims)}</td><td class="agent-negative">${promoMoney(x.agentDeduction)}</td><td><button class="agent-view-btn agent-view-eye" type="button" data-promo-id="${x.id}" title="View campaign details" aria-label="View campaign details"><i class="bi bi-eye" aria-hidden="true"></i></button></td></tr>`;}
+function promoCampaignRowHtml(x){return `<tr><td><b>${esc(x.name||'-')}</b><small class="agent-promo-cell-sub">${esc(x.code||'')}</small></td><td><span class="agent-promo-type">${esc(promoTypeLabel(x.type))}</span></td><td><span class="agent-status ${promoStatus(x)==='Active'?'':'inactive'}">${promoStatus(x)}</span></td><td>${promoDate(x.startAt)} - ${promoDate(x.endAt)}</td><td>${promoMoney(x.totalReward)}</td><td>${num(x.playersClaimed)}</td><td>${num(x.totalClaims)}</td><td class="agent-negative">${promoMoney(x.agentDeduction)}</td><td><button class="agent-view-btn agent-view-eye" type="button" data-promo-id="${x.id}" title="View campaign details" aria-label="View campaign details"><i class="bi bi-eye" aria-hidden="true"></i></button></td></tr>`;}
 function renderPromotionCampaigns(d){const all=(d.campaigns||[]).filter(meaningfulCampaign);promoCampaignRows=all;promoCampaignPage=1;paintPromotionCampaigns();}
 function renderRecentClaims(d){const rows=(d.recentClaims||[]).filter(x=>x.claimTime||x.playerId||x.playerName||Number(x.reward||0)!==0||Number(x.agentDeduction||0)!==0);const tbody=$('agentRecentClaimRows');if(tbody)tbody.innerHTML=rows.slice(0,5).map(x=>`<tr><td>${esc(x.playerId||'-')}</td><td>${esc(x.playerName||'-')}</td><td>${esc(x.campaignName||'-')}</td><td>${esc(shortDateTime(x.claimTime))}</td><td>${promoMoney(x.reward)}</td><td class="agent-negative">${promoMoney(x.agentDeduction)}</td></tr>`).join('')||'<tr><td colspan="6" class="table-empty">No claims for this period.</td></tr>'}
 function openPromotionDetail(id){const x=(promotionCache?.campaigns||[]).find(r=>Number(r.id)===Number(id));if(!x)return;const m=$('agentPromoModal');if(!m)return;$('agentPromoModalTitle').textContent=x.name||'Campaign Details';$('agentPromoModalBody').innerHTML=`<div class="agent-promo-detail-grid"><div><span>Campaign Type</span><b>${esc(promoTypeLabel(x.type))}</b></div><div><span>Status</span><b>${promoStatus(x)}</b></div><div><span>Period</span><b>${promoDate(x.startAt)} - ${promoDate(x.endAt)}</b></div><div><span>Players Claimed</span><b>${num(x.playersClaimed)}</b></div><div><span>Total Claims</span><b>${num(x.totalClaims)}</b></div><div><span>Agent Deduction</span><b class="agent-negative">${promoMoney(x.agentDeduction)}</b></div></div>`;if(m)m.hidden=false;document.body.classList.add('agent-modal-open')}

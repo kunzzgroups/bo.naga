@@ -7465,3 +7465,18 @@ Two follow-ups from the owner on the Merchant Profit alignment:
    a statistics strip, so the **table region** is capped with `max-height: calc(100vh - 430px)` and scrolls
    inside the card. 430px is the chain above it: topbar 64 + tab row 48 + statistics 130 + filter strip 65 +
    footer 65 + the gaps between them. The page itself never grows a scrollbar at desktop sizes.
+
+
+### agent-bonus.html: the page size follows the viewport, so nothing scrolls (2026-10)
+
+Owner: *"table cannot scroll - it has to follow the pagination logic and design"*, plus *"my Show entries
+cannot expand fully"*. The inner scrollbar is gone and `-` in the page-size select is now an **auto** count -
+`agent-portal.js:promoCampaignSize` measures the space between the table head and the card's footer
+(`window.innerHeight - 8 - wrapTop - 47 - footerHeight`, divided by the measured row height, floor 5) and a
+debounced `resize` listener re-renders. Pagination is therefore the only way through the rows, the footer is
+always inside the viewport, and the page never grows a scrollbar - which is what
+`main-merchant-profit.html` does by keeping its summary in the topbar.
+
+The table head also lost the `text-transform:uppercase` this page had added: the reference labels are Title
+Case (`Date`, `Merchant`, ...) at 12px/700 in `#3F3F46`. Rows were tightened from 96px to ~65px (the period
+column no longer wraps on a `<br>`; cell padding 9px) so a normal window fits five to eight rows.
