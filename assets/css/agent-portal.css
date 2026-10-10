@@ -2838,7 +2838,7 @@ html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-c
   border:0!important;border-radius:0!important;margin:0!important;
 }
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card .report-table thead th{
-  background:#FFE8CC!important;color:#6B360C!important;font-size:12px!important;font-weight:700!important;
+  background:transparent!important;color:#3F3F46!important;font-size:12px!important;font-weight:700!important;
   text-transform:none!important;height:47px!important;
   padding:14px 12px!important;border-bottom:1px solid #EADCC8!important;
 }
@@ -2897,4 +2897,32 @@ html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-c
 }
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card tbody td .agent-promo-cell-sub{
   display:block!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+
+/* Following main-merchant-profit.html's rendered look (the owner's screenshot):
+   - the head is plain (cream) and the *rows* carry the banding: white / light amber zebra stripes
+   - money columns are bold, like the reference's MYR column
+   - the type pill is an amber capsule with a leading dot, like "Monthly Pricing" there
+   - the filter strip closes with a hairline, exactly where the reference's does */
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card tbody tr:nth-child(odd) td{
+  background:#FFFFFF!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card tbody tr:nth-child(even) td{
+  background:#FFF4E4!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card tbody td:nth-child(5),
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card tbody td:nth-child(8){
+  font-weight:700!important;color:#18191C!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card tbody .agent-promo-type{
+  display:inline-flex!important;align-items:center!important;gap:7px!important;
+  background:#FBEBCB!important;color:#8A5A14!important;border:0!important;border-radius:999px!important;
+  padding:5px 12px!important;font-size:12px!important;font-weight:700!important;white-space:nowrap!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card tbody .agent-promo-type::before{
+  content:""!important;width:6px!important;height:6px!important;border-radius:50%!important;
+  background:#D97706!important;flex:0 0 6px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .filter-card{
+  border-bottom:1px solid #EADCC8!important;
 }
