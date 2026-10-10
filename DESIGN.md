@@ -7604,3 +7604,15 @@ pad, and neither they nor their parents clip (`overflow:visible`).
 Honest note: the clip census (every element whose `scrollHeight` exceeds `clientHeight` while its `overflow` is
 hidden/clip) reports an empty list in this environment, so the reported clipping could not be reproduced here -
 worth remembering if it comes back, together with browser zoom as a candidate cause of sub-pixel cap clipping.
+
+
+### The 14px band under the context strip (2026-10)
+
+Caught in DevTools by the owner: `.user-toolbar.mb-3` computed `margin: 0 0 14px`. It comes from
+`reports-dashboard-original.css:1149` (`.user-toolbar{...margin-bottom:14px!important}`) and the element's own
+`mb-3` class. Inside the card that is a 14px strip of bare cream between the strip's bottom hairline and the
+table head. The `products` and `player_game_report` rules had already zeroed it; `provider_detail` and the game
+report page had not - both do now (`margin:0!important`).
+
+Verified: `margin-bottom: 0px`, gap between the strip and the first header cell `0px`, the header's offset from
+the card's top fell from 80px to 66px, and nothing else moved (strip 65px, no clipping, no page scrollbar).

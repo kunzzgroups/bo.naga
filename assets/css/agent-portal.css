@@ -3080,3 +3080,13 @@ html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-repo
 html:not(#bo-charcoal-off) body[data-agent-page="provider_detail"].agent-report-body.agent-modern .agent-context{
   overflow:visible!important;
 }
+
+/* The owner caught this in DevTools: `.user-toolbar.mb-3` was carrying `margin: 0 0 14px`, which the generic
+   rule in reports-dashboard-original.css:1149 sets (`margin-bottom:14px!important`). Inside the card that is a
+   14px band of bare cream between the strip's bottom hairline and the table head - the strip's own class list
+   (`mb-3`) asks for it too. The player_game_report and products rules already zeroed it; provider_detail and the
+   game report page did not. */
+html:not(#bo-charcoal-off) body[data-agent-page="provider_detail"].agent-report-body.agent-modern .table-card > .user-toolbar,
+html:not(#bo-charcoal-off) body[data-agent-page="player_game_report"].agent-report-body.agent-modern .table-card > .user-toolbar{
+  margin:0!important;
+}
