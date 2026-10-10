@@ -2838,7 +2838,7 @@ html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-c
   border:0!important;border-radius:0!important;margin:0!important;
 }
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card .report-table thead th{
-  background:transparent!important;color:#3F3F46!important;font-size:12px!important;font-weight:700!important;
+  background:#FFE8CC!important;color:#6B360C!important;font-size:12px!important;font-weight:700!important;
   text-transform:none!important;height:47px!important;
   padding:14px 12px!important;border-bottom:1px solid #EADCC8!important;
 }
@@ -2904,11 +2904,14 @@ html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-c
    - money columns are bold, like the reference's MYR column
    - the type pill is an amber capsule with a leading dot, like "Monthly Pricing" there
    - the filter strip closes with a hairline, exactly where the reference's does */
-html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card tbody tr:nth-child(odd) td{
-  background:#FFFFFF!important;
-}
+/* the owner asked for the banding back out: one row colour, the head carries the design instead.
+   The stripes actually come from the shared agent sheets - bo-charcoal-agent.css:1531 and
+   bo-charcoal-legacy.css:126 both paint `tbody tr:nth-child(even) td`, which out-ranks a plain `tbody td`
+   rule - so the override has to carry the same nth-child weight. */
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card tbody tr td,
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card tbody tr:nth-child(odd) td,
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card tbody tr:nth-child(even) td{
-  background:#FFF4E4!important;
+  background:#FFF8EB!important;
 }
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card tbody td:nth-child(5),
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card tbody td:nth-child(8){
