@@ -7413,9 +7413,17 @@ Three border designs the page had invented are gone, replaced by the BO's comput
 provider-bet-report.html, light):
 
 - `.agent-promo-campaign-card`: the BO's `.table-card` is a hairline ring and not a box -
-  `border:0; border-radius:0; box-shadow:0 0 0 1px rgba(24,25,28,.03)`. The filter row inside it keeps no frame.
+  `box-shadow:0 0 0 1px rgba(24,25,28,.03)`, no border, `padding:0` (the siblings' card carries 18px of padding,
+  which pushed the frame inside the frame). **The panel's markup had the table and the footer nested inside the
+  filter card**, so two contours met at the corner and the footer's own flex rules never applied - the card is now
+  `card > [filter-card > filter-row] + table-wrap + agent-table-footer`, the same shape as agent-products.html.
+  The filter row is a bordered box of its own, inset (`margin:12px`, radius 16px) like the BO's filter-card, and
+  the table itself draws no frame.
 - `#agentCampaignPager button`: the BO's pager chip - `background:#F3F4F6; border:1px solid transparent;
   border-radius:8px; height:36px` (the same rule the sibling `#agentReportsPagination button` already carried).
+- the footer: the siblings' own recipe (`display:flex; justify-content:space-between; padding:14px 16px;
+  border-top:1px solid #EADCC8`) - this page had none of it, so "Show [select] entries" wrapped onto three lines.
+  The rules are scoped `body[data-agent-page="bonus"]` because the siblings' equivalents are scoped per page.
 - `.agent-view-eye`: the amber frame is dropped; the row eye is frameless like the BO's row controls.
 
 The status select is re-pinned to 160px: `bo-ui-standard.js:sizeNativeSelect` sizes it to its widest option +

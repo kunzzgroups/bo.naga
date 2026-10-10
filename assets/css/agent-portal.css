@@ -2815,15 +2815,39 @@ body.agent-promotion-page .agent-standard-filter .field > label{display:none!imp
 body.agent-promotion-page .agent-standard-filter .agent-status-field{flex:0 0 160px!important;width:160px!important;min-width:160px!important}
 body.agent-promotion-page .agent-standard-filter .agent-status-field select{width:160px!important}
 
-/* agentBonusCardRing - the BO's border system for this page, audited against provider-bet-report.html
-   (computed values, light): its `.table-card` is a hairline ring and not a box, its pager buttons are a grey
-   chip with a transparent border (#F3F4F6 / 8px / 36px), and its row controls carry no accent frame. This page
-   had three extra border designs of its own - a bordered round card, bordered white pager buttons and an amber
-   eye - so it looked nothing like the reference. Same escalation as the sibling pages' footer rules above, which
-   is what makes these stick. */
+/* agentBonusAutoLayout - the card frame, audited against provider-bet-report.html's computed values and its
+   rendered screenshot: the table card there is a hairline ring with a square corner and no padding, the filter
+   row is a bordered box of its own inset inside it (radius 16px), the table itself draws no frame, and the
+   footer is one flex row separated by a top border. This page had the filter's table and footer nested inside
+   the filter card and an 18px card padding, so two contours met at the corner and the footer wrapped. */
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card{
-  border:0!important;border-radius:0!important;box-shadow:0 0 0 1px rgba(24,25,28,.03)!important;
+  border:0!important;border-radius:0!important;padding:0!important;
+  box-shadow:0 0 0 1px rgba(24,25,28,.03)!important;
 }
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .filter-card{
+  border:1px solid #EADCC8!important;border-radius:16px!important;margin:12px!important;box-shadow:none!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .table-wrap{
+  border:0!important;border-radius:0!important;margin:0!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .agent-table-footer{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:12px!important;padding:14px 16px!important;border-top:1px solid #EADCC8!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .agent-table-footer > .agent-page-size{
+  display:flex!important;align-items:center!important;gap:6px!important;white-space:nowrap!important;flex:0 0 auto!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .agent-table-footer > .agent-page-size select{
+  width:68px!important;height:36px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .agent-table-footer > #agentCampaignMeta{
+  flex:1 1 auto!important;text-align:center!important;font-size:13px!important;
+}
+html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card > .agent-table-footer > .agent-pagination{
+  flex:0 0 auto!important;display:flex!important;align-items:center!important;gap:6px!important;
+}
+
+/* the BO pager chip + a frameless row eye (restored after the card rewrite) */
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] #agentCampaignPager button{
   background:#F3F4F6!important;border:1px solid transparent!important;color:#9CA3AF!important;
   border-radius:8px!important;height:36px!important;min-height:36px!important;min-width:36px!important;
@@ -2835,7 +2859,4 @@ html:not(#bo-charcoal-off) body[data-agent-page="bonus"] #agentCampaignPager but
 }
 html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-view-btn.agent-view-eye{
   border-color:transparent!important;background:transparent!important;box-shadow:none!important;
-}
-html:not(#bo-charcoal-off) body[data-agent-page="bonus"] .agent-promo-campaign-card .filter-card{
-  border:0!important;box-shadow:none!important;
 }
