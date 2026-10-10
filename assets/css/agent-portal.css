@@ -3134,3 +3134,86 @@ html[data-bo-theme="dark"]:not(#bo-charcoal-off) body.agent-modern.agent-report-
 html[data-bo-theme="dark"]:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem.active:hover{
   background:rgba(245,158,11,.18)!important;background-image:none!important;color:#F5B44A!important;
 }
+/* agentRailFlyout - the agent rail's Finance group as a **flyout**, the way the Main panel renders its groups
+   (owner's screenshot of main-dashboard.html: Access Control -> a white panel floating to the *right* of the rail,
+   over the content, radius ~12, soft shadow, rows of ~48px with a muted brown icon). The previous pass made it an
+   inline panel inside the rail - the styling was close but the position was a different pattern entirely. */
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-group{
+  position:relative!important;
+}
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-group > .agent-nav-sub{
+  position:absolute!important;left:calc(100% + 12px)!important;top:0!important;z-index:60!important;
+  width:300px!important;margin:0!important;padding:10px!important;
+  background:#FFFFFF!important;background-image:none!important;
+  border:1px solid #EFE3D2!important;border-radius:12px!important;
+  box-shadow:0 18px 44px rgba(60,48,32,.16)!important;
+  display:none!important;
+}
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-group.open > .agent-nav-sub{
+  display:block!important;
+}
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem{
+  display:flex!important;align-items:center!important;gap:12px!important;
+  height:48px!important;min-height:48px!important;padding:0 14px!important;border-radius:8px!important;
+  background:transparent!important;background-image:none!important;box-shadow:none!important;
+  color:#3F2E1E!important;font-size:14px!important;font-weight:600!important;white-space:nowrap!important;
+}
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem i{
+  font-size:18px!important;color:#8A6A4A!important;width:20px!important;text-align:center!important;
+}
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem:hover{
+  background:#F7EFE2!important;background-image:none!important;color:#18191C!important;
+}
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem.active,
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem.active:hover{
+  background:rgba(217,119,6,.14)!important;background-image:none!important;color:#B45309!important;
+}
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem.active i{
+  color:#B45309!important;
+}
+/* the group's chevron points right, like Main's, because the group opens sideways now */
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-group .agent-nav-chevron{
+  transform:rotate(-90deg)!important;
+}
+/* the rail must not clip its own flyout */
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .report-sidebar{
+  overflow:visible!important;
+}
+/* dark theme */
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-group > .agent-nav-sub{
+  background:#2A2C36!important;border-color:rgba(255,255,255,.08)!important;box-shadow:0 18px 44px rgba(0,0,0,.5)!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem{
+  color:#E4E4E7!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem i{
+  color:#A1A1AA!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem:hover{
+  background:rgba(255,255,255,.06)!important;
+}
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem.active,
+html[data-bo-theme="dark"]:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem.active:hover{
+  background:rgba(245,158,11,.18)!important;background-image:none!important;color:#F5B44A!important;
+}
+
+/* The flyout was in the DOM (300x124 at x=231, outside the rail) but nothing was painted: the nav container
+   clips. Nothing between the group and the viewport may clip, and the rail has to sit above the content. */
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body #agentPortalNav,
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .report-nav,
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .report-shell,
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .report-sidebar{
+  overflow:visible!important;
+}
+/* z-index only - the rail keeps its own positioning. Forcing position:relative put it into the flow, so the
+   content frame took the rail's 230px *and* its own 230px offset (everything shifted right by 230px). */
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .report-sidebar{
+  z-index:80!important;
+}
+
+/* The sub-items used to be inline, and their padding was part of what sized the rail: making them absolute
+   shrank the rail from 230px to ~172px and pushed the whole content frame right. Pin the expanded rail (the
+   collapsed rail is a different width and is left alone). */
+html:not(#bo-charcoal-off) body.agent-modern.agent-report-body:not(.sidebar-mini) .report-sidebar{
+  width:230px!important;min-width:230px!important;max-width:230px!important;
+}

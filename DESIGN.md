@@ -7639,3 +7639,27 @@ Dark theme mirrors it (`#2A2C36` panel, `rgba(255,255,255,.06)` hover, `rgba(245
 
 Verified: panel background/border/radius/padding, 38px rows, and the current row computing to
 `background-image: none` with the amber tint; no console errors.
+
+
+### agent rail: the Finance group is a flyout, the way Main renders groups (2026-10)
+
+First attempt was an inline panel inside the rail; the owner's reply was a screenshot of
+`main-dashboard.html` with "哪里一样" - Main opens its groups as a **flyout to the right of the rail, over the
+content**, which is a different pattern, not a different palette.
+
+Now (measured on the rendered page): `.agent-nav-group` is the positioning context and its `.agent-nav-sub` is
+`position:absolute; left:calc(100% + 12px); top:0; width:300px` - x 231 against a rail whose right edge is 230,
+i.e. outside it - with `#FFFFFF`, `1px #EFE3D2`, radius 12, `padding:10px` and `0 18px 44px rgba(60,48,32,.16)`.
+Rows are 48px with a 14px/600 `#3F2E1E` label and an 18px `#8A6A4A` icon; hover `#F7EFE2`; the current row the
+amber tint. The group's chevron turns to point right, as Main's does.
+
+Two traps this pass hit, both worth remembering for this rail:
+
+- **the flyout was in the DOM but not painted.** Nothing between the group and the viewport may clip:
+  `#agentPortalNav`, `.report-nav`, `.report-shell` and `.report-sidebar` all needed `overflow:visible`, and the
+  rail needed `z-index` to sit above the content frame.
+- **making the sub-items absolute shrank the rail** from 230px to ~172px (their padding had been part of what
+  sized it, the rail being content-sized) and **forcing `position:relative` on the rail put it into the flow**, so
+  the content frame took the rail's 230px *and* its own 230px offset - everything shifted right by 230px. The
+  rail keeps its own `position:fixed`; only its `z-index` is raised, and the expanded rail is pinned to
+  `width:230px` (the collapsed `sidebar-mini` state is untouched).
