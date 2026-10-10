@@ -25,8 +25,123 @@ function agentProfileHtml(){
  const name=profile?.name||'Agent',user=profile?.loginUsername||profile?.code||'agent';
  return `<a class="bo-account-link" href="agent-profile.html#password" title="Account settings / Change password" aria-label="Open account settings and change password"><span class="report-avatar" aria-hidden="true"><i class="bi bi-person"></i></span><span class="bo-account-meta"><span class="bo-account-name">${esc(name)}</span><span class="bo-account-role">Agent &middot; ${esc(user)}</span></span></a>`;
 }
-function bindProfileMenu(){const btn=document.querySelector('[data-agent-profile-toggle]'),menu=$('agentProfileMenu'),side=$('agentSidebarProfileCard'),sideMenu=$('agentSidebarProfileMenu');if(btn&&menu){btn.onclick=e=>{e.stopPropagation();menu.classList.toggle('show')}}if(side&&sideMenu){const toggle=e=>{e.preventDefault();e.stopPropagation();const open=!sideMenu.classList.contains('show');sideMenu.classList.toggle('show',open);side.classList.toggle('open',open);side.setAttribute('aria-expanded',String(open))};side.addEventListener('click',e=>{if(e.target.closest('.agent-sidebar-profile-menu a'))return;toggle(e)});side.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')toggle(e)})}document.addEventListener('click',e=>{if(wrap&&!wrap.contains(e.target))menu?.classList.remove('show');if(side&&!side.contains(e.target)){sideMenu?.classList.remove('show');side.classList.remove('open');side.setAttribute('aria-expanded','false')}});document.querySelectorAll('[data-agent-logout]').forEach(a=>a.onclick=e=>{e.preventDefault();localStorage.removeItem('agent_token');location.href='agent-login.html'});}
-async function initShell(){try{profile=await api('/agent/me');const allowed=new Set(profile.portalMenuKeys||['dashboard']);const required=permissionKey(page);if(!UTILITY.has(page)&&!allowed.has(required)){location.href=menuHref([...allowed][0]||'dashboard');return false;}const nav=$('agentPortalNav');if(nav){let html='';for(const x of MENU){const pk=permissionKey(x[0]);if(!allowed.has(pk))continue;const navActive=x[0]===page||(x[0]==='products'&&page==='provider_detail')||(x[0]==='reports'&&page==='player_game_report');html+=`<a class="report-nav-item ${navActive?'active':''}" href="${x[3]}"><i class="bi ${x[2]}"></i><span>${x[1]}</span></a>`;}const financeVisible=allowed.has('wallet')||allowed.has('settlement');if(financeVisible){const active=['finance','withdraw'].includes(page);html+=`<div class="agent-nav-group ${active?'open':''}"><button type="button" class="report-nav-item agent-nav-parent" data-finance-toggle><i class="bi bi-wallet2"></i><span>Finance</span><i class="bi bi-chevron-down agent-nav-chevron"></i></button><div class="agent-nav-sub">${allowed.has('wallet')?`<a class="report-nav-item agent-nav-subitem ${page==='finance'?'active':''}" href="agent-wallet.html"><i class="bi bi-wallet2"></i><span>Wallet</span></a>`:''}${allowed.has('settlement')?`<a class="report-nav-item agent-nav-subitem ${page==='withdraw'?'active':''}" href="agent-withdraw.html"><i class="bi bi-cash-stack"></i><span>Withdraw</span></a>`:''}</div></div>`;}nav.innerHTML=html;const ft=nav.querySelector('[data-finance-toggle]');if(ft)ft.onclick=()=>ft.closest('.agent-nav-group').classList.toggle('open');}if($('agentSidebarIdentity'))$('agentSidebarIdentity').textContent=(profile.code||'Agent')+' · '+Number(profile.commissionPercent||0).toFixed(2)+'%';const sf=$('agentSidebarFooter');if(sf)sf.innerHTML=`<div class="bo-sidebar-account-footer"><a class="bo-sidebar-logout" href="#logout" data-agent-logout><i class="bi bi-box-arrow-right"></i><span>Logout</span></a></div>`;if($('agentTopProfile'))$('agentTopProfile').innerHTML=agentProfileHtml();bindProfileMenu();
+function bindProfileMenu(){const btn=document.querySelector('[data-agent-profile-toggle]'),menu=$('agentProfileMenu'),side=$('agentSidebarProfileCard'),sideMenu=$('agentSidebarProfileMenu');if(btn&&menu){btn.onclick=e=>{e.stopPropagation();menu.classList.toggle('show')}}if(side&&sideMenu){const toggle=e=>{e.preventDefault();e.stopPropagation();const open=!sideMenu.classList.contains('show');sideMenu.classList.toggle('show',open);side.classList.toggle('open',open);side.setAttribute('aria-expanded',String(open))};side.addEventListener('click',e=>{if(e.target.closest('.agent-sidebar-profile-menu a'))return;toggle(e)});side.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')toggle(e)})}/* `wrap` was never declared: this handler threw a ReferenceError on every click (the portal's top
+   chip is a plain link now, agentProfileHtml above, so there is no menu to close either). The
+   container is resolved per click and an absent menu is a no-op. */
+document.addEventListener('click',e=>{const wrap=$('agentTopProfile');if(wrap&&menu&&!wrap.contains(e.target))menu.classList.remove('show');if(side&&!side.contains(e.target)){sideMenu?.classList.remove('show');side.classList.remove('open');side.setAttribute('aria-expanded','false')}});document.querySelectorAll('[data-agent-logout]').forEach(a=>a.onclick=e=>{e.preventDefault();localStorage.removeItem('agent_token');location.href='agent-login.html'});}
+async function initShell(){try{profile=await api('/agent/me');const allowed=new Set(profile.portalMenuKeys||['dashboard']);const required=permissionKey(page);if(!UTILITY.has(page)&&!allowed.has(required)){location.href=menuHref([...allowed][0]||'dashboard');return false;}const nav=$('agentPortalNav');if(nav){let html='';for(const x of MENU){const pk=permissionKey(x[0]);if(!allowed.has(pk))continue;const navActive=x[0]===page||(x[0]==='products'&&page==='provider_detail')||(x[0]==='reports'&&page==='player_game_report');html+=`<a class="report-nav-item ${navActive?'active':''}" href="${x[3]}"><i class="bi ${x[2]}"></i><span>${x[1]}</span></a>`;}const financeVisible=allowed.has('wallet')||allowed.has('settlement');if(financeVisible){const active=['finance','withdraw'].includes(page);html+=`<div class="nav-group agent-finance-group ${active?'open':''}" data-menu-group="finance">`+
+`<button type="button" class="nav-group-btn" data-finance-toggle aria-expanded="${active?'true':'false'}"><span><i class="bi bi-wallet2 me-2"></i>Finance</span><i class="bi bi-chevron-down"></i></button>`+
+`<div class="nav-group-list ${active?'show':''}"><div class="bo-flyout-title">Finance</div>`+
+(allowed.has('wallet')?`<a class="report-sub ${page==='finance'?'active':''}" href="agent-wallet.html" data-menu-key="wallet"><span><i class="bi bi-wallet2 me-2"></i>Wallet</span></a>`:'')+
+(allowed.has('settlement')?`<a class="report-sub ${page==='withdraw'?'active':''}" href="agent-withdraw.html" data-menu-key="withdraw"><span><i class="bi bi-cash-stack me-2"></i>Withdraw</span></a>`:'')+
+`</div></div>`;}
+nav.innerHTML=html;const ft=nav.querySelector('[data-finance-toggle]');if(ft){
+  /* Delegated, like auth.js's own bindDynamicSidebarEvents for this rail: the nav is rebuilt by initShell (and
+     can be rebuilt again by a menu refresh), so listeners hung on the group element disappear with it, and a
+     listener on the row misses a pointer that lands on a child (the icon or the label). The handlers therefore
+     live on the document and resolve the group per event. The behaviour itself is the Main rail's
+     (reports.js:91-232): 140ms intent delay before opening, a 400ms close grace that entering the panel cancels,
+     hover bound unconditionally (the pointer-capability query lies on touch laptops), a click fallback for
+     pointer-less devices, and the panel positioned at left = sidebar.right + 6. */
+  const isDesktop=()=>window.innerWidth>=992;
+  const onPage=()=>page==='finance'||page==='withdraw';
+  let openGroup=null,openTimer=0,closeTimer=0;
+  const parts=function(g){
+    if(!g)return {};
+    return {grp:g,btn:g.querySelector('.nav-group-btn'),list:g.querySelector('.nav-group-list')};
+  };
+  /* auth.js:positionSidebarFlyout writes two custom properties on the group and the shell sheet
+     (bo-global-quicknav.css) consumes them with position:fixed!important - the panel's top is the row's top,
+     its left is the rail's right edge + 6, and its height is capped to the room below. */
+  const placeFlyout=function(g){
+    const p=parts(g),rail=$('reportSidebar');
+    if(!p.btn||!p.list||!rail)return;
+    const sr=rail.getBoundingClientRect(),br=p.btn.getBoundingClientRect();
+    const left=Math.max(8,Math.round(sr.right+6));
+    let top=Math.round(br.top);
+    const room=window.innerHeight-top-12,cap=Math.max(160,Math.min(Math.round(window.innerHeight*0.62),room));
+    if(top+cap>window.innerHeight-12)top=Math.max(12,window.innerHeight-cap-12);
+    g.style.setProperty('--bo-sidebar-flyout-left',left+'px');
+    g.style.setProperty('--bo-sidebar-flyout-top',top+'px');
+    g.style.setProperty('--bo-sidebar-flyout-max',cap+'px');
+  };
+  const hideNow=function(g){
+    const p=parts(g||openGroup);
+    if(!p.grp)return;
+    clearTimeout(openTimer);clearTimeout(closeTimer);
+    p.grp.classList.remove('bo-flyout-hover','open');
+    if(p.list)p.list.classList.remove('show');
+    if(p.btn){p.btn.setAttribute('aria-expanded','false');if(!onPage())p.btn.classList.remove('active');}
+    if(openGroup===p.grp)openGroup=null;
+  };
+  const show=function(g){
+    const p=parts(g);
+    if(!p.grp)return;
+    if(openGroup&&openGroup!==p.grp)hideNow(openGroup);
+    clearTimeout(closeTimer);clearTimeout(openTimer);
+    openTimer=setTimeout(function(){
+      if(!isDesktop())return;
+      /* The original rail's flag is `.bo-flyout-hover` (auth.js:openSidebarFlyoutOnHover). reports.css:7296 hides
+         every `.nav-group:not(.bo-flyout-hover) > .nav-group-list` with display:none / visibility:hidden /
+         pointer-events:none, all !important - so the panel can only be opened by that class. Opening it with
+         `.open` + inline !important overrides (what this did before) paints the panel but leaves
+         pointer-events:none in force: visible, and the pointer falls through it onto the table beneath. */
+      p.grp.classList.add('bo-flyout-hover','open');
+      if(p.list)p.list.classList.add('show');
+      if(p.btn)p.btn.setAttribute('aria-expanded','true');
+      placeFlyout(p.grp);
+      openGroup=p.grp;
+    },140);
+  };
+  const scheduleHide=function(g){
+    clearTimeout(openTimer);clearTimeout(closeTimer);
+    closeTimer=setTimeout(function(){hideNow(g);},400);
+  };
+  const groupOf=function(node){
+    return node&&node.closest?node.closest('.report-sidebar .nav-group'):null;
+  };
+  document.addEventListener('mouseover',function(e){
+    const g=groupOf(e.target);
+    if(!g)return;
+    if(g===openGroup){
+      /* Still inside the open group (the pointer moved from the row into the panel, or between its rows).
+         This branch must cancel the pending close: returning silently left the 400ms timer scheduled by the
+         mouseout on the row, so the panel disappeared before the user could reach it - "I cannot click Wallet".
+         The panel is a child of the group, so moving onto it fires mouseover, not mouseout, for the group. */
+      clearTimeout(closeTimer);
+      return;
+    }
+    show(g);
+  });
+  document.addEventListener('mouseout',function(e){
+    const g=groupOf(e.target);
+    if(!g||g!==openGroup)return;
+    const to=e.relatedTarget,p=parts(g);
+    if(to&&(g.contains(to)||(p.list&&p.list.contains(to))))return;
+    scheduleHide(g);
+  });
+  document.addEventListener('click',function(e){
+    const g=groupOf(e.target);
+    if(!g)return;
+    const onBtn=e.target.closest&&e.target.closest('.nav-group-btn');
+    if(!onBtn)return;
+    if(window.matchMedia('(hover: hover)').matches&&openGroup===g)return;
+    e.preventDefault();
+    if(g.classList.contains('open'))hideNow(g);else show(g);
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Enter'&&e.key!==' ')return;
+    const g=groupOf(e.target);
+    if(!g||!e.target.closest('.nav-group-btn'))return;
+    e.preventDefault();
+    if(g.classList.contains('open'))hideNow(g);else show(g);
+  });
+  /* No default-open on the group's own pages. The original rail marks the current section with `.open` /
+     `.show` (the template above does that) and leaves the panel hidden - reports.css hides every
+     `.nav-group:not(.bo-flyout-hover) > .nav-group-list` - while the parent row is lit by the shell's
+     `:has(.report-sub.active)`. Adding `.bo-flyout-hover` here pinned the panel open over the page of the
+     link just clicked, with the pointer long gone. */
+}}if($('agentSidebarIdentity'))$('agentSidebarIdentity').textContent=(profile.code||'Agent')+' · '+Number(profile.commissionPercent||0).toFixed(2)+'%';const sf=$('agentSidebarFooter');if(sf)sf.innerHTML=`<div class="bo-sidebar-account-footer"><a class="bo-sidebar-logout" href="#logout" data-agent-logout><i class="bi bi-box-arrow-right"></i><span>Logout</span></a></div>`;if($('agentTopProfile'))$('agentTopProfile').innerHTML=agentProfileHtml();bindProfileMenu();
  /* The rail's own toggle, in the BO's slot: .report-brand holds the label and this button, laid out
      space-between (see the parity sheet), and it stays visible when the rail is collapsed - which is
      what BO does (measured: BO's topbar has NO hamburger; its rail keeps one at 42x42 in both
@@ -292,7 +407,7 @@ async function loadReports(){ /* the range fields are read directly and an empty
   document.querySelectorAll('[data-provider-players]').forEach(b=>b.onclick=()=>window.open('agent-provider-detail.html?provider='+encodeURIComponent(b.dataset.providerPlayers)+'&from='+encodeURIComponent(from)+'&to='+encodeURIComponent(to),'_blank','noopener'));
 }
 
-async function loadPlayerGameReport(){const sp=new URLSearchParams(location.search),id=sp.get('id'),from=sp.get('from')||today(),to=sp.get('to')||today(),providerFilter=sp.get('provider')||'',gameFilter=sp.get('game')||'';const d=await api('/agent/reports/player/'+encodeURIComponent(id)+'/games?'+new URLSearchParams({from,to}));if($('agentGameReportTitle'))$('agentGameReportTitle').textContent=(d.player?.username||'Player')+' Game Bet Report';let rows=(d.rows||[]).filter(r=>Number(r.totalBet||0)!==0||Number(r.validBet||0)!==0||Number(r.totalWin||0)!==0||Number(r.playerPL||0)!==0||Number(r.betCount||0)>0);if(providerFilter)rows=rows.filter(r=>String(r.providerCode||'').toUpperCase()===providerFilter.toUpperCase());if(gameFilter)rows=rows.filter(r=>String(r.gameCode||'').toUpperCase()===gameFilter.toUpperCase());if($('agentGameReportRows'))$('agentGameReportRows').innerHTML=rows.map(r=>`<tr><td>${esc(r.providerName||r.providerCode)}</td><td><b>${esc(r.gameName||r.gameCode)}</b>${r.gameName?`<small class="d-block text-muted">${esc(r.gameCode||'')}</small>`:''}</td><td>${esc(r.gameCategory||'-')}</td><td>RM ${money(r.totalBet)}</td><td>RM ${money(r.validBet)}</td><td>RM ${money(r.totalWin)}</td><td>${plHtml(r.playerPL)}</td><td>${num(r.betCount)}</td></tr>`).join('')||'<tr><td colspan="8" class="table-empty">No game report data.</td></tr>';}
+async function loadPlayerGameReport(){const sp=new URLSearchParams(location.search),id=sp.get('id'),from=sp.get('from')||today(),to=sp.get('to')||today(),providerFilter=sp.get('provider')||'',gameFilter=sp.get('game')||'';const d=await api('/agent/reports/player/'+encodeURIComponent(id)+'/games?'+new URLSearchParams({from,to}));if($('agentGameReportTitle'))$('agentGameReportTitle').textContent=d.player?.username||'Player';if($('agentGameReportRange'))$('agentGameReportRange').textContent=from+' - '+to;let rows=(d.rows||[]).filter(r=>Number(r.totalBet||0)!==0||Number(r.validBet||0)!==0||Number(r.totalWin||0)!==0||Number(r.playerPL||0)!==0||Number(r.betCount||0)>0);if(providerFilter)rows=rows.filter(r=>String(r.providerCode||'').toUpperCase()===providerFilter.toUpperCase());if(gameFilter)rows=rows.filter(r=>String(r.gameCode||'').toUpperCase()===gameFilter.toUpperCase());if($('agentGameReportRows'))$('agentGameReportRows').innerHTML=rows.map(r=>`<tr><td>${esc(r.providerName||r.providerCode)}</td><td><b>${esc(r.gameName||r.gameCode)}</b>${r.gameName?`<small class="d-block text-muted">${esc(r.gameCode||'')}</small>`:''}</td><td>${esc(r.gameCategory||'-')}</td><td>RM ${money(r.totalBet)}</td><td>RM ${money(r.validBet)}</td><td>RM ${money(r.totalWin)}</td><td>${plHtml(r.playerPL)}</td><td>${num(r.betCount)}</td></tr>`).join('')||'<tr><td colspan="8" class="table-empty">No game report data.</td></tr>';}
 
 async function loadFinance(){const[from,to]=daterange('agentWalletFrom','agentWalletTo'),d=await fetchWallet();const rows=walletCache.filter(x=>inDateRange(x.createdAt,from,to));const earned=rows.filter(x=>Number(x.amount)>0).reduce((a,x)=>a+Number(x.amount||0),0),spent=Math.abs(rows.filter(x=>Number(x.amount)<0).reduce((a,x)=>a+Number(x.amount||0),0)),pending=(await api('/agent/settlements').catch(()=>[])).filter(x=>String(x.settlementStatus||'').toUpperCase()==='PENDING').reduce((a,x)=>a+Number(x.requestedAmount||0),0);if($('agentFinanceCards'))$('agentFinanceCards').innerHTML=[['bi-wallet2','Available Balance',d.balance],['bi-clock','Pending Payout',pending],['bi-graph-up-arrow','Total Earned',earned],['bi-graph-down-arrow','Total Spent',spent]].map((x,i)=>`<div class="agent-player-stat-card"><span class="agent-stat-icon"><i class="bi ${x[0]}"></i></span><div><span>${x[1]}</span><strong>RM ${money(x[2])}</strong><small>Selected period</small></div></div>`).join('');renderWallet();if($('agentExpenseRows'))$('agentExpenseRows').innerHTML=rows.filter(x=>Number(x.amount)<0&&Number(x.amount)!==0).map(x=>`<tr><td>${esc(shortDateTime(x.createdAt))}</td><td>${esc(niceType(x.ledgerType))}</td><td class="agent-negative">-RM ${money(Math.abs(Number(x.amount||0)))}</td><td>${esc(x.remark||'-')}</td></tr>`).join('')||'<tr><td colspan="4" class="table-empty">No company-paid expense deductions in this period.</td></tr>';}
 async function submitReimbursement(){const f=$('agentReimburseProof')?.files?.[0],amount=Number($('agentReimburseAmount')?.value||0),remark=String($('agentReimburseRemark')?.value||'').trim();if(!f)return dialog.alert('Please upload the advertising receipt / proof image.',{title:'Proof Required',type:'error'});if(!(amount>0))return dialog.alert('Please enter a reimbursement amount greater than 0.',{title:'Amount Required',type:'error'});const btn=$('agentReimburseSubmit');try{btn.disabled=true;btn.textContent='Uploading...';const fd=new FormData();fd.append('image',f);const r=await fetch(base()+'/uploads/image',{method:'POST',body:fd}),j=await r.json();if(!r.ok||j.status==='error'||!j.data?.url)throw Error(j.message||'Image upload failed');await api('/agent/wallet/reimbursement',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({amount,remark,proofImageUrl:j.data.url})});$('agentReimburseForm').reset();await dialog.alert('Reimbursement claim submitted for company approval.',{title:'Claim Submitted',type:'success'});await loadFinance();}catch(e){await dialog.alert(e.message,{title:'Upload Failed',type:'error'});}finally{btn.disabled=false;btn.innerHTML='<i class="bi bi-upload"></i> Upload & Submit Claim';}}
@@ -302,11 +417,139 @@ function meaningfulCampaign(x){const active=promoStatus(x)==='Active',hasPeriod=
 function promoStatus(p){return String(p.status||'').toUpperCase()==='ACTIVE'?'Active':'Ended'}
 function promoTypeLabel(v){const x=String(v||'Promotion').replaceAll('_',' ').toLowerCase();return x.replace(/\b\w/g,c=>c.toUpperCase())}
 function promoDate(v){if(!v)return '-';const d=new Date(v);return Number.isNaN(d.getTime())?String(v).slice(0,10):d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}
-function renderPromotionOverview(items){const target=$('agentPromotionOverview');if(!target)return;const sums={};let total=0;(items||[]).forEach(x=>{const k=promoTypeLabel(x.type||'Promotion'),v=Number(x.agentDeduction||0);sums[k]=(sums[k]||0)+v;total+=v});const rows=Object.entries(sums).sort((a,b)=>b[1]-a[1]).slice(0,4);target.innerHTML=`<div class="agent-promo-donut"><div><strong>${promoMoney(total)}</strong><small>Total Agent Deduction</small></div></div><div class="agent-promo-legend">${rows.map(([k,v],i)=>`<div><span class="agent-promo-dot dot-${i+1}"></span><b>${esc(k)}</b><em>${promoMoney(v)}${total>0?` (${(v/total*100).toFixed(1)}%)`:''}</em></div>`).join('')||'<div class="table-empty">No promotion deduction in this period.</div>'}</div>`}
-function renderPromotionCampaigns(d){const rows=(d.campaigns||[]).filter(meaningfulCampaign);const tbody=$('agentCampaignRows');if(tbody)tbody.innerHTML=rows.map(x=>`<tr><td><b>${esc(x.name||'-')}</b><small class="agent-promo-cell-sub">${esc(x.code||'')}</small></td><td><span class="agent-promo-type">${esc(promoTypeLabel(x.type))}</span></td><td><span class="agent-status ${promoStatus(x)==='Active'?'':'inactive'}">${promoStatus(x)}</span></td><td>${promoDate(x.startAt)} -<br>${promoDate(x.endAt)}</td><td>${promoMoney(x.totalReward)}</td><td>${num(x.playersClaimed)}</td><td>${num(x.totalClaims)}</td><td class="agent-negative">${promoMoney(x.agentDeduction)}</td><td><button class="agent-view-btn" type="button" data-promo-id="${x.id}">View Details</button></td></tr>`).join('')||'<tr><td colspan="9" class="table-empty">No campaigns found for this period.</td></tr>';
- const meta=$('agentCampaignMeta');if(meta)meta.textContent=`Showing 1 to ${rows.length} of ${rows.length} campaigns`;
- document.querySelectorAll('[data-promo-id]').forEach(b=>b.onclick=()=>openPromotionDetail(Number(b.dataset.promoId)));
+/* The bonus page's three tables are tabs (owner: "要给每个table 分tab"), in the BO/Main module tab row's
+   own design (`bo-module-tabs.css`, the sheet the sibling agent pages already link): text-only
+   `.bo-module-tab`s, the active one marked `is-active` - what that sheet paints with a 2px orange
+   underline. One panel per table (`data-bonus-panel`), the first open on load. The rows themselves are
+   unaffected: each renderer keeps writing into its own tbody, visible or not. */
+function initBonusTabs(){
+  /* `bo-ui-standard.js:sizeNativeSelect` sizes a select to its widest option + 54px, which does not count the
+     native arrow, so "All Statuses" rendered as "All St...". The BO pins its own --bo-select-width for the same
+     reason; this one field takes an explicit width after that script has run. */
+  function pinStatusWidth(){
+    const st=$('agentBonusStatus');if(!st)return;
+    const wrap=st.closest('.bo-filter-select-item');
+    [st,wrap,st.closest('.field')].forEach(function(el){
+      if(!el)return;
+      el.style.setProperty('width','160px','important');
+      el.style.setProperty('min-width','160px','important');
+      el.style.setProperty('flex','0 0 160px','important');
+    });
+  }
+  window.addEventListener('load',pinStatusWidth);
+  /* The page-size control is a native select sitting at the bottom of a page that deliberately does not scroll:
+     its popup is browser UI, opens downwards and fell off the window, so the options could not be reached. It is
+     replaced by a small list that opens *upwards*; the hidden select stays the state holder so
+     promoCampaignSize() and the existing change wiring are untouched. */
+  (function(){
+    const btn=$('agentCampaignSizeBtn'),menu=$('agentCampaignSizeMenu'),sel=$('agentCampaignSize'),label=$('agentCampaignSizeLabel');
+    if(!btn||!menu||!sel)return;
+    const close=function(){menu.hidden=true;btn.setAttribute('aria-expanded','false');};
+    btn.addEventListener('click',function(e){e.stopPropagation();const open=menu.hidden;menu.hidden=!open;btn.setAttribute('aria-expanded',open?'true':'false');});
+    menu.querySelectorAll('[data-size]').forEach(function(o){
+      o.addEventListener('click',function(){
+        sel.value=o.dataset.size;
+        menu.querySelectorAll('[data-size]').forEach(x=>x.classList.toggle('is-active',x===o));
+        if(label)label.textContent=o.textContent.trim();
+        close();
+        sel.dispatchEvent(new Event('change',{bubbles:true}));
+      });
+    });
+    document.addEventListener('click',function(e){if(!menu.hidden&&!e.target.closest('.agent-size-picker'))close();});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+  })();
+  /* the auto page size follows the window, so the footer stays inside the viewport without a scrollbar */
+  let _reBonus=null;
+  window.addEventListener('resize',function(){clearTimeout(_reBonus);_reBonus=setTimeout(function(){if(page==='bonus')paintPromotionCampaigns();},150);});
+  const tabs=[...document.querySelectorAll('[data-bonus-section]')];
+  const panels=[...document.querySelectorAll('.agent-bonus-panel')];
+  if(!tabs.length||!panels.length)return;
+  const show=key=>{
+    tabs.forEach(b=>{
+      const on=b.dataset.bonusSection===key;
+      b.classList.toggle('is-active',on);
+      b.setAttribute('aria-selected',on?'true':'false');
+    });
+    panels.forEach(p=>p.classList.toggle('is-active',p.dataset.bonusPanel===key));
+  };
+  tabs.forEach(b=>b.addEventListener('click',()=>show(b.dataset.bonusSection)));
+  show(tabs[0].dataset.bonusSection);
 }
+
+function renderPromotionOverview(items){const target=$('agentPromotionOverview');if(!target)return;const sums={};let total=0;(items||[]).forEach(x=>{const k=promoTypeLabel(x.type||'Promotion'),v=Number(x.agentDeduction||0);sums[k]=(sums[k]||0)+v;total+=v});const rows=Object.entries(sums).sort((a,b)=>b[1]-a[1]).slice(0,4);target.innerHTML=`<div class="agent-promo-donut"><div><strong>${promoMoney(total)}</strong><small>Total Agent Deduction</small></div></div><div class="agent-promo-legend">${rows.map(([k,v],i)=>`<div><span class="agent-promo-dot dot-${i+1}"></span><b>${esc(k)}</b><em>${promoMoney(v)}${total>0?` (${(v/total*100).toFixed(1)}%)`:''}</em></div>`).join('')||'<div class="table-empty">No promotion deduction in this period.</div>'}</div>`}
+/* The campaigns table pages client-side, on the family's own ladder (`paintPager` on the performance
+   page is the same markup: First / Prev / window / Next / Last, the ends disabled on a single page -
+   the owner asked for that ladder there: "当前页面好像没有设计到 页数器"). `-` is the family default
+   page of 10, `all` shows everything. */
+let promoCampaignRows=[],promoCampaignPage=1;
+function promoCampaignSize(){
+  const sel=$('agentCampaignSize');
+  const v=sel?sel.value:'';
+  if(v==='all')return 0;
+  const n=Number(v);
+  if(n>0)return n;
+  /* "-" is the auto option: the row count comes from the free space so the table fills the window down to an
+     small margin, the way index.html's card reaches the bottom edge. 40px is what sits below the card itself:
+     its own 16px margin-bottom plus the 16px padding-bottom on `section.report-content` (which is also an
+     `overflow:auto` box, so anything past it puts a scrollbar on the inner frame) plus an 8px breathing space. */
+  const wrap=document.querySelector('.agent-promo-campaign-card > .table-wrap');
+  const foot=document.querySelector('.agent-promo-campaign-card > .agent-table-footer');
+  if(!wrap)return 10;
+  const row=document.querySelector('.agent-promo-campaign-card tbody tr');
+  const rowH=row?Math.round(row.getBoundingClientRect().height):66;
+  const top=wrap.getBoundingClientRect().top;
+  const footH=foot?Math.round(foot.getBoundingClientRect().height):65;
+  const avail=(window.innerHeight-40)-top-47-footH;
+  return Math.max(5,Math.floor(avail/Math.max(24,rowH)));
+}
+function promoRowHeight(size){
+  /* the rows share the free space equally, so every row is the same height whatever the data does */
+  const wrap=document.querySelector('.agent-promo-campaign-card > .table-wrap');
+  const foot=document.querySelector('.agent-promo-campaign-card > .agent-table-footer');
+  if(!wrap||!size)return 0;
+  const top=wrap.getBoundingClientRect().top;
+  const footH=foot?Math.round(foot.getBoundingClientRect().height):65;
+  const avail=(window.innerHeight-40)-top-47-footH;
+  return Math.max(40,Math.floor(avail/size));
+}
+function promoCampaignPager(pages){
+  const el=$('agentCampaignPager');
+  if(!el)return;
+  /* index.html's own ladder (owner's choice): first / prev / numbers with an ellipsis run / next / last, all
+     icon buttons. The icons are pointer-events:none in CSS so a click on the glyph still lands on the button. */
+  let html=`<button ${promoCampaignPage<=1?'disabled':''} data-promo-page="1" title="First page" aria-label="First page"><i class="bi bi-chevron-double-left" aria-hidden="true"></i></button>`
+    +`<button ${promoCampaignPage<=1?'disabled':''} data-promo-page="${promoCampaignPage-1}" title="Previous page" aria-label="Previous page"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>`;
+  for(let i=1;i<=pages;i++){
+    if(pages>7&&i>2&&i<pages-1&&Math.abs(i-promoCampaignPage)>1){if(i===3)html+='<button disabled class="dots" aria-hidden="true">\u2026</button>';continue}
+    html+=`<button class="${i===promoCampaignPage?'active':''}" data-promo-page="${i}" title="Page ${i}" aria-label="Page ${i}">${i}</button>`;
+  }
+  html+=`<button ${promoCampaignPage>=pages?'disabled':''} data-promo-page="${promoCampaignPage+1}" title="Next page" aria-label="Next page"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>`
+    +`<button ${promoCampaignPage>=pages?'disabled':''} data-promo-page="${pages}" title="Last page" aria-label="Last page"><i class="bi bi-chevron-double-right" aria-hidden="true"></i></button>`;
+  el.innerHTML=html;
+}
+function paintPromotionCampaigns(){
+  const tbody=$('agentCampaignRows');
+  if(!tbody)return;
+  const size=promoCampaignSize();const rowH=promoRowHeight(size);
+  const _card=document.querySelector('.agent-promo-campaign-card');
+  if(_card)_card.style.setProperty('--bonus-row-h',(rowH||66)+'px');
+  const total=promoCampaignRows.length;
+  const pages=size?Math.max(1,Math.ceil(total/size)):1;
+  promoCampaignPage=Math.max(1,Math.min(promoCampaignPage,pages));
+  const start=size?(promoCampaignPage-1)*size:0;
+  const slice=size?promoCampaignRows.slice(start,start+size):promoCampaignRows;
+  tbody.innerHTML=slice.map(promoCampaignRowHtml).join('')||'<tr><td colspan="9" class="table-empty">No campaigns found for this period.</td></tr>';
+  /* a short last page must not shorten the table (owner): keep the wrapper at a full page of rows */
+  const _wrap=tbody.closest('.table-wrap');
+  if(_wrap){const _r=tbody.querySelector('tr');const _rh=_r?Math.round(_r.getBoundingClientRect().height):66;
+    _wrap.style.minHeight=(size?size*_rh:0)+'px';}
+  const meta=$('agentCampaignMeta');
+  if(meta)meta.textContent=total?('Showing '+num(start+1)+' to '+num(start+slice.length)+' of '+num(total)+' campaign'+(total===1?'':'s')):'Showing 0 campaigns';
+  promoCampaignPager(pages);
+  document.querySelectorAll('[data-promo-id]').forEach(b=>b.onclick=()=>openPromotionDetail(Number(b.dataset.promoId)));
+}
+function promoCampaignRowHtml(x){return `<tr><td><b>${esc(x.name||'-')}</b><small class="agent-promo-cell-sub">${esc(x.code||'')}</small></td><td><span class="agent-promo-type">${esc(promoTypeLabel(x.type))}</span></td><td><span class="agent-status ${promoStatus(x)==='Active'?'':'inactive'}">${promoStatus(x)}</span></td><td>${promoDate(x.startAt)} - ${promoDate(x.endAt)}</td><td>${promoMoney(x.totalReward)}</td><td>${num(x.playersClaimed)}</td><td>${num(x.totalClaims)}</td><td class="agent-negative">${promoMoney(x.agentDeduction)}</td><td><button class="agent-view-btn agent-view-eye" type="button" data-promo-id="${x.id}" title="View campaign details" aria-label="View campaign details"><i class="bi bi-eye" aria-hidden="true"></i></button></td></tr>`;}
+function renderPromotionCampaigns(d){const all=(d.campaigns||[]).filter(meaningfulCampaign);promoCampaignRows=all;promoCampaignPage=1;paintPromotionCampaigns();}
 function renderRecentClaims(d){const rows=(d.recentClaims||[]).filter(x=>x.claimTime||x.playerId||x.playerName||Number(x.reward||0)!==0||Number(x.agentDeduction||0)!==0);const tbody=$('agentRecentClaimRows');if(tbody)tbody.innerHTML=rows.slice(0,5).map(x=>`<tr><td>${esc(x.playerId||'-')}</td><td>${esc(x.playerName||'-')}</td><td>${esc(x.campaignName||'-')}</td><td>${esc(shortDateTime(x.claimTime))}</td><td>${promoMoney(x.reward)}</td><td class="agent-negative">${promoMoney(x.agentDeduction)}</td></tr>`).join('')||'<tr><td colspan="6" class="table-empty">No claims for this period.</td></tr>'}
 function openPromotionDetail(id){const x=(promotionCache?.campaigns||[]).find(r=>Number(r.id)===Number(id));if(!x)return;const m=$('agentPromoModal');if(!m)return;$('agentPromoModalTitle').textContent=x.name||'Campaign Details';$('agentPromoModalBody').innerHTML=`<div class="agent-promo-detail-grid"><div><span>Campaign Type</span><b>${esc(promoTypeLabel(x.type))}</b></div><div><span>Status</span><b>${promoStatus(x)}</b></div><div><span>Period</span><b>${promoDate(x.startAt)} - ${promoDate(x.endAt)}</b></div><div><span>Players Claimed</span><b>${num(x.playersClaimed)}</b></div><div><span>Total Claims</span><b>${num(x.totalClaims)}</b></div><div><span>Agent Deduction</span><b class="agent-negative">${promoMoney(x.agentDeduction)}</b></div></div>`;if(m)m.hidden=false;document.body.classList.add('agent-modal-open')}
 function closePromotionDetail(){const m=$('agentPromoModal');if(m)m.hidden=true;document.body.classList.remove('agent-modal-open')}
@@ -323,5 +566,8 @@ if(_rSearch)_rSearch.addEventListener('input',function(){clearTimeout(_rDeb);_rD
    range look dead, so it is bound explicitly here. */
 ['agentReportFrom','agentReportTo'].forEach(function(id){const e=$(id);if(e)e.addEventListener('change',function(){loadReports().then(_reAfter);});});
 const _rReset=$('agentReportReset');if(_rReset)_rReset.onclick=function(){['agentReportPlayerSearch','agentReportProvider','agentReportGame','agentReportFrom','agentReportTo'].forEach(function(id){if($(id))$(id).value='';});loadReports().then(_reAfter);};
-if(page==='reports'){await loadReports();reportPage=1;providerPage=1;renderReportPanes();}if(page==='player_game_report'){await loadPlayerGameReport();gameReportPage=1;renderGameReportPaging();const gps=$('agentGameReportPageSize');if(gps){gps.onchange=function(){gameReportSize=Number(gps.value)||10;gameReportPage=1;renderGameReportPaging()}}}if(page==='withdraw'){ensureRange('agentSettlementFrom','agentSettlementTo');await loadBankAccounts();$('agentSettlementRefresh').onclick=loadSettlement;$('agentSettlementSubmit').onclick=submitSettlement;if($('agentSettlementAmount'))$('agentSettlementAmount').addEventListener('input',updateWithdrawSummary);if($('withdrawAllBtn'))$('withdrawAllBtn').onclick=()=>{const gross=Number(lastSettlementReport?.availableCommission??lastSettlementReport?.agentProfit??0),pending=(settlementsCache||[]).filter(x=>['PENDING','APPROVED'].includes(String(x.settlementStatus||'').toUpperCase())).reduce((a,x)=>a+Number(x.requestedAmount||0),0),max=Math.max(0,gross-pending);$('agentSettlementAmount').value=max.toFixed(2);updateWithdrawSummary()};if($('withdrawRemark'))$('withdrawRemark').addEventListener('input',()=>{if($('withdrawRemarkCount'))$('withdrawRemarkCount').textContent=String($('withdrawRemark').value.length)});if($('agentAddBankAccount'))$('agentAddBankAccount').onclick=()=>{clearBankForm();openBankModal()};if($('agentManageBankAccounts'))$('agentManageBankAccounts').onclick=openBankModal;if($('agentBankModalClose'))$('agentBankModalClose').onclick=closeBankModal;if($('agentBankModal'))$('agentBankModal').addEventListener('click',e=>{if(e.target===$('agentBankModal'))closeBankModal()});if($('agentBankAccountForm'))$('agentBankAccountForm').onsubmit=saveBankAccount;if($('agentBankFormReset'))$('agentBankFormReset').onclick=clearBankForm;if($('agentPayoutAccount'))$('agentPayoutAccount').onchange=renderBankAccounts;if($('withdrawHistoryStatus'))$('withdrawHistoryStatus').onchange=renderWithdrawHistory;await loadSettlement();}if(page==='finance'){ensureRange('agentWalletFrom','agentWalletTo');$('agentWalletSearch').onclick=loadFinance;$('agentWalletReset').onclick=()=>{$('agentWalletType').value='';$('agentWalletKeyword').value='';$('agentWalletFrom').value=today();$('agentWalletTo').value=today();loadFinance()};$('agentReimburseSubmit').onclick=submitReimbursement;await loadFinance();}if(page==='bonus'){ensureRange('agentBonusFrom','agentBonusTo');$('agentBonusSearch').onclick=loadBonus;$('agentBonusReset').onclick=()=>{$('agentBonusSearchText').value='';$('agentBonusStatus').value='';$('agentBonusType').value='';$('agentBonusFrom').value=today();$('agentBonusTo').value=today();loadBonus()};if($('agentPromotionExport'))$('agentPromotionExport').onclick=exportPromotionCsv;if($('agentPromoModalClose'))$('agentPromoModalClose').onclick=closePromotionDetail;if($('agentPromoModal'))$('agentPromoModal').onclick=e=>{if(e.target===$('agentPromoModal'))closePromotionDetail()};await loadBonus();}if(page==='profile')initProfile();   /* the password form now lives on the profile page under id="password" (BO's layout), so initPassword() runs here too - it self-guards on the form's existence. */if(page==='profile'||page==='password')initPassword();}catch(e){if(/Unauthorized|disabled/i.test(e.message)){localStorage.removeItem('agent_token');location.href='agent-login.html';}else await dialog.alert(e.message,{title:'Unable to Load',type:'error'});}})();
+if(page==='reports'){await loadReports();reportPage=1;providerPage=1;renderReportPanes();}if(page==='player_game_report'){await loadPlayerGameReport();gameReportPage=1;renderGameReportPaging();const gps=$('agentGameReportPageSize');if(gps){gps.onchange=function(){gameReportSize=Number(gps.value)||10;gameReportPage=1;renderGameReportPaging()}}}if(page==='withdraw'){ensureRange('agentSettlementFrom','agentSettlementTo');await loadBankAccounts();$('agentSettlementRefresh').onclick=loadSettlement;$('agentSettlementSubmit').onclick=submitSettlement;if($('agentSettlementAmount'))$('agentSettlementAmount').addEventListener('input',updateWithdrawSummary);if($('withdrawAllBtn'))$('withdrawAllBtn').onclick=()=>{const gross=Number(lastSettlementReport?.availableCommission??lastSettlementReport?.agentProfit??0),pending=(settlementsCache||[]).filter(x=>['PENDING','APPROVED'].includes(String(x.settlementStatus||'').toUpperCase())).reduce((a,x)=>a+Number(x.requestedAmount||0),0),max=Math.max(0,gross-pending);$('agentSettlementAmount').value=max.toFixed(2);updateWithdrawSummary()};if($('withdrawRemark'))$('withdrawRemark').addEventListener('input',()=>{if($('withdrawRemarkCount'))$('withdrawRemarkCount').textContent=String($('withdrawRemark').value.length)});if($('agentAddBankAccount'))$('agentAddBankAccount').onclick=()=>{clearBankForm();openBankModal()};if($('agentManageBankAccounts'))$('agentManageBankAccounts').onclick=openBankModal;if($('agentBankModalClose'))$('agentBankModalClose').onclick=closeBankModal;if($('agentBankModal'))$('agentBankModal').addEventListener('click',e=>{if(e.target===$('agentBankModal'))closeBankModal()});if($('agentBankAccountForm'))$('agentBankAccountForm').onsubmit=saveBankAccount;if($('agentBankFormReset'))$('agentBankFormReset').onclick=clearBankForm;if($('agentPayoutAccount'))$('agentPayoutAccount').onchange=renderBankAccounts;if($('withdrawHistoryStatus'))$('withdrawHistoryStatus').onchange=renderWithdrawHistory;await loadSettlement();}if(page==='finance'){ensureRange('agentWalletFrom','agentWalletTo');$('agentWalletSearch').onclick=loadFinance;$('agentWalletReset').onclick=()=>{$('agentWalletType').value='';$('agentWalletKeyword').value='';$('agentWalletFrom').value=today();$('agentWalletTo').value=today();loadFinance()};$('agentReimburseSubmit').onclick=submitReimbursement;await loadFinance();}if(page==='bonus'){initBonusTabs();$('agentCampaignSize')?.addEventListener('change',()=>{promoCampaignPage=1;paintPromotionCampaigns()});$('agentCampaignPager')?.addEventListener('click',e=>{const b=e.target.closest('[data-promo-page]');if(!b||b.disabled)return;promoCampaignPage=Number(b.dataset.promoPage)||1;paintPromotionCampaigns()});ensureRange('agentBonusFrom','agentBonusTo');/* The filter row has no Search / Reset buttons any more (owner: "再把reset 和搜索按键去除"): every
+   control applies itself - selects and dates on `change`, the keyword after a 400ms pause or on
+   Enter, the same shape agent-performance-report.js uses. Clearing a control IS the reset: the
+   option lists and an emptied box carry their own "All". */['agentBonusStatus','agentBonusType','agentBonusFrom','agentBonusTo'].forEach(id=>{const el=$(id);if(el)el.addEventListener('change',loadBonus)});(function(){const el=$('agentBonusSearchText');if(!el)return;let t=0;el.addEventListener('input',()=>{clearTimeout(t);t=setTimeout(loadBonus,400)});el.addEventListener('keydown',e=>{if(e.key==='Enter'){clearTimeout(t);loadBonus()}})})();if($('agentPromotionExport'))$('agentPromotionExport').onclick=exportPromotionCsv;if($('agentPromoModalClose'))$('agentPromoModalClose').onclick=closePromotionDetail;if($('agentPromoModal'))$('agentPromoModal').onclick=e=>{if(e.target===$('agentPromoModal'))closePromotionDetail()};await loadBonus();}if(page==='profile')initProfile();   /* the password form now lives on the profile page under id="password" (BO's layout), so initPassword() runs here too - it self-guards on the form's existence. */if(page==='profile'||page==='password')initPassword();}catch(e){if(/Unauthorized|disabled/i.test(e.message)){localStorage.removeItem('agent_token');location.href='agent-login.html';}else await dialog.alert(e.message,{title:'Unable to Load',type:'error'});}})();
 })();

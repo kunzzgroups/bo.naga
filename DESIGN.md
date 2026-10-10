@@ -7120,6 +7120,101 @@ the 8 presets and a 42-cell calendar with the range highlighted; picking This We
 overflow, the row wraps below 1024 (the field is 260px wide, as on the list) and stacks at 390, 0 page errors. The
 dead `.wlm-period` rules were removed with the pill.
 
+#### …and the row has one field recipe (2026-10-10, owner: "把奇怪的border去除 再调整 统一设计即可")
+
+Two leftovers from the pass above: the row mixed a #EADCC8 search frame with #DCC9A8 selects and an r10 date trigger
+(the frame and trigger are painted by the site-wide filter standard, the selects by the field standard), and the
+portal's own titles were still on two fields while the rest had none.
+
+- Every control in the row now takes the field standard - 36px, `1px var(--bo-field-border)`, radius 8,
+  `var(--bo-field-fill)` - through seven `:not(#…)` steps (the repo's escalation idiom; the base carries four).
+  Measured after: search / both selects / date trigger all read `rgb(220,201,168)` at radius 8.
+- The remaining titles are hidden (`label:not(.bo-search-control)`), so the row is one 36px line and the
+  placeholders and option texts carry the meaning.
+- **Widths are not settable from CSS here**: a content-sizing script writes them inline
+  (`data-bo-content-sized`; measured on the Status field: `style="--bo-select-width: 90px; width: 90px !important; …"`),
+  so its option text is what sets a column's width. "All Types" measures 145 and reads whole; "All Statuses"
+  measures 120 and still ellipsises to "All St…" because that script does not reserve the chevron's gutter - the row
+  gives ~26px back (`select{padding-right:26px}`), which removed the *overflow* (`scrollWidth == clientWidth`) but not
+  the ellipsis. Left for its own pass: the fix belongs in that script, and it would help every agent page.
+- The earlier attempt to set the columns (`width:140px!important` at five and then seven `:not(#…)` steps, and
+  `--bo-select-width` at the row) is removed: inline `!important` beats any sheet, so those rules were dead.
+
+#### …and the campaigns table pages (2026-10-10, owner: "这里的设计还需要优化一下 然后再给我安排pagination设计")
+
+The campaigns table loaded every campaign into one tbody with only a "Showing N campaigns" line. It carries the
+family's own footer now - `Show <size> entries` on the left, the count in the middle, and the ladder on the right -
+and pages client-side:
+
+- Markup in `agent-bonus.html`: `#agentCampaignSize` (`-`/10/20/50/100/all, `-` being the family's default of 10),
+  `#agentCampaignMeta`, and `<nav class="agent-pagination" id="agentCampaignPager">`. The ladder's buttons are the
+  `.smart-page` ones `bo-charcoal-legacy.css` already styles on both this page and the performance page.
+- `agent-portal.js`: `paintPromotionCampaigns()` slices the filtered rows, paints the count
+  ("Showing 11 to 20 of 25 campaigns") and renders the ladder - First / Prev / window / Next / Last with the ends
+  disabled on a single page, the same `paintPager` the performance page uses (the owner asked for that ladder there:
+  "当前页面好像没有设计到 页数器"). `renderPromotionCampaigns` now only stores the filtered rows and resets to page 1,
+  so any filter change starts at the top.
+- Measured with a stub of 25 campaigns: page 1 = 10 rows, "Showing 1 to 10 of 25 campaigns", ladder `[1] 2 3` with
+  First/Prev disabled; page 2 = rows 11-20 with `[2]` lit; page 3 = 5 rows with Next/Last disabled; size 20 = 20 rows
+  and 2 pages; a filter change returns to page 1. 0 page errors.
+- Same pass, the owner's "去除多余的设计": the blue "How Promotion Deduction Works" call-out is gone (the BO's page
+  carries no such strip) and the row action is the family's eye instead of a "View Details" text button.
+
+ (2026-10-10, owner: "再把reset 和搜索按键去除 也确保以上功能都能使用")
+
+The Reset / Search pair is gone from the filter row; each control applies itself, which is what the BO's own report
+pages do (`agent-performance-report.js`: selects and dates on `change`, the keyword after a 400ms pause or on Enter).
+The grid drops its trailing `auto` track (`1.3fr .8fr 1fr .9fr .9fr`). Clearing a control IS the reset - the option
+lists and an emptied box carry their own "All".
+
+Measured with a stub that records every `/agent/promotions` request: on load `…&q=&status=&type=`; status ->
+`status=ACTIVE`; type -> `type=CASHBACK`; the two dates -> `from=2026-08-01&to=2026-08-31`; typing "bonus" leaves the
+other three in place and fires after the pause with `q=bonus&status=ACTIVE&type=CASHBACK`. No `#agentBonusReset` /
+`#agentBonusSearch` in the DOM, the KPI strip and the table repaint on each, 0 page errors.
+
+#### …and the card lost its title, with the filters moved in (2026-10-10, owner: "table的上面标题可以去除 让框中的放进去")
+
+Two more BO details from the same pass, against `promotion-debug.html` (the BO's own Promotion Log: module row, KPI strip,
+then ONE card whose first row is the filter row, then the table head):
+
+- The three panel title bars (`.user-toolbar` with the "Campaigns List" / "Recent Claims" / "Promotion Overview" badges)
+  are gone - the tab row names each panel, and the BO keeps no title above its table.
+- The filter card moved from the page column into the campaigns table card, as its first row
+  (`<div class="table-card agent-promo-campaign-card"><div class="filter-card mb-3 agent-filter-card">…`), which is
+  also what the sibling agent page does (`agent-promotion-admin.html`). Inside the card its own frame - reports.css
+  paints `.filter-card` with a border, a fill and a shadow, `!important` - read as a box inside a box
+  ("卡中卡" again), so `body.agent-modern .agent-promo-campaign-card .filter-card` flattens it (three classes to
+  out-rank that base). Measured after: the filter row sits flat above the table head, the card is 16px from the KPI
+  strip, the row 16px below the tab row, 0 page errors.
+
+#### The agent bonus page's tables are tabs, in the BO/Main module row's own design (2026-10-10, owner: "要给每个table 分tab" then "像bo/main的tab页面设计" / "参考bo的设计排版")
+
+`agent-bonus.html` stacked three blocks - the campaigns table, a half-width claims table and the promotion overview -
+so the reader had to scan all three to find the one they wanted. They are tabs now, one table per tab:
+
+- The row is **`bo-module-tabs.css` itself**, not a second copy of its look: `<div class="bo-module-tabs agent-bonus-tabs"
+  role="tablist">` with text-only `.bo-module-tab` buttons and `is-active` on the current one - the sheet the sibling
+  agent pages already link. Measured on the active tab: colour `rgb(24,25,28)`, `font-weight:800`, a
+  `2px rgb(217,119,6)` underline, row height 48. The first attempt used the portal's own `.agent-detail-tabs` pills;
+  the owner asked for the BO/Main row instead, and this is the same row the BO module pages carry.
+- It sits **directly under the page header**, first in `.report-content`, which is where the module sheet's own
+  header says the row belongs ("on the content container's own left edge"). The sheet states `margin:0` because the
+  BO pages it lives on are flex columns that supply their own gap; this page's column is `display:block` (measured:
+  the row sat flush on the KPI strip, gap 0), so `body.agent-modern .agent-bonus-tabs{margin-bottom:16px}` states it
+  here - the portal's own rhythm on this page (15/16px). Two classes on purpose: `bo-module-tabs.css` is linked after
+  `agent-portal.css`, so a single-class rule lost to its `margin:0`.
+- Panels: `.agent-bonus-panel{display:none}` / `.is-active{display:block}` in agent-portal.css; the switcher
+  (`agent-portal.js` -> `initBonusTabs()`) marks the tab and shows its panel, and every renderer keeps writing into
+  its own tbody whether or not its panel is visible. Measured: load shows campaigns only; clicking Recent Claims and
+  Overview moves both the `is-active` mark and the visible panel; 2 campaign rows and 2 claim rows stay painted;
+  0 page errors.
+- Fixed while measuring: `agent-portal.js`'s profile-menu handler referenced an undeclared `wrap`, so **every click**
+  on an agent page threw `ReferenceError: wrap is not defined`. The container is resolved per click now and an absent
+  menu (the portal's top chip is a plain link) is a no-op.
+- Reported, not touched: the agent portal's shell keeps a 230px `margin-left` on `.report-main` at 390px width, so
+  the content is squeezed into a 160px column. Measured identically on an untouched agent page
+  (`agent-players.html`), so it is the portal shell, not this page - one for its own task.
+
 #### All three drill-down pages carry the range field (owner: "这个页面也要啊 日期选项")
 
 The Merchant List (`main-provider-merchant-list.html`) and the merchant's Provider Report
@@ -7304,3 +7399,549 @@ support - now unused by this page, but that report is linkable with a provider a
 `h1` overflows its `.user-title-wrap` at 390px and slides under the action buttons (measured on
 `main-win-lose-report.html`, `main-merchant-balance.html`, `main-merchant-transactions.html` and this page
 alike) — a shell condition, for the shell's own pass.
+
+
+### agent-bonus.html filter row and borders - audited against the BO (2026-10)
+
+The row is `provider-bet-report.html`'s own markup (`filter-card > user-search-grid bo-filter-row`), so its
+geometry is the filter standard's: no field titles, date range 390px, search 260px, selects at the BO's control
+height. `bo-filter-standard.css` paints the date trigger and the search frame `#EADCC8` while
+`bo-field-standard.css` paints selects `#DCC9A8` - two border colours in one row that are the BO's own, so this
+page does not unify them any more.
+
+Three border designs the page had invented are gone, replaced by the BO's computed recipes (measured on
+provider-bet-report.html, light):
+
+- `.agent-promo-campaign-card`: the BO's `.table-card` is a hairline ring and not a box -
+  `box-shadow:0 0 0 1px rgba(24,25,28,.03)`, no border, `padding:0` (the siblings' card carries 18px of padding,
+  which pushed the frame inside the frame). **The panel's markup had the table and the footer nested inside the
+  filter card**, so two contours met at the corner and the footer's own flex rules never applied - the card is now
+  `card > [filter-card > filter-row] + table-wrap + agent-table-footer`, the same shape as agent-products.html.
+  The filter row is a bordered box of its own, inset (`margin:12px`, radius 16px) like the BO's filter-card, and
+  the table itself draws no frame.
+- `#agentCampaignPager button`: the BO's pager chip - `background:#F3F4F6; border:1px solid transparent;
+  border-radius:8px; height:36px` (the same rule the sibling `#agentReportsPagination button` already carried).
+- the footer: the siblings' own recipe (`display:flex; justify-content:space-between; padding:14px 16px;
+  border-top:1px solid #EADCC8`) - this page had none of it, so "Show [select] entries" wrapped onto three lines.
+  The rules are scoped `body[data-agent-page="bonus"]` because the siblings' equivalents are scoped per page.
+- `.agent-view-eye`: the amber frame is dropped; the row eye is frameless like the BO's row controls.
+
+The status select is re-pinned to 160px: `bo-ui-standard.js:sizeNativeSelect` sizes it to its widest option +
+54px, which does not count the native arrow, so "All Statuses" rendered as "All St..." - the BO pins
+`--bo-select-width` on its own selects for the same reason. The pin is re-applied from the field's own
+MutationObserver because the script also re-measures on every `change` and whenever the table re-renders.
+
+
+### agent-bonus.html content area aligned to main-merchant-profit.html (2026-10)
+
+The owner asked for the page to look like `main-merchant-profit.html` (Merchant Profit). Its **shell** is out of
+scope - AGENTS.md forbids unifying the Main panel with the BO / agent shell - so the alignment covers the
+content-area components, measured on the reference (light):
+
+| component | Merchant Profit (measured) | this page before | now |
+| --- | --- | --- | --- |
+| filter strip | flat inside the card: `#FFF8EB`, `padding:14px 16px`, no frame | inset rounded box with its own border | the reference |
+| table head | transparent, `#3F3F46`, 12px/700, 47px, `padding:14px 12px` | amber `#FFE8CC` fill, 44px | the reference |
+| footer | flex row, `padding:14px 16px`, `border-top:1px solid #EADCC8`, `#FFF8EB` | same shape, kept | aligned |
+| pager | text buttons - `Previous / 1 2 / Next`, `#F3F4F6`, `#9CA3AF`, radius 8, 36px, `0 16px`, active solid amber | 36px chevron chips (`« ‹ 1 2 › »`) | text buttons |
+
+The pager markup is built in `agent-portal.js:promoCampaignPager`; the rest is one scoped block in
+`assets/css/agent-portal.css` (`body[data-agent-page="bonus"]`), per the spec's "scope changes to
+Promotion-specific selectors".
+
+Still open from the spec: the statistics-card details, the tab metrics (47px vs 48px) and the 1366/1440/1920
+responsive pass.
+
+
+### agent-bonus.html: the card frame is visible and the page does not scroll (2026-10)
+
+Two follow-ups from the owner on the Merchant Profit alignment:
+
+1. *"the design inside the box is gone"* - the card had been switched to the BO's hairline ring
+   (`0 0 0 1px rgba(24,25,28,.03)`), which is invisible at this background, so the filter strip and the table
+   read as one flat field. The card carries `1px solid #EADCC8` again (the reference's own border).
+2. *"the page must be fixed, no scroll"* - measured on `main-merchant-profit.html` at 1568x770:
+   `scrollHeight == clientHeight`, no page scrollbar. That page keeps its summary in the topbar; this one carries
+   a statistics strip, so the **table region** is capped with `max-height: calc(100vh - 430px)` and scrolls
+   inside the card. 430px is the chain above it: topbar 64 + tab row 48 + statistics 130 + filter strip 65 +
+   footer 65 + the gaps between them. The page itself never grows a scrollbar at desktop sizes.
+
+
+### agent-bonus.html: the page size follows the viewport, so nothing scrolls (2026-10)
+
+Owner: *"table cannot scroll - it has to follow the pagination logic and design"*, plus *"my Show entries
+cannot expand fully"*. The inner scrollbar is gone and `-` in the page-size select is now an **auto** count -
+`agent-portal.js:promoCampaignSize` measures the space between the table head and the card's footer
+(`window.innerHeight - 8 - wrapTop - 47 - footerHeight`, divided by the measured row height, floor 5) and a
+debounced `resize` listener re-renders. Pagination is therefore the only way through the rows, the footer is
+always inside the viewport, and the page never grows a scrollbar - which is what
+`main-merchant-profit.html` does by keeping its summary in the topbar.
+
+The table head also lost the `text-transform:uppercase` this page had added: the reference labels are Title
+Case (`Date`, `Merchant`, ...) at 12px/700 in `#3F3F46`. Rows were tightened from 96px to ~65px (the period
+column no longer wraps on a `<br>`; cell padding 9px) so a normal window fits five to eight rows.
+
+
+### agent-bonus.html: row height from the screen, and room under the card for the size dropdown (2026-10)
+
+Owner: *"the row height must be fixed by the screen, not by the data in the table"* and *"Show entries still
+cannot expand"*.
+
+- `--bonus-row-h` (set by `agent-portal.js:promoRowHeight` = free space / page size) drives `tbody tr` and
+  `tbody td` height with `overflow:hidden`, and the name cell clamps with an ellipsis: every row is the same
+  height whatever the campaign name or period does. The wrapper is pinned to `pageSize x rowH` so a short last
+  page cannot collapse the card either.
+- the auto page size now leaves **120px under the card** (`innerHeight - 128`): the page-size control is a
+  native select sitting at the bottom of a page that deliberately does not scroll, so its popup had nowhere to
+  open downwards and appeared clipped.
+
+
+### agent-bonus.html: pager switched to index.html's icon ladder (2026-10)
+
+Asked to choose between the two references' pagers, the owner picked `index.html`'s. `promoCampaignPager` now
+renders first / previous / page numbers with a single `...` run when there are more than seven / next / last, all
+as icon buttons on a 36px square (`#F3F4F6`, radius 8), the current page solid amber, disabled ends muted. The
+glyphs carry `pointer-events:none` so a click on the `<i>` still lands on its button, which keeps the existing
+delegated `[data-promo-page]` handler working without touching it. Verified: page 2 and 3 render their rows, the
+last page disables next/last, and the page-size change still resets to page 1.
+
+
+### agent-bonus.html: the page-size control is a custom drop-up (2026-10)
+
+*"Show entries still cannot expand"* - the third report of the same symptom, and the earlier two fixes
+(pagination-standardizer.js's mirror select, then the removed `overflow:hidden`) were not the cause. The control
+was a **native `<select>`**, so its popup is browser UI, outside the page: it opened *downwards* from a control
+that sits at the bottom edge of a page which deliberately never scrolls, so the options fell off the window and
+only the first row (`-`) was visible. No CSS can move or clip that popup.
+
+`index.html` avoids native selects for exactly this control - it uses the `.rounded-select-wrap` component - so
+this page now uses the same idea, scoped to itself: a `.agent-size-btn` that toggles `.agent-size-menu`, which is
+absolutely positioned with `bottom: calc(100% + 6px)` so it always opens **upwards** into the table. The native
+`<select id="agentCampaignSize">` stays in the DOM, `hidden`, as the state holder, so `promoCampaignSize()` and
+the existing `change` wiring are untouched; the options set its value and dispatch a bubbling `change`.
+
+Verified (headless, 1568x770, 25-campaign stub): menu hidden on load, opens above its button
+(`aboveButton: true`, 6 options), choosing 20 repaints 20 rows, syncs the button label, moves the `is-active`
+class and updates "Showing 1 to 20 of 25 campaigns"; 0 console errors.
+
+
+### agent-bonus.html: the empty strip under the card (2026-10)
+
+*"The bottom of my page is still a big empty area"*. It was self-inflicted: the auto page size worked from
+`innerHeight - 128`, because the 120px under the card existed to give the **native** page-size popup room to
+open downwards. Once that control became a drop-up, the reserve was nothing but an empty strip.
+
+It is now `innerHeight - 40`, which is what actually sits below the card: its own `margin-bottom:16px` plus the
+`padding-bottom:16px` on `section.report-content` (that element is also an `overflow:auto` frame, so anything
+past it does not scroll the page but puts a scrollbar on the inner frame). Verified in the auto (`-`) state at
+1568x930: `documentElement.scrollHeight == innerHeight` (778) - no page scrollbar - with the card ending 48px
+above the bottom edge, the same order as index.html's own gap.
+
+
+### agent-bonus.html: the page title is just "Promotion" (2026-10)
+
+Owner: *"drop the '- Campaigns' from the big title, I switch tabs"*. The topbar heading and the document title
+both carried the tab's name (`Promotion - Campaigns`) even while Recent Claims was showing, because they are
+static markup in `<header class="report-topbar"><h1>` and `<title>` - no script touches them. Both are now
+`Promotion`; the module tab row is what names the section. Verified: after clicking the Recent Claims tab the
+heading still reads "Promotion" with that tab active.
+
+
+### agent-player-game-report.html: the drill-down context strip (2026-10)
+
+The strip above the table read `0137126066 Game Bet Report` - the player id glued to a report name the topbar
+already shows, with no hierarchy. `loadPlayerGameReport` built it as `username + ' Game Bet Report'`; the markup
+is `<div class="user-toolbar"><h2 id="agentGameReportTitle">` plus the back control.
+
+Now: the strip carries a label over a value - `PLAYER` (11px/700 uppercase, `.03em` tracking, `#78716C`) over the
+id (15px/800 `#18191C`) - which is the label/value hierarchy index.html uses on its cards. The script sets the id
+only. The back control keeps its seat at the right.
+
+Two CSS details worth recording: an older rule (agent-portal.css ~2724) pins the same id at 13px/700 with its own
+`padding:14px 16px` and a longer class chain, so the new rule repeats that chain and adds `.user-toolbar` to
+out-rank it; and moving the padding from the `<h2>` onto the strip makes `PLAYER` line up with the table's first
+column (its cells are inset 12px - measured: label x 262 == first header text x 262).
+
+
+### The two drill-down strips are one component now (2026-10)
+
+`agent-player-game-report.html` and `agent-provider-detail.html` each had their own version of the strip above
+their table - the first a 13px h2 with the report name glued to the player id, the second a 28px h2 with a muted
+date line and a `.clean-btn` "Back". Both now render the same three parts:
+
+    LABEL           11px / 700 / uppercase / .03em / #78716C
+    VALUE  period   15px / 800 / #18191C   +  13px #78716C
+                    36px house back control at the right
+
+`.agent-back-to-list` stopped being page-scoped (nine selector chains broadened from
+`body[data-agent-page="player_game_report"]` to `body[data-agent-page]`): the class only exists where it is
+wanted, and the provider page's button is bound by id in its own inline script, so swapping its class was safe.
+The period comes from the URL in both cases - the provider page already printed it, the game report page now
+does too. Verified: label/period/value render with those values, the back control measures 36px / radius 8 /
+`1px #DCC9A8` with the text "Back to list", and neither page scrolls.
+
+
+### The drill-down strip could be squeezed until its text was cut (2026-10)
+
+*The value line reads as cut in half under the table header.* These two pages make `.table-card` a locked flex
+column that fills the viewport (agent-portal.css ~2723: `flex:1 1 auto; min-height:0; overflow:hidden`), and the
+strip's computed `flex` was `0 1 auto` - the `1` let the strip shrink when the window was short, so the value
+line spilled out of the strip and the table header's opaque band covered its lower half.
+
+The strip is now `flex:0 0 auto` with `min-height:65px` and `overflow:visible`, and its value row carries a
+`min-height`, so the pressure goes to the table (which already scrolls inside the card) instead of the strip.
+Verified in a deliberately short window (1568x560, innerHeight ~408): strip height 65, content not clipped,
+`documentElement.scrollHeight == innerHeight`, value and period fully inside the strip.
+
+
+### Uppercase label and table head: line-height headroom (2026-10)
+
+The owner's screenshot showed the uppercase label (`PROVIDER`) and the (also uppercase) table head cut across
+their tops while the mixed-case row text stayed whole - the signature of tight line boxes over uppercase glyphs
+rather than a shifted box. Both now carry `line-height:1.4` (15.4px on an 11px font) and the label a 1px top
+pad, and neither they nor their parents clip (`overflow:visible`).
+
+Honest note: the clip census (every element whose `scrollHeight` exceeds `clientHeight` while its `overflow` is
+hidden/clip) reports an empty list in this environment, so the reported clipping could not be reproduced here -
+worth remembering if it comes back, together with browser zoom as a candidate cause of sub-pixel cap clipping.
+
+
+### The 14px band under the context strip (2026-10)
+
+Caught in DevTools by the owner: `.user-toolbar.mb-3` computed `margin: 0 0 14px`. It comes from
+`reports-dashboard-original.css:1149` (`.user-toolbar{...margin-bottom:14px!important}`) and the element's own
+`mb-3` class. Inside the card that is a 14px strip of bare cream between the strip's bottom hairline and the
+table head. The `products` and `player_game_report` rules had already zeroed it; `provider_detail` and the game
+report page had not - both do now (`margin:0!important`).
+
+Verified: `margin-bottom: 0px`, gap between the strip and the first header cell `0px`, the header's offset from
+the card's top fell from 80px to 66px, and nothing else moved (strip 65px, no clipping, no page scrollbar).
+
+
+### agent rail: the Finance group in the Main panel's shape (2026-10)
+
+*"The expanded Wallet/Withdraw is ugly - unify it like Main."* The open group was plain indented text with the
+current row painted as a **solid amber block**: `bo-charcoal-agent.css:462` sets
+`linear-gradient(204deg,#D97706,#D97706)!important` on `.agent-nav-sub .agent-nav-subitem.active` (dark theme
+`:1192`, #F59E0B; agent-portal.css:754 has the older blue version underneath).
+
+It is now a panel of plain rows, the shape the Main rail shows in the owner's screenshot:
+
+| | value |
+| --- | --- |
+| panel | `#FFFDF8`, `1px solid #EADCC8`, radius 12, `padding:6px`, soft shadow, indented 10px |
+| row | 38px, radius 8, transparent, `#3F3F46`, 13px/600, 16px icon in `#A8A29E` |
+| row hover | `#F7EFE2` |
+| current row | **tint** `rgba(217,119,6,.14)` with `#B45309` text and **no** background-image |
+
+The current row is a tint rather than a filled slab - which is also the right call for a colour-blind read.
+Dark theme mirrors it (`#2A2C36` panel, `rgba(255,255,255,.06)` hover, `rgba(245,158,11,.18)` current).
+
+Verified: panel background/border/radius/padding, 38px rows, and the current row computing to
+`background-image: none` with the amber tint; no console errors.
+
+
+### agent rail: the Finance group is a flyout, the way Main renders groups (2026-10)
+
+First attempt was an inline panel inside the rail; the owner's reply was a screenshot of
+`main-dashboard.html` with "哪里一样" - Main opens its groups as a **flyout to the right of the rail, over the
+content**, which is a different pattern, not a different palette.
+
+Now (measured on the rendered page): `.agent-nav-group` is the positioning context and its `.agent-nav-sub` is
+`position:absolute; left:calc(100% + 12px); top:0; width:300px` - x 231 against a rail whose right edge is 230,
+i.e. outside it - with `#FFFFFF`, `1px #EFE3D2`, radius 12, `padding:10px` and `0 18px 44px rgba(60,48,32,.16)`.
+Rows are 48px with a 14px/600 `#3F2E1E` label and an 18px `#8A6A4A` icon; hover `#F7EFE2`; the current row the
+amber tint. The group's chevron turns to point right, as Main's does.
+
+Two traps this pass hit, both worth remembering for this rail:
+
+- **the flyout was in the DOM but not painted.** Nothing between the group and the viewport may clip:
+  `#agentPortalNav`, `.report-nav`, `.report-shell` and `.report-sidebar` all needed `overflow:visible`, and the
+  rail needed `z-index` to sit above the content frame.
+- **making the sub-items absolute shrank the rail** from 230px to ~172px (their padding had been part of what
+  sized it, the rail being content-sized) and **forcing `position:relative` on the rail put it into the flow**, so
+  the content frame took the rail's 230px *and* its own 230px offset - everything shifted right by 230px. The
+  rail keeps its own `position:fixed`; only its `z-index` is raised, and the expanded rail is pinned to
+  `width:230px` (the collapsed `sidebar-mini` state is untouched).
+
+
+### agent rail flyout: hover opens it, and the panel now matches Main's numbers (2026-10)
+
+*"Neither design nor behaviour matches - Main's sidebar opens on hover, no click needed."* Both fixed:
+
+- **behaviour**: `mouseenter` on `.agent-nav-group` adds `open`, `mouseleave` removes it (verified: closed ->
+  hovering -> open with the panel at `display:block` -> leaving -> closed). The click handler stays for touch and
+  keyboard, and `focusin`/`focusout` keep it reachable without a pointer.
+- **design**, from the reference screenshot: panel 320px wide (was 300), rows 52px (was 48 - 124px for two rows
+  plus 10px padding), **no border at all** (the shadow alone separates it, was `1px #EFE3D2`), a 20px offset from
+  the nav item which lands the panel 29px clear of the rail's edge (Main's own gap is 27px), radius 12,
+  `0 20px 48px rgba(60,48,32,.18)`.
+
+
+### agent rail: the row whose flyout is open takes the rail's active treatment (2026-10)
+
+Main highlights the whole row whose panel is open exactly like the current page's row, and that was the piece
+still missing here. The parent button is a `<button>`, and the rail's active recipe is written for its `<a>` rows,
+so carrying `active` alone only changed the text colour - the fill and the left bar never came.
+
+Both now come from one rule that repeats the chain the `.agent-nav-parent` rules own
+(`html:not(#bo-charcoal-off) body[data-agent-page].agent-report-body.agent-modern .report-sidebar .report-nav`,
+agent-portal.css:1712 and friends) and adds `.agent-nav-group.open` / `.active`: `#F5EBDC`, dark text,
+`box-shadow: inset 4px 0 0 0 #D97706`, with the chevron turning amber.
+
+Verified: with the group hovered open the row computes `rgb(245,235,220)` with
+`rgb(217,119,6) 4px 0 0 0 inset`, the flyout sits 29px clear of the rail at 320x130 with 52px rows and
+`#8A5A2B` / `#A9743F` label and icon, and the group still opens on hover and closes on leave.
+
+
+### Auditing the Main rail's group flyout, then re-doing the agent's (2026-10)
+
+Audit (`assets/js/reports.js`, which every agent page also loads):
+
+- markup is `.nav-group` > `.nav-group-btn` (level 1) + `.nav-group-list` (level 2); the open state is
+  `.open` on the group plus `.show` on the list (`reports.js:83-88` re-opens the section that holds the current
+  page).
+- **hover, not click**: `mouseenter` opens after a **140ms intent delay**, `mouseleave` schedules a close
+  **400ms** later so the pointer can cross the gap into the panel, and entering the panel cancels that close
+  (`reports.js:147-214`). On desktop a click deliberately does not pin the group (`reports.js:223`, "Desktop
+  flyouts are hover-only. Clicking the parent should not pin the submenu").
+- **the panel is positioned by script**: `positionSidebarFlyout()` sets `left = max(8, sidebarRect.right + 6)`
+  and the row's top, only at `innerWidth >= 992` (`reports.js:91-135`), and the previous flyout is hidden for a
+  frame while a new one opens (`bo-flyout-instant-hide`).
+- `BO_SIDEBAR.closeAllFlyouts()` is the shared close API.
+
+These bindings run at `DOMContentLoaded`, before the agent rail exists (it is built after `/me` returns), so none
+of it reached the agent portal - which is why the agent's own ad-hoc toggle never behaved like Main.
+
+The agent rail now implements the same mechanism in `agent-portal.js`, for exactly this one group: intent delay
+140ms, close grace 400ms (cancelled by entering the panel), clicks only toggle where `(hover: hover)` is false
+(touch), keyboard Enter/Space toggles, and the panel is `position:fixed` with `left = sidebar.right + 6` written
+inline on every open. One trap worth recording: the CSS for that panel must not carry `!important` on `left`/`top`,
+or the inline positioning is ignored and the panel parks off-screen.
+
+Verified: at 120ms after `mouseenter` the group is still closed; opened it reports the panel at
+`x = 236` against a rail ending at 230 (the reference's own `+6`); 150ms after `mouseleave` it is still open, and
+closed after the grace. Panel 320x130, rows 52px, labels `#8A5A2B`, icons `#A9743F`, and the open row carries the
+rail's `#F5EBDC` fill with an inset `#D97706` bar.
+
+
+### The real unification: use the reference markup, not a re-styled copy (2026-10)
+
+The audit (`auth.js:1242-1247` + `reports.js`) shows how the Main rail's groups are built: **fixed markup plus the
+shared shell stylesheets**, never a per-page restyle.
+
+    <div class="nav-group open" data-menu-group="...">
+      <button type="button" class="nav-group-btn" aria-expanded="true">
+        <span><i class="bi ... me-2"></i>Title</span><i class="bi bi-chevron-down"></i>
+      </button>
+      <div class="nav-group-list show">
+        <div class="bo-flyout-title">Title</div>
+        <a class="report-sub [active]" href="..."><i class="bi ... me-2"></i>Label</a>
+      </div>
+    </div>
+
+The agent rail's Finance group now emits exactly that (the previous `.agent-nav-*` classes are gone from the JS, so
+every bespoke rule written for them is inert and the look comes from the shared sheets). The behaviour stays in
+`agent-portal.js` with the reference's own mechanism (140ms intent delay, 400ms close grace, hover-only on
+desktop, `left = sidebar.right + 6`).
+
+Two page-level interferences had to be answered rather than restyled:
+
+1. the portal's `.report-nav a` rules lay the rail rows out space-between, which pushed the panel's labels to the
+   far right - the panel's rows are pinned back to `justify-content:flex-start` with a 10px gap;
+2. `.bo-flyout-title` is the collapsed rail's panel heading; the rule that hides it elsewhere lives in
+   `bo-global-quicknav.css`, which this side does not load, so it is hidden here for the expanded rail.
+
+Rendered result: cream panel `#FFF8EB`, `1px rgba(92,74,48,.12)`, radius 12, `padding:8px`, 42px rows with 13px
+brown labels and icons at x = 236 against a rail ending at 230. What remains different from Main is what
+AGENTS.md puts out of scope: the Main shell's own `data-bo-shell="main"` sheet.
+
+
+### Why the agent flyout never appeared (2026-10)
+
+Reported as *"hovering Finance shows no submenu"*, and it was two separate faults, both introduced by the move to
+the reference markup:
+
+1. **the reveal rule lives in a sheet this side does not load.** With `.open` on the group and `.show` on the
+   list the panel still computed `display:none; visibility:hidden` - the same root cause as the
+   `.bo-flyout-title` hiding rule. The look still comes from the shared sheets; `agent-portal.css` now supplies
+   only the reveal, scoped with `[data-agent-page]` so no BO page can match it.
+2. **the hook attribute was dropped with the old markup.** The behaviour block starts from
+   `nav.querySelector('[data-finance-toggle]')`, and the rewritten button no longer carried it, so the whole
+   binding was skipped - setup worked (140ms/400ms, positioning, keyboard) and nothing ran. The attribute is back
+   on the group button.
+
+Verified across eight agent pages (dashboard, wallet, withdraw, products, players, bonus, bet-report, profile):
+after a hover every one reports `open` + `show` + `display:block` + `visibility:visible` at
+`x=236, 286x108`, and the panel is the topmost element at its own coordinates wherever the page has no error
+overlay on top. The check is worth re-running with `node .pi-tmp-rail-allpages.js` after touching this markup.
+
+
+### The hover bindings were gated on a media query that lies on touch-capable machines (2026-10)
+
+*"Where is it?"* - the panel opened in every headless check but not for the owner. The bindings sat inside
+`if (window.matchMedia('(hover: hover)').matches)`, and that query reports **false** when the primary pointer is
+judged to be touch - a Windows laptop with a touchscreen, for instance. On such a machine the portal bound only
+the click fallback and **never bound hover at all**, so hovering Finance did nothing while this environment
+(headless, `hover: true`) worked.
+
+Hover is now bound unconditionally - a real mouse fires `mouseenter` regardless of the media query - and the
+click fallback stays for genuinely pointer-less devices. Re-verified on all eight agent pages: hover opens the
+panel at `x=236`, `286x108`, `display:block`, `visibility:visible`.
+
+Lesson for this rail: do not use a pointer-capability media query to decide whether to *bind* a listener; use it
+only to decide which extra affordance to add.
+
+
+### The flyout bindings are delegated now (2026-10)
+
+Reported twice as *"hovering Finance shows nothing"* while every check here passed. Two causes were ruled out and
+one robustness change made:
+
+- the pointer-capability gate (`matchMedia('(hover: hover)')`) around the hover bindings is gone: it reports
+  false on machines whose primary pointer is judged to be touch, and those users got no hover at all. Hover is
+  bound unconditionally; the click fallback stays for pointer-less devices.
+- the listeners moved from the group element to the **document**, resolved per event through
+  `closest('.report-sidebar .nav-group')` - the same delegation `auth.js` uses for this rail. Listeners hung on
+  the element disappear whenever the nav is rebuilt, and a listener on the row alone misses a pointer that lands
+  on a child (the icon or the label).
+
+A measurement trap worth recording: with an error modal up, the panel's measured rect read `y=84` while its
+inline `top` was the correct `256px`. The modal's backdrop carries a transform, and a transformed ancestor
+re-anchors `position:fixed`. Checks on these pages must either avoid the modal or assert the inline values.
+
+
+### Forcing the flyout visible (2026-10)
+
+The owner's DevTools settled it: `.nav-group.agent-finance-group.open` with
+`.nav-group-list.show` and inline `left:236px; top:301px`, and still nothing painted. With the DOM and the
+coordinates provably right, the only thing left is a stylesheet keeping the list hidden - and a stylesheet
+`!important` out-ranks a plain inline style (the mirror image of the earlier trap where our `!important` beat the
+script's inline coordinates).
+
+So `show()` now writes the three properties that mean "visible" as **inline `!important`**
+(`display:block`, `visibility:visible`, `opacity:1`), which no sheet can out-rank, and `hideNow()` removes them.
+The same is applied to the group that starts open on the finance/withdraw pages.
+
+Verified: computed `visibility:visible`, `opacity:1` and the inline values present at every one of the eight agent
+pages after a hover.
+
+
+### The agent flyout: matching Main's metrics, reachable, hovering (2026-10)
+
+Three follow-ups, all measured:
+
+- **the panel is anchored to its row now.** `position:fixed` + script coordinates was re-anchored by a transformed
+  ancestor and parked ~170px above its group (the owner's arrow). As an absolute child of the group it travels
+  with the row; the script no longer computes anything. Verified `aligned: true` on eight pages, i.e. the panel's
+  top equals its row's top.
+- **the metrics are Main's**: `320px` wide (shared component: 286), rows `52px` (42), labels `15px/700` (13/600),
+  icons `18px` (13), `gap:0`, `padding:10px`. Two leftovers were found by dumping the panel's children: the
+  `.bo-flyout-title` was still rendering whenever the body carried `sidebar-mini` (the rail reports
+  `data-bo-mini-hover`), and every row carried `margin: 2px 0` - together the empty band in the owner's crop.
+  Panel: **320x126** (Main's 124 plus a 1px border top and bottom).
+- **it is reachable and it highlights**: the panel clears the rail by a few pixels, and the pointer crossing that
+  gap used to land on the content frame, so the 400ms grace was all the user had to reach the panel - a
+  transparent `::before` bridge spans the gap so the pointer never leaves a hover target. The row hover
+  (`#F7EFE2`) and the active row (amber tint) are pinned with the same chain, since stronger sheet rules were
+  winning.
+
+
+### Why the sub-items could not be clicked (2026-10)
+
+Not a spacing problem - a hole in the delegated handlers. The pointer walks row -> gap -> panel, and:
+
+    document.addEventListener('mouseover', e => {
+      const g = groupOf(e.target);
+      if (!g || g === openGroup) return;   // <- entering the panel hits this
+      show(g);
+    });
+
+`show()` is what cancels the pending close (`clearTimeout(closeTimer)`), so taking that early return when the
+pointer arrived on the panel **left the 400ms timer scheduled by the mouseout on the row running**, and the panel
+vanished before the user could reach it. The handler now cancels the timer explicitly in that branch, because the
+panel is a child of the group: moving onto it fires `mouseover` for the group, not `mouseout`.
+
+Verified by walking the pointer the way a user does: leave the row (`mouseout` to the content frame) - 200ms
+later, over the gap, the group is still open - then `mouseover` the panel and wait 500ms: still open,
+`display:block`.
+
+Also matched the reference's spacing while here: the panel sits 25px clear of the rail (it was 5px), which is
+what the Main rail's flyout shows.
+
+
+### The agent rail flyout: the actual root cause (2026-10)
+
+Three sessions of patches went into this before the source was read properly. The answer was in the files that
+already existed, and none of it was a spacing, timing or z-index problem:
+
+1. **The open flag is `.bo-flyout-hover`, not `.open`/`.show`.** `reports.css:7295` (and the copy in
+   `reports-dashboard-original.css:5491`):
+
+       .report-sidebar .report-nav > .nav-group:not(.bo-flyout-hover) > .nav-group-list{
+         display:none!important; opacity:0!important; visibility:hidden!important; pointer-events:none!important;
+         transition:none!important; transform:none!important;
+       }
+
+   `auth.js:openSidebarFlyoutOnHover` adds exactly that class. The agent portal was opening its panel with
+   `.open`, so it was fighting this rule: first the panel never appeared at all, and once it was forced visible
+   with inline `!important` the fourth declaration still applied - **painted, but `pointer-events:none`, so the
+   pointer fell through it onto the table below.** That is the readout the owner captured: the Wallet link
+   computing `pointer-events: none`. Nothing in a headless run reproduced it because the empty stub page happened
+   to be matched by the portal's own override instead.
+
+2. **The agent pages never loaded `bo-global-quicknav.css`.** BO/Main pages get it injected by `auth.js`; the agent
+   pages do not load `auth.js` at all, so the sheet that positions the panel
+   (`position:fixed!important; left:var(--bo-sidebar-flyout-left); top:var(--bo-sidebar-flyout-top)`) was absent.
+   It is now linked in the head of all eleven agent pages, and `placeFlyout()` writes the two custom properties
+   plus the height cap, exactly as `auth.js:positionSidebarFlyout` does.
+
+3. **The sub-item markup has to be the reference's.** `menuLinkHtml` emits
+   `<a class="report-sub"><span><i class="bi … me-2"></i>Label</span></a>`, and `reports.css:49` sets
+   `justify-content:space-between` on `.report-nav a` - so with a bare text node for the label the icon and text
+   were pushed to opposite ends. With the `<span>` wrapper it lays out correctly, unchanged from Main.
+
+4. **No default-open on the group's own pages.** Marking the current section with `.bo-flyout-hover` pinned the
+   panel over the page of the link just clicked, pointer long gone. The shell only needs `.open`/`.show` there;
+   the parent row is lit by its `:has(.report-sub.active)` rule.
+
+Everything this session had written to force the panel open (its own `.agent-nav-*` component, sizes, a bridge,
+inline `!important` reveals) was removed - 14KB of CSS - because all of it existed to fight rule 1. What is left
+behind is the reference markup, the reference flag and the reference sheet.
+
+Verified with a real CDP pointer (not synthetic events) on all eight agent pages at 1698x790 / dpr 1.125: hover
+opens the panel, it is level with its row, the pointer crosses into it, the group stays open while the pointer
+rests on Wallet, and a real click lands on `/agent-wallet.html`. Also verified: dark theme, a 1000px window, and
+the landing state on `agent-wallet.html` / `agent-withdraw.html` (row lit via `:has(.report-sub.active)`, panel
+closed).
+
+
+### The regression that came from "cleaning up": rebuild from main (2026-10)
+
+The owner's decisive clue - *what is on main is fine, the local one shows the problem* - pointed at my own edits, and
+a controlled swap proved it: with `origin/main`'s `assets/css/agent-portal.css` in place, `agent-dashboard.html`
+and `agent-players.html` render their date control correctly (label hidden, the players field 277px wide with the
+trigger fitting it); with this branch's version they do not (label visible, a 390px trigger overflowing a 292px
+column and wrapping the filter row).
+
+Cause: a "purge the forcing CSS" pass removed everything from my first flyout comment to the end of the file. Main's
+later appends lived in that tail - including
+
+    .agent-modern .agent-head-actions .bo-range-field>label{display:none!important}
+    body[data-agent-page="players"] … .agent-player-filters .bo-range-field{…}
+    body[data-agent-page="reports"]  … .bo-range-field{width:100%!important;…}
+
+so they went with it. The date-range drift the owner saw was that deletion, not anything in the flyout work.
+
+The file is now **main's content plus only the blocks this branch genuinely adds** - the Promotion campaigns card,
+its field types, and the two drill-down context strips (16 blocks, ~27KB). Every rule of mine that touched
+`nav-group` / `report-sidebar` / `report-nav` / `bo-range-field` is gone: the reference mechanism owns those.
+
+Verified after the rebuild: dashboard and players date controls match main; the rail flyout still opens on hover,
+stays open across the gap, and a real click lands on `/agent-wallet.html` on all eight agent pages; the bonus page
+keeps its rows-per-page ladder and trigger; the game-report strip keeps `PLAYER / 0137126066` aligned with the
+first column. `agent-wallet.html` and `agent-withdraw.html` still show the range title exactly as main does - left
+alone deliberately, since main is the reference.
+
+Lesson: never remove "everything after marker X" from a file other people also append to. Diff against
+`origin/main` and delete only the lines this branch added.
