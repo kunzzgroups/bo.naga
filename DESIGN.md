@@ -7999,3 +7999,24 @@ game-report strip still reads `PLAYER / 0137126066` aligned with its first colum
 
 If this sheet needs changing again: `git diff origin/main -- assets/css/agent-portal.css` and change only the lines
 that belong to this branch. Never delete a tail, and never re-derive "which of my rules matter" from a keyword scan.
+
+
+### Dropping my rail overrides by provenance, not by selectors (2026-10)
+
+Three attempts at this file failed, each for the same underlying reason: deciding "which rules are mine" without
+asking git. A tail deletion took main's rules with it; a restore brought my superseded rail overrides back; a
+rule-level regeneration stripped comments and `@media` structure and broke every page's design.
+
+The pass that worked: start from the state that has all of this session's work plus main's rules, then drop a
+comment block **only when every selector in it is a rail selector AND none of its rules exist in `origin/main`** -
+provenance first, selectors only as a secondary filter. 24 blocks went; then the rule sets were compared and the
+11 rules of main's that the drop had taken were re-appended verbatim.
+
+Verified: **0 of main's 891 rules are missing**, `check-shell-drift` clean, and - the step that had been skipped
+all along - every page was looked at: the Promotion page (tabs, KPI strip, filter row with the 25-campaign table,
+amber dot pills, bold money, the five-step ladder), My Players (pills, search, date trigger with no title, All VIP,
+table, footer), the dashboard (topbar date with no title, panels, Quick Access) and Finance - Withdraw (cards,
+form, notes, history band with its own filter row) all render as designed.
+
+The rule before touching this sheet: change it with git as the reference (`git diff origin/main -- <file>`), never
+by pattern-matching my own comments.
