@@ -7536,3 +7536,12 @@ It is now `innerHeight - 40`, which is what actually sits below the card: its ow
 past it does not scroll the page but puts a scrollbar on the inner frame). Verified in the auto (`-`) state at
 1568x930: `documentElement.scrollHeight == innerHeight` (778) - no page scrollbar - with the card ending 48px
 above the bottom edge, the same order as index.html's own gap.
+
+
+### agent-bonus.html: the page title is just "Promotion" (2026-10)
+
+Owner: *"drop the '- Campaigns' from the big title, I switch tabs"*. The topbar heading and the document title
+both carried the tab's name (`Promotion - Campaigns`) even while Recent Claims was showing, because they are
+static markup in `<header class="report-topbar"><h1>` and `<title>` - no script touches them. Both are now
+`Promotion`; the module tab row is what names the section. Verified: after clicking the Recent Claims tab the
+heading still reads "Promotion" with that tab active.
