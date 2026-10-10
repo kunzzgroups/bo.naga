@@ -7914,3 +7914,34 @@ opens the panel, it is level with its row, the pointer crosses into it, the grou
 rests on Wallet, and a real click lands on `/agent-wallet.html`. Also verified: dark theme, a 1000px window, and
 the landing state on `agent-wallet.html` / `agent-withdraw.html` (row lit via `:has(.report-sub.active)`, panel
 closed).
+
+
+### The regression that came from "cleaning up": rebuild from main (2026-10)
+
+The owner's decisive clue - *what is on main is fine, the local one shows the problem* - pointed at my own edits, and
+a controlled swap proved it: with `origin/main`'s `assets/css/agent-portal.css` in place, `agent-dashboard.html`
+and `agent-players.html` render their date control correctly (label hidden, the players field 277px wide with the
+trigger fitting it); with this branch's version they do not (label visible, a 390px trigger overflowing a 292px
+column and wrapping the filter row).
+
+Cause: a "purge the forcing CSS" pass removed everything from my first flyout comment to the end of the file. Main's
+later appends lived in that tail - including
+
+    .agent-modern .agent-head-actions .bo-range-field>label{display:none!important}
+    body[data-agent-page="players"] … .agent-player-filters .bo-range-field{…}
+    body[data-agent-page="reports"]  … .bo-range-field{width:100%!important;…}
+
+so they went with it. The date-range drift the owner saw was that deletion, not anything in the flyout work.
+
+The file is now **main's content plus only the blocks this branch genuinely adds** - the Promotion campaigns card,
+its field types, and the two drill-down context strips (16 blocks, ~27KB). Every rule of mine that touched
+`nav-group` / `report-sidebar` / `report-nav` / `bo-range-field` is gone: the reference mechanism owns those.
+
+Verified after the rebuild: dashboard and players date controls match main; the rail flyout still opens on hover,
+stays open across the gap, and a real click lands on `/agent-wallet.html` on all eight agent pages; the bonus page
+keeps its rows-per-page ladder and trigger; the game-report strip keeps `PLAYER / 0137126066` aligned with the
+first column. `agent-wallet.html` and `agent-withdraw.html` still show the range title exactly as main does - left
+alone deliberately, since main is the reference.
+
+Lesson: never remove "everything after marker X" from a file other people also append to. Diff against
+`origin/main` and delete only the lines this branch added.
