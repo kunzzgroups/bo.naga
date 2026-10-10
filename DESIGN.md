@@ -8020,3 +8020,28 @@ form, notes, history band with its own filter row) all render as designed.
 
 The rule before touching this sheet: change it with git as the reference (`git diff origin/main -- <file>`), never
 by pattern-matching my own comments.
+
+
+### The collapsed rail's active cell now matches the BO (2026-10)
+
+Owner: *the collapsed rail's active icon colour is not unified with Main/BO.* It was not: `bo-charcoal-agent.css`
+paints that cell as a solid amber block with a white icon
+(`background:linear-gradient(135deg,#D97706,#D97706)` + `color:#FFFFFF`), while the BO/Main cell
+(`bo-charcoal-shell.css`) is a cream fill with a dark brown icon, a hairline ring, a soft shadow and a 3px amber
+bar on its left edge:
+
+    light  linear-gradient(135deg,#FFF8EF 0%,#FFE8CC 48%,#FFF3E0 100%) + #9A3412, radius 10
+           inset 0 1px 0 rgba(255,255,255,.85), 0 0 0 1px rgba(217,119,6,.18), 0 6px 16px rgba(217,119,6,.12)
+    dark   linear-gradient(180deg,rgba(245,158,11,.20),rgba(245,158,11,.10)) + #FBBF24, radius 10
+           inset 0 0 0 1px rgba(245,158,11,.20), inset 0 1px 0 rgba(245,158,11,.18),
+           inset 0 -1px 0 rgba(245,158,11,.10), 0 0 28px rgba(245,158,11,.12)
+    bar    left:0; top:7px; bottom:7px; width:3px; radius 999px; #FBBF24 -> #D97706; glow rgba(217,119,6,.35)
+
+The agent sheet now carries those values, declared after the rules they answer so equal specificity resolves to
+them, for both the hovered and the un-hovered collapsed rail and for both themes. The bar's geometry is scoped with
+`body[data-agent-page]` - the scope AGENTS.md gives the portal's own shell rules - because `position`/`left`/`width`
+are layout metrics the drift guard polices on shell selectors.
+
+Verified by rendering the collapsed rail: light computes `linear-gradient(135deg,#FFF8EF…)`, `#9A3412`, radius
+10px, the inset ring plus shadow and a 3px `#FBBF24 -> #D97706` bar; dark computes the `.20 -> .10` amber gradient
+with `#FBBF24` and the same bar. Screenshot: `.pi-tmp-wl-eye/mini-light.png`.
