@@ -3142,11 +3142,11 @@ html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-group{
   position:relative!important;
 }
 html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-group > .agent-nav-sub{
-  position:absolute!important;left:calc(100% + 12px)!important;top:0!important;z-index:60!important;
-  width:300px!important;margin:0!important;padding:10px!important;
+  position:absolute!important;left:calc(100% + 40px)!important;top:0!important;z-index:60!important;
+  width:320px!important;margin:0!important;padding:10px!important;
   background:#FFFFFF!important;background-image:none!important;
-  border:1px solid #EFE3D2!important;border-radius:12px!important;
-  box-shadow:0 18px 44px rgba(60,48,32,.16)!important;
+  border:0!important;border-radius:12px!important;
+  box-shadow:0 20px 48px rgba(60,48,32,.18)!important;
   display:none!important;
 }
 html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-group.open > .agent-nav-sub{
@@ -3154,7 +3154,7 @@ html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-group.
 }
 html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .agent-nav-sub .agent-nav-subitem{
   display:flex!important;align-items:center!important;gap:12px!important;
-  height:48px!important;min-height:48px!important;padding:0 14px!important;border-radius:8px!important;
+  height:52px!important;min-height:52px!important;padding:0 16px!important;border-radius:8px!important;
   background:transparent!important;background-image:none!important;box-shadow:none!important;
   color:#3F2E1E!important;font-size:14px!important;font-weight:600!important;white-space:nowrap!important;
 }
@@ -3217,3 +3217,6 @@ html:not(#bo-charcoal-off) body.agent-modern.agent-report-body .report-sidebar{
 html:not(#bo-charcoal-off) body.agent-modern.agent-report-body:not(.sidebar-mini) .report-sidebar{
   width:230px!important;min-width:230px!important;max-width:230px!important;
 }
+
+/* Main's flyout has no border at all - the shadow alone separates it - and its rows are 52px in a 320px panel
+   (124px for two rows plus 10px padding). The gap from the rail is 20px. */

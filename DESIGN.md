@@ -7663,3 +7663,16 @@ Two traps this pass hit, both worth remembering for this rail:
   the content frame took the rail's 230px *and* its own 230px offset - everything shifted right by 230px. The
   rail keeps its own `position:fixed`; only its `z-index` is raised, and the expanded rail is pinned to
   `width:230px` (the collapsed `sidebar-mini` state is untouched).
+
+
+### agent rail flyout: hover opens it, and the panel now matches Main's numbers (2026-10)
+
+*"Neither design nor behaviour matches - Main's sidebar opens on hover, no click needed."* Both fixed:
+
+- **behaviour**: `mouseenter` on `.agent-nav-group` adds `open`, `mouseleave` removes it (verified: closed ->
+  hovering -> open with the panel at `display:block` -> leaving -> closed). The click handler stays for touch and
+  keyboard, and `focusin`/`focusout` keep it reachable without a pointer.
+- **design**, from the reference screenshot: panel 320px wide (was 300), rows 52px (was 48 - 124px for two rows
+  plus 10px padding), **no border at all** (the shadow alone separates it, was `1px #EFE3D2`), a 20px offset from
+  the nav item which lands the panel 29px clear of the rail's edge (Main's own gap is 27px), radius 12,
+  `0 20px 48px rgba(60,48,32,.18)`.
