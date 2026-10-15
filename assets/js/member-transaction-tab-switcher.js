@@ -253,7 +253,7 @@
       if(active)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
     });
     setTableShape();installCleanListeners();
-    hideBankSelector();
+    showBankSummary();
     const from=$(id('From')),to=$(id('To')),keyword=$(id('Keyword')),status=$(id('Status'));
     if(from)from.value=current.from;if(to)to.value=current.to;if(keyword)keyword.value=current.keyword;
     if(status)status.value=current.status||'ALL';
@@ -325,7 +325,7 @@
     if(!ownsAll())return;
     setTableShape();
     installCleanListeners();
-    hideBankSelector();
+    showBankSummary();
     await waitForDateRangeReady();
     reload();
   }
@@ -357,12 +357,16 @@
   window.BO_MEMBER_TX_ALL_PAGE={reinit:init};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
   else init();
-  /* The All workspace spans every bank, so it has no per-bank selector. Deposit and
-     Withdraw build their own chips into this host; without this, the host's static
-     placeholder would sit there loading forever, and a strip left over from the tab the
-     user came from would stay on screen. */
-  function hideBankSelector(){
-    const bankCards=document.getElementById('depositBankCards');
-    if(bankCards) bankCards.hidden=true;
+  /* Keep the shared bank summary visible on All without activating bank filtering. */
+  function showBankSummary(){
+    const host=document.getElementById('depositBankCards');
+    if(!host)return;
+    host.hidden=false;
+    host.style.pointerEvents='none';
+    const refresh=window.BO_MEMBER_DEPOSIT_PAGE?.renderBankSummary;
+    if(typeof refresh==='function')refresh();
   }
+  document.addEventListener('bo:deposit-module-ready',()=>{
+    if(ownsAll())showBankSummary();
+  });
 })();

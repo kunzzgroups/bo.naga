@@ -320,9 +320,10 @@
   /* A card per bank, every bank complete without a click. `flow` is this bank's total under the
      table's current filters, so the figures beside the panel agree with the rows below it. */
   async function renderBankCards(){
-    if(!ownsView()) return;
+    if(!ownsView() && window.BO_TX_VIEW!=='all') return;
     const host=document.getElementById('depositBankCards');
     if(!host)return;
+    if(ownsView()){host.hidden=false;host.style.pointerEvents='';}
     // The grid's layout is keyed on this class rather than on the markup, so a page whose HTML
     // was cached before the matrix existed still gets it instead of the old 220px card grid.
     host.classList.add('bo-bank-chips');
@@ -606,7 +607,8 @@
     if(pp){ if(pp.__boProofClose) try{pp.__boProofClose();}catch(e){} else pp.remove(); }
   };
   document.addEventListener('bo:spa:before',window.__boDepositSpaCleanup);
-  window.BO_MEMBER_DEPOSIT_PAGE={reinit:initDepositPage};
+  window.BO_MEMBER_DEPOSIT_PAGE={reinit:initDepositPage,renderBankSummary:renderBankCards};
+  document.dispatchEvent(new Event('bo:deposit-module-ready'));
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initDepositPage,{once:true});
   else initDepositPage();
 })();
