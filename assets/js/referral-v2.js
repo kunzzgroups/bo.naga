@@ -5,6 +5,9 @@ const price=v=>'RM '+Number(v??0).toLocaleString('en-MY',{minimumFractionDigits:
 const base=()=>String(window.API_CONFIG?.BASE_URL||'/api').replace(/\/$/,'');
 const apiRoot='/admin/referral-v2';
 let networkRows=[];
+let financeViewData=null;
+let generationPolicy=null;
+const configuredGenerationRates=new Map();
 const pageState=new Map();
 const DEFAULT_PAGE_SIZE=10;
 function tableData(id,records,render,colspan){
@@ -21,7 +24,7 @@ function paintTable(id){
  state.page=Math.max(1,Math.min(state.page,totalPages));
  const start=(state.page-1)*state.size;
  body.innerHTML=matches.length?matches.slice(start,start+state.size).map(state.render).join(''):
-  '<tr><td colspan="'+state.colspan+'" class="text-muted py-3">No matching records</td></tr>';
+  '<tr><td colspan="'+state.colspan+'" class="text-muted py-3">'+(id==='r2Participants'?'No referral relationships found':'No matching records')+'</td></tr>';
  const footer=$('r2Pager_'+id);if(!footer)return;
  const from=matches.length?start+1:0,to=Math.min(start+state.size,matches.length);
  footer.querySelector('[data-r2-total]').textContent=`Showing ${from} to ${to} of ${matches.length} entries`;
@@ -74,7 +77,16 @@ async function request(path,opts={}){
 }
 function read(form){const data={};new FormData(form).forEach((value,key)=>{if(String(value).trim()!=='')data[key]=String(value).trim()});return data;}
 function body(v){return JSON.stringify(v)}
-function show(tab){document.querySelectorAll('[data-r2-panel]').forEach(p=>{p.hidden=p.dataset.r2Panel!==tab});document.querySelectorAll('[data-r2-tab]').forEach(btn=>btn.classList.toggle('active',btn.dataset.r2Tab===tab));}
+function show(tab){document.querySelectorAll('[data-r2-panel]').forEach(p=>{p.hidden=p.dataset.r2Panel!==tab});document.querySelectorAll('[data-r2-tab]').forEach(btn=>{const selected=btn.dataset.r2Tab===tab;btn.classList.toggle('active',selected);btn.setAttribute('aria-selected',String(selected));});}
+function friendlyStatus(value){return ({PENDING:'Waiting for review',VERIFIED:'Payment confirmed',CALCULATED:'Awaiting commission approval',APPROVED:'Approved',REJECTED:'Declined',REVERSED:'Corrected',PAID:'Paid',DRAFT:'Pending approval'})[String(value)]||String(value||'-');}
+function transactionType(type){return ({COMMISSION:'Commission received',RESERVE:'Withdrawal requested',RELEASE:'Withdrawal hold released',WITHDRAWAL:'Withdrawal paid',REVERSAL:'Commission corrected'})[String(type)]||String(type||'-');}
+function paymentReference(key){
+ const raw=String(key||'-');const match=/^(commission|withdraw-reserve|withdraw-release|withdraw-paid|reversal):(\d+)$/.exec(raw);
+ if(!match)return raw;
+ const title=({commission:'Commission', 'withdraw-reserve':'Withdrawal request','withdraw-release':'Declined withdrawal','withdraw-paid':'Withdrawal payment',reversal:'Commission correction'})[match[1]];
+ return title+' #'+match[2];
+}
+function auditAction(type){return ({REQUEST_WITHDRAWAL:'Withdrawal requested',REQUEST_REVERSAL:'Commission correction requested',APPROVE_REVERSAL:'Commission correction confirmed',APPROVE_COMMISSION:'Commission approved',UPDATE_GENERATION_POLICY:'Commission rates updated',CHANGE_PARENT:'Referrer updated',CALCULATE:'Commission calculated',MANUAL_ALLOCATION:'Commission adjusted',REQUEST_RECEIPT:'Payment submitted',VERIFY_RECEIPT:'Payment confirmed',REJECT_RECEIPT:'Payment rejected'})[String(type)]||String(type||'-').replaceAll('_',' ').toLowerCase();}
 function row(cells){return '<tr>'+cells.map(x=>'<td>'+escapeHtml(x)+'</td>').join('')+'</tr>';}
 function draw(id,records,render,colspan){tableData(id,records,render,colspan);}
 function action(label,act,id,disabled=false){return '<button type="button" class="btn btn-sm btn-outline-primary me-1 mb-1" '+(disabled?'disabled ':'')+'data-r2-command="'+act+'" data-id="'+id+'">'+escapeHtml(label)+'</button>';}
@@ -87,21 +99,80 @@ function updateMerchantCurrencyNotice(){
  notice.classList.toggle('r2-discovery-warning',!!incompatible);
  const submit=$('r2CreateCollection')?.querySelector('button[type="submit"],button:not([type])');if(submit)submit.disabled=!!incompatible;
 }
-function populateNetworkSelects(){
+function linkedAccounts(){
+ const parentIds=new Set(networkRows.filter(p=>p.parent_id!=null).map(p=>String(p.parent_id)));
+ return networkRows.filter(p=>p.parent_id!=null||parentIds.has(String(p.id)));
+}
+function orderedNetwork(rows){
+ const index=new Map(rows.map(p=>[String(p.id),p]));
+ const children=new Map();
+ for(const participant of rows){const parent=String(participant.parent_id);if(!children.has(parent))children.set(parent,[]);children.get(parent).push(participant);}
+ const sort=(a,b)=>String(a.account_code||a.display_name||'').localeCompare(String(b.account_code||b.display_name||''),undefined,{numeric:true});
+ for(const siblings of children.values())siblings.sort(sort);
+ const roots=rows.filter(p=>p.parent_id==null||!index.has(String(p.parent_id))).sort(sort);
+ const result=[],visited=new Set();
+ const walk=initial=>{const queue=[initial];while(queue.length){const item=queue.pop(),key=String(item.id);if(visited.has(key))continue;visited.add(key);result.push(item);const kids=children.get(key)||[];for(let i=kids.length-1;i>=0;i--)queue.push(kids[i]);}};
+ roots.forEach(walk);rows.filter(p=>!visited.has(String(p.id))).sort(sort).forEach(walk);
+ return result;
+}
+function populateNetworkSelects(wallets=[]){
  const make=(id,filter,empty)=>{const el=$(id);if(!el)return;const selected=el.value;el.innerHTML='<option value="">'+escapeHtml(empty)+'</option>'+networkRows.filter(filter).map(p=>'<option value="'+Number(p.id)+'">'+escapeHtml(accountLabel(p))+'</option>').join('');el.value=selected;};
- make('r2ParentParticipant',()=>true,'Select account');make('r2ParentReferrer',()=>true,'No referrer (root)');make('r2MerchantSelect',p=>p.kind==='MERCHANT','Select merchant');updateMerchantCurrencyNotice();make('r2RecipientSelect',()=>true,'Select upstream account');make('r2WithdrawParticipant',()=>true,'Select account');
+ const linkedIds=new Set(linkedAccounts().map(p=>String(p.id)));
+ const availableIds=new Set(wallets.filter(w=>Number(w.available)>0).map(w=>String(w.participant_id)));
+ make('r2ParentParticipant',()=>true,'Select account');make('r2ParentReferrer',()=>true,'No referrer (root)');make('r2MerchantSelect',p=>p.kind==='MERCHANT','Select merchant');updateMerchantCurrencyNotice();make('r2RecipientSelect',p=>linkedIds.has(String(p.id)),'Select upstream account');make('r2WithdrawParticipant',p=>availableIds.has(String(p.id)),'Select funded account');
 }
 function renderNetwork(){
+ const linked=linkedAccounts(),countByParent=new Map();
+ for(const p of networkRows)if(p.parent_id!=null){const id=String(p.parent_id);countByParent.set(id,(countByParent.get(id)||0)+1);}
  const search=($('r2NetworkSearch')?.value||'').trim().toLowerCase(),kind=$('r2NetworkKind')?.value||'';
- const matches=networkRows.filter(p=>(!kind||p.kind===kind)&&(!search||[p.account_code,p.display_name,p.referrer_code,p.kind].some(v=>String(v||'').toLowerCase().includes(search))));
- draw('r2Participants',matches,p=>row([p.account_code||'#'+p.id,p.kind+(p.kind==='MERCHANT'&&p.currency?' · '+p.currency:''),p.display_name,p.referrer_code||'Root',p.id,p.mode??'Not set',p.rate_percent??'0',p.fixed_amount??'0',p.maximum_amount??'-']),9);
- const count=$('r2NetworkCount');if(count){const agents=networkRows.filter(p=>p.kind==='AGENT').length,merchants=networkRows.filter(p=>p.kind==='MERCHANT').length;count.textContent=matches.length+' of '+networkRows.length+' accounts · '+agents+' agents · '+merchants+' merchants';}
+ const matches=orderedNetwork(linked).filter(p=>(!kind||p.kind===kind)&&(!search||[p.account_code,p.display_name,p.referrer_code,p.kind].some(v=>String(v||'').toLowerCase().includes(search))));
+ draw('r2Participants',matches,p=>row([p.account_code||'#'+p.id,p.kind+(p.kind==='MERCHANT'&&p.currency?' · '+p.currency:''),p.display_name,p.referrer_code||'Root',countByParent.get(String(p.id))||0,p.generation??'-',p.generation_rate_percent==null?'-':(p.generation_rate_valid===false?'Invalid':p.generation_rate_percent+'%')]),7);
+ const count=$('r2NetworkCount');if(count){const relationships=networkRows.filter(p=>p.parent_id!=null).length;count.textContent=matches.length+' of '+linked.length+' linked accounts · '+relationships+' referrals';}
+}
+function renderGenerationRates(){
+ const area=$('r2GenOverrides');if(!area)return;
+ const entries=[...configuredGenerationRates].sort((a,b)=>a[0]-b[0]);
+ area.innerHTML=entries.length?entries.map(([level,rate])=>'<span class="r2-generation-chip"><strong>Gen '+level+'</strong> '+escapeHtml(rate.toLocaleString('en-MY',{maximumFractionDigits:4}))+'% <button type="button" class="r2-generation-edit" data-r2-edit-generation="'+level+'" aria-label="Edit generation '+level+' rate" title="Edit rate">Edit</button> <button type="button" class="r2-generation-remove" data-r2-remove-generation="'+level+'" aria-label="Remove generation '+level+' rate" title="Remove rate">×</button></span>').join(''):'No rates set yet. Add a generation and its rate above.';
+}
+function renderGenerationPreview(){
+ const area=$('r2GenerationPreview');if(!area)return;
+ const entries=[...configuredGenerationRates].sort((a,b)=>a[0]-b[0]);
+ area.innerHTML=entries.length?entries.map(([level,rate])=>'<span class="r2-generation-chip"><strong>Gen '+level+'</strong> '+escapeHtml(rate.toLocaleString('en-MY',{maximumFractionDigits:4}))+'%</span>').join(''):'No rates set yet.';
+}
+function syncGenerationPolicy(policy){
+ generationPolicy=policy;
+ const status=$('r2GenerationStatus');
+ if(status){status.textContent=policy?.configured?'Active':'Not configured';status.classList.toggle('r2-generation-unset',!policy?.configured);}
+ configuredGenerationRates.clear();
+ const date=$('r2GenFrom');if(date)date.value=policy?.rates?.[0]?.effective_from?String(policy.rates[0].effective_from).substring(0,10):'';
+ for(const entry of policy?.rates||[]){
+  const level=Number(entry.generation_no),rate=Number(entry.rate_percent);
+  if(Number.isSafeInteger(level)&&level>=1&&Number.isFinite(rate)&&rate>=0&&rate<=100)configuredGenerationRates.set(level,rate);
+ }
+ renderGenerationRates();renderGenerationPreview();
+}
+function addGenerationRate(){
+ const levelInput=$('r2GenOverrideLevel'),rateInput=$('r2GenOverrideRate');
+ const level=Number(levelInput?.value),rate=Number(rateInput?.value);
+ if(!levelInput?.value||!Number.isSafeInteger(level)||level<1||level>2147483647){feedback('Enter a valid generation number (1 or higher).',true);return;}
+ if(!rateInput?.value||!Number.isFinite(rate)||rate<0||rate>100||!/^\d+(?:\.\d{1,4})?$/.test(rateInput.value.trim())){feedback('Enter a rate between 0 and 100% (up to 4 decimals).',true);return;}
+ if(!configuredGenerationRates.has(level)&&configuredGenerationRates.size>=1000){feedback('You can save up to 1,000 generation rates.',true);return;}
+ configuredGenerationRates.set(level,rate);levelInput.value='';rateInput.value='';
+ renderGenerationRates();renderGenerationPreview();feedback('Generation '+level+' is set to '+rate+'%. Click Save commission rates to apply it.');
 }
 async function refresh(){
  const paths=['summary','participants','collections','receipts','wallets','withdrawals','ledger','reconciliation','reversals','audit'];
  const items=await Promise.all(paths.map(async x=>[x,await request('/'+x)]));const data=Object.fromEntries(items);
- const s=data.summary;$('r2Summary').innerHTML=[['People',s.participants],['Invoices',s.collections],['Billed',price(s.billed)],['Verified',price(s.verified)],['Commission credited',price(s.credited)],['Pending payouts',s.withdrawalsPending]].map(([name,value],i)=>'<div class="metric agent-admin-metric r2-summary-metric"><span class="bo-summary-icon"><i class="bi '+['bi-people','bi-receipt','bi-cash-stack','bi-patch-check','bi-wallet2','bi-hourglass-split'][i]+'"></i></span><div><span>'+escapeHtml(name)+'</span><strong>'+escapeHtml(value)+'</strong></div></div>').join('');
- networkRows=data.participants;renderNetwork();
+ try{syncGenerationPolicy(await request('/generation-policy'));}
+ catch(error){
+  generationPolicy=null;
+  const status=$('r2GenerationStatus');
+  if(status){status.textContent='Unable to load settings';status.classList.add('r2-generation-unset');}
+  renderGenerationPreview();
+ }
+ networkRows=data.participants;
+ const s=data.summary;$('r2Summary').innerHTML=[['Linked accounts',linkedAccounts().length],['Invoices',s.collections],['Billed',price(s.billed)],['Verified',price(s.verified)],['Commission credited',price(s.credited)],['Pending payouts',s.withdrawalsPending]].map(([name,value],i)=>'<div class="metric agent-admin-metric r2-summary-metric"><span class="bo-summary-icon"><i class="bi '+['bi-people','bi-receipt','bi-cash-stack','bi-patch-check','bi-wallet2','bi-hourglass-split'][i]+'"></i></span><div><span>'+escapeHtml(name)+'</span><strong>'+escapeHtml(value)+'</strong></div></div>').join('');
+ renderNetwork();
  try{
   const discovery=await request('/merchant-discovery');const info=$('r2MerchantDiscovery');
   const status=`Merchant source: ${discovery.scope==='BOSS'?'Boss (all active brands)':'Current brand only'} · ${discovery.referralMerchants} of ${discovery.eligibleMerchants} available`;
@@ -109,20 +180,30 @@ async function refresh(){
    if(!info)continue;info.textContent=status;info.classList.toggle('r2-discovery-warning',discovery.scope!=='BOSS'||Number(discovery.referralMerchants)<Number(discovery.eligibleMerchants));
   }
  }catch(error){const info=$('r2MerchantDiscovery');if(info){info.textContent='Merchant discovery check unavailable: '+error.message;info.classList.add('r2-discovery-warning');}}
- populateNetworkSelects();
- const policySelect=$('r2PolicyParticipant');if(policySelect){const selected=policySelect.value;policySelect.innerHTML='<option value="">Select existing account</option>'+data.participants.map(p=>'<option value="'+Number(p.id)+'">'+escapeHtml(accountLabel(p))+'</option>').join('');policySelect.value=selected;}
- draw('r2Collections',data.collections,c=>row([c.id,c.reference,c.merchant_name,c.billing_mode,price(c.billed_amount),price(c.verified_amount),price(c.outstanding),c.status]),8);
- draw('r2Receipts',data.receipts,r=>'<tr>'+[r.id,r.collection_id,r.payment_reference,price(r.amount),r.status].map(x=>'<td>'+escapeHtml(x)+'</td>').join('')+'<td>'+(r.status==='PENDING'?action('Verify','verify',r.id)+action('Reject','reject-receipt',r.id):'')+(['VERIFIED','CALCULATED'].includes(r.status)?action('Calculate','calculate',r.id):'')+(r.status==='CALCULATED'?action('Approve','approve',r.id):'')+(r.status==='APPROVED'?action('Reverse','reverse',r.id):'')+'</td></tr>',6);
- draw('r2Wallets',data.wallets,w=>row([w.display_name+' (#'+w.participant_id+')',w.kind,price(w.balance),price(w.reserved),price(w.available)]),5);
- draw('r2Withdrawals',data.withdrawals,w=>'<tr>'+[w.id,w.display_name,w.reference,price(w.amount),w.status,w.payout_reference||'-'].map(x=>'<td>'+escapeHtml(x)+'</td>').join('')+'<td>'+(w.status==='PENDING'?action('Approve','approve-withdraw',w.id):'')+(['PENDING','APPROVED'].includes(w.status)?action('Reject','reject-withdraw',w.id):'')+(w.status==='APPROVED'?action('Mark paid','pay-withdraw',w.id):'')+'</td></tr>',7);
- draw('r2Reconciliation',data.reconciliation,r=>{const bad=Number(r.discrepancy)!==0||Number(r.reserved_discrepancy)!==0;return '<tr'+(bad?' class="table-danger"':'')+'>'+[r.id,r.display_name,price(r.balance),price(r.ledger_balance),price(r.discrepancy),price(r.reserved),price(r.ledger_reserved),price(r.reserved_discrepancy)].map(x=>'<td>'+escapeHtml(x)+'</td>').join('')+'</tr>'},8);
- draw('r2Reversals',data.reversals,r=>'<tr>'+[r.id,r.receipt_id,r.reason,r.requested_by,r.status].map(x=>'<td>'+escapeHtml(x)+'</td>').join('')+'<td>'+(r.status==='PENDING'?action('Approve reversal','approve-reversal',r.id):'')+'</td></tr>',6);
- draw('r2Ledger',data.ledger,l=>row([l.id,l.display_name,l.entry_type,price(l.amount),price(l.reserved_delta),l.event_key,l.created_at]),7);
- draw('r2Audit',data.audit,a=>row([a.created_at,a.actor_id,a.action,a.entity_id,a.detail]),5);
+ populateNetworkSelects(data.wallets);
+ draw('r2Collections',data.collections,c=>row([c.id,c.reference,c.merchant_name,c.billing_mode,price(c.billed_amount),price(c.verified_amount),price(c.outstanding),friendlyStatus(c.status)]),8);
+ draw('r2Receipts',data.receipts,r=>'<tr>'+[r.id,r.collection_id,r.payment_reference,price(r.amount),friendlyStatus(r.status)].map(x=>'<td>'+escapeHtml(x)+'</td>').join('')+'<td>'+(r.status==='PENDING'?action('Verify','verify',r.id)+action('Reject','reject-receipt',r.id):'')+(['VERIFIED','CALCULATED'].includes(r.status)?action('Calculate','calculate',r.id):'')+(r.status==='CALCULATED'?action('Approve','approve',r.id):'')+(r.status==='APPROVED'?action('Request commission correction','reverse',r.id):'')+'</td></tr>',6);
+ financeViewData=data;
+ renderFinanceTables();
+ draw('r2Withdrawals',data.withdrawals,w=>'<tr>'+[w.id,w.display_name,w.reference,price(w.amount),friendlyStatus(w.status),w.payout_reference||'-'].map(x=>'<td>'+escapeHtml(x)+'</td>').join('')+'<td>'+(w.status==='PENDING'?action('Approve withdrawal','approve-withdraw',w.id):'')+(['PENDING','APPROVED'].includes(w.status)?action('Decline','reject-withdraw',w.id):'')+(w.status==='APPROVED'?action('Confirm payment','pay-withdraw',w.id):'')+'</td></tr>',7);
+ draw('r2Reversals',data.reversals,r=>'<tr>'+[r.id,r.receipt_id,r.reason,r.requested_by,friendlyStatus(r.status)].map(x=>'<td>'+escapeHtml(x)+'</td>').join('')+'<td>'+(r.status==='PENDING'?action('Confirm correction','approve-reversal',r.id):'')+'</td></tr>',6);
+ draw('r2Ledger',data.ledger,l=>row([l.id,l.display_name,transactionType(l.entry_type),price(l.amount),price(l.reserved_delta),paymentReference(l.event_key),l.created_at]),7);
+ draw('r2Audit',data.audit,a=>row([a.created_at,a.actor_id,auditAction(a.action),a.entity_id,a.detail]),5);
 }
-function bindForm(form,callback){const el=$(form);el?.addEventListener('submit',async ev=>{ev.preventDefault();const b=read(el);try{feedback('Saving…');const result=await callback(b);feedback('Saved: '+JSON.stringify(result));await refresh();}catch(err){feedback(err.message,true);}});}
+function renderFinanceTables(){
+ if(!financeViewData)return;
+ const data=financeViewData;
+ const activityIds=new Set([...data.ledger,...data.withdrawals].map(r=>String(r.participant_id)));
+ const hasAmount=r=>['balance','reserved','ledger_balance','ledger_reserved','discrepancy','reserved_discrepancy'].some(k=>Math.abs(Number(r[k]||0))>0.0000001);
+ const wallets=$('r2ShowInactiveWallets')?.checked?data.wallets:data.wallets.filter(w=>hasAmount(w)||activityIds.has(String(w.participant_id)));
+ draw('r2Wallets',wallets,w=>row([w.display_name+' (#'+w.participant_id+')',w.kind,price(w.balance),price(w.reserved),price(w.available)]),5);
+ const reconciliation=$('r2ShowInactiveReconciliation')?.checked?data.reconciliation:data.reconciliation.filter(r=>hasAmount(r)||activityIds.has(String(r.id)));
+ draw('r2Reconciliation',reconciliation,r=>{const bad=Number(r.discrepancy)!==0||Number(r.reserved_discrepancy)!==0;return '<tr'+(bad?' class="table-danger"':'')+'>'+[r.id,r.display_name,price(r.balance),price(r.ledger_balance),price(r.discrepancy),price(r.reserved),price(r.ledger_reserved),price(r.reserved_discrepancy)].map(x=>'<td>'+escapeHtml(x)+'</td>').join('')+'</tr>'},8);
+}
+function bindForm(form,callback){const el=$(form);el?.addEventListener('submit',async ev=>{ev.preventDefault();const b=read(el);try{feedback('Saving…');await callback(b);feedback('Saved successfully.');await refresh();}catch(err){feedback(err.message,true);}});}
 function bind(){
  setupTableTools();
+ for(const id of ['r2ShowInactiveWallets','r2ShowInactiveReconciliation'])$(id)?.addEventListener('change',renderFinanceTables);
  document.querySelectorAll('[data-r2-tab]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.r2Tab)));
  show($('r2FinancePage')?.dataset.r2DefaultTab||'overview');
  bindForm('r2ParentForm',b=>{const id=b.id;delete b.id;return request('/participants/'+encodeURIComponent(id)+'/parent',{method:'POST',body:body({parentId:b.parentId?Number(b.parentId):null})});});
@@ -130,23 +211,34 @@ function bind(){
  $('r2NetworkKind')?.addEventListener('change',renderNetwork);
  $('r2MerchantSelect')?.addEventListener('change',updateMerchantCurrencyNotice);
  $('r2ParentParticipant')?.addEventListener('change',()=>{const p=networkRows.find(x=>String(x.id)===$('r2ParentParticipant').value);if($('r2ParentReferrer'))$('r2ParentReferrer').value=p?.parent_id==null?'':String(p.parent_id);});
- bindForm('r2Policy',b=>{const id=b.id;delete b.id;return request('/participants/'+encodeURIComponent(id)+'/policy',{method:'POST',body:body(b)});});
+ bindForm('r2GenerationPolicy',b=>{
+  if(!configuredGenerationRates.size)throw Error('Add at least one generation rate before saving.');
+  return request('/generation-policy',{method:'POST',body:body({...b,rates:[...configuredGenerationRates].sort((a,c)=>a[0]-c[0]).map(([generation,ratePercent])=>({generation,ratePercent}))})});
+ });
+ $('r2GenOverrideAdd')?.addEventListener('click',addGenerationRate);
+ $('r2GenOverrides')?.addEventListener('click',event=>{
+  const edit=event.target.closest('[data-r2-edit-generation]');
+  if(edit){const level=Number(edit.dataset.r2EditGeneration);$('r2GenOverrideLevel').value=level;$('r2GenOverrideRate').value=configuredGenerationRates.get(level);$('r2GenOverrideRate').focus();return;}
+  const remove=event.target.closest('[data-r2-remove-generation]');if(!remove)return;
+  configuredGenerationRates.delete(Number(remove.dataset.r2RemoveGeneration));
+  renderGenerationRates();renderGenerationPreview();feedback('Rate removed from the form. Save commission rates to apply.');
+ });
  bindForm('r2CreateCollection',b=>request('/collections',{method:'POST',body:body(b)}));
  bindForm('r2SubmitReceipt',b=>{const id=b.collectionId;delete b.collectionId;return request('/collections/'+encodeURIComponent(id)+'/receipts',{method:'POST',body:body(b)});});
  bindForm('r2Manual',b=>{const id=b.receiptId;delete b.receiptId;return request('/receipts/'+encodeURIComponent(id)+'/manual',{method:'POST',body:body(b)});});
  bindForm('r2Withdraw',b=>request('/withdrawals',{method:'POST',body:body(b)}));
- $('r2InspectAllocations')?.addEventListener('submit',async ev=>{ev.preventDefault();try{const id=read(ev.currentTarget).receiptId;const rows=await request('/allocations/'+encodeURIComponent(id));draw('r2Allocations',rows,r=>row([r.id,r.receipt_id,r.recipient_name+' (#'+r.recipient_id+')',r.depth,r.mode,r.rate_percent,price(r.amount),r.status]),8);show('approvals');}catch(err){feedback(err.message,true);}});
+ $('r2InspectAllocations')?.addEventListener('submit',async ev=>{ev.preventDefault();try{const id=read(ev.currentTarget).receiptId;const rows=await request('/allocations/'+encodeURIComponent(id));draw('r2Allocations',rows,r=>row([r.id,r.receipt_id,r.recipient_name+' (#'+r.recipient_id+')',r.depth,r.mode,r.rate_percent,price(r.amount),friendlyStatus(r.status)]),8);show('approvals');}catch(err){feedback(err.message,true);}});
  document.addEventListener('click',async ev=>{const target=ev.target.closest('[data-r2-command],[data-r2-action]');if(!target)return;if(target.dataset.r2Action==='refresh'){await refresh().then(()=>feedback('Updated')).catch(err=>feedback(err.message,true));return;}
  const id=target.dataset.id,command=target.dataset.r2Command;if(!id||!command)return;
- if(!window.confirm('Confirm '+command.replaceAll('-',' ')+' for record #'+id+'?'))return;
+ const label=target.textContent.trim();if(!window.confirm(label+' for record #'+id+'?'))return;
  let path='',payload=null;
  if(command==='verify'||command==='calculate'||command==='approve'||command==='reverse')path='/receipts/'+id+'/'+command;
  if(command==='reject-receipt')path='/receipts/'+id+'/reject';
  if(command==='approve-reversal')path='/reversals/'+id+'/approve';
  if(command==='approve-withdraw'||command==='reject-withdraw'||command==='pay-withdraw')path='/withdrawals/'+id+'/'+command.replace('-withdraw','');
- if(command==='reverse'||command==='reject-withdraw'||command==='reject-receipt'){const reason=window.prompt('Required reason');if(!reason?.trim())return;payload={reason:reason.trim()};}
+ if(command==='reverse'||command==='reject-withdraw'||command==='reject-receipt'){const reason=window.prompt(command==='reverse'?'Reason for correcting commission':'Reason for declining');if(!reason?.trim())return;payload={reason:reason.trim()};}
  if(command==='pay-withdraw'){const ref=window.prompt('External payout transaction reference');if(!ref?.trim())return;payload={payoutReference:ref.trim()};}
- try{target.disabled=true;feedback('Processing…');const data=await request(path,{method:'POST',...(payload?{body:body(payload)}:{})});feedback('Success: '+JSON.stringify(data));await refresh();}catch(err){feedback(err.message,true);}finally{target.disabled=false;}
+ try{target.disabled=true;feedback('Processing…');await request(path,{method:'POST',...(payload?{body:body(payload)}:{})});feedback('Action completed.');await refresh();}catch(err){feedback(err.message,true);}finally{target.disabled=false;}
  });
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{bind();refresh().catch(e=>feedback(e.message,true));});else{bind();refresh().catch(e=>feedback(e.message,true));}
