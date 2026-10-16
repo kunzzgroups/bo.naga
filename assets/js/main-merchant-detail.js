@@ -877,6 +877,10 @@
    listFilterCurrencies.forEach(code=>currencyModalDraft.add(code));
   }else{
    syncEnabledWithPrimary();
+   // Match Add Merchant: use the shared currency dropdown catalog, while retaining
+   // currencies already configured on this merchant to avoid accidental data loss.
+   const shared=sharedCurrencyCodes();
+   if(shared && shared.length) shared.forEach(code=>currencyModalDraft.add(code));
    enabledCurrencies.forEach(code=>currencyModalDraft.add(code));
   }
   currencyModalSelected.clear();
@@ -986,6 +990,13 @@
   const primary=normalizeCurrencyCode(b?.currency||'MYR')||'MYR';
   ensureCurrencyOption(primary, currencyRowByCode(primary)?.displayName||primary);
   enabledCurrencies.add(primary);
+  // The Add Merchant selector is populated from the shared currency list.
+  // Make the same currencies selectable on Edit without removing saved values.
+  const shared=sharedCurrencyCodes();
+  if(shared && shared.length) shared.forEach(code=>{
+   ensureCurrencyOption(code, currencyRowByCode(code)?.displayName||code);
+   enabledCurrencies.add(code);
+  });
   renderCurrencyOptions(primary);
  }
  function providerCode(p){ return String(p.code||'').toUpperCase(); }
