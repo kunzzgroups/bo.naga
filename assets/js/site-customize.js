@@ -964,7 +964,23 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
         [htmlEditor, cssEditor, jsEditor].forEach((editor) => editor.__boHistory?.reset());
     }
 
+    let sectionRequestSequence = 0;
+    let sectionLoading = false;
+    let sectionSaving = false;
+    let loadedSectionKey = null;
+    let loadedBrandId = null;
+    function editorBrandId() { return brandScopedHeaders({})['X-Brand-Id']; }
+    function refreshSectionSaveState() {
+        saveBtn.disabled = sectionLoading || sectionSaving || loadedSectionKey !== activeSection || loadedBrandId !== editorBrandId();
+    }
+
     async function loadSection(sectionKey) {
+        const sequence = ++sectionRequestSequence;
+        const requestedBrand = editorBrandId();
+        sectionLoading = true;
+        loadedSectionKey = null;
+        loadedBrandId = null;
+        refreshSectionSaveState();
         setStatus('Loading section...', '');
         try {
             const res = await fetch(API_CUSTOMIZE_SECTION_URL + '?key=' + encodeURIComponent(sectionKey) + '&v=' + Date.now(), {
@@ -973,8 +989,12 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
             });
             const json = await res.json().catch(() => ({}));
             if (!res.ok) throw new Error(json.message || 'Load failed');
-            const sectionData = withSectionDefaults(sectionKey, json.data || {});
+            if (sequence !== sectionRequestSequence || activeSection !== sectionKey || editorBrandId() !== requestedBrand) return;
+            if (!json || json.status !== 'success' || !json.data || json.data.key !== sectionKey) throw new Error('Unexpected section response; previous editor content preserved.');
+            const sectionData = withSectionDefaults(sectionKey, json.data);
             setEditors(sectionData);
+            loadedSectionKey = sectionKey;
+            loadedBrandId = requestedBrand;
             setStatus(activeSection === 'animation-custom-effects'
                 ? (sectionData.usingAnimationTemplate ? 'Example template loaded. Rename the effect, edit it, then Save Section. After that select Custom CSS / JS in Animation Effect and enter the same effect name.' : 'Edit custom animation CSS and optional JS here. Save, then select Custom CSS / JS in Animation Effect and enter the matching effect name.')
                 : sectionData.usingDefaultHtml
@@ -983,12 +1003,25 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
                         ? 'Existing text Login/Register buttons were converted to uploaded image HTML. Click Save Section to publish this updated layout.'
                         : 'Latest active files loaded.', 'success');
         } catch (err) {
-            setEditors({});
-            setStatus(err.message || 'Load failed. Section files may not exist yet.', 'error');
+            if (sequence === sectionRequestSequence && activeSection === sectionKey) {
+                setStatus((err.message || 'Load failed.') + ' Saving is disabled until this section loads successfully.', 'error');
+            }
+        } finally {
+            if (sequence === sectionRequestSequence) {
+                sectionLoading = false;
+                refreshSectionSaveState();
+            }
         }
     }
 
     async function saveSection() {
+        if (sectionSaving || sectionLoading || loadedSectionKey !== activeSection || loadedBrandId !== editorBrandId()) {
+            setStatus('Section is not fully loaded for this brand. Reload before saving.', 'error');
+            return;
+        }
+        const savingKey = activeSection;
+        const savingBrand = loadedBrandId;
+        sectionSaving = true;
         // Use multipart FormData for layout source instead of URL-encoded source code.
         // The section editor can contain HTML/CSS/JS characters that are commonly flagged by
         // reverse-proxy/WAF form-body rules. Spring's existing @RequestParam endpoint accepts
@@ -1016,7 +1049,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
             }
         }
 
-        payload.append('key', activeSection);
+        payload.append('key', savingKey);
         payload.append('html', safeHtml);
         payload.append('css', safeCss);
         payload.append('js', jsValue);
@@ -1029,16 +1062,18 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
             const res = await fetch(API_CUSTOMIZE_SECTION_URL, {
                 method: 'POST',
                 // Do not set Content-Type manually; the browser must add the multipart boundary.
-                headers: brandScopedHeaders({ 'Accept': 'application/json' }),
+                headers: Object.assign(brandScopedHeaders({ 'Accept': 'application/json' }), { 'X-Brand-Id': savingBrand }),
                 body: payload
             });
             const json = await res.json().catch(() => ({}));
-            if (!res.ok) throw new Error(json.message || 'Save failed');
+            if (!res.ok || json.status !== 'success') throw new Error(json.message || 'Save failed');
+            if (activeSection !== savingKey || editorBrandId() !== savingBrand) return;
             setStatus(activeSection === 'home' ? 'Saved. This CSS now overrides the TitanXgaming frontend after refresh.' : activeSection === 'animation-custom-effects' ? 'Saved. Custom animation CSS/JS will be loaded by the managed animation engine after frontend refresh. No server file editing is needed.' : 'Saved. Section content now applies to the TitanXgaming frontend after refresh.', 'success');
         } catch (err) {
             setStatus(err.message || 'Save failed. Please check Spring Boot API.', 'error');
         } finally {
-            saveBtn.disabled = false;
+            sectionSaving = false;
+            refreshSectionSaveState();
             saveBtn.innerHTML = '<i class="bi bi-save"></i> Save Section';
         }
     }
@@ -1059,6 +1094,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
             sectionBtns.forEach((item) => item.classList.remove('active'));
             btn.classList.add('active');
             activeSection = btn.dataset.section;
+            refreshSectionSaveState();
             updateHeader(btn);
             loadSection(activeSection).catch(() => {});
         });
