@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html data-bo-shell="bo" data-bo-spa="1" lang="en">
+<html data-bo-shell="main" data-bo-spa="1" lang="en">
 <head>
 <script>!function () { try { var t = localStorage.getItem('bo_theme'); if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-bo-theme', t); } catch (e) { } try { var R = window.__boDCL = window.__boDCL || [], O = EventTarget.prototype.addEventListener; EventTarget.prototype.addEventListener = function (t, f, o) { if (t === 'DOMContentLoaded' && typeof f === 'function') { try { var s = document.currentScript, x = null; if (s && s.tagName === 'SCRIPT') x = String(s.getAttribute('src') || '').split('?')[0].split('/').pop() || null; var d = false; for (var i = 0; i < R.length; i++) { if (R[i].t === this && R[i].f === f) { d = true; break; } } if (!d) R.push({ t: this, f: f, s: x, o: (o && typeof o === 'object' && o.once === true) ? 1 : 0, e: window.__boDclEpoch || 0 }); } catch (e) { } } return O.call(this, t, f, o); }; } catch (e) { } }();</script>
 <meta charset="utf-8"/>
@@ -43,6 +43,7 @@
 <div class="r2-nav-shell mb-3">
 <div aria-label="Referral v2 modules" class="r2-module-nav" role="tablist">
 <button aria-selected="false" class="btn btn-outline-primary" data-r2-tab="overview" role="tab">Overview</button>
+<button aria-selected="false" class="btn btn-outline-primary" data-r2-tab="agent-management" role="tab">Agent Management</button>
 <button aria-selected="false" class="btn btn-outline-primary" data-r2-tab="network" role="tab">Referral Network</button><button aria-selected="false" class="btn btn-outline-primary" data-r2-tab="participants" role="tab">Commission Rates</button>
 <button aria-selected="false" class="btn btn-outline-primary" data-r2-tab="collections" role="tab">Merchant Collections</button>
 <button aria-selected="false" class="btn btn-outline-primary" data-r2-tab="approvals" role="tab">Commission Review</button>
@@ -50,6 +51,26 @@
 <button aria-selected="false" class="btn btn-outline-primary" data-r2-tab="reconciliation" role="tab">Balances &amp; Activity</button>
 </div>
 <div aria-live="polite" id="r2Feedback" role="status"></div>
+</div>
+<div class="table-card p-3 mb-3" data-r2-panel="agent-management" hidden="" role="tabpanel">
+<h5>Referral V2 Agent Management</h5>
+<p class="text-muted">Only agents explicitly enrolled here appear in Referral V2. Existing HouseWin accounts and commissions are not changed.</p>
+<h6>Create New Referral V2 Agent</h6>
+<form id="r2CreateAgentForm" class="row g-3 mb-4">
+<div class="col-md-3"><label class="form-label">Agent code</label><input class="form-control" name="code" maxlength="60" pattern="[A-Za-z0-9_-]{2,60}" required></div>
+<div class="col-md-3"><label class="form-label">Agent name</label><input class="form-control" name="name" maxlength="160" required></div>
+<div class="col-md-3"><label class="form-label">Login username</label><input class="form-control" name="loginUsername" maxlength="100" required></div>
+<div class="col-md-3"><label class="form-label">Login password (8+ characters)</label><input class="form-control" type="password" name="password" minlength="8" maxlength="200" autocomplete="new-password" required></div>
+<div class="col-md-4"><label class="form-label">Referral V2 referrer (optional)</label><input class="form-control" name="referrerCode" maxlength="120" placeholder="Already enrolled code"></div>
+<div class="col-md-4 d-flex align-items-end"><button type="submit" class="btn btn-primary">Create Referral V2 Agent</button></div>
+</form>
+<h6>Enroll Existing Agent</h6>
+<form id="r2EnrollAgentForm" class="row g-3 mb-4">
+<div class="col-md-4"><label class="form-label" for="r2EnrollAgentCode">Existing agent code</label><input id="r2EnrollAgentCode" class="form-control" name="accountCode" maxlength="120" required placeholder="Enter existing agent code"></div>
+<div class="col-md-4"><label class="form-label" for="r2EnrollReferrerCode">Referral V2 referrer code (optional)</label><input id="r2EnrollReferrerCode" class="form-control" name="referrerCode" maxlength="120" placeholder="Already enrolled account"></div>
+<div class="col-md-4 d-flex align-items-end"><button type="submit" class="btn btn-primary">Add to Referral V2</button></div>
+</form>
+<div class="table-responsive"><table class="table table-sm"><thead><tr><th>Agent code</th><th>Name</th><th>Referrer</th><th>Enrollment ID</th></tr></thead><tbody id="r2EnrolledAgents"></tbody></table></div>
 </div>
 <div class="table-card p-3 mb-3" data-r2-panel="network" hidden="" role="tabpanel"><div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
 <div><h5 class="mb-1">Referral Network</h5><p class="text-muted mb-0">Set a direct referrer and view existing referral links.</p></div>
@@ -323,7 +344,7 @@
 <script src="assets/js/currency-runtime.js?v=b63c89fb"></script>
 <script src="assets/js/reports.js?v=a96450f8"></script>
 <script src="assets/js/bo-date-range.js?v=b1113dc8"></script>
-<script src="assets/js/referral-v2.js?v=1.0.5"></script>
+<script src="assets/js/referral-v2.js?v=1.0.6"></script>
 <script defer="" src="assets/js/bo-ui-standard.js?v=890f213b"></script>
 <script src="assets/js/bo-theme.js?v=d78603d9"></script>
 <script src="assets/js/bo-account-chip.js?v=fcf6fa08"></script>

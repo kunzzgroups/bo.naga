@@ -171,6 +171,7 @@ async function refresh(){
   renderGenerationPreview();
  }
  networkRows=data.participants;
+ renderEnrolledAgents();
  const s=data.summary;$('r2Summary').innerHTML=[['Linked accounts',linkedAccounts().length],['Invoices',s.collections],['Billed',price(s.billed)],['Verified',price(s.verified)],['Commission credited',price(s.credited)],['Pending payouts',s.withdrawalsPending]].map(([name,value],i)=>'<div class="metric agent-admin-metric r2-summary-metric"><span class="bo-summary-icon"><i class="bi '+['bi-people','bi-receipt','bi-cash-stack','bi-patch-check','bi-wallet2','bi-hourglass-split'][i]+'"></i></span><div><span>'+escapeHtml(name)+'</span><strong>'+escapeHtml(value)+'</strong></div></div>').join('');
  renderNetwork();
  try{
@@ -201,11 +202,17 @@ function renderFinanceTables(){
  draw('r2Reconciliation',reconciliation,r=>{const bad=Number(r.discrepancy)!==0||Number(r.reserved_discrepancy)!==0;return '<tr'+(bad?' class="table-danger"':'')+'>'+[r.id,r.display_name,price(r.balance),price(r.ledger_balance),price(r.discrepancy),price(r.reserved),price(r.ledger_reserved),price(r.reserved_discrepancy)].map(x=>'<td>'+escapeHtml(x)+'</td>').join('')+'</tr>'},8);
 }
 function bindForm(form,callback){const el=$(form);el?.addEventListener('submit',async ev=>{ev.preventDefault();const b=read(el);try{feedback('Saving…');await callback(b);feedback('Saved successfully.');await refresh();}catch(err){feedback(err.message,true);}});}
+function renderEnrolledAgents(){
+ const agents=networkRows.filter(p=>p.kind==='AGENT');
+ draw('r2EnrolledAgents',agents,p=>row([p.account_code||'-',p.display_name||'-',p.referrer_code||'-',p.id]),4);
+}
 function bind(){
  setupTableTools();
  for(const id of ['r2ShowInactiveWallets','r2ShowInactiveReconciliation'])$(id)?.addEventListener('change',renderFinanceTables);
  document.querySelectorAll('[data-r2-tab]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.r2Tab)));
  show($('r2FinancePage')?.dataset.r2DefaultTab||'overview');
+ bindForm('r2CreateAgentForm',b=>request('/agents/create',{method:'POST',body:body(b)}));
+ bindForm('r2EnrollAgentForm',b=>request('/participants',{method:'POST',body:body({kind:'AGENT',accountCode:b.accountCode,referrerCode:b.referrerCode||null})}));
  bindForm('r2ParentForm',b=>{const id=b.id;delete b.id;return request('/participants/'+encodeURIComponent(id)+'/parent',{method:'POST',body:body({parentId:b.parentId?Number(b.parentId):null})});});
  $('r2NetworkSearch')?.addEventListener('input',renderNetwork);
  $('r2NetworkKind')?.addEventListener('change',renderNetwork);
