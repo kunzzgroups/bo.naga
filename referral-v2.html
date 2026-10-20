@@ -19,14 +19,15 @@
 <link href="assets/css/bo-charcoal-agent.css?v=bc3c526b" rel="stylesheet"/>
 <link href="assets/css/bo-control-height.css?v=ff703846" rel="stylesheet">
 <link href="assets/css/bo-field-standard.css?v=6673ed98" rel="stylesheet">
-<link href="assets/css/bo-module-tabs.css?v=0c2b4ebb" rel="stylesheet"/>
 <link href="assets/css/bo-shell.css?v=047655db" rel="stylesheet"/>
+<link href="assets/css/main-sidebar-account.css?v=6119e3c5" rel="stylesheet">
 <link href="assets/css/bo-input-fill.css?v=1ab80f49" rel="stylesheet"/>
 <link href="assets/css/bo-scrollbar.css?v=39f413e5" rel="stylesheet">
 <link data-bo-quicknav-css="1" href="assets/css/bo-global-quicknav.css?v=0d429385" rel="stylesheet">
-<link href="assets/css/referral-v2-standard.css?v=1.0.5" rel="stylesheet">
-</link></link></link></link></link></head>
-<body class="report-body standardized-listing-page brand-agent-standard bo-charcoal bo-account-chip">
+<link href="assets/css/main-content-rhythm.css?v=d1ecd471" rel="stylesheet">
+<link href="assets/css/referral-v2-standard.css?v=cf8eb9d4" rel="stylesheet">
+</head>
+<body class="report-body standardized-listing-page brand-agent-standard bo-charcoal bo-account-chip referral-v2-page">
 <div class="report-shell">
 <aside class="report-sidebar" id="reportSidebar">
 <div class="report-brand">
@@ -40,51 +41,48 @@
 <script src="assets/js/bo-topbar.js?v=ddbcfef7"></script>
 <section class="report-content" data-r2-default-tab="overview" id="r2FinancePage">
 <div class="agent-admin-metrics" id="r2Summary"></div>
-<div class="r2-nav-shell mb-3">
-<div aria-label="Referral v2 modules" class="r2-module-nav" role="tablist">
-<button aria-selected="false" class="btn btn-outline-primary" data-r2-tab="overview" role="tab">Overview</button>
-<button aria-selected="false" class="btn btn-outline-primary" data-r2-tab="agent-management" role="tab">Agent Management</button>
-<button aria-selected="false" class="btn btn-outline-primary" data-r2-tab="network" role="tab">Referral Network</button><button aria-selected="false" class="btn btn-outline-primary" data-r2-tab="participants" role="tab">Commission Rates</button>
-<button aria-selected="false" class="btn btn-outline-primary" data-r2-tab="collections" role="tab">Merchant Collections</button>
-<button aria-selected="false" class="btn btn-outline-primary" data-r2-tab="approvals" role="tab">Commission Review</button>
-<button aria-selected="false" class="btn btn-outline-primary" data-r2-tab="wallets" role="tab">Balances &amp; Withdrawals</button>
-<button aria-selected="false" class="btn btn-outline-primary" data-r2-tab="reconciliation" role="tab">Balances &amp; Activity</button>
+<div class="mad-tabs" role="tablist" aria-label="Referral V2 modules">
+<button class="mad-tab is-active" id="r2TabOverview" aria-selected="true" aria-controls="r2PanelOverview" data-r2-tab="overview" role="tab" type="button"><span>Overview</span></button>
+<button class="mad-tab" id="r2TabAgentManagement" aria-selected="false" aria-controls="r2PanelAgentManagement" data-r2-tab="agent-management" role="tab" type="button"><span>Agent Management</span></button>
+<button class="mad-tab" id="r2TabNetwork" aria-selected="false" aria-controls="r2PanelNetwork" data-r2-tab="network" role="tab" type="button"><span>Referral Network</span></button>
+<button class="mad-tab" id="r2TabParticipants" aria-selected="false" aria-controls="r2PanelParticipants" data-r2-tab="participants" role="tab" type="button"><span>Commission Rates</span></button>
+<button class="mad-tab" id="r2TabCollections" aria-selected="false" aria-controls="r2PanelCollections" data-r2-tab="collections" role="tab" type="button"><span>Merchant Collections</span></button>
+<button class="mad-tab" id="r2TabApprovals" aria-selected="false" aria-controls="r2PanelApprovals" data-r2-tab="approvals" role="tab" type="button"><span>Commission Review</span></button>
+<button class="mad-tab" id="r2TabWallets" aria-selected="false" aria-controls="r2PanelWallets" data-r2-tab="wallets" role="tab" type="button"><span>Balances &amp; Withdrawals</span></button>
+<button class="mad-tab" id="r2TabReconciliation" aria-selected="false" aria-controls="r2PanelReconciliation" data-r2-tab="reconciliation" role="tab" type="button"><span>Balances &amp; Activity</span></button>
 </div>
 <div aria-live="polite" id="r2Feedback" role="status"></div>
+<div class="table-card p-3 mb-3" data-r2-panel="overview" id="r2PanelOverview" role="tabpanel" aria-labelledby="r2TabOverview">
+<h5>Referral V2 overview</h5>
+<p class="text-muted mb-0">Agents earn commission on what their referred merchants actually pay. Each step below is a section of this page, in the order the money moves.</p>
+<ol class="r2-overview-flow">
+<li>Enrol agents</li>
+<li>Set commission rates</li>
+<li>Invoice the merchant</li>
+<li>Verify the payment</li>
+<li>Calculate commission</li>
+<li>Review and approve</li>
+<li>Pay withdrawals</li>
+</ol>
+<p class="r2-discovery-status" id="r2MerchantDiscovery">Checking the merchant list…</p>
 </div>
-<div class="table-card p-3 mb-3" data-r2-panel="agent-management" hidden="" role="tabpanel">
-<h5>Referral V2 Agent Management</h5>
-<p class="text-muted">Only agents explicitly enrolled here appear in Referral V2. Existing HouseWin accounts and commissions are not changed.</p>
-<h6>Create New Referral V2 Agent</h6>
-<form id="r2CreateAgentForm" class="row g-3 mb-4">
-<div class="col-md-3"><label class="form-label">Agent code</label><input class="form-control" name="code" maxlength="60" pattern="[A-Za-z0-9_-]{2,60}" required></div>
-<div class="col-md-3"><label class="form-label">Agent name</label><input class="form-control" name="name" maxlength="160" required></div>
-<div class="col-md-3"><label class="form-label">Login username</label><input class="form-control" name="loginUsername" maxlength="100" required></div>
-<div class="col-md-3"><label class="form-label">Login password (8+ characters)</label><input class="form-control" type="password" name="password" minlength="8" maxlength="200" autocomplete="new-password" required></div>
-<div class="col-md-4"><label class="form-label">Referral V2 referrer (optional)</label><input class="form-control" name="referrerCode" maxlength="120" placeholder="Already enrolled code"></div>
-<div class="col-md-4 d-flex align-items-end"><button type="submit" class="btn btn-primary">Create Referral V2 Agent</button></div>
-</form>
-<h6>Enroll Existing Agent</h6>
-<form id="r2EnrollAgentForm" class="row g-3 mb-4">
-<div class="col-md-4"><label class="form-label" for="r2EnrollAgentCode">Existing agent code</label><input id="r2EnrollAgentCode" class="form-control" name="accountCode" maxlength="120" required placeholder="Enter existing agent code"></div>
-<div class="col-md-4"><label class="form-label" for="r2EnrollReferrerCode">Referral V2 referrer code (optional)</label><input id="r2EnrollReferrerCode" class="form-control" name="referrerCode" maxlength="120" placeholder="Already enrolled account"></div>
-<div class="col-md-4 d-flex align-items-end"><button type="submit" class="btn btn-primary">Add to Referral V2</button></div>
-</form>
+<div aria-labelledby="r2TabAgentManagement" class="table-card r2-table-panel mb-3" data-r2-panel="agent-management" hidden="" id="r2PanelAgentManagement" role="tabpanel">
 <div class="table-responsive"><table class="table table-sm"><thead><tr><th>Agent code</th><th>Name</th><th>Referrer</th><th>Enrollment ID</th></tr></thead><tbody id="r2EnrolledAgents"></tbody></table></div>
+<div class="r2-toolbar-actions" data-r2-table-actions="r2EnrolledAgents" hidden>
+<button class="btn btn-primary" type="button" data-r2-open="r2CreateAgentModal"><i aria-hidden="true" class="bi bi-plus-lg"></i> Create agent</button>
+<button class="btn btn-outline-primary" type="button" data-r2-open="r2EnrollAgentModal"><i aria-hidden="true" class="bi bi-person-check"></i> Enrol existing</button>
 </div>
-<div class="table-card p-3 mb-3" data-r2-panel="network" hidden="" role="tabpanel"><div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-<div><h5 class="mb-1">Referral Network</h5><p class="text-muted mb-0">Set a direct referrer and view existing referral links.</p></div>
+</div>
+<div aria-labelledby="r2TabNetwork" class="table-card r2-table-panel mb-3" data-r2-panel="network" hidden="" id="r2PanelNetwork" role="tabpanel">
+<div class="r2-list-toolbar r2-network-toolbar">
+<label class="r2-list-search-label" for="r2NetworkSearch"><i aria-hidden="true" class="bi bi-search"></i><input class="r2-list-search" id="r2NetworkSearch" placeholder="Search agent or merchant" type="search"/></label>
+<div class="r2-network-kind-wrap"><select aria-label="Account type" class="form-select r2-network-kind" id="r2NetworkKind"><option value="">All accounts</option><option value="AGENT">Agent</option><option value="MERCHANT">Merchant</option></select></div>
+<div class="r2-toolbar-actions">
+<button class="btn btn-primary" data-r2-open="r2ParentModal" type="button"><i aria-hidden="true" class="bi bi-diagram-3"></i> Set referrer</button>
 <button class="btn btn-outline-primary" data-r2-action="refresh" type="button">Refresh accounts</button>
-</div><div class="row g-2 mb-3 align-items-end">
-<div class="col-md-5"><label class="form-label" for="r2NetworkSearch">Find agent or merchant</label><input class="form-control" id="r2NetworkSearch" placeholder="Search AG1001, T2, name or referrer" type="search"/></div>
-<div class="col-md-3"><label class="form-label" for="r2NetworkKind">Account type</label><select class="form-select" id="r2NetworkKind"><option value="">All accounts</option><option value="AGENT">Agent</option><option value="MERCHANT">Merchant</option></select></div>
-<div class="col-md-4"><div aria-live="polite" class="r2-network-count" id="r2NetworkCount"></div></div>
-</div><form class="row g-2 mb-4" id="r2ParentForm">
-<div class="col-md-4"><label class="form-label">Account</label><select class="form-select" id="r2ParentParticipant" name="id" required=""><option value="">Select account</option></select></div>
-<div class="col-md-4"><label class="form-label">Direct referrer</label><select class="form-select" id="r2ParentReferrer" name="parentId"><option value="">No referrer (root)</option></select></div>
-<div class="col-md-4 d-flex align-items-end"><button class="btn btn-primary">Save referral relationship</button></div>
-<div class="col-12 text-muted small">Self-referral and circular relationships are not allowed.</div>
-</form><h5>Referral Relationships</h5><p class="text-muted small mb-2">Only accounts with a referral relationship are listed. All existing accounts remain available above.</p><div class="table-responsive">
+</div>
+</div>
+<div class="table-responsive">
 <table class="table table-sm">
 <thead>
 <tr>
@@ -99,68 +97,33 @@
 </thead>
 <tbody id="r2Participants"></tbody>
 </table>
-</div></div><div class="table-card p-3 mb-3" data-r2-panel="participants" hidden="" role="tabpanel">
-<div class="r2-generation-heading">
-<div>
-<h5 class="mb-1">Unlimited Generation Commission Settings</h5>
-<p class="text-muted mb-0">Set the rate for each generation once. It applies to every referral chain.</p>
 </div>
+</div>
+<div aria-labelledby="r2TabParticipants" class="table-card r2-table-panel mb-3" data-r2-panel="participants" hidden="" id="r2PanelParticipants" role="tabpanel">
+<div class="r2-list-toolbar">
 <span class="r2-generation-status" id="r2GenerationStatus" role="status">Loading...</span>
-</div>
-<form id="r2GenerationPolicy" class="mb-3">
-<div class="r2-generation-custom">
-<div class="r2-generation-custom-heading"><div><strong>Set each generation's commission</strong><span>Enter the generation number and its exact rate. Only configured generations earn commission.</span></div></div>
-<div class="r2-generation-custom-editor">
-<div><label class="form-label" for="r2GenOverrideLevel">Generation</label><input class="form-control" id="r2GenOverrideLevel" type="number" min="1" max="2147483647" step="1" placeholder="e.g. 1"/></div>
-<div><label class="form-label" for="r2GenOverrideRate">Commission rate (%)</label><input class="form-control" id="r2GenOverrideRate" type="number" min="0" max="100" step="0.0001" placeholder="e.g. 5.5"/></div>
-<button class="btn btn-outline-primary" id="r2GenOverrideAdd" type="button">Add / update rate</button>
-</div>
-<div class="r2-generation-override-list" id="r2GenOverrides" aria-live="polite">No rates set yet.</div>
-<div class="r2-generation-actions"><div><label class="form-label" for="r2GenFrom">Effective from (optional)</label><input class="form-control" id="r2GenFrom" name="effectiveFrom" type="date"/></div><button class="btn btn-primary" type="submit">Save commission rates</button></div>
-</div>
-</form>
-<div class="r2-generation-preview mb-3">
-<div class="r2-generation-preview-heading">Commission rates by generation</div>
-<div aria-live="polite" class="r2-generation-chips" id="r2GenerationPreview">No rates set yet.</div>
+<div class="r2-toolbar-actions">
+<button class="btn btn-primary" data-r2-open="r2GenerationModal" type="button"><i aria-hidden="true" class="bi bi-sliders"></i> Set commission rates</button>
 </div>
 </div>
-<div class="table-card p-3 mb-3" data-r2-panel="collections" hidden="" role="tabpanel">
-<h5>New Merchant Collection</h5>
-<form class="row g-2 mb-3" id="r2CreateCollection">
-<div class="col-md-2"><label class="form-label">Payer merchant</label><select class="form-select" id="r2MerchantSelect" name="merchantId" required=""><option value="">Select merchant</option></select><small class="r2-merchant-currency-note" id="r2MerchantCurrencyNotice"></small></div>
-<div class="col-md-2"><label class="form-label">Invoice reference</label><input class="form-control" maxlength="120" name="reference" required=""/></div>
-<div class="col-md-2"><label class="form-label">Billing mode</label><select class="form-select" name="billingMode">
-<option>MANUAL</option>
-<option>FIXED</option>
-<option>REVENUE</option>
-<option>TURNOVER</option>
-<option>PER_TRANSACTION</option>
-<option>HYBRID</option>
-</select></div>
-<div class="col-md-2"><label class="form-label">Fixed/manual RM</label><input class="form-control" min="0" name="billedAmount" step="0.0001" type="number" value="0"/>
-</div>
-<div class="col-md-2"><label class="form-label">Revenue RM</label><input class="form-control" min="0" name="revenue" step="0.0001" type="number" value="0"/></div>
-<div class="col-md-2"><label class="form-label">Revenue rate %</label><input class="form-control" min="0" name="revenueRate" step="0.0001" type="number" value="0"/></div>
-<div class="col-md-2"><label class="form-label">Turnover RM</label><input class="form-control" min="0" name="turnover" step="0.0001" type="number" value="0"/></div>
-<div class="col-md-2"><label class="form-label">Turnover rate %</label><input class="form-control" min="0" name="turnoverRate" step="0.0001" type="number" value="0"/>
-</div>
-<div class="col-md-2"><label class="form-label">Fee per transaction RM</label><input class="form-control" min="0" name="perTransaction" step="0.0001" type="number" value="0"/></div>
-<div class="col-md-2"><label class="form-label">Transaction count</label><input class="form-control" min="0" name="transactionCount" step="1" type="number" value="0"/>
-</div>
-<div class="col-md-4 d-flex align-items-end"><button class="btn btn-primary w-100">Create
-                                invoice</button></div>
-</form>
-<h5>Record Merchant Payment</h5>
-<form class="row g-2 mb-3" id="r2SubmitReceipt">
-<div class="col-md-3"><label class="form-label">Invoice ID</label><input class="form-control" min="1" name="collectionId" required="" type="number"/></div>
-<div class="col-md-3"><label class="form-label">Unique payment reference</label><input class="form-control" maxlength="120" name="paymentReference" required=""/></div>
-<div class="col-md-3"><label class="form-label">Received amount RM</label><input class="form-control" min="0.0001" name="amount" required="" step="0.0001" type="number"/>
-</div>
-<div class="col-md-3 d-flex align-items-end"><button class="btn btn-primary w-100">Submit for
-                                verification</button></div>
-</form>
 <div class="table-responsive">
-<table class="table table-sm">
+<table class="table table-sm r2-data-table r2-generation-table">
+<thead><tr><th>Generation</th><th>Commission rate</th><th>Effective from</th></tr></thead>
+<tbody id="r2GenerationSaved"></tbody>
+</table>
+</div>
+</div>
+<div class="r2-stack r2-stack-fit" data-r2-panel="collections" hidden="" id="r2PanelCollections" role="tabpanel" aria-labelledby="r2TabCollections">
+<div class="table-card r2-table-panel r2-table-panel-fit">
+<div class="r2-list-toolbar" data-r2-toolbar="r2Collections">
+<div class="r2-seg" role="tablist" aria-label="Collection tables">
+<button aria-selected="true" class="r2-seg-btn is-active" data-bo-ui-skip data-r2-seg="invoices" type="button">Invoices <span class="r2-seg-count" data-r2-seg-count="invoices"></span></button>
+<button aria-selected="false" class="r2-seg-btn" data-bo-ui-skip data-r2-seg="receipts" type="button">Receipts <span class="r2-seg-count" data-r2-seg-count="receipts"></span></button>
+</div>
+</div>
+<div class="r2-dataset" data-r2-dataset="invoices">
+<div class="table-responsive">
+<table class="table table-sm r2-invoice-table">
 <thead>
 <tr>
 <th>ID</th>
@@ -176,9 +139,10 @@
 <tbody id="r2Collections"></tbody>
 </table>
 </div>
-<h5 class="mt-3">Individual Receipts</h5>
-<div class="table-responsive">
-<table class="table table-sm">
+</div>
+<div class="r2-dataset" data-r2-dataset="receipts" hidden="">
+<div class="table-responsive" data-r2-no-toolbar>
+<table class="table table-sm r2-receipts-table">
 <thead>
 <tr>
 <th>ID</th>
@@ -193,21 +157,19 @@
 </table>
 </div>
 </div>
-<div class="table-card p-3 mb-3" data-r2-panel="approvals" hidden="" role="tabpanel">
-<h5>Review Commissions</h5>
-<p>Only confirmed payments qualify. Another administrator must review and approve commissions.</p>
-<form class="row g-2 mb-3" id="r2Manual">
-<div class="col-md-3"><label class="form-label">Payment receipt #</label><input class="form-control" min="1" name="receiptId" required="" type="number"/></div>
-<div class="col-md-3"><label class="form-label">Receiving referrer</label><select class="form-select" id="r2RecipientSelect" name="recipientId" required=""><option value="">Select upstream account</option></select></div>
-<div class="col-md-3"><label class="form-label">Commission amount (RM)</label><input class="form-control" min="0" name="amount" required="" step="0.0001" type="number"/></div>
-<div class="col-md-3 d-flex align-items-end"><button class="btn btn-primary w-100">Save commission adjustment</button></div>
-</form>
-<form class="row g-2 mb-3" id="r2InspectAllocations">
-<div class="col-md-4"><input class="form-control" min="1" name="receiptId" placeholder="Payment receipt #" required="" type="number"/></div>
-<div class="col-md-3"><button class="btn btn-outline-primary">View commission details</button></div>
-</form>
+<div class="r2-toolbar-actions" data-r2-table-actions="r2Collections" hidden>
+<button class="btn btn-primary" data-r2-open="r2CollectionModal" type="button"><i aria-hidden="true" class="bi bi-plus-lg"></i> New collection</button>
+<button class="btn btn-outline-primary" data-r2-open="r2ReceiptModal" type="button"><i aria-hidden="true" class="bi bi-cash-coin"></i> Record payment</button>
+</div>
+</div>
+</div>
+<div aria-labelledby="r2TabApprovals" class="table-card r2-table-panel mb-3" data-r2-panel="approvals" hidden="" id="r2PanelApprovals" role="tabpanel">
+<div class="r2-toolbar-actions" data-r2-table-actions="r2Allocations" hidden>
+<button class="btn btn-primary" data-r2-open="r2ManualModal" type="button"><i aria-hidden="true" class="bi bi-sliders"></i> Adjust commission</button>
+<button class="btn btn-outline-primary" data-r2-open="r2LookupModal" type="button"><i aria-hidden="true" class="bi bi-search"></i> Look up receipt</button>
+</div>
 <div class="table-responsive">
-<table class="table table-sm">
+<table class="table table-sm r2-alloc-table">
 <thead>
 <tr>
 <th>Commission ID</th>
@@ -220,21 +182,22 @@
 <th>Status</th>
 </tr>
 </thead>
-<tbody id="r2Allocations"></tbody>
+<tbody id="r2Allocations"><tr><td class="r2-empty-row" colspan="8">Choose <strong>Look up receipt</strong> to see how a payment was split across the upline.</td></tr></tbody>
 </table>
 </div>
 </div>
-<div class="table-card p-3 mb-3" data-r2-panel="wallets" hidden="" role="tabpanel">
-<h5>Request Withdrawal</h5>
-<form class="row g-2 mb-3" id="r2Withdraw">
-<div class="col-md-3"><select class="form-select" id="r2WithdrawParticipant" name="participantId" required=""><option value="">Select account</option></select></div>
-<div class="col-md-3"><input class="form-control" name="reference" placeholder="Unique withdrawal reference" required=""/></div>
-<div class="col-md-3"><input class="form-control" min="0.0001" name="amount" placeholder="RM" required="" step="0.0001" type="number"/></div>
-<div class="col-md-3"><button class="btn btn-primary w-100">Submit withdrawal request</button></div>
-</form>
-<h5>Referral Balances</h5><label class="r2-show-all-toggle" for="r2ShowInactiveWallets"><input class="form-check-input" id="r2ShowInactiveWallets" type="checkbox"/> Show inactive accounts</label>
+<div aria-labelledby="r2TabWallets" class="r2-stack r2-stack-fit" data-r2-panel="wallets" hidden="" id="r2PanelWallets" role="tabpanel">
+<div class="table-card r2-table-panel r2-table-panel-fit">
+<div class="r2-list-toolbar" data-r2-toolbar="r2Wallets">
+<div class="r2-seg" role="tablist" aria-label="Wallet tables">
+<button aria-selected="true" class="r2-seg-btn is-active" data-bo-ui-skip data-r2-seg="balances" type="button">Balances <span class="r2-seg-count" data-r2-seg-count="balances"></span></button>
+<button aria-selected="false" class="r2-seg-btn" data-bo-ui-skip data-r2-seg="withdrawals" type="button">Withdrawals <span class="r2-seg-count" data-r2-seg-count="withdrawals"></span></button>
+</div>
+<div class="r2-toolbar-actions"><label class="r2-show-all-toggle" for="r2ShowInactiveWallets"><input class="form-check-input" id="r2ShowInactiveWallets" type="checkbox"/> Show inactive accounts</label></div>
+</div>
+<div class="r2-dataset" data-r2-dataset="balances">
 <div class="table-responsive">
-<table class="table table-sm">
+<table class="table table-sm r2-wallet-table">
 <thead>
 <tr>
 <th>Participant</th>
@@ -247,9 +210,10 @@
 <tbody id="r2Wallets"></tbody>
 </table>
 </div>
-<h5>Withdrawal Requests</h5>
-<div class="table-responsive">
-<table class="table table-sm">
+</div>
+<div class="r2-dataset" data-r2-dataset="withdrawals" hidden="">
+<div class="table-responsive" data-r2-no-toolbar>
+<table class="table table-sm r2-withdraw-table">
 <thead>
 <tr>
 <th>ID</th>
@@ -265,11 +229,25 @@
 </table>
 </div>
 </div>
-<div class="table-card p-3 mb-3" data-r2-panel="reconciliation" hidden="" role="tabpanel">
-<h5>Balances &amp; Activity</h5><label class="r2-show-all-toggle" for="r2ShowInactiveReconciliation"><input class="form-check-input" id="r2ShowInactiveReconciliation" type="checkbox"/> Show inactive accounts</label>
-<p>Check that wallet totals match recorded transactions before completing payments.</p>
+<div class="r2-toolbar-actions" data-r2-table-actions="r2Wallets" hidden>
+<button class="btn btn-primary" data-r2-open="r2WithdrawModal" type="button"><i aria-hidden="true" class="bi bi-box-arrow-up"></i> Request withdrawal</button>
+</div>
+</div>
+</div>
+<div class="r2-stack r2-stack-fit" data-r2-panel="reconciliation" hidden="" id="r2PanelReconciliation" role="tabpanel" aria-labelledby="r2TabReconciliation">
+<div class="table-card r2-table-panel r2-table-panel-fit">
+<div class="r2-list-toolbar" data-r2-toolbar="r2Reconciliation">
+<div class="r2-seg" role="tablist" aria-label="Balance and activity tables">
+<button aria-selected="true" class="r2-seg-btn is-active" data-bo-ui-skip data-r2-seg="recon" type="button">Reconciliation <span class="r2-seg-count" data-r2-seg-count="recon"></span></button>
+<button aria-selected="false" class="r2-seg-btn" data-bo-ui-skip data-r2-seg="transactions" type="button">Transactions <span class="r2-seg-count" data-r2-seg-count="transactions"></span></button>
+<button aria-selected="false" class="r2-seg-btn" data-bo-ui-skip data-r2-seg="corrections" type="button">Corrections <span class="r2-seg-count" data-r2-seg-count="corrections"></span></button>
+<button aria-selected="false" class="r2-seg-btn" data-bo-ui-skip data-r2-seg="activity" type="button">Activity <span class="r2-seg-count" data-r2-seg-count="activity"></span></button>
+</div>
+<div class="r2-toolbar-actions"><label class="r2-show-all-toggle" for="r2ShowInactiveReconciliation"><input class="form-check-input" id="r2ShowInactiveReconciliation" type="checkbox"/> Show inactive accounts</label></div>
+</div>
+<div class="r2-dataset" data-r2-dataset="recon">
 <div class="table-responsive">
-<table class="table table-sm">
+<table class="table table-sm r2-recon-table">
 <thead>
 <tr>
 <th>ID</th>
@@ -285,9 +263,10 @@
 <tbody id="r2Reconciliation"></tbody>
 </table>
 </div>
-<h5>Wallet Transaction History</h5>
-<div class="table-responsive">
-<table class="table table-sm">
+</div>
+<div class="r2-dataset" data-r2-dataset="transactions" hidden="">
+<div class="table-responsive" data-r2-no-toolbar>
+<table class="table table-sm r2-ledger-table">
 <thead>
 <tr>
 <th>ID</th>
@@ -302,9 +281,10 @@
 <tbody id="r2Ledger"></tbody>
 </table>
 </div>
-<h5>Commission Corrections</h5>
-<div class="table-responsive">
-<table class="table table-sm">
+</div>
+<div class="r2-dataset" data-r2-dataset="corrections" hidden="">
+<div class="table-responsive" data-r2-no-toolbar>
+<table class="table table-sm r2-reversal-table">
 <thead>
 <tr>
 <th>ID</th>
@@ -318,9 +298,10 @@
 <tbody id="r2Reversals"></tbody>
 </table>
 </div>
-<h5>Activity History</h5>
-<div class="table-responsive">
-<table class="table table-sm">
+</div>
+<div class="r2-dataset" data-r2-dataset="activity" hidden="">
+<div class="table-responsive" data-r2-no-toolbar>
+<table class="table table-sm r2-audit-table">
 <thead>
 <tr>
 <th>Time</th>
@@ -334,6 +315,8 @@
 </table>
 </div>
 </div>
+</div>
+</div>
 </section>
 </main>
 </div>
@@ -344,11 +327,201 @@
 <script src="assets/js/currency-runtime.js?v=b63c89fb"></script>
 <script src="assets/js/reports.js?v=a96450f8"></script>
 <script src="assets/js/bo-date-range.js?v=b1113dc8"></script>
-<script src="assets/js/referral-v2.js?v=1.0.6"></script>
+<script src="assets/js/referral-v2.js?v=48191bdb"></script>
 <script defer="" src="assets/js/bo-ui-standard.js?v=890f213b"></script>
 <script src="assets/js/bo-theme.js?v=d78603d9"></script>
 <script src="assets/js/bo-account-chip.js?v=fcf6fa08"></script>
+<script src="assets/js/main-sidebar-account.js?v=11a3bb9b"></script>
 <script src="assets/js/bo-spa-manifest.js?v=e25e34cd"></script>
 <script src="assets/js/bo-spa.js?v=4df7a52c"></script>
+<div aria-hidden="true" class="modal-clean r2-modal" hidden id="r2CreateAgentModal" role="dialog" aria-modal="true" aria-labelledby="r2CreateAgentTitle">
+<div class="modal-clean-panel r2-modal-panel">
+<div class="modal-clean-head r2-modal-head">
+<div><h3 id="r2CreateAgentTitle">Create Referral V2 agent</h3><p>Creates the agent's login and enrols it in Referral V2 in one step.</p></div>
+<button aria-label="Close" class="modal-clean-close" data-r2-close type="button"><i aria-hidden="true" class="bi bi-x-lg"></i></button>
+</div>
+<form autocomplete="off" class="r2-modal-form" id="r2CreateAgentForm">
+<div class="r2-modal-body">
+<div class="r2-fields">
+<label class="r2-field" for="r2AgentCode"><span class="r2-label">Agent code <b>*</b></span><input class="form-control" id="r2AgentCode" maxlength="60" name="code" pattern="[A-Za-z0-9_-]{2,60}" required></label>
+<label class="r2-field" for="r2AgentName"><span class="r2-label">Agent name <b>*</b></span><input class="form-control" id="r2AgentName" maxlength="160" name="name" required></label>
+<label class="r2-field" for="r2AgentLogin"><span class="r2-label">Login username <b>*</b></span><input class="form-control" id="r2AgentLogin" maxlength="100" name="loginUsername" required></label>
+<label class="r2-field" for="r2AgentPassword"><span class="r2-label">Login password <b>*</b></span><input autocomplete="new-password" class="form-control" id="r2AgentPassword" minlength="8" name="password" placeholder="At least 8 characters" required type="password"></label>
+<label class="r2-field" for="r2AgentReferrer"><span class="r2-label">Referral V2 referrer</span><input class="form-control" id="r2AgentReferrer" maxlength="120" name="referrerCode" placeholder="Optional - enrolled code"></label>
+</div>
+</div>
+<footer class="r2-modal-foot"><button class="btn btn-outline-primary" data-r2-close type="button">Cancel</button><button class="btn btn-primary" type="submit">Create Referral V2 agent</button></footer>
+</form>
+</div>
+</div>
+<div aria-hidden="true" class="modal-clean r2-modal" hidden id="r2EnrollAgentModal" role="dialog" aria-modal="true" aria-labelledby="r2EnrollAgentTitle">
+<div class="modal-clean-panel r2-modal-panel">
+<div class="modal-clean-head r2-modal-head">
+<div><h3 id="r2EnrollAgentTitle">Enrol an existing agent</h3><p>Adds an agent that already exists in the backoffice. Its account and commissions are not changed.</p></div>
+<button aria-label="Close" class="modal-clean-close" data-r2-close type="button"><i aria-hidden="true" class="bi bi-x-lg"></i></button>
+</div>
+<form autocomplete="off" class="r2-modal-form" id="r2EnrollAgentForm">
+<div class="r2-modal-body">
+<div class="r2-fields r2-fields-2">
+<label class="r2-field" for="r2EnrollAgentCode"><span class="r2-label">Existing agent code <b>*</b></span><input class="form-control" id="r2EnrollAgentCode" maxlength="120" name="accountCode" placeholder="Enter existing agent code" required></label>
+<label class="r2-field" for="r2EnrollReferrerCode"><span class="r2-label">Referral V2 referrer code</span><input class="form-control" id="r2EnrollReferrerCode" maxlength="120" name="referrerCode" placeholder="Optional - enrolled account"></label>
+</div>
+</div>
+<footer class="r2-modal-foot"><button class="btn btn-outline-primary" data-r2-close type="button">Cancel</button><button class="btn btn-primary" type="submit">Add to Referral V2</button></footer>
+</form>
+</div>
+</div>
+<div aria-hidden="true" class="modal-clean r2-modal" hidden id="r2ParentModal" role="dialog" aria-modal="true" aria-labelledby="r2ParentTitle">
+<div class="modal-clean-panel r2-modal-panel">
+<div class="modal-clean-head r2-modal-head">
+<div><h3 id="r2ParentTitle">Set a direct referrer</h3><p>Self-referral and circular relationships are not allowed.</p></div>
+<button aria-label="Close" class="modal-clean-close" data-r2-close type="button"><i aria-hidden="true" class="bi bi-x-lg"></i></button>
+</div>
+<form class="r2-modal-form" id="r2ParentForm">
+<div class="r2-modal-body">
+<div class="r2-fields r2-fields-2">
+<label class="r2-field" for="r2ParentParticipant"><span class="r2-label">Account <b>*</b></span><select class="form-select" id="r2ParentParticipant" name="id" required=""><option value="">Select account</option></select></label>
+<label class="r2-field" for="r2ParentReferrer"><span class="r2-label">Direct referrer</span><select class="form-select" id="r2ParentReferrer" name="parentId"><option value="">No referrer (root)</option></select></label>
+</div>
+</div>
+<footer class="r2-modal-foot"><button class="btn btn-outline-primary" data-r2-close type="button">Cancel</button><button class="btn btn-primary" type="submit">Save referral relationship</button></footer>
+</form>
+</div>
+</div>
+<div aria-hidden="true" class="modal-clean r2-modal" hidden id="r2GenerationModal" role="dialog" aria-modal="true" aria-labelledby="r2GenerationTitle">
+<div class="modal-clean-panel r2-modal-panel">
+<div class="modal-clean-head r2-modal-head">
+<div><h3 id="r2GenerationTitle">Commission rate by generation</h3><p>Only configured generations earn commission.</p></div>
+<button aria-label="Close" class="modal-clean-close" data-r2-close type="button"><i aria-hidden="true" class="bi bi-x-lg"></i></button>
+</div>
+<form class="r2-modal-form" id="r2GenerationPolicy">
+<div class="r2-modal-body">
+<div class="r2-fields r2-generation-add">
+<label class="r2-field" for="r2GenOverrideLevel"><span class="r2-label">Generation</span><input class="form-control" id="r2GenOverrideLevel" max="2147483647" min="1" placeholder="e.g. 1" step="1" type="number"/><span class="r2-field-error" id="r2GenLevelError"></span></label>
+<label class="r2-field" for="r2GenOverrideRate"><span class="r2-label">Commission rate (%)</span><input class="form-control" id="r2GenOverrideRate" max="100" min="0" placeholder="e.g. 5.5" step="0.0001" type="number"/><span class="r2-field-error" id="r2GenRateError"></span></label>
+<div class="r2-field r2-field-action"><button class="r2-btn-ghost" data-bo-ui-skip id="r2GenOverrideAdd" type="button"><i aria-hidden="true" class="bi bi-plus-lg"></i> Add / update rate</button></div>
+</div>
+<div class="r2-generation-table-wrap">
+<table class="table table-sm r2-data-table r2-generation-table">
+<thead><tr><th>Generation</th><th>Commission rate</th><th class="r2-col-actions">Actions</th></tr></thead>
+<tbody aria-live="polite" id="r2GenOverrides"></tbody>
+</table>
+</div>
+<div aria-live="polite" class="r2-modal-feedback" id="r2GenFeedback" role="status"></div>
+</div>
+<footer class="r2-modal-foot">
+<label class="r2-field r2-field-inline" for="r2GenFrom"><span class="r2-label">Effective from</span><input class="form-control" id="r2GenFrom" name="effectiveFrom" type="date"/></label>
+<div class="r2-modal-foot-actions"><button class="btn btn-outline-primary" data-r2-close type="button">Cancel</button><button class="btn btn-primary" type="submit">Save commission rates</button></div>
+</footer>
+</form>
+</div>
+</div>
+<div aria-hidden="true" class="modal-clean r2-modal" hidden id="r2CollectionModal" role="dialog" aria-modal="true" aria-labelledby="r2CollectionModalTitle">
+<div class="modal-clean-panel r2-modal-panel r2-modal-panel-wide">
+<div class="modal-clean-head r2-modal-head">
+<div><h3 id="r2CollectionModalTitle">New merchant collection</h3><p>Raise an invoice against a referred merchant. Billing mode decides which amounts below are used.</p></div>
+<button aria-label="Close" class="modal-clean-close" data-r2-close type="button"><i aria-hidden="true" class="bi bi-x-lg"></i></button>
+</div>
+<form class="r2-modal-form" id="r2CreateCollection">
+<div class="r2-modal-body">
+<div class="r2-fields r2-fields-3">
+<label class="r2-field" for="r2MerchantSelect"><span class="r2-label">Payer merchant <b>*</b></span><select class="form-select" id="r2MerchantSelect" name="merchantId" required=""><option value="">Select merchant</option></select><small class="r2-field-note" id="r2MerchantCurrencyNotice"></small></label>
+<label class="r2-field" for="r2CollReference"><span class="r2-label">Invoice reference <b>*</b></span><input class="form-control" id="r2CollReference" maxlength="120" name="reference" required=""/></label>
+<label class="r2-field" for="r2CollBillingMode"><span class="r2-label">Billing mode</span><select class="form-select" id="r2CollBillingMode" name="billingMode">
+<option>MANUAL</option>
+<option>FIXED</option>
+<option>REVENUE</option>
+<option>TURNOVER</option>
+<option>PER_TRANSACTION</option>
+<option>HYBRID</option>
+</select></label>
+<label class="r2-field" for="r2CollBilled"><span class="r2-label">Fixed / manual (RM)</span><input class="form-control" id="r2CollBilled" min="0" name="billedAmount" step="0.0001" type="number" value="0"/></label>
+<label class="r2-field" for="r2CollRevenue"><span class="r2-label">Revenue (RM)</span><input class="form-control" id="r2CollRevenue" min="0" name="revenue" step="0.0001" type="number" value="0"/></label>
+<label class="r2-field" for="r2CollRevenueRate"><span class="r2-label">Revenue rate (%)</span><input class="form-control" id="r2CollRevenueRate" min="0" name="revenueRate" step="0.0001" type="number" value="0"/></label>
+<label class="r2-field" for="r2CollTurnover"><span class="r2-label">Turnover (RM)</span><input class="form-control" id="r2CollTurnover" min="0" name="turnover" step="0.0001" type="number" value="0"/></label>
+<label class="r2-field" for="r2CollTurnoverRate"><span class="r2-label">Turnover rate (%)</span><input class="form-control" id="r2CollTurnoverRate" min="0" name="turnoverRate" step="0.0001" type="number" value="0"/></label>
+<label class="r2-field" for="r2CollPerTransaction"><span class="r2-label">Fee per transaction (RM)</span><input class="form-control" id="r2CollPerTransaction" min="0" name="perTransaction" step="0.0001" type="number" value="0"/></label>
+<label class="r2-field" for="r2CollCount"><span class="r2-label">Transaction count</span><input class="form-control" id="r2CollCount" min="0" name="transactionCount" step="1" type="number" value="0"/></label>
+</div>
+<div aria-live="polite" class="r2-modal-feedback" id="r2CollectionModalFeedback" role="status"></div>
+</div>
+<footer class="r2-modal-foot"><div class="r2-modal-foot-actions"><button class="btn btn-outline-primary" data-r2-close type="button">Cancel</button><button class="btn btn-primary" type="submit">Create invoice</button></div></footer>
+</form>
+</div>
+</div>
+<div aria-hidden="true" class="modal-clean r2-modal" hidden id="r2ReceiptModal" role="dialog" aria-modal="true" aria-labelledby="r2ReceiptModalTitle">
+<div class="modal-clean-panel r2-modal-panel r2-modal-panel-wide">
+<div class="modal-clean-head r2-modal-head">
+<div><h3 id="r2ReceiptModalTitle">Record merchant payment</h3><p>Submits a payment against an invoice. A second administrator verifies it before it can carry commission.</p></div>
+<button aria-label="Close" class="modal-clean-close" data-r2-close type="button"><i aria-hidden="true" class="bi bi-x-lg"></i></button>
+</div>
+<form class="r2-modal-form" id="r2SubmitReceipt">
+<div class="r2-modal-body">
+<div class="r2-fields r2-fields-3">
+<label class="r2-field" for="r2ReceiptCollection"><span class="r2-label">Invoice ID <b>*</b></span><input class="form-control" id="r2ReceiptCollection" min="1" name="collectionId" required="" type="number"/></label>
+<label class="r2-field" for="r2ReceiptReference"><span class="r2-label">Unique payment reference <b>*</b></span><input class="form-control" id="r2ReceiptReference" maxlength="120" name="paymentReference" required=""/></label>
+<label class="r2-field" for="r2ReceiptAmount"><span class="r2-label">Received amount (RM) <b>*</b></span><input class="form-control" id="r2ReceiptAmount" min="0.0001" name="amount" required="" step="0.0001" type="number"/></label>
+</div>
+<div aria-live="polite" class="r2-modal-feedback" id="r2ReceiptModalFeedback" role="status"></div>
+</div>
+<footer class="r2-modal-foot"><div class="r2-modal-foot-actions"><button class="btn btn-outline-primary" data-r2-close type="button">Cancel</button><button class="btn btn-primary" type="submit">Submit for verification</button></div></footer>
+</form>
+</div>
+</div>
+<div aria-hidden="true" class="modal-clean r2-modal" hidden id="r2ManualModal" role="dialog" aria-modal="true" aria-labelledby="r2ManualTitle">
+<div class="modal-clean-panel r2-modal-panel">
+<div class="modal-clean-head r2-modal-head">
+<div><h3 id="r2ManualTitle">Manual commission adjustment</h3><p>Adds a commission line by hand. Only confirmed payments qualify, and a second administrator reviews it.</p></div>
+<button aria-label="Close" class="modal-clean-close" data-r2-close type="button"><i aria-hidden="true" class="bi bi-x-lg"></i></button>
+</div>
+<form class="r2-modal-form" id="r2Manual">
+<div class="r2-modal-body">
+<div class="r2-fields">
+<label class="r2-field" for="r2ManualReceipt"><span class="r2-label">Payment receipt # <b>*</b></span><input class="form-control" id="r2ManualReceipt" min="1" name="receiptId" required="" type="number"/></label>
+<label class="r2-field" for="r2RecipientSelect"><span class="r2-label">Receiving referrer <b>*</b></span><select class="form-select" id="r2RecipientSelect" name="recipientId" required=""><option value="">Select upstream account</option></select></label>
+<label class="r2-field" for="r2ManualAmount"><span class="r2-label">Commission amount (RM) <b>*</b></span><input class="form-control" id="r2ManualAmount" min="0" name="amount" required="" step="0.0001" type="number"/></label>
+</div>
+<div aria-live="polite" class="r2-modal-feedback" id="r2ManualFeedback" role="status"></div>
+</div>
+<footer class="r2-modal-foot"><div class="r2-modal-foot-actions"><button class="btn btn-outline-primary" data-r2-close type="button">Cancel</button><button class="btn btn-primary" type="submit">Save commission adjustment</button></div></footer>
+</form>
+</div>
+</div>
+<div aria-hidden="true" class="modal-clean r2-modal" hidden id="r2LookupModal" role="dialog" aria-modal="true" aria-labelledby="r2LookupTitle">
+<div class="modal-clean-panel r2-modal-panel">
+<div class="modal-clean-head r2-modal-head">
+<div><h3 id="r2LookupTitle">Look up a receipt's commission</h3><p>Shows how one payment was split across the upline, generation by generation.</p></div>
+<button aria-label="Close" class="modal-clean-close" data-r2-close type="button"><i aria-hidden="true" class="bi bi-x-lg"></i></button>
+</div>
+<form class="r2-modal-form" id="r2InspectAllocations">
+<div class="r2-modal-body">
+<div class="r2-fields r2-fields-2">
+<label class="r2-field" for="r2InspectReceipt"><span class="r2-label">Payment receipt # <b>*</b></span><input class="form-control" id="r2InspectReceipt" min="1" name="receiptId" placeholder="Payment receipt #" required="" type="number"/></label>
+</div>
+<div aria-live="polite" class="r2-modal-feedback" id="r2LookupFeedback" role="status"></div>
+</div>
+<footer class="r2-modal-foot"><div class="r2-modal-foot-actions"><button class="btn btn-outline-primary" data-r2-close type="button">Cancel</button><button class="btn btn-primary" type="submit">View commission details</button></div></footer>
+</form>
+</div>
+</div>
+<div aria-hidden="true" class="modal-clean r2-modal" hidden id="r2WithdrawModal" role="dialog" aria-modal="true" aria-labelledby="r2WithdrawTitle">
+<div class="modal-clean-panel r2-modal-panel">
+<div class="modal-clean-head r2-modal-head">
+<div><h3 id="r2WithdrawTitle">Request a withdrawal</h3><p>Reserves the amount and needs a second approval before it is paid out.</p></div>
+<button aria-label="Close" class="modal-clean-close" data-r2-close type="button"><i aria-hidden="true" class="bi bi-x-lg"></i></button>
+</div>
+<form class="r2-modal-form" id="r2Withdraw">
+<div class="r2-modal-body">
+<div class="r2-fields r2-fields-3">
+<label class="r2-field" for="r2WithdrawParticipant"><span class="r2-label">Account <b>*</b></span><select class="form-select" id="r2WithdrawParticipant" name="participantId" required=""><option value="">Select account</option></select><span class="r2-field-note">Only accounts with a withdrawable balance</span></label>
+<label class="r2-field" for="r2WithdrawReference"><span class="r2-label">Withdrawal reference <b>*</b></span><input class="form-control" id="r2WithdrawReference" name="reference" placeholder="Unique withdrawal reference" required=""/></label>
+<label class="r2-field" for="r2WithdrawAmount"><span class="r2-label">Amount (RM) <b>*</b></span><input class="form-control" id="r2WithdrawAmount" min="0.0001" name="amount" placeholder="RM" required="" step="0.0001" type="number"/></label>
+</div>
+<div aria-live="polite" class="r2-modal-feedback" id="r2WithdrawFeedback" role="status"></div>
+</div>
+<footer class="r2-modal-foot"><div class="r2-modal-foot-actions"><button class="btn btn-outline-primary" data-r2-close type="button">Cancel</button><button class="btn btn-primary" type="submit">Submit withdrawal request</button></div></footer>
+</form>
+</div>
+</div>
 </body>
 </html>

@@ -1,80 +1,552 @@
-#r2FinancePage { --r2-line:var(--bo-border,#EADCC8);--r2-well:var(--bo-surface,#FFF8EB);--r2-tint:var(--bo-table-row-alt,#FFF1DC); }
-#r2FinancePage .r2-nav-shell{margin:0 -2px 16px;background:transparent;border:0;padding:0;box-shadow:none;}
-#r2FinancePage .r2-module-nav{display:flex;flex-wrap:wrap;align-items:end;gap:4px 18px;border-bottom:1px solid var(--r2-line);min-height:48px;padding:0 6px;}
-#r2FinancePage .r2-module-nav [data-r2-tab]{appearance:none;background:transparent!important;color:var(--bo-text-muted,#57534E)!important;border:0!important;border-bottom:2px solid transparent!important;border-radius:0!important;box-shadow:none!important;font-size:13px;font-weight:700;padding:11px 8px;min-height:42px;line-height:20px;white-space:nowrap;}
-#r2FinancePage .r2-module-nav [data-r2-tab]:hover,#r2FinancePage .r2-module-nav [data-r2-tab]:focus-visible{color:var(--bo-text,#18191C)!important;background:transparent!important;outline-offset:-3px;}
-#r2FinancePage .r2-module-nav [data-r2-tab].active{color:var(--bo-text,#18191C)!important;border-bottom-color:#D97706!important;}
+/* ============================================================================
+   Referral V2 — page sheet for referral-v2.html and referral-v2-approval.html
+
+   WHAT THIS SHEET OWNS
+     · the page's two aliases (--r2-line / --r2-well), read off the shell tokens
+     · section tabs        .mad-tabs / .mad-tab      (colours: bo-charcoal-shell.css)
+     · KPI strip           .agent-admin-metrics / .r2-summary-metric
+     · overview pipeline   .r2-overview-flow / .r2-discovery-*
+     · listing tables      .r2-data-table + toolbar + footer/pager
+     · commission rate cards .r2-generation-*
+     · create/edit blocks  .r2-section  (the locked form ladder)
+     · responsive rules, all of them at the bottom
+
+   WHAT IT DOES NOT OWN
+     · field fill / border / ink / focus ring -> assets/css/bo-field-standard.css (loaded last)
+     · tab colours                            -> assets/css/bo-charcoal-shell.css
+     · the shell, the rail, the topbar        -> the shell sheets (AGENTS.md: never unify shells)
+
+   Every rule is scoped under #r2FinancePage, so nothing here can reach another page, and the
+   shell-drift guard sees no shell-metric declaration in this file.
+   ============================================================================ */
+
+/* The page's own aliases, read off the shell tokens so both themes follow without a second palette. */
+#r2FinancePage{--r2-line:var(--bo-border,#EADCC8);--r2-well:var(--bo-surface,#FFF8EB);}
+
+/* ----------------------------------------------------------------------------
+   1. Section tabs — the site's own row, `.mad-tabs` / `.mad-tab`.
+
+   Colour comes from bo-charcoal-shell.css (`body.report-body.bo-charcoal .mad-tab.is-active`
+   -> --bo-text + --bo-sidebar-active, !important), and bo-ui-standard.js already exempts
+   `.mad-tab` from the generic button chrome — so the page owns geometry and the focus ring only.
+
+   Deliberately NOT `.bo-module-tabs`: that class belongs to auth.js's module row (MODULE_TABS),
+   and renderModuleTabs() removes any `.bo-module-tabs` it did not render itself
+   (assets/js/auth.js -> `if(!html) existing.remove()`). These tabs switch panels inside ONE page.
+   ---------------------------------------------------------------------------- */
+#r2FinancePage .mad-tabs{display:flex;align-items:stretch;flex-wrap:nowrap;gap:4px;height:48px;min-height:48px;box-sizing:border-box;margin:0;padding:0;border-bottom:1px solid var(--r2-line);overflow-x:auto;overflow-y:hidden;scrollbar-width:none;}
+#r2FinancePage .mad-tabs::-webkit-scrollbar{height:0;display:none;}
+#r2FinancePage .mad-tab{display:inline-flex;align-items:center;flex:0 0 auto;height:100%;margin:0;padding:0 12px;border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;color:var(--bo-muted,#71717A);font-size:13.5px;font-weight:650;line-height:1.2;white-space:nowrap;cursor:pointer;transition:color .16s ease,border-color .16s ease;}
+#r2FinancePage .mad-tab:focus-visible{outline:2px solid var(--bo-cyan,#D97706);outline-offset:2px;box-shadow:0 0 0 3px var(--bo-cyan-tint,rgba(217,119,6,.14));}
+
+/* The inline result line under the row (success / error). Empty = no box at all. */
 #r2FinancePage #r2Feedback:empty{display:none;}
-#r2FinancePage #r2Feedback:not(:empty){padding:12px 14px;margin:12px 0 0;border-radius:8px;font-size:13px;font-weight:600;}
-#r2FinancePage .agent-admin-metrics{margin-bottom:16px;}
-#r2FinancePage .r2-summary-metric{display:grid!important;grid-template-columns:52px minmax(0,1fr);align-items:center;column-gap:24px;min-height:104px;padding:16px 18px;border-radius:16px;}
-#r2FinancePage .r2-summary-metric .bo-summary-icon{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(217,119,6,.18);background:rgba(217,119,6,.12);color:#D97706;font-size:22px;}
-#r2FinancePage .r2-summary-metric>div{min-width:0;}
-#r2FinancePage .r2-summary-metric>div>span{display:block;font-size:12px;font-weight:800;line-height:1.2;}
-#r2FinancePage .r2-summary-metric>div>strong{display:block;font-size:23px;font-weight:900;font-variant-numeric:tabular-nums;line-height:1.1;margin-top:5px;}
-#r2FinancePage [data-r2-panel]>.table-responsive{border:1px solid var(--r2-line);border-radius:8px;overflow-x:auto;}
-#r2FinancePage .r2-data-table{width:100%;margin:0;font-size:13px;min-width:700px;border-collapse:collapse;}
-#r2FinancePage .r2-data-table thead th{background:#FFE8CC;color:#3F3F46;font-size:12px;letter-spacing:.01em;font-weight:800;border:0;border-bottom:1px solid #EADCC8;vertical-align:middle;padding:12px 13px;white-space:nowrap;}
-#r2FinancePage .r2-data-table tbody td{padding:12px 13px;border-color:#F0E6D8;vertical-align:middle;font-weight:600;}
-#r2FinancePage .r2-data-table tbody tr:nth-child(odd)>td{background:#FFF8EB;}
-#r2FinancePage .r2-data-table tbody tr:nth-child(even)>td{background:#FFF1DC;}
-#r2FinancePage .r2-list-toolbar{display:flex;justify-content:flex-end;gap:10px;align-items:center;padding:10px 0;}
-#r2FinancePage .r2-list-search-label{display:flex;align-items:center;gap:9px;width:min(100%,250px);height:36px;border:1px solid var(--r2-line);background:var(--r2-well);border-radius:8px;color:var(--bo-text-muted,#57534E);padding:0 12px;margin:0;}
-#r2FinancePage .r2-list-search{border:0!important;outline:0;background:transparent!important;box-shadow:none!important;min-width:0;flex:1;color:inherit;font-size:13px;font-weight:600;}
-#r2FinancePage .r2-table-footer{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;padding:12px 2px 20px;font-size:12px;font-weight:600;color:var(--bo-text-muted,#57534E);}
-#r2FinancePage .r2-page-size{display:flex;align-items:center;gap:8px;white-space:nowrap;}
-#r2FinancePage .r2-page-size select{height:36px;min-width:65px;border:1px solid var(--r2-line);background:var(--r2-well);color:inherit;border-radius:8px;padding:0 8px;}
-#r2FinancePage .r2-pager-pages{display:flex;align-items:center;justify-content:flex-end;gap:4px;}
-#r2FinancePage .r2-pager-btn{min-width:36px;height:36px;padding:0 10px;border:0;border-radius:8px;background:#F3F4F6;color:#52525B;font-size:13px;font-weight:800;box-shadow:none;}
-#r2FinancePage .r2-pager-btn.active{background:linear-gradient(180deg,#FBBF24,#E98A00);color:#292524;box-shadow:0 2px 5px rgba(180,83,9,.23);}
-#r2FinancePage .r2-pager-btn:disabled{opacity:.46;cursor:default;}
-#r2FinancePage .r2-pager-ellipsis{padding:0 4px;}
-#r2FinancePage .r2-network-count{height:36px;display:flex;align-items:center;color:var(--bo-text-muted,#57534E);font-size:12px;font-weight:700;}
-#r2FinancePage .r2-overview-flow{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:14px 0;}
-#r2FinancePage .r2-overview-flow>span{border:1px solid var(--r2-line);border-radius:8px;background:var(--r2-well);padding:10px 14px;font-size:12px;font-weight:700;}
-#r2FinancePage .r2-discovery-status{font-size:13px;font-weight:700;color:var(--bo-text-muted,#57534E);margin:8px 0 0;}
+#r2FinancePage #r2Feedback:not(:empty){padding:12px 14px;margin:0;border-radius:8px;font-size:13px;font-weight:600;}
+
+/* ----------------------------------------------------------------------------
+   2. KPI strip — the locked listing specimen (.interface-design/system.md -> "KPI summary card"):
+      16px 18px pad, 104px min-height, 16px radius, 52px icon well, `52px minmax(0,1fr)` grid with a
+      24px column gap, 12px/800 label, 23px/900 tabular value.
+
+   Two overrides here are load-bearing:
+     · `border-radius:16px!important` — bo-charcoal-legacy.css pins 14px with !important.
+     · the icon is a <div> in the markup (see referral-v2.js): agent-admin-management.css styles
+       `.agent-admin-metric span` (meaning the LABEL) at font-size:12px!important, and a <span>
+       icon inherited it, painting the glyph at 12px instead of 22px.
+   Six tiles are laid out 3-up: 4-up broke the strip 4+2, and 6-up squeezed tiles to 201px where
+   both the label and the value wrapped.
+   ---------------------------------------------------------------------------- */
+#r2FinancePage .agent-admin-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:0;}
+#r2FinancePage .r2-summary-metric{display:grid!important;grid-template-columns:52px minmax(0,1fr);align-items:center;column-gap:24px;min-height:104px;padding:16px 18px;border-radius:16px!important;}
+#r2FinancePage .r2-summary-metric>.bo-summary-icon{grid-column:1;grid-row:1/4;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;background:var(--bo-cyan-tint,rgba(217,119,6,.12));border:1px solid rgba(217,119,6,.18);color:var(--bo-cyan,#D97706);font-size:22px;}
+#r2FinancePage .r2-summary-metric>div{grid-column:2;min-width:0;}
+#r2FinancePage .r2-summary-metric>div>span{display:block;font-size:12px;font-weight:800;line-height:1.2;color:var(--bo-muted,#57534E);}
+#r2FinancePage .r2-summary-metric>div>strong{display:block;font-size:23px;font-weight:900;line-height:1.05;margin:2px 0;font-variant-numeric:tabular-nums;}
+
+/* ----------------------------------------------------------------------------
+   3. Overview — the pipeline is an <ol> because its order carries meaning
+      (enrol -> invoice -> verify -> calculate -> approve -> withdraw).
+   ---------------------------------------------------------------------------- */
+#r2FinancePage .r2-overview-flow{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:14px 0;padding:0;list-style:none;counter-reset:r2flow;}
+#r2FinancePage .r2-overview-flow>li{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--r2-line);border-radius:8px;background:var(--r2-well);padding:10px 14px;font-size:12px;font-weight:700;}
+#r2FinancePage .r2-overview-flow>li::before{counter-increment:r2flow;content:counter(r2flow);display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:999px;background:var(--bo-cyan-tint,rgba(217,119,6,.12));color:var(--bo-cyan-deep,#B45309);font-size:11px;font-weight:800;}
+#r2FinancePage .r2-discovery-status{font-size:13px;font-weight:700;color:var(--bo-muted,#57534E);margin:8px 0 0;}
 #r2FinancePage .r2-discovery-warning{color:#B45309;}
+
+/* ----------------------------------------------------------------------------
+   4. Panel chrome — one h5 per panel (the tab names it), h6 for its sections.
+      Bootstrap's .text-muted is not theme-aware here, so panel descriptions followed the wrong ink.
+   ---------------------------------------------------------------------------- */
+#r2FinancePage [data-r2-panel]>h5,#r2FinancePage [data-r2-panel]>form~h5{font-weight:800;font-size:16px;margin-bottom:12px;}
+#r2FinancePage [data-r2-panel]>h6{font-weight:800;font-size:13px;letter-spacing:.01em;margin:16px 0 10px;color:var(--bo-text,#18191C);}
+#r2FinancePage .text-muted{color:var(--bo-muted,#57534E)!important;}
 #r2FinancePage .form-control,#r2FinancePage .form-select{border-radius:8px;min-height:36px;}
 #r2FinancePage .btn{border-radius:8px;font-weight:700;min-height:36px;}
-#r2FinancePage [data-r2-panel]>h5,#r2FinancePage [data-r2-panel]>form~h5{font-weight:800;font-size:16px;margin-bottom:12px;}
-@media(max-width:800px){#r2FinancePage .r2-table-footer{grid-template-columns:1fr auto}#r2FinancePage .r2-table-footer>[data-r2-total]{grid-column:1/-1;grid-row:2;text-align:center}#r2FinancePage .r2-module-nav{overflow-x:auto;flex-wrap:nowrap;}#r2FinancePage .r2-summary-metric{column-gap:12px;}}
-[data-bo-theme="dark"] #r2FinancePage .r2-data-table thead th{background:#1F2128;color:#E7E5E4;border-color:rgba(255,255,255,.12);}
-[data-bo-theme="dark"] #r2FinancePage .r2-data-table tbody tr:nth-child(odd)>td{background:#3A3C48;color:#F5F5F4;border-color:rgba(255,255,255,.12);}
-[data-bo-theme="dark"] #r2FinancePage .r2-data-table tbody tr:nth-child(even)>td{background:#434653;color:#F5F5F4;border-color:rgba(255,255,255,.12);}
-[data-bo-theme="dark"] #r2FinancePage .r2-pager-btn:not(.active){background:#2A2C36;color:#D4D4D8;}
-[data-bo-theme="dark"] #r2FinancePage .r2-summary-metric .bo-summary-icon{background:rgba(245,158,11,.16);border-color:rgba(245,158,11,.28);color:#FBBF24;}
 
-#r2FinancePage .r2-merchant-currency-note{display:block;font-size:11px;line-height:1.3;margin-top:3px;}
+/* ----------------------------------------------------------------------------
+   5. Listing tables.
 
-#r2FinancePage .r2-generation-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:14px 0;}
-#r2FinancePage .r2-generation-heading h5{font-size:16px;font-weight:800;}
-#r2FinancePage .r2-generation-status{font-size:12px;font-weight:750;color:#166534;background:#DCFCE7;border-radius:999px;padding:7px 12px;}
-#r2FinancePage .r2-generation-unset{color:#9A3412;background:#FFEDD5;}
-#r2FinancePage .r2-generation-help{border:1px solid var(--r2-line);background:var(--r2-well);padding:12px 14px;border-radius:8px;color:var(--bo-text-muted,#57534E);font-size:12px;line-height:1.55;}
-#r2FinancePage .r2-generation-preview{border:1px solid var(--r2-line);border-radius:8px;padding:12px 14px;}
-#r2FinancePage .r2-generation-preview-heading{font-size:12px;font-weight:800;margin-bottom:10px;}
-#r2FinancePage .r2-generation-chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
-#r2FinancePage .r2-generation-chip{display:inline-flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--r2-line);border-radius:8px;background:var(--r2-well);font-size:12px;}
-#r2FinancePage .r2-generation-chip-error{border-color:#EF4444;color:#B91C1C;}
-[data-bo-theme="dark"] #r2FinancePage .r2-generation-status{background:#14532D;color:#DCFCE7;}
-[data-bo-theme="dark"] #r2FinancePage .r2-generation-unset{background:#7C2D12;color:#FFEDD5;}
+   `brand-agent-standard.css` is on this page's body and paints EVERY `table.table` cell with cool
+   chrome, all of it !important: #fff cells, #fcfdff even rows, #edf0f5 rules, #344054 ink,
+   white-space:nowrap. DESIGN.md's light block bans exactly that ("Never cool #fff / #FBFCFE /
+   #F1F5F9 chrome"). A normal declaration loses to an !important one at any specificity, so the
+   warm paint below carries !important too — it is the only way to beat the sheet that already
+   claims the element, not decoration.
 
-#r2FinancePage .r2-generation-custom{padding:14px;border:1px solid var(--r2-line);border-radius:9px;background:var(--r2-well);margin-top:8px;}
-#r2FinancePage .r2-generation-custom-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;}
-#r2FinancePage .r2-generation-custom-heading strong{display:block;font-size:14px;margin-bottom:4px;}
-#r2FinancePage .r2-generation-custom-heading span{display:block;color:var(--bo-text-muted,#57534E);font-size:12px;}
-#r2FinancePage .r2-generation-custom-editor{display:grid;grid-template-columns:minmax(140px,1fr) minmax(195px,1.5fr) auto;gap:12px;align-items:end;margin-bottom:12px;}
-#r2FinancePage .r2-generation-custom-editor>.btn{white-space:nowrap;}
-#r2FinancePage .r2-generation-override-list{display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-height:44px;margin-bottom:10px;color:var(--bo-text-muted,#57534E);font-size:12px;}
-#r2FinancePage .r2-generation-remove{border:0;background:transparent;color:#B45309;font-size:19px;line-height:1;padding:0 2px;cursor:pointer;}
-#r2FinancePage .r2-generation-remove:hover{color:#7C2D12;}
-#r2FinancePage .r2-generation-chip small{font-weight:700;color:#B45309;}
-@media(max-width:800px){#r2FinancePage .r2-generation-custom-editor{grid-template-columns:1fr;}#r2FinancePage .r2-generation-custom-editor>.btn{width:100%;}}
+   Geometry follows the site's listing family (.standardized-listing-page .report-table): a 44px
+   header strip, 11px/800 uppercase labels, separate borders. `table-layout` is pinned to fixed:
+   auto measured 307/315/257/358px on four columns, i.e. widths decided by whichever cell happened
+   to be longest — the family's own data listings (agent-payout / agent-commission / agent-claim in
+   agent-admin-management.css) force fixed the same way. Cells wrap rather than clip.
+   ---------------------------------------------------------------------------- */
+/* A panel that holds nothing but a table is the card: padding 0, the card owns the frame and clips it,
+   the toolbar strip sits inside with a bottom hairline and the footer is a 64px strip with a top one.
+   That is how the Agents page (.agent-list-panel > .filter-card / .table-wrap / .table-footer) is built -
+   the table is never a bordered box floating inside another bordered box. */
+#r2FinancePage .r2-table-panel{padding:0!important;overflow:hidden;border-radius:8px!important;}
+/* Viewport-locked frame (DESIGN.md -> Data tables -> "Fixed frame"): the shell is one screen tall,
+   the content frame is its own scroll area, and the table panel takes whatever is left. The table body
+   then scrolls inside the panel instead of the page growing with the rows.
+   Scoped by `data-bo-shell="main"` + the page's own body class, so no other page is touched - and the
+   data-bo-shell="main" scope is the carve-out check-shell-drift.js documents for the Main frame. */
+html[data-bo-shell="main"] body.referral-v2-page .report-main{height:100dvh;overflow:hidden;display:flex;flex-direction:column;}
+html[data-bo-shell="main"] body.referral-v2-page #r2FinancePage{flex:1 1 auto;min-height:0;overflow:auto;}
+html[data-bo-shell="main"] body.referral-v2-page .report-topbar{flex:0 0 auto;}
+html[data-bo-shell="main"] body.referral-v2-page #r2FinancePage>.r2-table-panel:not([hidden]){flex:1;min-height:320px;display:flex;flex-direction:column;overflow:hidden;}
+html[data-bo-shell="main"] body.referral-v2-page #r2FinancePage>.r2-table-panel:not([hidden])>.table-responsive{flex:1;min-height:0;overflow:auto;}
+html[data-bo-shell="main"] body.referral-v2-page #r2FinancePage>.r2-table-panel:not([hidden])>.r2-list-toolbar,
+html[data-bo-shell="main"] body.referral-v2-page #r2FinancePage>.r2-table-panel:not([hidden])>.r2-table-footer{flex:0 0 auto;}
+/* The footer's Show-N menu opens UPWARD, into the panel: the panel clips its own corners (radius 8), so a
+   menu opening downward was painted below the card and outside the viewport (measured y=949 in an 804px
+   viewport). The Agents page solves it the same way (bottom:calc(100% + 6px)). */
+#r2FinancePage .r2-table-footer{position:relative;z-index:6;}
+#r2FinancePage .r2-table-footer .rounded-select-wrap{overflow:visible;}
+#r2FinancePage .r2-table-footer .rounded-select-menu{top:auto!important;bottom:calc(100% + 6px)!important;margin:0!important;}
+#r2FinancePage .r2-table-panel>.table-responsive{border:0!important;border-radius:0!important;}
+/* Two tables in one panel do not share a viewport-locked height: the panel stops flexing (the frame
+   scrolls instead) and each wrapper keeps its content height - the single-panel flex rule was winning on
+   equal specificity and clipping every table to one row. */
+/* !important, not politeness: the viewport-lock block further down carries the same specificity
+   (`#id .class:not([hidden])`) and would win on source order. */
+/* A tab that holds two different lists gives each its own card: the stack is the swappable panel, the
+   cards are two independent frames (title + search + actions + table + pager), so nothing can read as
+   "one table with a second table glued underneath". */
+/* flex:0 0 auto - as a shrinking flex child of the locked frame the stack was clipped, cutting the
+   invoice card off mid-row (and hiding its footer). The frame scrolls instead. */
+/* Column rhythm per table: with `table-layout:fixed` and no widths every column is equal, which squeezed
+   the amount columns and overflowed the long reason/detail cells. */
+/* Commission allocations: eight columns, and the recipient/status cells carry the longest text. */
+#r2FinancePage .r2-alloc-table thead th:first-child{width:12%;}
+#r2FinancePage .r2-alloc-table thead th:nth-child(2){width:9%;}
+#r2FinancePage .r2-alloc-table thead th:nth-child(3){width:20%;}
+#r2FinancePage .r2-alloc-table thead th:nth-child(4){width:11%;}
+#r2FinancePage .r2-alloc-table thead th:nth-child(5){width:12%;}
+#r2FinancePage .r2-alloc-table thead th:nth-child(6){width:8%;}
+#r2FinancePage .r2-alloc-table thead th:nth-child(7){width:12%;}
+#r2FinancePage .r2-alloc-table thead th:last-child{width:16%;}
+#r2FinancePage .r2-empty-row{padding:28px 16px!important;text-align:center;color:var(--bo-muted,#57534E);font-weight:600;}
+#r2FinancePage .r2-empty-row strong{color:var(--bo-text,#18191C);}
+#r2FinancePage .r2-recon-table thead th:first-child{width:6%;}
+#r2FinancePage .r2-recon-table thead th:nth-child(2){width:20%;}
+#r2FinancePage .r2-recon-table thead th:nth-child(3),
+#r2FinancePage .r2-recon-table thead th:nth-child(4),
+#r2FinancePage .r2-recon-table thead th:nth-child(5){width:12%;}
+#r2FinancePage .r2-recon-table thead th:nth-child(6),
+#r2FinancePage .r2-recon-table thead th:nth-child(7){width:11%;}
+#r2FinancePage .r2-recon-table thead th:last-child{width:16%;}
+#r2FinancePage .r2-ledger-table thead th:first-child{width:8%;}
+#r2FinancePage .r2-ledger-table thead th:nth-child(2){width:18%;}
+#r2FinancePage .r2-ledger-table thead th:nth-child(3){width:14%;}
+#r2FinancePage .r2-ledger-table thead th:nth-child(4),
+#r2FinancePage .r2-ledger-table thead th:nth-child(5){width:14%;}
+#r2FinancePage .r2-ledger-table thead th:nth-child(6){width:18%;}
+#r2FinancePage .r2-ledger-table thead th:last-child{width:14%;}
+#r2FinancePage .r2-reversal-table thead th:first-child{width:8%;}
+#r2FinancePage .r2-reversal-table thead th:nth-child(2){width:14%;}
+#r2FinancePage .r2-reversal-table thead th:nth-child(3){width:30%;}
+#r2FinancePage .r2-reversal-table thead th:nth-child(4){width:14%;}
+#r2FinancePage .r2-reversal-table thead th:nth-child(5){width:14%;}
+#r2FinancePage .r2-reversal-table thead th:last-child{width:20%;}
+#r2FinancePage .r2-audit-table thead th:first-child{width:18%;}
+#r2FinancePage .r2-audit-table thead th:nth-child(2){width:14%;}
+#r2FinancePage .r2-audit-table thead th:nth-child(3){width:18%;}
+#r2FinancePage .r2-audit-table thead th:nth-child(4){width:10%;}
+#r2FinancePage .r2-audit-table thead th:last-child{width:40%;}
+/* the reconciliation card carries the "show inactive" toggle beside its search */
+#r2FinancePage .r2-list-toolbar .r2-show-all-toggle{margin:0;}
+/* Capsule switch — main-merchant-detail's recipe, reproduced value for value:
+   6px dot (#B8C0CC idle, #059669 selected), 36px pill with 0 14px padding, transparent rest state,
+   and the selected one wearing the gradient capsule (#FFF8EB -> #F3E8D6, #EADCC8 hairline, the two-layer
+   warm shadow). Counts are 13px and inherit weight/colour, with the brackets drawn by ::before/::after.
+   That page moves the capsule with a `.bo-seg-thumb` element; at rest the gradient on `.is-active` is the
+   same picture, and this page has no slide to animate. */
+#r2FinancePage .r2-seg{display:inline-flex;align-items:center;gap:6px;padding:0;border:0;background:transparent;}
+#r2FinancePage .r2-seg-btn{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px;border:1px solid transparent;border-radius:999px;background:transparent;color:#71717A;font-size:12.5px;font-weight:600;line-height:1;white-space:nowrap;cursor:pointer;transition:background .16s ease,color .16s ease,box-shadow .16s ease;}
+#r2FinancePage .r2-seg-btn::before{content:"";width:6px;height:6px;border-radius:50%;background:#B8C0CC;flex:0 0 auto;box-shadow:none;}
+#r2FinancePage .r2-seg-btn:hover:not(.is-active){background:rgba(24,25,28,.04);color:#4B5563;}
+#r2FinancePage .r2-seg-btn.is-active{background-image:linear-gradient(180deg,#FFF8EB 0%,#F3E8D6 100%);background-color:#F3E8D6;border-color:#EADCC8;color:#18191C;font-weight:700;box-shadow:0 1px 2px rgba(24,25,28,.06),0 2px 6px rgba(24,25,28,.05);}
+#r2FinancePage .r2-seg-btn.is-active::before{background:#059669;}
+#r2FinancePage .r2-seg-count{font-size:13px;font-weight:inherit;font-variant-numeric:tabular-nums;color:inherit;background:transparent;padding:0;min-width:0;height:auto;}
+#r2FinancePage .r2-seg-count::before{content:"(";}
+#r2FinancePage .r2-seg-count::after{content:")";}
+[data-bo-theme="dark"] #r2FinancePage .r2-seg-btn{color:#8A8F98;}
+[data-bo-theme="dark"] #r2FinancePage .r2-seg-btn::before{background:#3F3F46;}
+[data-bo-theme="dark"] #r2FinancePage .r2-seg-btn:hover:not(.is-active){background:rgba(255,255,255,.04);color:#D4D4D8;}
+[data-bo-theme="dark"] #r2FinancePage .r2-seg-btn.is-active{background-image:linear-gradient(180deg,#4A4C58 0%,#383A46 48%,#2C2E38 100%);background-color:#383A46;border-color:rgba(255,255,255,.12);color:#FFFFFF;box-shadow:0 1px 2px rgba(0,0,0,.22),0 4px 10px rgba(0,0,0,.16);}
+[data-bo-theme="dark"] #r2FinancePage .r2-seg-btn.is-active::before{background:#34D399;box-shadow:0 0 0 2px rgba(52,211,153,.18),0 0 10px rgba(52,211,153,.55);}
+/* Collections: the stack fills the locked frame, the card fills the stack, and inside it the dataset is
+   the flex column that lets the table body scroll while the footer stays pinned to the card's bottom. */
+#r2FinancePage .r2-stack.r2-stack-fit{display:flex;flex-direction:column;flex:1 1 auto;min-height:0;}
+/* No 320px floor here: on a short window the strip + tabs left less than that, the frame scrolled and the
+   pinned footer ended up below the fold (reported). The card shrinks with the frame instead, and the table
+   body keeps a two-row floor of its own so it never collapses to nothing. */
+#r2FinancePage .r2-table-panel.r2-table-panel-fit{flex:1 1 auto;min-height:220px;display:flex;flex-direction:column;overflow:hidden;}
+/* reports.css gives every `.table-card` a 16px bottom margin; inside the filling stack that margin is space
+   the card cannot use, so the card stopped 16px short of the frame and the table never reached the bottom. */
+#r2FinancePage .r2-stack-fit>.r2-table-panel-fit{margin-bottom:0!important;}
+#r2FinancePage .r2-dataset{display:flex;flex-direction:column;flex:1 1 auto;min-height:0;}
+/* The body may shrink to nothing before the footer does: a floor here pushed the pinned footer out of
+   the card on short windows, where it was clipped away (reported). The card's own 220px floor is what
+   keeps the toolbar, one row and the footer on screen. */
+#r2FinancePage .r2-dataset{overflow:hidden;}
+#r2FinancePage .r2-dataset>.table-responsive{flex:1 1 auto;min-height:0;overflow:auto;}
+#r2FinancePage .r2-dataset>.r2-table-footer{flex:0 0 auto;}
+#r2FinancePage .r2-stack{display:grid;gap:16px;align-content:start;min-height:0;flex:0 0 auto;}
+#r2FinancePage .r2-card-title{margin:0;font-size:13px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--bo-text,#18191C);white-space:nowrap;}
+#r2FinancePage .r2-list-toolbar .r2-card-title{margin-right:auto;}
+#r2FinancePage .r2-list-toolbar .r2-list-search-label{flex:0 1 300px;min-width:0;max-width:300px;}
+#r2FinancePage .r2-table-panel.r2-table-panel-multi{flex:0 0 auto!important;min-height:0!important;overflow:visible!important;}
+#r2FinancePage .r2-table-panel.r2-table-panel-multi>.table-responsive{flex:0 0 auto!important;}
+#r2FinancePage .r2-table-panel>.r2-subhead{margin:16px 0 0;padding:0 16px 10px;font-size:13px;font-weight:800;letter-spacing:.01em;color:var(--bo-text,#18191C);}
+#r2FinancePage .r2-table-panel>.r2-list-toolbar{margin:0;padding:10px 16px;border-bottom:1px solid var(--r2-line);}
+/* The footer is a card child in some panels and a child of a switching dataset in others; both have to
+   land on the same strip (16px inset, 64px min height, top hairline), otherwise the same footer read as a
+   different component on Merchant Collections than on Referral Network. */
+#r2FinancePage .r2-table-panel>.r2-table-footer,
+#r2FinancePage .r2-table-panel .r2-dataset>.r2-table-footer{padding:14px 16px;min-height:64px;border-top:1px solid var(--r2-line);}
+/* A long row action ("Request commission correction") is wider than its cell: with nowrap it pushed
+   straight out of the card. Inside a cell the label wraps; the column gets a real width below. */
+/* Row action buttons carry their own chrome: they run inside a table cell, and the global button standard
+   re-classifies them when a hidden dataset is revealed - the button repainted a frame later, which read as
+   a flicker. With the standard opted out, the recipe is stated here once. */
+#r2FinancePage .r2-data-table td .r2-act-btn{display:inline-flex;align-items:center;min-height:32px;margin:0 6px 6px 0;padding:6px 12px;border-radius:8px;background:#FFF8EB;border:1px solid #EADCC8;color:#18191C;font-size:12.5px;font-weight:700;line-height:1.2;white-space:normal;text-align:left;box-shadow:none;cursor:pointer;}
+#r2FinancePage .r2-data-table td .r2-act-btn:hover{border-color:var(--bo-cyan,#D97706);color:#B45309;}
+#r2FinancePage .r2-data-table td .r2-act-btn.r2-act-danger{color:#B42318;}
+#r2FinancePage .r2-data-table td .r2-act-btn.r2-act-danger:hover{border-color:#B42318;color:#B42318;background:#FEE2E2;}
+[data-bo-theme="dark"] #r2FinancePage .r2-data-table td .r2-act-btn{background:#2A2C36;border-color:rgba(255,255,255,.14);color:#F5F5F4;}
+[data-bo-theme="dark"] #r2FinancePage .r2-data-table td .r2-act-btn:hover{border-color:#F59E0B;color:#FBBF24;}
+[data-bo-theme="dark"] #r2FinancePage .r2-data-table td .r2-act-btn.r2-act-danger{color:#F87171;}
+[data-bo-theme="dark"] #r2FinancePage .r2-data-table td .r2-act-btn.r2-act-danger:hover{border-color:#F87171;color:#F87171;background:rgba(248,113,113,.16);}
+/* Receipts: six columns, and the action column needs room for two stacked buttons. */
+#r2FinancePage .r2-invoice-table thead th:first-child{width:6%;}
+#r2FinancePage .r2-invoice-table thead th:nth-child(2){width:16%;}
+#r2FinancePage .r2-invoice-table thead th:nth-child(3){width:18%;}
+#r2FinancePage .r2-invoice-table thead th:nth-child(4){width:12%;}
+#r2FinancePage .r2-invoice-table thead th:nth-child(5),
+#r2FinancePage .r2-invoice-table thead th:nth-child(6){width:12%;}
+#r2FinancePage .r2-invoice-table thead th:nth-child(7){width:12%;}
+#r2FinancePage .r2-invoice-table thead th:last-child{width:12%;}
+#r2FinancePage .r2-receipts-table thead th:first-child{width:8%;}
+#r2FinancePage .r2-receipts-table thead th:nth-child(2){width:12%;}
+#r2FinancePage .r2-receipts-table thead th:nth-child(3){width:22%;}
+#r2FinancePage .r2-receipts-table thead th:nth-child(4){width:14%;}
+#r2FinancePage .r2-receipts-table thead th:nth-child(5){width:20%;}
+#r2FinancePage .r2-receipts-table thead th:last-child{width:24%;}
+#r2FinancePage [data-r2-panel]>.table-responsive{border:1px solid var(--r2-line);border-radius:8px;overflow-x:auto;}
+#r2FinancePage .r2-data-table,
+body.referral-v2-page .r2-modal .r2-data-table{width:100%!important;margin:0;min-width:760px;table-layout:fixed!important;border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums;}
+/* Locked listing header, copied from the Agents page: #FFE8CC field, #6b360c ink, 11px/700, .04em,
+   10px 12px cells, sticky with a hairline shadow so the head survives the body scroll. */
+#r2FinancePage .r2-data-table thead th,
+body.referral-v2-page .r2-modal .r2-data-table thead th{position:sticky;top:0;z-index:4;padding:10px 12px!important;background:#FFE8CC!important;color:#6b360c!important;font-size:11px!important;font-weight:700!important;letter-spacing:.04em!important;text-transform:uppercase!important;white-space:nowrap!important;border:0!important;border-bottom:1px solid #EADCC8!important;border-radius:0!important;vertical-align:middle!important;box-shadow:0 1px 0 #EADCC8;}
+#r2FinancePage .r2-data-table tbody td,
+body.referral-v2-page .r2-modal .r2-data-table tbody td{padding:10px 12px!important;background:#FFF8EB!important;color:#18191C!important;font-size:13px!important;font-weight:700!important;vertical-align:middle!important;white-space:normal!important;border:0!important;border-bottom:1px solid #EADCC8!important;}
+#r2FinancePage .r2-data-table tbody tr:nth-child(even)>td,
+body.referral-v2-page .r2-modal .r2-data-table tbody tr:nth-child(even)>td{background:#FFF1DC!important;}
+#r2FinancePage .r2-data-table tbody tr:hover>td,
+body.referral-v2-page .r2-modal .r2-data-table tbody tr:hover>td{background:#FFE8CC!important;}
+#r2FinancePage .r2-data-table tbody tr:last-child>td,
+body.referral-v2-page .r2-modal .r2-data-table tbody tr:last-child>td{border-bottom:0!important;}
 
-#r2FinancePage .r2-show-all-toggle{display:flex;align-items:center;gap:8px;justify-content:flex-end;font-size:12px;font-weight:700;color:var(--bo-text-muted,#57534E);margin:0 0 10px;}
+/* Search row above each table (inserted by setupTableTools). */
+/* Search left, the panel's own actions right, on one row above the table.
+   The input IS the control here: bo-field-standard.css owns its well, border and amber focus ring.
+   It used to be drawn twice - the label carried a box AND the input carried its own - so the field
+   read as two nested rounded rectangles. The label now only carries the glyph. */
+/* Title · search · actions, in that order, with the title taking the slack. `space-between` used to
+   leave the search floating in the middle of the row (reported). */
+#r2FinancePage .r2-list-toolbar{display:flex;justify-content:flex-start;align-items:center;gap:10px;padding:6px 0 12px;flex-wrap:wrap;}
+#r2FinancePage .r2-list-search-label{position:relative;display:flex;align-items:center;width:min(100%,300px);margin:0;color:var(--bo-muted,#57534E);}
+#r2FinancePage .r2-list-search-label>i{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;}
+#r2FinancePage .r2-list-search{flex:1;min-width:0;height:36px;padding:0 12px 0 34px;font-size:13px;font-weight:600;}
+#r2FinancePage .r2-toolbar-actions{display:flex;align-items:center;gap:8px;margin-left:0;}
+/* An authored `display` beats the UA sheet's `[hidden]{display:none}`, so a parked action group stayed a
+   flex item and its gap pushed the card 16px short of the frame (the table never reached the bottom on
+   Merchant Collections). Hidden means gone. */
+#r2FinancePage .r2-toolbar-actions[hidden]{display:none!important;}
+#r2FinancePage .r2-seg[hidden]{display:none!important;}
+#r2FinancePage .r2-toolbar-actions .btn{display:inline-flex;align-items:center;gap:7px;text-decoration:none;white-space:nowrap;}
+/* The Network panel keeps its own filter strip: search + account type + count on the left, actions right. */
+#r2FinancePage .r2-network-toolbar{flex-wrap:nowrap;}
+#r2FinancePage .r2-network-toolbar .r2-list-search-label{flex:1 1 240px;max-width:320px;min-width:160px;}
+/* The field standard stretches every select to 100% (with !important), so the fixed width lives on a
+   wrapper - a 100% select inside a 170px box is 170px wide, whatever wins on the select itself. */
+#r2FinancePage .r2-network-kind-wrap{flex:0 0 170px;width:170px;min-width:170px;}
+#r2FinancePage .r2-network-kind{width:100%!important;}
+/* A caption line inside a flush table panel needs its own inset - the panel has no padding. */
+
+/* Footer: Show N · total · pager (First · Prev · pages · Next · Last, amber active, no shadow). */
+#r2FinancePage .r2-table-footer{display:grid;grid-template-columns:minmax(190px,1fr) minmax(260px,1fr) minmax(190px,1fr);align-items:center;gap:12px;padding:12px 0 2px;font-size:12.5px;font-weight:600;color:var(--bo-muted,#57534E);}
+#r2FinancePage .r2-page-size{display:flex;align-items:center;gap:8px;white-space:nowrap;}
+/* reports.js wraps every select in the Role-select chrome, and that wrapper takes the width of its
+   cell — so the footer control stretched to ~500px. The wrapper carries the visible box; the native
+   select stays at 72px underneath it. */
+#r2FinancePage .r2-page-size .rounded-select-wrap{width:68px!important;flex:0 0 auto;}
+#r2FinancePage .r2-page-size .rounded-select-btn{width:100%;}
+#r2FinancePage .r2-page-size select{height:36px;min-width:68px;width:68px;flex:0 0 auto;border:1px solid var(--r2-line);background:var(--r2-well);color:inherit;border-radius:8px;padding:0 8px;font-size:13px;font-weight:700;}
+#r2FinancePage .r2-pager-pages{display:flex;align-items:center;justify-content:flex-end;gap:6px;}
+#r2FinancePage .r2-pager-btn{min-width:40px;height:36px;padding:0 14px;border:0;border-radius:8px;background:#F3F4F6;color:#9CA3AF;font-size:13px;font-weight:700;box-shadow:none;}
+#r2FinancePage .r2-pager-btn:hover:not(:disabled):not(.active){background:#E5E7EB;color:#374151;}
+#r2FinancePage .r2-pager-btn i{font-size:12px;line-height:1;}
+#r2FinancePage .r2-pager-btn.active{background:linear-gradient(180deg,#FBBF24,#F59E0B,#D97706);color:#fff;border:1px solid #D97706;box-shadow:none;}
+#r2FinancePage .r2-pager-btn:disabled{opacity:.42;cursor:default;}
+#r2FinancePage .r2-pager-ellipsis{padding:0 4px;}
+
+/* "N of M linked accounts · N referrals" beside the search row, and the two "show inactive" toggles. */
+#r2FinancePage .r2-show-all-toggle{display:flex;align-items:center;gap:8px;justify-content:flex-end;font-size:12px;font-weight:700;color:var(--bo-muted,#57534E);margin:0 0 10px;}
 #r2FinancePage .r2-show-all-toggle input{margin:0;cursor:pointer;accent-color:#D97706;}
 
-#r2FinancePage .r2-generation-edit{border:0;background:transparent;color:var(--bo-primary,#B45309);font-weight:700;cursor:pointer;font-size:12px;}
-#r2FinancePage .r2-generation-actions{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-top:12px;}
-#r2FinancePage .r2-generation-actions>div{flex:0 1 260px;}
-#r2FinancePage .r2-generation-actions>.btn{min-height:38px;}
+/* ----------------------------------------------------------------------------
+   6. Commission rates — the settings cards (self-contained controls, not create/edit blocks).
+   ---------------------------------------------------------------------------- */
+#r2FinancePage .r2-generation-status{font-size:12px;font-weight:750;color:#166534;background:#DCFCE7;border-radius:999px;padding:7px 12px;}
+#r2FinancePage .r2-generation-unset{color:#9A3412;background:#FFEDD5;}
+/* Commission Rates: the live status sits at the right of the block head, the date field keeps the
+   footer's left slot and the "add rate" button lines up with the two inputs above it. */
+#r2FinancePage .r2-section-head .r2-generation-status{margin-left:auto;}
+#r2FinancePage .r2-field-action{justify-content:flex-end;}
+#r2FinancePage .r2-field-action>.btn{width:auto;}
+#r2FinancePage .r2-field-inline{flex:0 0 220px;margin-right:auto;}
+/* Commission Rates — the add row is two fields plus a button that keeps its own width (a 3-way even
+   grid left the button floating a third of the row away from the rate it belongs to), and the
+   configured rates are a table inside the card, with the same head/zebra as the listing tables. */
+#r2FinancePage .r2-generation-add{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;align-items:end;}
+#r2FinancePage .r2-quiet{display:none;}
+#r2FinancePage .r2-generation-table-wrap{margin-top:16px;border:1px solid var(--r2-line);border-radius:8px;overflow:auto;}
+#r2FinancePage .r2-generation-table{min-width:0;}
+#r2FinancePage .r2-generation-table tbody td:first-child{font-variant-numeric:tabular-nums;}
+/* fixed layout + width:100% scales columns to fill, so all three are stated (a lone 160px on the
+   last column still got grown); the actions column only needs room for two small buttons. */
+#r2FinancePage .r2-col-actions{width:160px;text-align:right;white-space:nowrap;}
+#r2FinancePage .r2-generation-table thead th:first-child{width:22%;}
+#r2FinancePage .r2-generation-table thead th:nth-child(2){width:62%;}
+#r2FinancePage .r2-generation-table thead th:last-child{width:16%;}
+#r2FinancePage .r2-generation-table tbody td.r2-col-actions{text-align:right;}
+#r2FinancePage .r2-generation-table tbody tr td.text-center{color:var(--bo-muted,#57534E);font-weight:600;padding:22px 12px!important;}
+/* The dialog's rate table needs an ID in the selector: bo-charcoal-agent.css carries
+   `html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.brand-agent-standard table.table thead th`
+   at (0,5,5), which outranks any body-class scope (0,3,3). An ID settles it - and only this dialog
+   has a table, so the scope stays precise. */
+#r2GenerationModal .r2-data-table thead th{background:#FFE8CC!important;color:#6b360c!important;border:0!important;border-bottom:1px solid #EADCC8!important;}
+#r2GenerationModal .r2-data-table tbody td{background:#FFF8EB!important;color:#18191C!important;border:0!important;border-bottom:1px solid #EADCC8!important;}
+#r2GenerationModal .r2-data-table tbody tr:nth-child(even)>td{background:#FFF1DC!important;}
+#r2GenerationModal .r2-data-table tbody tr:hover>td{background:#FFE8CC!important;}
+[data-bo-theme="dark"] #r2GenerationModal .r2-data-table thead th{background:#1F2128!important;color:#E7E5E4!important;border-bottom-color:rgba(255,255,255,.12)!important;}
+[data-bo-theme="dark"] #r2GenerationModal .r2-data-table tbody td{background:#3A3C48!important;color:#F5F5F4!important;border-bottom-color:rgba(255,255,255,.12)!important;}
+[data-bo-theme="dark"] #r2GenerationModal .r2-data-table tbody tr:nth-child(even)>td{background:#434653!important;}
+[data-bo-theme="dark"] #r2GenerationModal .r2-data-table tbody tr:hover>td{background:#444654!important;}
+/* two classes on the row so it outranks the dialog's generic `.r2-fields` grid, which is two equal
+   columns and would drop the button onto a line of its own */
+/* Row actions are icon buttons, on the transaction-listing metric (26x26, radius 6, 15px glyph):
+   two word-buttons inside a dialog's narrow actions column read as stray text. */
+body.referral-v2-page .r2-ico-btn{width:26px;height:26px;padding:0;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line,#EADCC8);border-radius:6px;background:var(--well,#FFF8EB);color:#57534E;font-size:15px;line-height:1;cursor:pointer;}
+body.referral-v2-page .r2-ico-btn+.r2-ico-btn{margin-left:6px;}
+body.referral-v2-page .r2-ico-btn:hover{border-color:var(--bo-cyan,#D97706);color:#B45309;}
+body.referral-v2-page .r2-ico-btn.is-danger:hover{border-color:#B42318;color:#B42318;background:#FEE2E2;}
+[data-bo-theme="dark"] body.referral-v2-page .r2-ico-btn{background:#2A2C36;border-color:rgba(255,255,255,.14);color:#D4D4D8;}
+[data-bo-theme="dark"] body.referral-v2-page .r2-ico-btn:hover{border-color:#F59E0B;color:#FBBF24;}
+[data-bo-theme="dark"] body.referral-v2-page .r2-ico-btn.is-danger:hover{border-color:#F87171;color:#F87171;background:rgba(248,113,113,.16);}
+body.referral-v2-page .r2-modal .r2-fields.r2-generation-add{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;}
+/* Empty dialog table: no headings, a dashed placeholder box, one quiet line with its own hint. */
+body.referral-v2-page .r2-modal .r2-generation-table-wrap.is-empty{border-style:dashed;background:transparent;}
+body.referral-v2-page .r2-modal .r2-generation-table-wrap.is-empty thead{display:none;}
+body.referral-v2-page .r2-modal .r2-generation-table-wrap.is-empty tbody td.r2-generation-empty{border:0!important;background:transparent!important;padding:22px 16px!important;font-weight:600;color:var(--bo-muted,#57534E);}
+body.referral-v2-page .r2-modal .r2-generation-empty{display:flex;align-items:center;justify-content:center;gap:10px;}
+body.referral-v2-page .r2-modal .r2-generation-empty i{font-size:18px;opacity:.6;}
+body.referral-v2-page .r2-modal .r2-generation-empty span{display:grid;gap:2px;text-align:left;}
+body.referral-v2-page .r2-modal .r2-generation-empty small{font-size:11.5px;font-weight:600;opacity:.85;}
+/* The actions column holds two controls; 16% of a 520px dialog cut them off. */
+body.referral-v2-page .r2-modal .r2-generation-table thead th:first-child{width:26%;}
+body.referral-v2-page .r2-modal .r2-generation-table thead th:nth-child(2){width:48%;}
+body.referral-v2-page .r2-modal .r2-generation-table thead th:last-child{width:96px;}
+body.referral-v2-page .r2-modal .r2-generation-add .r2-field-action>.btn{width:auto;}
+body.referral-v2-page .r2-modal .r2-generation-table-wrap{margin-top:16px;border:1px solid var(--line,#EADCC8);border-radius:8px;overflow:auto;}
+
+/* ----------------------------------------------------------------------------
+   7. Create / edit blocks — the locked form ladder
+      (DESIGN.md -> "Create / Edit Admin — form hierarchy", system.md -> Patterns -> Forms).
+
+   Every other create/edit page states this ladder as `.mac-section` inside its own family sheet
+   (main-admin-detail-executive.css is 530KB and body-scoped per page), so the same values are
+   stated here on this page's own scope — the way payment-method-create.css and the provider sheets
+   do. Layers, top to bottom:
+
+     panel   .table-card        surface #FFF8EB   the frame the block sits in
+     block   .r2-section        lift    #FFFCF7   1px #DCC9A8 + 3px amber rail + warm shadow
+     field   input / select     #FFF8EB          owned by bo-field-standard.css (loaded last)
+     footer  .r2-section-foot   top hairline #EADCC8, primary CTA on the right
+
+   Labels use the Roles scale (11.5px / 800 / uppercase / .06em) rather than Bootstrap's
+   .form-label: these are data-entry blocks, and that is the label treatment the Admin and Merchant
+   create pages use. --bo-cyan and --bo-cyan-tint flip with the theme, so the rail and the icon
+   tile follow dark mode without a second copy of the palette.
+   ---------------------------------------------------------------------------- */
+#r2FinancePage .r2-section{position:relative;background:var(--bo-surface,#FFF8EB);border:1px solid var(--bo-border,#EADCC8);border-radius:8px;padding:18px 20px;box-shadow:0 8px 22px rgba(92,74,48,.06);}
+#r2FinancePage .r2-section::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:0 3px 3px 0;background:var(--bo-cyan,#D97706);}
+#r2FinancePage .r2-section+.r2-section{margin-top:14px;}
+#r2FinancePage .r2-section-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;}
+#r2FinancePage .r2-section-icon{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;flex:0 0 auto;background:var(--bo-cyan-tint,rgba(217,119,6,.12));color:var(--bo-cyan,#D97706);font-size:14px;}
+#r2FinancePage .r2-section-copy{min-width:0;}
+#r2FinancePage .r2-section-copy h6{margin:0;font-size:13px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--bo-text,#18191C);}
+#r2FinancePage .r2-section-copy p{margin:3px 0 0;font-size:12px;font-weight:600;color:var(--bo-muted,#57534E);}
+#r2FinancePage .r2-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px 12px;}
+#r2FinancePage .r2-fields-2,#r2FinancePage .r2-fields-3{display:grid;gap:14px 12px;grid-template-columns:repeat(2,minmax(0,1fr));}
+#r2FinancePage .r2-fields-3{grid-template-columns:repeat(3,minmax(0,1fr));}
+#r2FinancePage .r2-field{display:grid;gap:6px;align-content:start;min-width:0;margin:0;}
+#r2FinancePage .r2-label{font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--bo-muted,#57534E);}
+#r2FinancePage .r2-label b{color:#B42318;font-weight:800;}
+#r2FinancePage .r2-field .form-control,#r2FinancePage .r2-field .form-select{width:100%;}
+#r2FinancePage .r2-field-note{font-size:11.5px;font-weight:600;color:var(--bo-muted,#57534E);}
+#r2FinancePage .r2-section-foot{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--r2-line);}
+
+/* ============================================================================
+   8. Dark mode — one block per surface, so the light values above stay readable
+      and nothing here has to be scrolled through to find the other half of a pair.
+   ============================================================================ */
+[data-bo-theme="dark"] #r2FinancePage .r2-summary-metric>div>span{color:#D4D4D8;}
+[data-bo-theme="dark"] #r2FinancePage .r2-summary-metric>.bo-summary-icon{background:rgba(245,158,11,.16);border-color:rgba(245,158,11,.28);color:#FBBF24;}
+[data-bo-theme="dark"] #r2FinancePage [data-r2-panel]>h6{color:#E7E5E4;}
+[data-bo-theme="dark"] #r2FinancePage .text-muted{color:#D4D4D8!important;}
+[data-bo-theme="dark"] #r2FinancePage .r2-discovery-warning{color:#FBBF24;}
+[data-bo-theme="dark"] #r2FinancePage .r2-data-table thead th,
+[data-bo-theme="dark"] body.referral-v2-page .r2-modal .r2-data-table thead th{background:#1F2128!important;color:#E7E5E4!important;border-bottom-color:rgba(255,255,255,.12)!important;}
+[data-bo-theme="dark"] #r2FinancePage .r2-data-table tbody td,
+[data-bo-theme="dark"] body.referral-v2-page .r2-modal .r2-data-table tbody td{background:#3A3C48!important;color:#F5F5F4!important;border-bottom-color:rgba(255,255,255,.12)!important;}
+[data-bo-theme="dark"] #r2FinancePage .r2-data-table tbody tr:nth-child(even)>td,
+[data-bo-theme="dark"] body.referral-v2-page .r2-modal .r2-data-table tbody tr:nth-child(even)>td{background:#434653!important;}
+[data-bo-theme="dark"] #r2FinancePage .r2-data-table tbody tr:hover>td,
+[data-bo-theme="dark"] body.referral-v2-page .r2-modal .r2-data-table tbody tr:hover>td{background:#444654!important;}
+[data-bo-theme="dark"] #r2FinancePage .r2-pager-btn:not(.active){background:#2A2C36;color:#D4D4D8;}
+[data-bo-theme="dark"] #r2FinancePage .r2-pager-btn:hover:not(:disabled):not(.active){background:#444654;color:#E7E5E4;}
+[data-bo-theme="dark"] #r2FinancePage .r2-pager-btn.active{color:#2A2C36;border-color:#F59E0B;}
+[data-bo-theme="dark"] #r2FinancePage .r2-generation-status{background:#14532D;color:#DCFCE7;}
+[data-bo-theme="dark"] #r2FinancePage .r2-generation-unset{background:#7C2D12;color:#FFEDD5;}
+[data-bo-theme="dark"] 
+/* ============================================================================
+   9. Responsive. Light-only exceptions sit next to their rule; the breakpoints live here.
+   ============================================================================ */
+html:not([data-bo-theme="dark"]) #r2FinancePage .r2-section{background:#FFFCF7;border-color:#DCC9A8;}
+html:not([data-bo-theme="dark"]) 
+@media(max-width:1100px){
+  #r2FinancePage .r2-fields,#r2FinancePage .r2-fields-3{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media(max-width:1023px){
+  #r2FinancePage .agent-admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media(max-width:800px){
+  #r2FinancePage .r2-summary-metric{column-gap:12px;}
+  #r2FinancePage .r2-table-footer{grid-template-columns:1fr auto;}
+  #r2FinancePage .r2-table-footer>[data-r2-total]{grid-column:1/-1;grid-row:2;text-align:center;}
+    }
+@media(max-width:767px){
+  #r2FinancePage .agent-admin-metrics{grid-template-columns:1fr;}
+}
+@media(max-width:700px){
+  #r2FinancePage .r2-fields,#r2FinancePage .r2-fields-3,#r2FinancePage .r2-fields-2{grid-template-columns:1fr;}
+  #r2FinancePage .r2-section{padding:14px 14px 14px 16px;}
+}
+
+/* ============================================================================
+   10. The create / enrol dialogs. They live under <body> (DESIGN.md: modals go outside the shell),
+       so nothing scoped to #r2FinancePage reaches them - the field primitives are repeated here on the
+       page's own body class, and only for the modal.
+   ============================================================================ */
+body.referral-v2-page .r2-modal-panel{width:100%;max-width:680px;margin:0 auto;}
+/* The panel clips for its rounded corners, which also sliced the select's popup in half. Inside a
+   dialog the menu has to be free to overlay the footer, and a long account label ("T10 — T10
+   (MERCHANT · MYR)") has to wrap inside the field instead of widening the menu past the panel. */
+body.referral-v2-page .r2-modal .modal-clean-panel{overflow:visible;}
+body.referral-v2-page .r2-modal .rounded-select-menu{width:100%;max-width:100%;min-width:100%;}
+body.referral-v2-page .r2-modal .rounded-select-option{white-space:normal;line-height:1.3;height:auto;min-height:36px;padding:8px 12px;}
+body.referral-v2-page .r2-modal-head h3{margin:0;font-size:17px;font-weight:800;color:var(--bo-navy,#18191C);}
+body.referral-v2-page .r2-modal-head p{margin:4px 0 0;font-size:12.5px;font-weight:600;color:var(--bo-muted,#57534E);}
+/* Field-level error: a small line under the input that failed, and the input marks itself. The filled
+   red band was wide, loud and pushed the table down; this says the same thing at the point of the
+   mistake without moving anything. */
+/* Absolute, so a message never grows the row: the three controls keep their shared bottom line. */
+body.referral-v2-page .r2-modal .r2-field{position:relative;}
+/* A floating tip, not a line of text parked on the table header: cream pill, hairline border, warm
+   shadow (the site's tip recipe), anchored under the field it belongs to and above the table's own
+   sticky head. pointer-events:none so it never eats a click on the row beneath. */
+body.referral-v2-page .r2-modal .r2-field-error{position:absolute;top:calc(100% + 8px);left:0;z-index:6;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:#FFF8EB;border:1px solid rgba(180,35,24,.32);color:#B42318;font-size:11.5px;font-weight:800;line-height:1.2;white-space:nowrap;box-shadow:0 8px 22px rgba(60,48,32,.16);pointer-events:none;}
+body.referral-v2-page .r2-modal .r2-field-error::before{content:"";width:6px;height:6px;border-radius:999px;background:#B42318;flex:0 0 auto;}
+/* a small beak pointing back at the field, so the pill reads as attached to it rather than as
+   something floating on the table under it */
+body.referral-v2-page .r2-modal .r2-field-error::after{content:"";position:absolute;left:16px;top:-5px;width:8px;height:8px;transform:rotate(45deg);background:inherit;border-left:1px solid rgba(180,35,24,.32);border-top:1px solid rgba(180,35,24,.32);}
+body.referral-v2-page .r2-modal .r2-field-error:empty{display:none;}
+/* the ghost button had no dark variant: cream fill + --bo-navy (= near-white on dark) made it
+   unreadable in the dark theme */
+[data-bo-theme="dark"] body.referral-v2-page .r2-btn-ghost{background:#2A2C36;border-color:rgba(255,255,255,.14);color:#F5F5F4;}
+[data-bo-theme="dark"] body.referral-v2-page .r2-btn-ghost:hover{border-color:#F59E0B;color:#FBBF24;background:rgba(245,158,11,.14);}
+[data-bo-theme="dark"] body.referral-v2-page .r2-modal .r2-field-error{background:#40424E;border-color:rgba(248,113,113,.38);color:#F87171;box-shadow:0 12px 28px rgba(0,0,0,.35);}
+[data-bo-theme="dark"] body.referral-v2-page .r2-modal .r2-field-error::before{background:#F87171;}
+[data-bo-theme="dark"] body.referral-v2-page .r2-modal .r2-field-error::after{border-left-color:rgba(248,113,113,.38);border-top-color:rgba(248,113,113,.38);}
+body.referral-v2-page .r2-modal .form-control.is-invalid,
+body.referral-v2-page .r2-modal .form-select.is-invalid{border-color:#B42318!important;box-shadow:0 0 0 3px rgba(180,35,24,.12)!important;}
+[data-bo-theme="dark"] body.referral-v2-page .r2-modal .r2-field-error{color:#F87171;}
+[data-bo-theme="dark"] body.referral-v2-page .r2-modal .form-control.is-invalid{border-color:#F87171!important;box-shadow:0 0 0 3px rgba(248,113,113,.16)!important;}
+/* The dialog-wide line is only for form-level outcomes: compact, text-only, sits above the footer. */
+body.referral-v2-page .r2-modal-feedback:empty{display:none;}
+body.referral-v2-page .r2-modal-feedback{margin:10px 0 0;padding:0;background:transparent;font-size:12px;font-weight:700;color:#8A4B00;}
+body.referral-v2-page .r2-modal-feedback.is-error{color:#B42318;}
+[data-bo-theme="dark"] body.referral-v2-page .r2-modal-feedback{color:#FBBF24;}
+[data-bo-theme="dark"] body.referral-v2-page .r2-modal-feedback.is-error{color:#F87171;}
+body.referral-v2-page .r2-modal-body{padding:18px 20px;}
+/* Dialog footer: the date keeps the left slot (label above its field), the two actions sit right.
+   `.r2-field-inline` had only been declared under #r2FinancePage, so inside the dialog the date had no
+   width and drifted to the middle of the strip. */
+body.referral-v2-page .r2-modal-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:14px 20px;border-top:1px solid #EADCC8;}
+body.referral-v2-page .r2-modal-foot .r2-field-inline{flex:0 0 200px;margin:0;}
+body.referral-v2-page .r2-modal-foot-actions{display:flex;align-items:center;gap:10px;margin-left:auto;}
+/* `Add / update rate` is not the dialog's primary action: one amber button per dialog (Save), so this
+   one is a quiet tertiary control instead of a second filled slab. */
+/* 42px, not 36: dialog fields are 42 by the field standard ("dialogs 40/42px were left alone"), so a
+   36px control beside them is visibly short even when the baselines agree. */
+body.referral-v2-page .r2-btn-ghost{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:42px;padding:0 16px;border:1px solid var(--line,#EADCC8);border-radius:8px;background:#FFFCF7;color:var(--bo-navy,#18191C);font-size:13px;font-weight:800;white-space:nowrap;cursor:pointer;}
+body.referral-v2-page .r2-btn-ghost:hover{border-color:var(--bo-cyan,#D97706);color:#B45309;background:var(--bo-cyan-tint,rgba(217,119,6,.10));}
+body.referral-v2-page .r2-btn-ghost i{font-size:14px;}
+/* A dialog that holds two numbers does not need 680px; the fields keep a comfortable fixed measure and
+   the extra width goes away. */
+body.referral-v2-page .r2-modal-panel{width:100%;max-width:560px;margin:0 auto;}
+/* A dialog that carries ten amount fields needs the extra room; three columns of ~200px still fit. */
+body.referral-v2-page .r2-modal-panel.r2-modal-panel-wide{max-width:760px;}
+body.referral-v2-page .r2-modal .r2-fields.r2-fields-3{grid-template-columns:repeat(3,minmax(0,1fr));}
+/* align-items:end is what puts the three on one line: without it the action cell stretches and its
+   button sits at the TOP of the row, a few pixels above the inputs it belongs to. */
+body.referral-v2-page .r2-modal .r2-fields.r2-generation-add{grid-template-columns:minmax(0,200px) minmax(0,200px) auto;justify-content:start;align-items:end;gap:14px 16px;}
+body.referral-v2-page .r2-modal-body{padding:16px 20px 18px;}
+body.referral-v2-page .r2-modal .r2-fields,
+body.referral-v2-page .r2-modal .r2-fields-2,
+body.referral-v2-page .r2-modal .r2-fields-3{display:grid;gap:14px 12px;grid-template-columns:repeat(2,minmax(0,1fr));}
+body.referral-v2-page .r2-modal .r2-field{display:grid;gap:6px;align-content:start;min-width:0;margin:0;}
+body.referral-v2-page .r2-modal .r2-label{font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--bo-muted,#57534E);}
+body.referral-v2-page .r2-modal .r2-label b{color:#B42318;font-weight:800;}
+body.referral-v2-page .r2-modal .form-control,
+body.referral-v2-page .r2-modal .form-select{width:100%;}
+[data-bo-theme="dark"] body.referral-v2-page .r2-modal .modal-clean-panel{background:#383A46;border:1px solid rgba(255,255,255,.14);box-shadow:0 22px 60px rgba(0,0,0,.45);}
+[data-bo-theme="dark"] body.referral-v2-page .r2-modal-head h3{color:#F5F5F4;}
+[data-bo-theme="dark"] body.referral-v2-page .r2-modal-head p{color:#D4D4D8;}
+[data-bo-theme="dark"] body.referral-v2-page .r2-modal .modal-clean-head{border-bottom-color:rgba(255,255,255,.12);}
+[data-bo-theme="dark"] body.referral-v2-page .r2-modal .modal-clean-close{background:#2A2C36;border-color:rgba(255,255,255,.14);color:#E7E5E4;}
+[data-bo-theme="dark"] body.referral-v2-page .r2-modal-foot{border-top-color:rgba(255,255,255,.12);}
+[data-bo-theme="dark"] body.referral-v2-page .r2-modal .r2-label{color:#D4D4D8;}
