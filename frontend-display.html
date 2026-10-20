@@ -2003,6 +2003,30 @@
                       <div class="fd-control"><input id="telegramBotUsername" class="form-control" type="text" readonly>
                       </div>
                     </div>
+                    <div class="fd-social-field">
+                      <div class="display-setting-copy"><h2>Facebook Messenger Page ID</h2><p>Connect a different Facebook Page for each brand.</p></div>
+                      <div class="fd-control"><input id="messengerPageId" class="form-control" type="text" inputmode="numeric" autocomplete="off"></div>
+                    </div>
+                    <div class="fd-social-field">
+                      <div class="display-setting-copy"><h2>Messenger Page Access Token</h2><p>Leave blank to keep the saved token.</p></div>
+                      <div class="fd-control"><input id="messengerPageToken" class="form-control" type="password" autocomplete="new-password" placeholder="Leave blank to keep existing"></div>
+                    </div>
+                    <div class="fd-social-field">
+                      <div class="display-setting-copy"><h2>Messenger App Secret</h2><p>From Meta App Dashboard. Leave blank to keep the saved secret.</p></div>
+                      <div class="fd-control"><input id="messengerAppSecret" class="form-control" type="password" autocomplete="new-password" placeholder="Leave blank to keep existing"></div>
+                    </div>
+                    <div class="fd-social-field">
+                      <div class="display-setting-copy"><h2>Messenger Verify Token</h2><p>Enter this same token when configuring Meta's webhook. Leave blank to keep existing.</p></div>
+                      <div class="fd-control"><input id="messengerVerifyToken" class="form-control" type="password" autocomplete="new-password" placeholder="Leave blank to keep existing"></div>
+                    </div>
+                    <div class="fd-social-field">
+                      <div class="display-setting-copy"><h2>Messenger Webhook URL</h2><p>Copy this URL into the Meta webhook configuration; subscribe to messages and messaging_postbacks.</p></div>
+                      <div class="fd-control"><input id="messengerWebhookUrl" class="form-control" type="text" readonly></div>
+                    </div>
+                    <div class="fd-social-field">
+                      <div class="display-setting-copy"><h2>Messenger Status</h2><p id="messengerConfigStatus">Not loaded</p></div>
+                      <div class="fd-control"><select id="messengerEnabled" class="display-setting-select"><option value="1">Enabled</option><option value="0">Disabled</option></select></div>
+                    </div>
                   </div>
                   <div class="display-setting-row fd-switch-tile" id="leaderboardFeatureRow" style="visibility:hidden">
                     <div class="display-setting-copy">

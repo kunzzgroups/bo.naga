@@ -27,6 +27,19 @@
   const brandTarget=document.getElementById('frontendDisplayBrandTarget');
   const brandTargetRow=document.getElementById('frontendDisplayBrandRow');
   const socialPluginSettings=document.getElementById('socialPluginSettings');
+  const messengerPageId=document.getElementById('messengerPageId');
+  const messengerPageToken=document.getElementById('messengerPageToken');
+  const messengerAppSecret=document.getElementById('messengerAppSecret');
+  const messengerVerifyToken=document.getElementById('messengerVerifyToken');
+  const messengerWebhookUrl=document.getElementById('messengerWebhookUrl');
+  const messengerEnabled=document.getElementById('messengerEnabled');
+  const messengerConfigStatus=document.getElementById('messengerConfigStatus');
+  let messengerConfigLoaded=false;
+  let messengerConfigChanged=false;
+  for(const field of [messengerPageId,messengerPageToken,messengerAppSecret,messengerVerifyToken,messengerEnabled]) {
+    field?.addEventListener('input',()=>{messengerConfigChanged=true;});
+    field?.addEventListener('change',()=>{messengerConfigChanged=true;});
+  }
   const telegramBotToken=document.getElementById('telegramBotToken');
   const telegramBotId=document.getElementById('telegramBotId');
   const telegramBotUsername=document.getElementById('telegramBotUsername');
@@ -823,7 +836,10 @@
     if(socialPluginSettings) socialPluginSettings.style.display=socialAllowed?'grid':'none';
     if(leaderboardFeatureRow){leaderboardFeatureRow.style.display=leaderboardAllowed?'':'none';leaderboardFeatureRow.style.visibility='visible';}
     if(vipFeatureRow){vipFeatureRow.style.display=vipAllowed?'':'none';vipFeatureRow.style.visibility='visible';}
-    if(socialAllowed) await loadTelegramConfig();
+    if(socialAllowed) {
+      await loadTelegramConfig();
+      await loadMessengerConfig();
+    }
   }
   async function loadTelegramConfig(){
     const r=await fetch(String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+'/admin/frontend/telegram',{headers:headers(false),cache:'no-store'});
@@ -833,6 +849,30 @@
     if(telegramBotToken) telegramBotToken.value='';
     if(telegramBotId) telegramBotId.value=String(d.botId||'');
     if(telegramBotUsername) telegramBotUsername.value=String(d.botUsername||'');
+  }
+  async function loadMessengerConfig(){
+    const r=await fetch(String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+'/admin/frontend/messenger',{headers:headers(false),cache:'no-store'});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok||j.status==='error') throw new Error(j.message||'Unable to load Messenger setting');
+    const d=j.data||{};
+    messengerConfigLoaded=true;
+    messengerConfigChanged=false;
+    if(messengerPageId) messengerPageId.value=String(d.pageId||'');
+    for(const field of [messengerPageToken,messengerAppSecret,messengerVerifyToken]) if(field) field.value='';
+    if(messengerEnabled) messengerEnabled.value=d.enabled===false?'0':'1';
+    if(messengerConfigStatus) messengerConfigStatus.textContent=d.configured?(d.usingLegacyEnvironment?'Configured on server (saving moves this brand to BO settings)':'Configured'):'Not configured';
+    // This API URL is shared by all brands; the path identifies the selected brand.
+    const base=String(API_CONFIG.BASE_URL||'').replace(/\/$/,'');
+    const id=d.brandId;
+    if(messengerWebhookUrl) messengerWebhookUrl.value=id?base+'/integrations/social/messenger/'+encodeURIComponent(id)+'/webhook':'';
+  }
+  async function saveMessengerConfig(){
+    if(Number(brandFeatureAccess.socialPluginEnabled)!==1||!messengerConfigLoaded||!messengerConfigChanged) return;
+    const payload={pageId:String(messengerPageId?.value||'').trim(),pageAccessToken:String(messengerPageToken?.value||'').trim(),appSecret:String(messengerAppSecret?.value||'').trim(),verifyToken:String(messengerVerifyToken?.value||'').trim(),enabled:messengerEnabled?.value==='1'};
+    const r=await fetch(String(API_CONFIG.BASE_URL||'').replace(/\/$/,'')+'/admin/frontend/messenger',{method:'POST',headers:headers(true),body:JSON.stringify(payload)});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok||j.status==='error') throw new Error(j.message||'Unable to save Messenger setting');
+    await loadMessengerConfig();
   }
   async function saveTelegramConfig(){
     if(Number(brandFeatureAccess.socialPluginEnabled)!==1||!telegramBotToken) return;
@@ -960,6 +1000,7 @@
       await saveInstallSetting();
       await saveBoSidebarInteraction();
       await saveTelegramConfig();
+      await saveMessengerConfig();
       setMessage('Frontend display settings saved successfully.','success');
     }catch(error){
       setMessage(error.message,'error');
