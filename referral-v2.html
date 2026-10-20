@@ -25,7 +25,7 @@
 <link href="assets/css/bo-scrollbar.css?v=39f413e5" rel="stylesheet">
 <link data-bo-quicknav-css="1" href="assets/css/bo-global-quicknav.css?v=0d429385" rel="stylesheet">
 <link href="assets/css/main-content-rhythm.css?v=d1ecd471" rel="stylesheet">
-<link href="assets/css/referral-v2-standard.css?v=cf8eb9d4" rel="stylesheet">
+<link href="assets/css/referral-v2-standard.css?v=7402d7cd" rel="stylesheet">
 </head>
 <body class="report-body standardized-listing-page brand-agent-standard bo-charcoal bo-account-chip referral-v2-page">
 <div class="report-shell">
@@ -469,14 +469,14 @@
 </div>
 </div>
 <div aria-hidden="true" class="modal-clean r2-modal" hidden id="r2ManualModal" role="dialog" aria-modal="true" aria-labelledby="r2ManualTitle">
-<div class="modal-clean-panel r2-modal-panel">
+<div class="modal-clean-panel r2-modal-panel r2-modal-panel-wide">
 <div class="modal-clean-head r2-modal-head">
 <div><h3 id="r2ManualTitle">Manual commission adjustment</h3><p>Adds a commission line by hand. Only confirmed payments qualify, and a second administrator reviews it.</p></div>
 <button aria-label="Close" class="modal-clean-close" data-r2-close type="button"><i aria-hidden="true" class="bi bi-x-lg"></i></button>
 </div>
 <form class="r2-modal-form" id="r2Manual">
 <div class="r2-modal-body">
-<div class="r2-fields">
+<div class="r2-fields r2-fields-2">
 <label class="r2-field" for="r2ManualReceipt"><span class="r2-label">Payment receipt # <b>*</b></span><input class="form-control" id="r2ManualReceipt" min="1" name="receiptId" required="" type="number"/></label>
 <label class="r2-field" for="r2RecipientSelect"><span class="r2-label">Receiving referrer <b>*</b></span><select class="form-select" id="r2RecipientSelect" name="recipientId" required=""><option value="">Select upstream account</option></select></label>
 <label class="r2-field" for="r2ManualAmount"><span class="r2-label">Commission amount (RM) <b>*</b></span><input class="form-control" id="r2ManualAmount" min="0" name="amount" required="" step="0.0001" type="number"/></label>
@@ -505,14 +505,14 @@
 </div>
 </div>
 <div aria-hidden="true" class="modal-clean r2-modal" hidden id="r2WithdrawModal" role="dialog" aria-modal="true" aria-labelledby="r2WithdrawTitle">
-<div class="modal-clean-panel r2-modal-panel">
+<div class="modal-clean-panel r2-modal-panel r2-modal-panel-wide">
 <div class="modal-clean-head r2-modal-head">
 <div><h3 id="r2WithdrawTitle">Request a withdrawal</h3><p>Reserves the amount and needs a second approval before it is paid out.</p></div>
 <button aria-label="Close" class="modal-clean-close" data-r2-close type="button"><i aria-hidden="true" class="bi bi-x-lg"></i></button>
 </div>
 <form class="r2-modal-form" id="r2Withdraw">
 <div class="r2-modal-body">
-<div class="r2-fields r2-fields-3">
+<div class="r2-fields r2-fields-2">
 <label class="r2-field" for="r2WithdrawParticipant"><span class="r2-label">Account <b>*</b></span><select class="form-select" id="r2WithdrawParticipant" name="participantId" required=""><option value="">Select account</option></select><span class="r2-field-note">Only accounts with a withdrawable balance</span></label>
 <label class="r2-field" for="r2WithdrawReference"><span class="r2-label">Withdrawal reference <b>*</b></span><input class="form-control" id="r2WithdrawReference" name="reference" placeholder="Unique withdrawal reference" required=""/></label>
 <label class="r2-field" for="r2WithdrawAmount"><span class="r2-label">Amount (RM) <b>*</b></span><input class="form-control" id="r2WithdrawAmount" min="0.0001" name="amount" placeholder="RM" required="" step="0.0001" type="number"/></label>

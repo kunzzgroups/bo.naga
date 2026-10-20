@@ -315,6 +315,11 @@ body.referral-v2-page .r2-modal .r2-data-table tbody tr:last-child>td{border-bot
 /* "N of M linked accounts · N referrals" beside the search row, and the two "show inactive" toggles. */
 #r2FinancePage .r2-show-all-toggle{display:flex;align-items:center;gap:8px;justify-content:flex-end;font-size:12px;font-weight:700;color:var(--bo-muted,#57534E);margin:0 0 10px;}
 #r2FinancePage .r2-show-all-toggle input{margin:0;cursor:pointer;accent-color:#D97706;}
+/* Bootstrap draws its own check, so `accent-color` never reached it: the toggle rendered as the stock blue
+   box. Only the fill and the border are re-pointed; Bootstrap's white tick stays. */
+#r2FinancePage .form-check-input:checked{background-color:#D97706!important;border-color:#D97706!important;}
+[data-bo-theme="dark"] #r2FinancePage .form-check-input:checked{background-color:#F59E0B!important;border-color:#F59E0B!important;}
+#r2FinancePage .form-check-input:focus{border-color:#D97706!important;box-shadow:0 0 0 3px rgba(217,119,6,.14)!important;}
 
 /* ----------------------------------------------------------------------------
    6. Commission rates — the settings cards (self-contained controls, not create/edit blocks).
@@ -477,7 +482,10 @@ body.referral-v2-page .r2-modal-panel{width:100%;max-width:680px;margin:0 auto;}
    (MERCHANT · MYR)") has to wrap inside the field instead of widening the menu past the panel. */
 body.referral-v2-page .r2-modal .modal-clean-panel{overflow:visible;}
 body.referral-v2-page .r2-modal .rounded-select-menu{width:100%;max-width:100%;min-width:100%;}
-body.referral-v2-page .r2-modal .rounded-select-option{white-space:normal;line-height:1.3;height:auto;min-height:36px;padding:8px 12px;}
+/* reports.js writes `white-space:nowrap!important` as an INLINE style on every option, so no stylesheet can
+   make a long account label wrap - the dialog is widened instead (r2-modal-panel-wide) so the label fits on
+   one line. Kept here only for the padding/height rhythm, not for wrapping. */
+body.referral-v2-page .r2-modal .rounded-select-option{line-height:1.35;height:auto;min-height:36px;padding:8px 12px;}
 body.referral-v2-page .r2-modal-head h3{margin:0;font-size:17px;font-weight:800;color:var(--bo-navy,#18191C);}
 body.referral-v2-page .r2-modal-head p{margin:4px 0 0;font-size:12.5px;font-weight:600;color:var(--bo-muted,#57534E);}
 /* Field-level error: a small line under the input that failed, and the input marks itself. The filled
