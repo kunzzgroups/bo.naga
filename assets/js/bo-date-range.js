@@ -28,8 +28,11 @@
     const isLedgerAllTime = from.id === 'ledgerFrom' && new URLSearchParams(location.search).get('scope') === 'all';
     const allowEmpty = from.dataset.rangeAllowEmpty === '1';
     const defaultPreset=from.dataset.rangeDefault||'';
+    // Provider API logs may be stored in a different server timezone. Include the
+    // preceding calendar day by default so midnight does not hide fresh debug logs.
+    const providerLogRange = from.id === 'txFrom';
     if(!isLedgerAllTime && !allowEmpty){
-      if(!from.value||!to.value){const r=defaultPreset?rangeFor(defaultPreset):null;if(r){from.value=iso(r[0]);to.value=iso(r[1]);}else{if(!from.value)from.value=todayValue;if(!to.value)to.value=todayValue;}}
+      if(!from.value||!to.value){const r=providerLogRange ? (()=>{const now=new Date();const yesterday=new Date(now.getFullYear(),now.getMonth(),now.getDate()-1);return [yesterday,now]})() : (defaultPreset?rangeFor(defaultPreset):null);if(r){from.value=iso(r[0]);to.value=iso(r[1]);}else{if(!from.value)from.value=todayValue;if(!to.value)to.value=todayValue;}}
     } else if(isLedgerAllTime){
       from.value=''; to.value=''; host.classList.add('bo-range-all-time');
     } else if(allowEmpty && (!from.value || !to.value)){
