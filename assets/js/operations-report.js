@@ -360,7 +360,7 @@
          across pages (11.. on page 2). Owner: "页面的序列号也有问题 … Transaction：ID 列改成
          1…N 行号" - and it is the `#` heading `report-table-sort.js` looks for when it renumbers
          the column after a sort (its `renumberDisplayRows` only runs when th[0] reads `#`). */
-      const v=c[0]==='id'?(start+ri+1):x[c[0]];
+      const v=c[0]==='id'?(start+ri+1):c[0]==='memberId'?(x.memberUsername||''):x[c[0]];
       return `<td${tdClass(c[0])}>${cellHtml(c[0],v)}</td>`;
     }).join('')+'</tr>').join(''):`<tr><td colspan="${cols.length}" class="table-empty">No records found.</td></tr>`;
     fitColumns();
