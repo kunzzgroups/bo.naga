@@ -1,0 +1,24 @@
+.t1-member-points{min-width:0}
+.t1-points-balance{margin:15px 0;padding:18px 20px;background:#fff6e9;border:1px solid #eed5b9;border-radius:12px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.t1-points-balance strong{font-size:24px;color:#b66c00}
+.t1-points-balance button{margin-left:auto}
+.t1-points-filters,.t1-points-pager{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:14px 0}
+.t1-points-filters select,.t1-report-filters input,.t1-report-filters select{min-height:40px;border:1px solid #e0cba8;border-radius:9px;padding:8px 12px;background:#fff9ee}
+.t1-points-pager{justify-content:flex-end}
+.t1-points-dialog{max-width:min(96vw,470px);border:1px solid #ecc482;border-radius:14px;padding:24px;background:#fffbf4;color:#29201a;box-shadow:0 18px 50px #0004}
+.t1-points-dialog::backdrop{background:#060c21a6}
+.t1-points-dialog h3{font-weight:700;font-size:21px;margin:0 0 16px}
+.t1-points-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:20px}
+.t1-points-report{max-width:1560px;margin:0 auto}
+.t1-report-filters{display:flex;flex-wrap:wrap;align-items:end;gap:12px;background:#fff;border:1px solid #eed4af;border-radius:12px;padding:16px;margin:16px 0}
+.t1-report-filters label{display:block;font-size:12px;font-weight:700;margin-bottom:4px}
+.t1-report-filters .field{flex:1;min-width:135px}
+.t1-report-filters input,.t1-report-filters select{width:100%}
+.t1-report-summary{display:flex;gap:14px;flex-wrap:wrap;margin:18px 0}
+.t1-report-summary>div{flex:1;min-width:180px;background:#fff;border:1px solid #eddbc5;border-radius:12px;padding:15px}
+.t1-report-summary b{display:block;font-size:22px;color:#b46b00}
+.t1-points-table{width:100%;border-collapse:collapse;background:#fff}
+.t1-points-table th,.t1-points-table td{border-bottom:1px solid #f0e5d7;padding:10px;text-align:left;white-space:nowrap}
+.t1-points-table td:last-child{white-space:normal;min-width:160px}
+.t1-points-table th{background:#fff4e4}
+.t1-report-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:flex-end;margin:14px 0}

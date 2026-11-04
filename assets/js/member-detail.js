@@ -2,6 +2,8 @@
   let selectedWalletMember = null;
   let selectedWalletBalance = 0;
   let walletBankOptions = [];
+  let walletBalanceLoading = false;
+  let walletAdjustmentPending = false;
   const MEMBER_WALLET_API = {
     balance: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.MEMBER_WALLET_BALANCE,
     adjust: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.MEMBER_WALLET_ADJUST,
@@ -51,7 +53,10 @@
   function bankStatus(msg,type){ const el=document.getElementById('bankProfileStatus'); if(el){ el.textContent=msg||''; el.className='upload-status' + (type ? ' ' + type : ''); } }
 
   function setWalletTab(name){
+    const oldTab = document.querySelector('[data-wallet-tab].active')?.dataset?.walletTab || 'main';
     if(name === 'remark' || name === 'password' || name === 'transactionPassword') name = 'profile';
+    if(name === 'points') window.T1MemberPoints?.activate(memberIdOfSelected());
+    if(name === 'main' && oldTab !== 'main' && memberIdOfSelected()) void loadMemberWallet(memberIdOfSelected(),true).catch(()=>{});
     document.querySelectorAll('[data-wallet-tab]').forEach(btn=>btn.classList.toggle('active', btn.dataset.walletTab === name));
     document.querySelectorAll('[data-wallet-pane]').forEach(pane=>pane.classList.toggle('active', pane.dataset.walletPane === name));
     const stage = document.querySelector('.md-stage');
@@ -306,13 +311,20 @@
       }
     }
   }
-  async function loadMemberWallet(memberId){
-    const json = await api(MEMBER_WALLET_API.balance + '?memberId=' + encodeURIComponent(memberId), {headers:{...BO_AUTH.authHeader()}});
-    const balance = num(json && json.data && json.data.balance);
-    selectedWalletBalance = balance;
-    const bal=document.getElementById('walletCurrentBalance'); if(bal) bal.textContent = '$' + money(balance);
-    updateWalletPreview();
-    walletResult(json.data);
+  async function loadMemberWallet(memberId, quiet=false){
+    if(walletBalanceLoading || walletAdjustmentPending) return;
+    walletBalanceLoading = true;
+    try {
+      const json = await api(MEMBER_WALLET_API.balance + '?memberId=' + encodeURIComponent(memberId), {headers:{...BO_AUTH.authHeader()}});
+      if(String(memberIdOfSelected()) !== String(memberId)) return;
+      const balance = num(json && json.data && json.data.balance);
+      if(selectedWalletBalance !== balance || !quiet){
+        selectedWalletBalance = balance;
+        const bal=document.getElementById('walletCurrentBalance'); if(bal) bal.textContent = '$' + money(balance);
+        updateWalletPreview();
+      }
+      if(!quiet) walletResult(json.data);
+    } finally {walletBalanceLoading = false;}
   }
   async function submitWalletAdjust(){
     if(!selectedWalletMember) return;
@@ -324,6 +336,8 @@
     const amountNumber = Number(amount);
     if(!amount || !Number.isFinite(amountNumber) || (type !== 'ADJUSTMENT' && amountNumber <= 0) || (type === 'ADJUSTMENT' && amountNumber === 0)){ walletStatus(type === 'ADJUSTMENT' ? 'Please enter positive or negative adjustment amount.' : 'Please enter amount greater than 0.', 'error'); return; }
     if(type !== 'ADJUSTMENT' && !paymentMethodId){ walletStatus(type==='DEPOSIT'?'Please select the casino receiving bank.':'Please select a casino funding bank with enough Bank Usage.','error'); return; }
+    if(walletAdjustmentPending) return;
+    walletAdjustmentPending = true;
     try{
       walletStatus('Processing main wallet...', '');
       const json = await api(MEMBER_WALLET_API.adjust, {method:'POST', headers:{'Content-Type':'application/json', ...BO_AUTH.authHeader()}, body: JSON.stringify({memberId:Number(memberId), type, amount:Number(amount), paymentMethodId:type==='ADJUSTMENT'?null:Number(paymentMethodId), externalTxId:'BO-MEMBER-' + Date.now(), remark})});
@@ -332,8 +346,9 @@
       document.getElementById('walletAdjustAmount').value = '';
       document.getElementById('walletAdjustRemark').value = '';
       await loadMemberWallet(memberId);
-      await loadWalletBankOptions();
+      await loadWalletBankOptions().catch(()=>{});
     }catch(err){ walletStatus(err.message || 'Wallet adjustment failed', 'error'); }
+    finally {walletAdjustmentPending = false; await loadMemberWallet(memberId, true).catch(()=>{}); }
   }
 
   function bindMember(member, tab){
@@ -401,6 +416,7 @@
   function refreshActiveWalletTab(){
     const tab=activeWalletTab();
     const memberId=selectedWalletMember ? first(selectedWalletMember,['id','memberId','userId'], '') : '';
+    if(tab==='points') return window.T1MemberPoints?.refresh(memberId);
     if(tab==='provider') return loadWalletProviderAccounts().catch(err=>renderProviderError(err.message));
     if(tab==='insight') return loadGameInsight().catch(err=>renderInsightError(err.message));
     if(tab==='ledger') return loadWalletLedgerPreview().catch(err=>renderLedgerError(err.message));
@@ -411,6 +427,19 @@
 
   document.addEventListener('DOMContentLoaded',()=>{
     document.getElementById('walletRefreshBtn')?.addEventListener('click', ()=>{ refreshActiveWalletTab(); });
+    // Near real-time display: BO credit events can originate in another browser.
+    // Poll only a visible Main Wallet tab. Never mutate wallet amounts via polling.
+    window.setInterval(() => {
+      if(document.visibilityState !== 'visible' || !selectedWalletMember || activeWalletTab() !== 'main') return;
+      const id=memberIdOfSelected(); if(id) void loadMemberWallet(id,true).catch(()=>{});
+    },6000);
+    document.addEventListener('visibilitychange',()=>{
+      if(document.visibilityState==='visible' && activeWalletTab()==='main' && memberIdOfSelected())
+        void loadMemberWallet(memberIdOfSelected(),true).catch(()=>{});
+    });
+    window.addEventListener('focus',()=>{
+      if(activeWalletTab()==='main' && memberIdOfSelected())void loadMemberWallet(memberIdOfSelected(),true).catch(()=>{});
+    });
     document.getElementById('walletSubmitBtn')?.addEventListener('click', submitWalletAdjust);
     document.getElementById('walletAdjustType')?.addEventListener('change', ()=>{ updateWalletPreview(); renderWalletBankOptions(); });
     document.getElementById('walletAdjustAmount')?.addEventListener('input', ()=>{ updateWalletPreview(); renderWalletBankOptions(); });

@@ -120,6 +120,7 @@
     }
     if(p==='brand-detail.html') return 'brand-management.html';
     if(p==='member-detail.html') return 'index.html';
+    if(p==='t1-points-report.html') return 'wallet-ledger.html';
     if(p==='provider-detail.html'){
       /* BO's provider drill-down, and the Report workspace's: the Win/Lose merchant page's
          provider rows and the Provider Report's own row action both open it. Light whichever
@@ -249,6 +250,7 @@
     'casino-provider-winloss-report.html':{label:'Provider Win/Loss',order:8,module:'report'},
     'agent-performance-report.html':{label:'Agent Performance',order:9,module:'report'},
     'member-top-deposit-report.html':{label:'Top Deposit',order:10,module:'report'},
+    't1-points-report.html':{label:'T1 Points',order:11,module:'report'},
     // Game Management. Order and labels follow the sidebar flyout.
     'game-provider.html':{label:'Provider',order:1,module:'game'},
     'player-provider-session.html':{label:'Provider Sessions',order:2,module:'game'},
@@ -269,6 +271,12 @@
     'layout-section.html':{label:'Layout Section',order:6,module:'design'},
     'page-customize.html':{label:'Page Customize',order:7,module:'design'},
     'image-to-url.html':{label:'Image To URL',order:8,module:'design'},
+    't1-engagement.html':{label:'T1 Rewards & Content',order:9,module:'design'},
+    't1-missions.html':{label:'T1 Missions',order:10,module:'design'},
+    't1-rewards.html':{label:'T1 Reward Catalog',order:11,module:'design'},
+    't1-redemptions.html':{label:'T1 Redemption Requests',order:12,module:'design'},
+    't1-pages.html':{label:'T1 React Pages',order:13,module:'design'},
+    't1-kyc.html':{label:'T1 KYC Review',order:14,module:'design'},
     // 11. Access Control. All six rows of the group are registered, so it collapses to one
     // Access Control row and the row carries them. Five are ordinary BO pages; Roles &
     // Permissions (11.1, menu-permission.html) is a Main panel page (data-bo-shell="main") that
@@ -578,6 +586,7 @@
       if(current === 'brand-detail.html') current = 'brand-management.html';
       // Member Detail / Wallet is a drill-down of User Management (index.html).
       if(current === 'member-detail.html') current = 'index.html';
+      if(current === 't1-points-report.html') current = 'wallet-ledger.html';
       if(current === 'provider-detail.html') current = 'main-accounting-report.html';
       // Create/Edit Banner is a drill-down of Banner Management.
       if(current === 'slider-edit.html') current = 'slider.html';
@@ -685,6 +694,11 @@
         return current === accountPage;
       }
       let allowed = menus.some(function(m){ return pageFile(m.url || '') === current; });
+      // Points Report is a member/T1 drill-down. Existing member or T1 permission
+      // grants navigation; the dedicated API still restricts adjustments to managers.
+      if(!allowed && currentFile() === 't1-points-report.html'){
+        allowed=menus.some(m=>['index.html','member-wallet.html','wallet-ledger.html','t1-engagement.html'].includes(pageFile(m.url||'')));
+      }
       // Bonus Category Item may be assigned as its own menu row, or only opened via
       // Manage Items from the merged Promotion Bonus page. Allow either permission.
       if(!allowed && currentFile() === 'bonus-category-item.html'){

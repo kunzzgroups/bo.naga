@@ -720,7 +720,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
     }
 
     function updateEditorMode() {
-        const isCssStyling = activeSection === 'home';
+        const isCssStyling = activeSection === 'home' || activeSection === 't1-react-global';
         const isAnimationCustom = activeSection === 'animation-custom-effects';
 
         // Custom animation effects are CSS/JS only. HTML stays untouched so this
@@ -739,7 +739,8 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
 
         const cssLabel = cssPane?.querySelector('label');
         const jsLabel = jsPane?.querySelector('label');
-        if (cssLabel) cssLabel.innerHTML = isAnimationCustom
+        if (cssLabel && activeSection === 't1-react-global') cssLabel.innerHTML = 'T1 React CSS <small class="text-muted">(React pages only. TitanX7 legacy HTML is unaffected.)</small>';
+        if (cssLabel && activeSection !== 't1-react-global') cssLabel.innerHTML = isAnimationCustom
             ? 'Custom Animation CSS <small class="text-muted">(Use the same effect name configured in Animation Effect)</small>'
             : 'CSS <small class="text-muted">(CSS Styling applies globally to TitanXgaming frontend)</small>';
         if (jsLabel) jsLabel.innerHTML = isAnimationCustom
@@ -1068,7 +1069,7 @@ const API_CUSTOMIZE_MAIN_LAYOUT_URL =
             const json = await res.json().catch(() => ({}));
             if (!res.ok || json.status !== 'success') throw new Error(json.message || 'Save failed');
             if (activeSection !== savingKey || editorBrandId() !== savingBrand) return;
-            setStatus(activeSection === 'home' ? 'Saved. This CSS now overrides the TitanXgaming frontend after refresh.' : activeSection === 'animation-custom-effects' ? 'Saved. Custom animation CSS/JS will be loaded by the managed animation engine after frontend refresh. No server file editing is needed.' : 'Saved. Section content now applies to the TitanXgaming frontend after refresh.', 'success');
+            setStatus(activeSection === 't1-react-global' ? 'Saved for T1 React only. The existing TitanX7 HTML frontend is not affected.' : activeSection === 'home' ? 'Saved. This CSS now overrides the TitanXgaming frontend after refresh.' : activeSection === 'animation-custom-effects' ? 'Saved. Custom animation CSS/JS will be loaded by the managed animation engine after frontend refresh. No server file editing is needed.' : 'Saved. Section content now applies to the TitanXgaming frontend after refresh.', 'success');
         } catch (err) {
             setStatus(err.message || 'Save failed. Please check Spring Boot API.', 'error');
         } finally {

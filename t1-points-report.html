@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" data-bo-spa="1" data-bo-shell="bo">
+  <head><script>!function(){try{var t=localStorage.getItem('bo_theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-bo-theme',t);}catch(e){}try{var R=window.__boDCL=window.__boDCL||[],O=EventTarget.prototype.addEventListener;EventTarget.prototype.addEventListener=function(t,f,o){if(t==='DOMContentLoaded'&&typeof f==='function'){try{var s=document.currentScript,x=null;if(s&&s.tagName==='SCRIPT')x=String(s.getAttribute('src')||'').split('?')[0].split('/').pop()||null;var d=false;for(var i=0;i<R.length;i++){if(R[i].t===this&&R[i].f===f){d=true;break;}}if(!d)R.push({t:this,f:f,s:x,o:(o&&typeof o==='object'&&o.once===true)?1:0,e:window.__boDclEpoch||0});}catch(e){}}return O.call(this,t,f,o);};}catch(e){}}();</script>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
+    <meta charset="utf-8" />
+    <meta content="width=device-width,initial-scale=1" name="viewport" />
+    <title>T1 Points Report</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="assets/css/reports.css?v=9c07f140" rel="stylesheet" />
+    <link href="assets/css/bo-ui-standard.css?v=817727e7" rel="stylesheet" />
+    <link href="assets/css/bo-targeted-fixes.css?v=3147d00a" rel="stylesheet" />
+    <link href="assets/css/bo-account-chip.css?v=c8730135" rel="stylesheet" />
+    <link href="assets/css/bo-charcoal-shell.css?v=6ceb4a37" rel="stylesheet" />
+    <link href="assets/css/bo-charcoal-legacy.css?v=8fced50e" rel="stylesheet" />
+    <link href="assets/css/bo-charcoal-primitives.css?v=292c8b34" rel="stylesheet" />
+    <link href="assets/css/bo-input-fill.css?v=1ab80f49" rel="stylesheet" />
+    <link href="assets/css/compliance-policy.css?v=0237322d" rel="stylesheet" />
+<link href="assets/css/bo-scrollbar.css?v=39f413e5" rel="stylesheet"/>
+<link href="assets/css/bo-control-height.css?v=ff703846" rel="stylesheet">
+<link href="assets/css/bo-field-standard.css?v=6673ed98" rel="stylesheet">
+  <link href="assets/css/bo-module-tabs.css?v=0c2b4ebb" rel="stylesheet"/>
+  <link href="assets/css/t1-points.css?v=1.0.0" rel="stylesheet"/>
+  <link href="assets/css/bo-shell.css?v=047655db" rel="stylesheet" />
+<link href="assets/css/bo-global-quicknav.css?v=0d429385" rel="stylesheet" data-bo-quicknav-css="1"/></head>
+  <body class="report-body standardized-listing-page bo-charcoal bo-account-chip t1-engagement-page">
+    <div class="report-shell">
+      <aside class="report-sidebar" id="reportSidebar">
+        <div class="report-brand">
+          <div>Backoffice</div>
+          <button class="close-side" data-close-sidebar type="button" aria-label="Close menu">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+        <nav class="report-nav"></nav>
+      </aside>
+      <div class="sidebar-overlay" data-close-sidebar id="reportOverlay"></div>
+      <main class="report-main">
+        <header class="report-topbar" data-bo-topbar data-bo-title="T1 Points Report" data-bo-icon="bi-file-earmark-lock" data-bo-hamb-aria="Open menu"></header>
+<script src="assets/js/bo-topbar.js?v=ddbcfef7"></script>
+
+        <section class="report-content t1-points-report">
+<div class="t1-head"><div><h2>T1 Points Report</h2><p>Brand-scoped ledger of all member points, including manual adjustments.</p></div><a href="t1-engagement.html" class="btn btn-outline-secondary">T1 Management</a></div>
+<div class="t1-report-filters">
+<div class="field"><label for="pointReportMember">Member ID</label><input id="pointReportMember" type="number" min="1" placeholder="All members"/></div>
+<div class="field"><label for="pointReportUsername">Username</label><input id="pointReportUsername" placeholder="All usernames"/></div>
+<div class="field"><label for="pointReportType">Transaction Type</label><select id="pointReportType"><option value="ALL">All types</option><option value="MISSION">Mission</option><option value="REDEEM">Redeem</option><option value="REFUND">Refund</option><option value="ADMIN_ADD">Admin Add</option><option value="ADMIN_DEDUCT">Admin Deduct</option></select></div>
+<div class="field"><label for="pointReportFrom">From</label><input id="pointReportFrom" type="date"/></div><div class="field"><label for="pointReportUntil">Until</label><input id="pointReportUntil" type="date"/></div>
+<button type="button" class="btn btn-warning" id="pointReportSearch">Search</button></div>
+<div class="t1-report-summary"><div>Transactions<b id="pointReportCount">0</b></div><div>Total Credited<b id="pointReportCredit">0.00</b></div><div>Total Deducted<b id="pointReportDebit">0.00</b></div></div>
+<div id="pointReportStatus" class="upload-status" role="status"></div>
+<div class="table-responsive"><table class="t1-points-table"><thead><tr><th>Date</th><th>Member</th><th>Type</th><th>Points +/-</th><th>Balance After</th><th>Operator</th><th>Remark / Reference</th></tr></thead><tbody id="pointReportRows"><tr><td colspan="7">Loading...</td></tr></tbody></table></div>
+<div class="t1-report-actions"><button id="pointReportPrev" class="btn btn-outline-secondary" type="button">Previous</button><span id="pointReportPage">Page 1</span><button id="pointReportNext" class="btn btn-outline-secondary" type="button">Next</button><label for="pointExportPage">CSV export page (1,000 rows each)</label><input style="width:90px" type="number" id="pointExportPage" value="0" min="0"/><button id="pointReportExport" type="button" class="btn btn-warning">Export CSV</button></div>
+</section>
+      </main>
+    </div>
+    <script src="assets/js/config.js?v=e7312672"></script>
+    <script src="assets/js/brand-context.js?v=27360386"></script>
+    <script src="assets/js/main-currency-runtime.js?v=2b28e860"></script>
+    <script src="assets/js/currency-runtime.js?v=b63c89fb"></script>
+    <script src="assets/js/reports.js?v=a96450f8"></script>
+    <script src="assets/js/auth.js?v=t1-20261104-2"></script>
+    <script src="assets/js/t1-points-report.js?v=1.0.0"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+    <script src="assets/js/firebase-config.js?v=c41fc3b0"></script>
+    <script src="assets/js/livechat-global-notification.js?v=6bb96bce"></script>
+    <script src="assets/js/bo-ui-standard.js?v=890f213b"></script>
+    <script src="assets/js/operation-global-notification.js?v=ed9bcecb"></script>
+    <script src="assets/js/bo-theme.js?v=d78603d9"></script>
+    <script src="assets/js/bo-account-chip.js?v=fcf6fa08"></script>
+  <script src="assets/js/bo-spa-manifest.js?v=e25e34cd"></script><script src="assets/js/bo-spa.js?v=4df7a52c"></script>
+</body>
+</html>
