@@ -5362,3 +5362,20 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.member-wallet-page .bo-tx-body-tabl
   html:not(#bo-da-tab-off) body.bo-wallet-tx.deposit-approval-page:not(#bo-da-tab-off-2) .bo-tx-head-table .bo-tx-col-action,
   html:not(#bo-da-tab-off) body.bo-wallet-tx.deposit-approval-page:not(#bo-da-tab-off-2) .bo-tx-body-table .bo-tx-col-action{width:84px!important}
 }
+
+/* Member Wallet: the table was 2360px wide on every screen (1377px hidden at 1280, 1097px at 1560, 740px even at
+   1917) because each column was sized so its heading fit on ONE line (Provider / Adjustment / Bonus / Rebate
+   detail: 210px; money: 132px). Headings wrap now (two lines, 44px header as before) and the columns take what
+   their VALUES need: 112px holds "12,345,678.90" without splitting the digits (numbers never wrap). Sum 1792px:
+   a 1917 screen hides 155px (was 740), a 1534 one 540px (was 1110), a 1280 one 800px (was 1377). */
+html:not(#bo-mw-fit-off) body.bo-wallet-tx.member-wallet-page:not(#bo-mw-fit-off-2) .mw-col-member{width:132px!important;min-width:132px!important}
+html:not(#bo-mw-fit-off) body.bo-wallet-tx.member-wallet-page:not(#bo-mw-fit-off-2) .mw-col-money{width:112px!important;min-width:112px!important}
+html:not(#bo-mw-fit-off) body.bo-wallet-tx.member-wallet-page:not(#bo-mw-fit-off-2) .mw-col-provider{width:128px!important;min-width:128px!important}
+html:not(#bo-mw-fit-off) body.bo-wallet-tx.member-wallet-page:not(#bo-mw-fit-off-2) .mw-col-detail{width:112px!important;min-width:112px!important}
+html:not(#bo-mw-fit-off) body.bo-wallet-tx.member-wallet-page:not(#bo-mw-fit-off-2) .mw-col-winloss{width:100px!important;min-width:100px!important}
+html:not(#bo-mw-fit-off) body.bo-wallet-tx.member-wallet-page:not(#bo-mw-fit-off-2) .mw-col-action{width:88px!important;min-width:88px!important}
+html:not(#bo-mw-fit-off) body.bo-wallet-tx.member-wallet-page:not(#bo-mw-fit-off-2) .bo-tx-table-head .report-table,
+html:not(#bo-mw-fit-off) body.bo-wallet-tx.member-wallet-page:not(#bo-mw-fit-off-2) .bo-tx-table-body .report-table{width:max(100%,1792px)!important;min-width:1792px!important}
+html:not(#bo-mw-fit-off) body.bo-wallet-tx.member-wallet-page:not(#bo-mw-fit-off-2) .bo-tx-head-table th,
+html:not(#bo-mw-fit-off) body.bo-wallet-tx.member-wallet-page:not(#bo-mw-fit-off-2) .bo-tx-head-table th .bo-tx-sort-btn{white-space:normal!important;line-height:1.25!important}
+html:not(#bo-mw-fit-off) body.bo-wallet-tx.member-wallet-page:not(#bo-mw-fit-off-2) .bo-tx-body-table td:nth-child(n+2):nth-child(-n+15){white-space:nowrap!important}
