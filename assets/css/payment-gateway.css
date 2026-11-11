@@ -350,3 +350,22 @@ html[data-bo-theme="dark"] .pg-pill.on{background:rgba(16,185,129,.14);color:#6E
 html[data-bo-theme="dark"] .pg-pill.off{background:rgba(239,68,68,.16);color:#FCA5A5}
 html[data-bo-theme="dark"] .pg-capability{background:rgba(255,255,255,.08);color:#D4D4D8}
 html[data-bo-theme="dark"] .pg-capability.off{background:rgba(255,255,255,.05);color:#A1A1AA}
+
+/* Tablet widths: the Gateway column is the one that runs out of room. The columns are percentages of the table
+   (24 / 26 / 18 / 10 / 12 / 10), which is right while the table is wide; at a 1024 window the table is 750 and
+   24% leaves the logo + name 180px against the 192 they need - measured, that cell was the only one clipped,
+   and it is the "logo and name squeezed together" report. Below 1025 the six widths are px instead, measured
+   from what each column carries, so the name never has to give:
+
+     Gateway 196   Base API URL 160   Capabilities 118   Channels 78   Status 86   Action 66   (= 704 of 732)
+
+   The URL gives up the most because it wraps now (bo-ui-standard lets every cell break at spaces); the Gateway
+   cell is a flex row of logo + two text lines and cannot wrap around itself. */
+@media (max-width:1024px){
+  body.bo-wallet-tx .pg-list-table col.pg-c-gateway{width:196px!important}
+  body.bo-wallet-tx .pg-list-table col.pg-c-url{width:186px!important}
+  body.bo-wallet-tx .pg-list-table col.pg-c-caps{width:106px!important}
+  body.bo-wallet-tx .pg-list-table col.pg-c-channels{width:78px!important}
+  body.bo-wallet-tx .pg-list-table col.pg-c-status{width:86px!important}
+  body.bo-wallet-tx .pg-list-table col.pg-c-action{width:66px!important}
+}
