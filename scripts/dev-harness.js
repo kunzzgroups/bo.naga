@@ -100,6 +100,29 @@ window.fetch=function(url,opt){
     var lsl=lg.slice(pgl*szl,pgl*szl+szl),ltp=Math.max(1,Math.ceil(lg.length/szl));
     data={content:lsl,totalElements:lg.length,totalPages:ltp,number:pgl,numberOfElements:lsl.length,size:szl,first:pgl===0,last:pgl>=ltp-1};
   }
+  /* --- lists for the pages under audit (admin-operation-log, online-users, referral) --- */
+  else if(/admin\\/rebate\\/audit/.test(u)){
+    var qau=new URLSearchParams(u.split('?')[1]||''),szu=Number(qau.get('size'))||20,pgu=Math.max(0,Number(qau.get('page'))||0),au=[];
+    for(var aui=1;aui<=37;aui++){au.push({id:aui,createdAt:'2026-10-'+String(8+(aui%20)).padStart(2,'0')+'T10:2'+ (aui%10) +':11',entityType:['REBATE_RULE','MANUAL_REBATE_APPROVAL','ADMIN_OPERATION'][aui%3],entityId:aui,action:['UPDATE_GAME_CATEGORY','MANUAL_REBATE_APPROVAL','CREATE_REBATE_RULE'][aui%3],actor:['JK','SYSTEM','ops1'][aui%3],ipAddress:'10.0.'+(aui%200)+'.'+(aui%250),detail:'Changed setting '+aui,beforeJson:'{"a":1}',afterJson:'{"a":2}'});}
+    var asl=au.slice(pgu*szu,pgu*szu+szu),atp=Math.max(1,Math.ceil(au.length/szu));
+    data={content:asl,totalElements:au.length,totalPages:atp,number:pgu,numberOfElements:asl.length,size:szu};
+  }
+  else if(/admin\\/member\\/online/.test(u)){
+    var onl=[];for(var oi=1;oi<=30;oi++)onl.push({memberId:100+oi,lastSeenAt:new Date(Date.now()-oi*61000).toISOString()});
+    data={content:onl,totalElements:onl.length};
+  }
+  else if(/admin\\/member\\/wallet\\/list/.test(u)){
+    var wal=[];for(var wi=1;wi<=30;wi++)wal.push({memberId:100+wi,mainBalance:100+wi*3.5,bonusBalance:wi});
+    data={content:wal,totalElements:wal.length};
+  }
+  else if(/admin\\/member\\/list/.test(u)){
+    var mls=[];for(var mi=1;mi<=30;mi++)mls.push({id:100+mi,memberId:100+mi,username:['0123456789','testboo','abc123'][mi%3]+mi,fullName:'Member '+mi,mobile:'01'+String(10000000+mi*37),referrerCode:'AG'+(mi%4),status:mi%5?'ACTIVE':'LOCKED',locked:mi%7===0,agentName:'Agent '+(mi%4),bankName:['Maybank','CIMB','RHB'][mi%3],createdAt:'2026-0'+(1+mi%9)+'-1'+(mi%9)});
+    data=mls;
+  }
+  else if(/admin\\/referral\\/list/.test(u)){
+    var rfl=[];for(var ri=1;ri<=40;ri++)rfl.push({id:200+ri,memberId:200+ri,username:['0123456789','testboo','abc123','refuser'][ri%4]+ri,mobile:'01'+String(20000000+ri*41),referrerCode:'AG'+(ri%5),level1Count:ri%9,l1Count:ri%9,totalDownline:ri%23,createdAt:new Date(Date.now()-(ri%3)*86400000).toISOString().slice(0,10),registerDate:new Date(Date.now()-(ri%3)*86400000).toISOString().slice(0,10),status:ri%5?'ACTIVE':'LOCKED'});
+    data=rfl;
+  }
   else if(/admin\\/rebate\\/batches/.test(u)) data=[{id:1,status:'COMPLETED',processedCount:2,businessDate:'2026-10-08'}];
   else if(/auth\\/admin\\/me/.test(u)) data=JSON.parse(localStorage.getItem('bo_admin_user'));
   return Promise.resolve(new Response(JSON.stringify({status:'success',message:'ok',data:data,pagination:pg}),{status:200,headers:{'Content-Type':'application/json'}}));
