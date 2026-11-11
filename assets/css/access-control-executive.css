@@ -1224,3 +1224,44 @@ html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .
   margin:0 !important;
   align-self:center !important;
 }
+
+/* Responsive ladder for the operation log. The seven columns are fixed px summing to 978 plus an `auto` Details
+   column, against a min-width:1200px floor that was written for the widest case and kept at every width:
+   measured, 36px hidden at 1440, 196 at 1280, 452 at 1024 and 470 at 768.
+
+   The Result column was 3px narrower than its own badge at every width (measured need 99 against 96 - "SUCCESS"
+   clipped), so it is 104 from here on and every sum below includes that.
+
+   What a tablet keeps is what an audit log is read for - when, who, what, the outcome, and the sentence - so the
+   two columns that go first are Module and IP:
+
+     >=1480   all 7, floor 1186 (Details gets 200)          frames 1643 / 1286
+     1440     all 7, floor 1166 (Details 180)               frame 1166, exact
+     1280     minus Module            -> 794 + 212           frame 1006
+     1024     minus Module and IP     -> 660 + 90            frame 750
+     <=829    also minus Admin        -> 494 + 238           frame 732
+
+   Scoped with a page class because this sheet is shared with the rest of the access-control family. */
+@media (min-width:1480px){
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-operation-log-page .standard-data-table{min-width:1186px!important}
+}
+@media (max-width:1479.98px){
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-operation-log-page .standard-data-table{min-width:1166px!important}
+}
+@media (max-width:1439.98px){
+html:not(#bo-charcoal-off) body.bo-access-control.admin-operation-log-page .standard-data-table th:nth-child(4),
+html:not(#bo-charcoal-off) body.bo-access-control.admin-operation-log-page .standard-data-table td:nth-child(4){display:none!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-operation-log-page .standard-data-table{min-width:1006px!important}
+}
+@media (max-width:1149.98px){
+html:not(#bo-charcoal-off) body.bo-access-control.admin-operation-log-page .standard-data-table th:nth-child(5),
+html:not(#bo-charcoal-off) body.bo-access-control.admin-operation-log-page .standard-data-table td:nth-child(5){display:none!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-operation-log-page .standard-data-table{min-width:750px!important}
+}
+@media (max-width:829.98px){
+html:not(#bo-charcoal-off) body.bo-access-control.admin-operation-log-page .standard-data-table th:nth-child(2),
+html:not(#bo-charcoal-off) body.bo-access-control.admin-operation-log-page .standard-data-table td:nth-child(2){display:none!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-operation-log-page .standard-data-table{min-width:700px!important}
+}
+html:not(#bo-charcoal-off) body.bo-access-control.admin-operation-log-page .standard-data-table th:nth-child(7),
+html:not(#bo-charcoal-off) body.bo-access-control.admin-operation-log-page .standard-data-table td:nth-child(7){width:104px!important}
