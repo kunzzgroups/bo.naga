@@ -572,24 +572,37 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebat
    IP 132, VIEW 84. The prose DETAIL column ellipsizes and carries its full text in a title, the
    way every long-text cell in this back office does. */
 .rebate-page [data-panel="reconciliation"] .standard-data-table{min-width:1140px}
+/* Reconciliation column widths are the measured need of each column (Date 105, Member 104, Provider 148 for
+   PRAGMATIC_PLAY, Expected Main 121, Expected Bonus 131, Actual 109, Difference 96, Status 156 for PENDING_REVIEW), and Session / Member /
+   Provider - the identifiers whose length the feed does not bound (a 19-digit session id, PRAGMATIC_PLAY) -
+   wrap anywhere instead of ending in an ellipsis. Together with Detail (two lines, see below) they sum to
+   the 1260px content area at a 1534px window; the old 76 / 76 / 88 cut the session id, the member id and
+   the actual balance. */
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(2),
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(3),
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(4){
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+  text-overflow:clip!important;
+}
 .rebate-page [data-panel="reconciliation"] .standard-data-table thead th:nth-child(1),
-.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(1){width:120px}
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(1){width:108px}
 .rebate-page [data-panel="reconciliation"] .standard-data-table thead th:nth-child(2),
-.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(2){width:76px}
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(2){width:112px}
 .rebate-page [data-panel="reconciliation"] .standard-data-table thead th:nth-child(3),
-.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(3){width:76px}
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(3){width:108px}
 .rebate-page [data-panel="reconciliation"] .standard-data-table thead th:nth-child(4),
-.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(4){width:142px}
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(4){width:150px}
 .rebate-page [data-panel="reconciliation"] .standard-data-table thead th:nth-child(5),
-.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(5){width:130px}
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(5){width:124px}
 .rebate-page [data-panel="reconciliation"] .standard-data-table thead th:nth-child(6),
-.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(6){width:158px}
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(6){width:132px}
 .rebate-page [data-panel="reconciliation"] .standard-data-table thead th:nth-child(7),
-.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(7){width:88px}
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(7){width:112px}
 .rebate-page [data-panel="reconciliation"] .standard-data-table thead th:nth-child(8),
-.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(8){width:122px}
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(8){width:100px}
 .rebate-page [data-panel="reconciliation"] .standard-data-table thead th:nth-child(9),
-.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(9){width:152px}
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(9){width:160px}
 
 .rebate-page [data-panel="audit"] .standard-data-table{min-width:1080px}
 .rebate-page [data-panel="audit"] .standard-data-table thead th:nth-child(1),
