@@ -5264,3 +5264,64 @@ body.bo-wallet-tx.promotion-log-page .bo-filter-row > .field:has(#dbgStatus){
   body.bo-wallet-tx .report-main .filter-card{overflow:visible!important;}
   body.bo-wallet-tx .report-main .filter-card .bo-range-field{position:relative!important;z-index:1310!important;}
 }
+
+/* Responsive: the deposit / withdraw approval pages at laptop and tablet widths.
+
+   Measured at 1917 / 1560 / 1440 / 1280 / 1024 / 834 / 768.
+
+   1. The toolbar was one nowrap row - a 344px tab row plus a 670px filter cluster, ~1062px of frame, and the
+      frame is viewport-32-230(sidebar). Below ~1330 the two cannot share a row, and the row did not wrap: the
+      filter cluster was pushed PAST the right edge (measured at 1280: x=1255, width 670, page not scrollable,
+      so the date range and the status filter were off screen). These selectors carry the same two :not(#id)
+      steps as the filter-standard rules at the top of this sheet, which is what it takes to outrank them.
+
+   2. The bank cards are one line of equal shares, which is right while there are a handful of banks; with more
+      they shrink below the width of their own numbers ("4,433.84" needs ~86px plus padding - measured 26px per
+      card with 30 banks). They wrap now, and each card keeps a 168px floor: seven banks at 1560 still fill one
+      row exactly as before.
+
+   3. The table held a 1080px floor against a 1006px frame at 1280 and 750px at 1024. The column recipe it was
+      written with sums to 980 (156+112+96+150+130+100+140+96), so at 1280 only the floor was pushing it over.
+      At 1024 even 980 is too wide, so the column a tablet can do without is dropped rather than squeezed -
+      Processed - and the rest are re-measured to 712px: Date / Member / Amount / Bank / Reference / Status /
+      Action, all inside the 750px frame. (The bank column is bo-tx-col-method in this table, not bo-tx-col-bank;
+      it stays.) */
+@media (max-width:1339.98px){
+  html body.bo-wallet-tx.deposit-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar,
+  html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar{
+    flex-flow:column nowrap!important;align-items:stretch!important;
+  }
+  html body.bo-wallet-tx.deposit-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls,
+  html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls{
+    flex:0 0 auto!important;flex-flow:row wrap!important;justify-content:flex-start!important;
+    width:100%!important;margin-left:0!important;
+  }
+  html body.bo-wallet-tx.deposit-approval-page .bo-tx-tabs,
+  html body.bo-wallet-tx.withdraw-approval-page .bo-tx-tabs{width:100%!important}
+}
+body.bo-wallet-tx .bo-bank-cards{flex-wrap:wrap!important}
+body.bo-wallet-tx .bo-bank-card{flex:1 1 168px!important;min-width:168px!important}
+@media (max-width:1280px){
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-head-table,
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-body-table{min-width:980px!important}
+}
+@media (max-width:1100.98px){
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-head-table,
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-body-table{min-width:0!important;width:100%!important}
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-head-table col.bo-tx-col-processed,
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-body-table col.bo-tx-col-processed{visibility:collapse!important}
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-head-table .bo-tx-col-date,
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-body-table .bo-tx-col-date{width:126px!important}
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-head-table .bo-tx-col-member,
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-body-table .bo-tx-col-member{width:96px!important}
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-head-table .bo-tx-col-amount,
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-body-table .bo-tx-col-amount{width:88px!important}
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-head-table .bo-tx-col-method,
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-body-table .bo-tx-col-method{width:114px!important}
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-head-table .bo-tx-col-ref,
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-body-table .bo-tx-col-ref{width:112px!important}
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-head-table .bo-tx-col-status,
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-body-table .bo-tx-col-status{width:92px!important}
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-head-table .bo-tx-col-action,
+  body.bo-wallet-tx.deposit-approval-page .bo-tx-body-table .bo-tx-col-action{width:84px!important}
+}
