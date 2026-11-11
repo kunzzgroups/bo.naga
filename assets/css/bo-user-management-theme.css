@@ -359,3 +359,27 @@ html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard
   text-align:right!important;
   font-variant-numeric:tabular-nums!important;
 }
+
+/* One toolbar row. The filter grid measures 922px at a 1560px window (its children are pinned at 240 / 260 /
+   150 / 150 / 82 by bo-charcoal-legacy) and the action buttons need 326 + the 12px gap = 1260, against the
+   1254 the row actually has: six pixels over, so the buttons wrapped to a second line and left 46px of empty
+   band under the filters. From 1470px the grid takes the width left over by the buttons instead of claiming its
+   own max-content width, the grid may not wrap its own children, and the search box is the one child that gives
+   the surplus back (0 1 260 with a 190px floor, measured: 254 at 1560). Below that the shrink would push the
+   search past that floor, so the toolbar still wraps exactly as before. */
+@media (min-width:1470px){
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-toolbar-row).user-management-page.report-body.bo-charcoal .user-toolbar > .user-search-grid,
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-toolbar-row).user-management-page.report-body.bo-charcoal .user-toolbar > .user-search-grid{
+    flex:1 1 700px!important;width:auto!important;min-width:0!important;max-width:none!important;flex-wrap:nowrap!important;
+  }
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-toolbar-row).user-management-page.report-body.bo-charcoal .user-search-grid > .field.um-search-item,
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-toolbar-row).user-management-page.report-body.bo-charcoal .user-search-grid > .field.um-search-item{
+    flex:0 1 260px!important;min-width:190px!important;max-width:260px!important;
+  }
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-toolbar-row).user-management-page.report-body.bo-charcoal .user-search-grid > .field.um-search-item .bo-search-control,
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-toolbar-row).user-management-page.report-body.bo-charcoal .user-search-grid > .field.um-search-item .bo-search-control,
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-toolbar-row).user-management-page.report-body.bo-charcoal .user-search-grid > .field.um-search-item input,
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-toolbar-row).user-management-page.report-body.bo-charcoal .user-search-grid > .field.um-search-item input{
+    width:100%!important;min-width:0!important;max-width:none!important;
+  }
+}
