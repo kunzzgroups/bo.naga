@@ -3,6 +3,16 @@
   const searchInput = document.getElementById('livechatSearch');
   const refreshBtn = document.getElementById('livechatRefreshBtn');
   const roomHead = document.getElementById('livechatRoomHead');
+  /* One pane at a time below 992 (see the master-detail block in livechat-executive.css): the shell carries which
+     pane is on screen, and the thread offers a Back button to return to the inbox. Above that width both panes
+     are laid out side by side and the attribute changes nothing. */
+  const lcShell = () => document.querySelector('.livechat-admin-shell');
+  function setLcPane(pane){ const el = lcShell(); if(el) el.setAttribute('data-lc-pane', pane); }
+  const lcBackMarkup = '<button type="button" class="livechat-room-back" data-lc-back="1" aria-label="Back to conversations"><i class="bi bi-arrow-left" aria-hidden="true"></i><span>Back</span></button>';
+  if(!window.__lcPaneBound){
+    window.__lcPaneBound = 1;
+    document.addEventListener('click', (e) => { if(e.target.closest && e.target.closest('[data-lc-back]')) setLcPane('inbox'); });
+  }
   const messagesEl = document.getElementById('livechatMessages');
   const form = document.getElementById('livechatForm');
   const input = document.getElementById('livechatInput');
@@ -403,11 +413,12 @@
   function selectConversation(id){
     cancelEditing();
     selectedId = id;
+    setLcPane('room');
     const listenerSeq = ++messageListenerSeq;
     setComposerVisible(true);
     renderInbox();
     const conv = conversations.find(c => c.id === id) || {id:id};
-    roomHead.innerHTML = '<div class="livechat-room-id"><div class="livechat-room-avatar">' + esc(initials(conv.memberName || 'M')) + '</div><div class="livechat-room-id-copy"><h2>' + esc(conv.memberName || 'Member') + '</h2><p>' + esc(conv.memberUsername || conv.id) + ' · ' + esc(conversationPlatformLabel(conv)) + '</p></div></div>';
+    roomHead.innerHTML = lcBackMarkup + '<div class="livechat-room-id"><div class="livechat-room-avatar">' + esc(initials(conv.memberName || 'M')) + '</div><div class="livechat-room-id-copy"><h2>' + esc(conv.memberName || 'Member') + '</h2><p>' + esc(conv.memberUsername || conv.id) + ' · ' + esc(conversationPlatformLabel(conv)) + '</p></div></div>';
     loadMemberCasinoStats(conv.memberUsername || conv.id, id);
     markConversationRead(id);
     if(unsubscribeMessages){ unsubscribeMessages(); unsubscribeMessages = null; }

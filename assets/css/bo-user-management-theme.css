@@ -359,3 +359,106 @@ html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard
   text-align:right!important;
   font-variant-numeric:tabular-nums!important;
 }
+
+/* One toolbar row. The filter grid measures 922px at a 1560px window (its children are pinned at 240 / 260 /
+   150 / 150 / 82 by bo-charcoal-legacy) and the action buttons need 326 + the 12px gap = 1260, against the
+   1254 the row actually has: six pixels over, so the buttons wrapped to a second line and left 46px of empty
+   band under the filters. From 1470px the grid takes the width left over by the buttons instead of claiming its
+   own max-content width, the grid may not wrap its own children, and the search box is the one child that gives
+   the surplus back (0 1 260 with a 190px floor, measured: 254 at 1560). Below that the shrink would push the
+   search past that floor, so the toolbar still wraps exactly as before. */
+@media (min-width:1470px){
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-toolbar-row).user-management-page.report-body.bo-charcoal .user-toolbar > .user-search-grid,
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-toolbar-row).user-management-page.report-body.bo-charcoal .user-toolbar > .user-search-grid{
+    flex:1 1 700px!important;width:auto!important;min-width:0!important;max-width:none!important;flex-wrap:nowrap!important;
+  }
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-toolbar-row).user-management-page.report-body.bo-charcoal .user-search-grid > .field.um-search-item,
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-toolbar-row).user-management-page.report-body.bo-charcoal .user-search-grid > .field.um-search-item{
+    flex:0 1 260px!important;min-width:190px!important;max-width:260px!important;
+  }
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-toolbar-row).user-management-page.report-body.bo-charcoal .user-search-grid > .field.um-search-item .bo-search-control,
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-toolbar-row).user-management-page.report-body.bo-charcoal .user-search-grid > .field.um-search-item .bo-search-control,
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-toolbar-row).user-management-page.report-body.bo-charcoal .user-search-grid > .field.um-search-item input,
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-toolbar-row).user-management-page.report-body.bo-charcoal .user-search-grid > .field.um-search-item input{
+    width:100%!important;min-width:0!important;max-width:none!important;
+  }
+}
+
+/* Column widths by NAME, not position: member-management.js renders this table and its columns come and go
+   through the Columns menu, so nth-child(n) would size whichever column landed in slot 3. The numbers are the
+   measured need of the data each column carries, 1118 in total - and that is what replaces the hard 1560px
+   floor, which (not the content) was the 394px of table hidden at 1440.
+   Above the floor the headers were wider than the data (NAME / USERNAME needs 147 against 130 of content), so
+   they wrap to a second line instead of ellipsizing: two short lines read, a truncated label does not. */
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table,
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table{width:100%!important;min-width:0!important;max-width:none!important}
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table thead th,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table thead th{
+  white-space:normal!important;line-height:1.12!important;padding-top:8px!important;padding-bottom:8px!important;
+}
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="select"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="select"],
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="select"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="select"]{width:48px!important;min-width:48px!important;max-width:48px!important}
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="registerDate"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="registerDate"],
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="registerDate"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="registerDate"]{width:100px!important;min-width:100px!important;max-width:100px!important}
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="name"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="name"],
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="name"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="name"]{width:130px!important;min-width:130px!important;max-width:130px!important}
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="mobile"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="mobile"],
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="mobile"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="mobile"]{width:116px!important;min-width:116px!important;max-width:116px!important}
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="mainWallet"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="mainWallet"],
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="mainWallet"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="mainWallet"]{width:104px!important;min-width:104px!important;max-width:104px!important}
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="status"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="status"],
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="status"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="status"]{width:88px!important;min-width:88px!important;max-width:88px!important}
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="webStatus"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="webStatus"],
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="webStatus"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="webStatus"]{width:96px!important;min-width:96px!important;max-width:96px!important}
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="vipLevel"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="vipLevel"],
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="vipLevel"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="vipLevel"]{width:88px!important;min-width:88px!important;max-width:88px!important}
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="lastLogin"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="lastLogin"],
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="lastLogin"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="lastLogin"]{width:96px!important;min-width:96px!important;max-width:96px!important}
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="kycStatus"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="kycStatus"],
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="kycStatus"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="kycStatus"]{width:100px!important;min-width:100px!important;max-width:100px!important}
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="remark"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="remark"],
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="remark"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="remark"]{width:80px!important;min-width:80px!important;max-width:80px!important}
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="action"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table th[data-col="action"],
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="action"],
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table td[data-col="action"]{width:72px!important;min-width:72px!important;max-width:72px!important}
+
+/* the label lives in a sort button, and the button - not the th - is what refused to wrap */
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table thead th .um-sort-btn,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table thead th .um-sort-btn{
+  white-space:normal!important;line-height:1.12!important;text-align:left!important;
+  display:inline-flex!important;align-items:center!important;gap:5px!important;max-width:100%!important;
+}
+html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table thead th .um-sort-btn .um-sort-ico,
+html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-colw).user-management-page.report-body.bo-charcoal .user-main-table thead th .um-sort-btn .um-sort-ico{flex:0 0 auto!important}
+
+/* Below 1200 reports.css hides .desktop-only, which takes the column picker with it - and at this breakpoint the
+   picker is the only way back to the columns this table now hides. Export stays hidden; Columns does not. */
+@media (max-width:1199.98px){
+  html body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-filter-standard-off):not(#bo-um-cols-btn).user-management-page.report-body.bo-charcoal .user-toolbar .column-menu-wrap.desktop-only,
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-um-cols-btn).user-management-page.report-body.bo-charcoal .user-toolbar .column-menu-wrap.desktop-only{
+    display:block!important;
+  }
+}

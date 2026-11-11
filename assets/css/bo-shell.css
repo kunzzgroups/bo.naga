@@ -349,16 +349,28 @@ html:not(#bo-charcoal-off) body.report-body.online-users-page .report-shell .rep
     padding:18px!important;
   }
 }
+/* Below 992 the live chat used to let the page scroll, because the inbox and the thread were stacked and the
+   pair had to be taller than the screen. It is master-detail now (one pane at a time, livechat-executive.css),
+   so the frame keeps the same column it has above 992: the workspace fills the viewport and the thread scrolls
+   inside itself with the composer pinned to the bottom - measured at 768, the content column was 706px in a
+   1024px viewport, i.e. a third of the screen wasted under the composer. */
 @media (max-width:991.98px){
   body.report-body.livechat-bo-page .report-main{
-    display:block!important;
-    height:auto!important;
-    overflow:visible!important;
+    display:flex!important;
+    flex-direction:column!important;
+    height:100dvh!important;
+    overflow:hidden!important;
+  }
+  body.report-body.livechat-bo-page .report-main .report-topbar[data-bo-topbar]{
+    flex:0 0 auto!important;
   }
   body.report-body.livechat-bo-page .report-main .report-content{
-    display:block!important;
+    display:flex!important;
+    flex-direction:column!important;
+    flex:1 1 auto!important;
     height:auto!important;
-    overflow:visible!important;
+    min-height:0!important;
+    overflow:hidden!important;
   }
 }
 
