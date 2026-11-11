@@ -1883,3 +1883,34 @@ html[data-bo-theme="dark"] body.livechat-template-page .template-back:hover{
   background-image:linear-gradient(180deg,#383A46 0%,#2C2E38 100%)!important;
   border-color:rgba(255,255,255,.18)!important;color:#F5F5F4!important;
 }
+
+/* Tablet portrait and phone: master-detail. Below 992 the grid is one column, so the inbox AND the thread were
+   both on screen and the thread sat under the fold - measured on a 768-wide iPad, the room card started at
+   y=476 with 680px of messages below it, i.e. you had to scroll to read the conversation you had just opened.
+   One pane at a time now: the inbox until a conversation is picked, then the thread with a Back button. The
+   280px cap on the inbox list was there to make the stacked pair share one screen and is no longer wanted. */
+body.livechat-bo-page .livechat-room-back{display:none!important}
+@media (max-width:991.98px){
+  body.livechat-bo-page .livechat-admin-shell:not([data-lc-pane="room"]) .livechat-room-card{display:none!important}
+  body.livechat-bo-page .livechat-admin-shell[data-lc-pane="room"] .livechat-inbox-card{display:none!important}
+  body.livechat-bo-page .livechat-admin-shell[data-lc-pane="room"]{grid-template-rows:1fr!important;align-content:stretch!important}
+  /* the thread card was content-sized (680px) inside a 934px shell row */
+  body.livechat-bo-page .livechat-admin-shell[data-lc-pane="room"] .livechat-room-card{height:100%!important;align-self:stretch!important}
+  body.livechat-bo-page .livechat-inbox-list{max-height:none!important}
+  body.livechat-bo-page .livechat-room-card{min-height:0!important}
+  body.livechat-bo-page .livechat-msg .bubble{max-width:min(520px,calc(100% - 48px))!important}
+  body.livechat-bo-page .livechat-room-back{
+    display:inline-flex!important;align-items:center!important;gap:6px!important;flex:0 0 auto!important;
+    height:32px!important;padding:0 10px!important;border-radius:8px!important;
+    border:1px solid var(--lc-border)!important;background:transparent!important;
+    color:inherit!important;font-size:12.5px!important;font-weight:700!important;cursor:pointer!important;
+  }
+  body.livechat-bo-page .livechat-room-back .bi{font-size:14px!important;line-height:1!important}
+}
+/* Inbox rows below 1280: the row is avatar + copy + time inside a 245px item at 1024, which left the copy 108px -
+   measured, the username prefix in the preview was cut to "GUE..." while the name line had the same 108px. The
+   prefix repeats a name that already sits on the line above it, so it goes first. */
+@media (max-width:1279.98px){
+  body.livechat-bo-page .livechat-inbox-preview > small{display:none!important}
+}
+
