@@ -1,0 +1,81 @@
+#!/usr/bin/env node
+/* Local test server: opens EVERY page of this repo on localhost without the real API.
+
+   scripts/serve-static.js serves the files only, so any page bounces to login (no token) and
+   every request goes to the production API. This one also injects, at the top of each HTML
+   <head>, a small stub that
+     - signs you in as a fake ROOT admin (ROOT bypasses the page guard, so every page opens),
+     - points API_CONFIG at THIS server and answers every /api/... call with an empty-but-valid
+       success response (lists come back empty, so pages render their empty state), and
+     - fills the deposit / withdraw lists with a few rows so tables are not empty there.
+   Nothing is sent to the real backend, and no repo file is modified.
+
+     node scripts/dev-harness.js [port]            # default 8123
+
+   Then open  http://127.0.0.1:8123/<page>.html
+   Theme:     add ?theme=dark or ?theme=light  (also stored in localStorage.bo_theme)
+   Examples:  /member-deposit.html?tab=all&theme=dark     /index.html     /main-dashboard.html
+
+   Limits: the sidebar menu is empty (the fake admin has no menu rows), and any screen that needs
+   real data shows its empty state. To see real data, use serve-static.js and sign in for real. */
+'use strict';
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+
+const ROOT = path.resolve(__dirname, '..');
+const PORT = Number(process.argv[2] || 8123);
+const TYPES = {
+  '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json',
+  '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.gif': 'image/gif', '.webp': 'image/webp',
+  '.mp3': 'audio/mpeg', '.ico': 'image/x-icon', '.woff2': 'font/woff2', '.woff': 'font/woff', '.ttf': 'font/ttf',
+};
+
+const STUB = `<script>(function(){
+try{
+  localStorage.setItem('bo_admin_token','dev-harness-token');
+  localStorage.setItem('bo_admin_user',JSON.stringify({id:1,username:'JK',displayName:'JK',role:'ROOT',roleType:'ROOT',roleName:'Master Admin',menus:[]}));
+  localStorage.setItem('bo_api_base',location.origin+'/api');
+  var t=new URLSearchParams(location.search).get('theme'); if(t==='dark'||t==='light') localStorage.setItem('bo_theme',t);
+}catch(e){}
+/* A hidden browser pane never fires requestAnimationFrame, and several pages start their first load
+   inside two of them - so they would sit on "Loading..." forever. Dev server only: use a timer. */
+window.requestAnimationFrame=function(cb){return setTimeout(function(){cb(performance.now());},16);};
+window.cancelAnimationFrame=function(id){clearTimeout(id);};
+var d=new Date(), TD=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+var base=[
+ ['10:23:45','0123456787',30,'TEST2'],['01:12:09','testboo',10,'TEST2'],['15:30:11','testboo',15,'Maybank'],
+ ['14:50:02','testboo',15,'Hong Leong Bank'],['17:00:30','testboo',50,'TEST BANK']
+];
+/* 40 rows so "Show entries = -" (fit to screen) has something to fit; the list honours page/size. */
+var rows=[];for(var i=0;i<40;i++){var b=base[i%base.length];rows.push({id:i+1,createdAt:TD+'T'+b[0],username:b[1],amount:b[2],bankName:b[3],paymentMethodName:b[3],referenceNo:'DP-'+(1792463116178-i*7919),status:'PENDING',processedAt:null});}
+function pageOf(u){var q=new URLSearchParams(u.split('?')[1]||''),size=Number(q.get('size'))||20,page=Number(q.get('page'))||1;return {page:page,size:size,slice:rows.slice((page-1)*size,page*size),total:rows.length,pages:Math.max(1,Math.ceil(rows.length/size))};}
+var realFetch=window.fetch;
+window.fetch=function(url,opt){
+  var u=String(url);
+  if(u.indexOf('/api/')<0) return realFetch.apply(this,arguments);
+  var list=[], data={content:list,items:list,list:list,rows:list,records:list,totalPages:1,totalElements:0,total:0,page:1,size:20};
+  var pg={totalPages:1,totalElements:0,page:1,size:20};
+  if(/member-deposit\\/list|member-withdraw\\/list/.test(u)){ var p=pageOf(u); pg={totalPages:p.pages,totalElements:p.total,page:p.page,size:p.size}; data={content:p.slice,items:p.slice,list:p.slice,pagination:pg,totalPages:p.pages,totalElements:p.total,total:p.total,page:p.page,size:p.size}; }
+  else if(/payment-method\\/list/.test(u)) data=[{id:1,name:'TEST2',bankName:'TEST2',bankUsage:99},{id:2,name:'Maybank',bankName:'Maybank',bankUsage:0}];
+  else if(/auth\\/admin\\/me/.test(u)) data=JSON.parse(localStorage.getItem('bo_admin_user'));
+  return Promise.resolve(new Response(JSON.stringify({status:'success',message:'ok',data:data,pagination:pg}),{status:200,headers:{'Content-Type':'application/json'}}));
+};
+})();</script>`;
+
+http.createServer((req, res) => {
+  const p = decodeURIComponent(String(req.url || '/').split('?')[0]);
+  if (p.startsWith('/api/')) {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    return res.end('{"status":"success","data":{}}');
+  }
+  const file = path.join(ROOT, p === '/' ? 'index.html' : p);
+  if (!file.startsWith(ROOT)) { res.writeHead(403); return res.end('forbidden'); }
+  fs.readFile(file, (err, buf) => {
+    if (err) { res.writeHead(404); return res.end('not found'); }
+    const ext = path.extname(file).toLowerCase();
+    res.writeHead(200, { 'Content-Type': TYPES[ext] || 'application/octet-stream', 'Cache-Control': 'no-store' });
+    if (ext === '.html') return res.end(buf.toString('utf8').replace(/<head>/i, '<head>' + STUB));
+    res.end(buf);
+  });
+}).listen(PORT, '127.0.0.1', () => console.log('dev harness: http://127.0.0.1:' + PORT + '/index.html'));
