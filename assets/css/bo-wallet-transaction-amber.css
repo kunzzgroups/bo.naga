@@ -5336,3 +5336,29 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.member-wallet-page .bo-tx-body-tabl
   color:#FBBF24!important;
   text-decoration:underline;
 }
+
+/* Deposit Approval, below 1101px: the table stopped at 712px inside a 745-795px frame (an 83px empty band at 834)
+   and Member / Reference values broke mid-token. The unused Processed column was hidden with
+   visibility:collapse on its <col>, which makes Chrome ignore the table's 100% width. It is hidden with
+   display:none instead (col, header and body cells), so the table fills its frame; the visible columns still
+   sum to 712 (the 768 frame) and the saved width goes to Member and Reference. */
+@media (max-width:1100.98px){
+  html:not(#bo-da-tab-off) body.bo-wallet-tx.deposit-approval-page:not(#bo-da-tab-off-2) .bo-tx-head-table col.bo-tx-col-processed,
+  html:not(#bo-da-tab-off) body.bo-wallet-tx.deposit-approval-page:not(#bo-da-tab-off-2) .bo-tx-body-table col.bo-tx-col-processed{display:none!important;visibility:visible!important}
+  html:not(#bo-da-tab-off) body.bo-wallet-tx.deposit-approval-page:not(#bo-da-tab-off-2) .bo-tx-head-table thead th:nth-child(7),
+  html:not(#bo-da-tab-off) body.bo-wallet-tx.deposit-approval-page:not(#bo-da-tab-off-2) .bo-tx-body-table tbody td:nth-child(7):not([colspan]){display:none!important}
+  html:not(#bo-da-tab-off) body.bo-wallet-tx.deposit-approval-page:not(#bo-da-tab-off-2) .bo-tx-head-table .bo-tx-col-date,
+  html:not(#bo-da-tab-off) body.bo-wallet-tx.deposit-approval-page:not(#bo-da-tab-off-2) .bo-tx-body-table .bo-tx-col-date{width:104px!important}
+  html:not(#bo-da-tab-off) body.bo-wallet-tx.deposit-approval-page:not(#bo-da-tab-off-2) .bo-tx-head-table .bo-tx-col-member,
+  html:not(#bo-da-tab-off) body.bo-wallet-tx.deposit-approval-page:not(#bo-da-tab-off-2) .bo-tx-body-table .bo-tx-col-member{width:104px!important}
+  html:not(#bo-da-tab-off) body.bo-wallet-tx.deposit-approval-page:not(#bo-da-tab-off-2) .bo-tx-head-table .bo-tx-col-amount,
+  html:not(#bo-da-tab-off) body.bo-wallet-tx.deposit-approval-page:not(#bo-da-tab-off-2) .bo-tx-body-table .bo-tx-col-amount{width:80px!important}
+  html:not(#bo-da-tab-off) body.bo-wallet-tx.deposit-approval-page:not(#bo-da-tab-off-2) .bo-tx-head-table .bo-tx-col-method,
+  html:not(#bo-da-tab-off) body.bo-wallet-tx.deposit-approval-page:not(#bo-da-tab-off-2) .bo-tx-body-table .bo-tx-col-method{width:114px!important}
+  html:not(#bo-da-tab-off) body.bo-wallet-tx.deposit-approval-page:not(#bo-da-tab-off-2) .bo-tx-head-table .bo-tx-col-ref,
+  html:not(#bo-da-tab-off) body.bo-wallet-tx.deposit-approval-page:not(#bo-da-tab-off-2) .bo-tx-body-table .bo-tx-col-ref{width:138px!important}
+  html:not(#bo-da-tab-off) body.bo-wallet-tx.deposit-approval-page:not(#bo-da-tab-off-2) .bo-tx-head-table .bo-tx-col-status,
+  html:not(#bo-da-tab-off) body.bo-wallet-tx.deposit-approval-page:not(#bo-da-tab-off-2) .bo-tx-body-table .bo-tx-col-status{width:88px!important}
+  html:not(#bo-da-tab-off) body.bo-wallet-tx.deposit-approval-page:not(#bo-da-tab-off-2) .bo-tx-head-table .bo-tx-col-action,
+  html:not(#bo-da-tab-off) body.bo-wallet-tx.deposit-approval-page:not(#bo-da-tab-off-2) .bo-tx-body-table .bo-tx-col-action{width:84px!important}
+}
