@@ -456,3 +456,22 @@ html[data-bo-theme="dark"] body.promotion-workspace-page .promo-ws-tip{
 @media (prefers-reduced-motion: reduce){
   body.promotion-workspace-page .promo-ws-tip{ transition: none; }
 }
+
+/* Bonus Category toolbar: the two Add buttons. They were 175px and 179px wide (the text sets the width), so the
+   pair looked uneven, and the group ended 11px inside the list edge while the Actions icons end 16px in. Both
+   buttons now share one width, the gap is fixed, and the group ends where the Actions column's icons end. */
+html:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-pb-toolbar-off) body.promotion-bonus-page.report-body .report-main .standardized-toolbar-title > .clean-btn.primary{
+  box-sizing:border-box!important;
+  width:176px!important;
+  min-width:176px!important;
+  justify-content:center!important;
+}
+html:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-pb-toolbar-off) body.promotion-bonus-page.report-body .report-main .standardized-toolbar-title{
+  gap:12px!important;
+  padding-right:16px!important;
+}
+/* reports.css gives `.section-title span` margin-top:6px. The first Add button's label caught it (3px low), the
+   second did not. Both labels now sit on the button's centre line. */
+html:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-pb-toolbar-off) body.promotion-bonus-page.report-body .report-main .standardized-toolbar-title > .clean-btn.primary .btn-label{
+  margin:0!important;
+}
