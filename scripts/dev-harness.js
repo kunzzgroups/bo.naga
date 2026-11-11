@@ -82,6 +82,9 @@ window.fetch=function(url,opt){
   else if(/payment-method\\/list/.test(u)){ var names=['TEST2','Maybank','Hong Leong Bank','TEST BANK','Test 123','CIMB','Public Bank','RHB'];
     data=[];for(var m=0;m<30;m++){var nm=names[m%names.length]+(m>=names.length?' '+(m+1):'');data.push({id:m+1,name:nm,bankName:nm,displayName:nm,accountName:'Account '+(m+1),accountNumber:'1234567'+(100+m),minAmount:10,maxAmount:m%3===0?0:50000,dailyLimit:m%2?20000:0,status:m%4===3?0:1,visible:true,showOnDeposit:true,isShow:true,bankUsage:m*10});} }
   else if(/payment-gateway\\/list/.test(u)) data={content:[{id:1,gatewayCode:'S1PAY',displayName:'S1PAY',baseUrl:'https://s.s1pay.site',status:1,logoUrl:'',endpoints:[{actionType:'DEPOSIT',enabled:true},{actionType:'WITHDRAW',enabled:true}],channels:[{id:1},{id:2},{id:3},{id:4}]}]};
+  else if(/admin\\/rebate\\/rules$|admin\\/rebate\\/rules\\?/.test(u)){ data=[];for(var k=1;k<=24;k++)data.push({id:k,name:'Test '+k,priority:k,providerCode:k%3?'':'PGSOFT',gameCategory:k%2?'':'SLOT',minValidBet:1,maxValidBet:k%4?0:5000,rebateRate:k%5+0.5,maxRebate:k%4?0:200,combinationMode:'HIGHER_RATE',claimMode:k%2?'AUTO':'MANUAL',settlementCycle:'DAILY',status:k%6?1:0}); }
+  else if(/admin\\/rebate\\/worker-settings/.test(u)) data={enabled:true,timeZone:'Asia/Kuala_Lumpur',dailyTime:'00:01',weeklyOffDay:'MONDAY',monthlyDay:1};
+  else if(/admin\\/rebate\\/batches/.test(u)) data=[{id:1,status:'COMPLETED',processedCount:2,businessDate:'2026-10-08'}];
   else if(/auth\\/admin\\/me/.test(u)) data=JSON.parse(localStorage.getItem('bo_admin_user'));
   return Promise.resolve(new Response(JSON.stringify({status:'success',message:'ok',data:data,pagination:pg}),{status:200,headers:{'Content-Type':'application/json'}}));
 };

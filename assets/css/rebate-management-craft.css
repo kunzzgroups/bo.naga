@@ -2,9 +2,10 @@
 
 /* ---- KPI strip ---- */
 .rebate-page .rebate-summary{gap:10px}
+/* 8px: one radius for every card on this page (the KPI strip, the schedule card and the table card). */
 .rebate-page .rebate-summary-card{
   min-height:84px;padding:14px 16px;column-gap:14px;
-  grid-template-columns:40px minmax(0,1fr);border-radius:12px;
+  grid-template-columns:40px minmax(0,1fr);border-radius:8px;
 }
 .rebate-page .rebate-summary-icon,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebate-summary-icon{
@@ -20,7 +21,14 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebat
    is a later sibling of the schedule card). It has to sit ABOVE the chrome bar (z-index:3, which
    the Audit pickers' own menus need so they clear the table): at 2 the bar band covered the
    Daily card's Status menu instead - measured, "Disabled" was under the tab row. */
-.rebate-page .rebate-worker-card.rebate-schedule{border-radius:12px;position:relative;z-index:4}
+.rebate-page .rebate-worker-card.rebate-schedule{position:relative;z-index:4}
+/* This card also carries .standard-list-card, and bo-charcoal-legacy paints that class at 16px !important, so
+   the 12px written here never applied (measured 16px in both themes). Pinned to the page's 8px. */
+.rebate-page .standard-list-card.rebate-schedule,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .standard-list-card.rebate-schedule,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .standard-list-card.rebate-schedule{
+  border-radius:8px!important;
+}
 .rebate-schedule-bar{
   display:flex;align-items:center;gap:12px;
   padding:10px 14px;min-height:56px;
@@ -70,7 +78,7 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebat
 .rebate-schedule-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .rebate-cycle-card{
   display:flex;flex-direction:column;gap:0;
-  background:#FFF8EB;border:1px solid #EADCC8;border-radius:10px;
+  background:#FFF8EB;border:1px solid #EADCC8;border-radius:8px;
   /* NOT `overflow:hidden`: it used to clip the header's square corners, and it also clipped the
      Status/Day dropdown menus that reports.js opens below their trigger - measured with the
      card's own children: the menu's option was hit-tested onto the tab row / table underneath,
@@ -79,7 +87,7 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebat
 }
 .rebate-cycle-card header{
   display:flex;align-items:center;gap:8px;
-  margin:0;padding:8px 12px;border-radius:9px 9px 0 0;
+  margin:0;padding:8px 12px;border-radius:7px 7px 0 0;
   font-size:13px;font-weight:800;color:#18191C;
   background:#F5EBDC;border-bottom:1px solid #EADCC8;
 }
@@ -273,12 +281,27 @@ body.report-body.bo-charcoal.rebate-page .report-content > .rebate-summary,
 body.report-body.bo-charcoal.rebate-page .report-content > .rebate-schedule{
   flex:0 0 auto;
 }
-.rebate-page .rebate-chrome{
+/* One card, one frame — the construction the approved listing pages use (.table-card: an 8px surface with a
+   1px border and NO second rounded box inside it). This page sits directly inside .standard-list-card, which
+   bo-charcoal-legacy paints at 16px, and around .standard-data-table, which it paints at 14px with its own
+   border; measured in light, the two roundings stacked into a visibly double frame, and in dark the frame had
+   been killed outright (see the dark block below) so the row strip floated on the page background. */
+.rebate-page .rebate-chrome,
+.rebate-page .standard-list-card.rebate-chrome{
   display:flex;flex-direction:column;gap:0;
   flex:1 1 auto;min-height:0;
   margin:0;padding:0;overflow:hidden;
-  background:#FFF8EB;border:1px solid #EADCC8;border-radius:12px;
-  box-shadow:0 1px 2px rgba(92,74,48,.04);
+  background:#FFF8EB;border:1px solid #EADCC8;border-radius:8px;
+  box-shadow:0 1px 2px rgba(24,25,28,.04),0 2px 8px rgba(60,48,32,.05);
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .standard-list-card.rebate-chrome{
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;border-radius:8px!important;
+}
+/* the table inside the card draws no frame of its own, in either theme */
+.rebate-page .rebate-chrome .standard-table-wrap,
+.rebate-page .rebate-chrome .standard-data-table,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebate-chrome .standard-data-table{
+  border:0!important;border-radius:0!important;box-shadow:none!important;
 }
 .rebate-chrome-bar{
   display:flex;align-items:center;justify-content:space-between;gap:12px;
@@ -532,9 +555,9 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebat
 .rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(10){width:128px}
 
 .rebate-page [data-panel="rules"] .standard-data-table thead th:nth-child(1),
-.rebate-page [data-panel="rules"] .standard-data-table tbody td:nth-child(1){width:56px}
+.rebate-page [data-panel="rules"] .standard-data-table tbody td:nth-child(1){width:76px}
 .rebate-page [data-panel="rules"] .standard-data-table thead th:nth-child(8),
-.rebate-page [data-panel="rules"] .standard-data-table tbody td:nth-child(8){width:90px}
+.rebate-page [data-panel="rules"] .standard-data-table tbody td:nth-child(8){width:136px}
 .rebate-page [data-panel="rules"] .standard-data-table thead th:nth-child(9),
 .rebate-page [data-panel="rules"] .standard-data-table tbody td:nth-child(9){width:88px}
 /* Audit and Reconciliation carried no column sync at all, so with `table-layout:fixed` every
@@ -834,21 +857,25 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebat
 }
 
 /* ---- Dark schedule ---- */
-/* Kill the workbench card frame — .standard-list-card was still painting #383A46 */
+/* The dark listing surface the approved pages use (.table-card): #383A46, 1px rgba(255,255,255,.14), 8px, no
+   shadow. This block used to paint the card transparent so the workbench would not read as "a second card" - the
+   measured result was no card, no border and rows floating on the page background, i.e. no table at all in dark. */
 html[data-bo-theme="dark"] .rebate-page .rebate-chrome,
 html[data-bo-theme="dark"] .rebate-page .standard-list-card.rebate-chrome,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .standard-list-card.rebate-chrome{
-  background:transparent!important;background-color:transparent!important;background-image:none!important;
-  border:0!important;border-color:transparent!important;
-  border-radius:0!important;box-shadow:none!important;outline:0!important;
+  background:#383A46!important;background-color:#383A46!important;background-image:none!important;
+  border:1px solid rgba(255,255,255,.14)!important;border-color:rgba(255,255,255,.14)!important;
+  border-radius:8px!important;box-shadow:none!important;outline:0!important;
 }
+/* the tab row is the card's head band, so it keeps the separator the light theme draws (rgba(255,255,255,.12)
+   is the dark value of the same line) and the same inset - the padding zeros only existed because the card
+   frame around it was gone. */
 html[data-bo-theme="dark"] .rebate-chrome-bar,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome-bar,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .standard-list-card.rebate-chrome > .rebate-chrome-bar{
   background:transparent!important;background-color:transparent!important;
-  border:0!important;border-bottom:0!important;
-  padding-left:0!important;padding-right:0!important;
+  border:0!important;border-bottom:1px solid rgba(255,255,255,.12)!important;
   box-shadow:none!important;
 }
 /* Beat legacy dark .rebate-tabs #2A2C36 + border box (bo-charcoal-legacy) */
@@ -868,8 +895,8 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chro
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-panel .table-footer,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome .table-footer.rebate-table-footer,
 html[data-bo-theme="dark"] .rebate-panel .table-footer{
-  background:transparent!important;background-color:transparent!important;
-  border:0!important;border-top:1px solid rgba(255,255,255,.10)!important;
+  background:#383A46!important;background-color:#383A46!important;
+  border:0!important;border-top:1px solid rgba(255,255,255,.14)!important;
   box-shadow:none!important;
 }
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs .bo-tx-tab,
@@ -1096,4 +1123,21 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-pane
 @media(prefers-reduced-motion:reduce){
   .rebate-schedule-chevron{transition:none}
   .rebate-schedule-body{animation:none}
+}
+
+/* Tab pills at the panel's 36px (they were 40-41px, padding-driven; the active "Rules" one was 41 because of
+   the heavier weight + icon). Same 36px / 12.5px / 700 the other tab rows use; the segmented thumb follows. */
+.rebate-page .rebate-tabs .bo-tx-tab,
+.rebate-page .rebate-tabs .mad-tab{
+  box-sizing:border-box!important;
+  height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
+  padding:0 14px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  font-size:12.5px!important;
+  font-weight:700!important;
+  line-height:1!important;
 }
