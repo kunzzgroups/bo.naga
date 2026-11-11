@@ -53,12 +53,72 @@ function pager(target,page,totalPages,handler){
   el.onclick=e=>{const b=e.target.closest('[data-p]');if(!b||b.disabled)return;handler(Number(b.dataset.p));};
 }
 function clientPage(rows,page,size){const total=rows.length,pages=Math.ceil(total/size),safe=pages?Math.min(page,pages-1):0,start=safe*size;return{rows:rows.slice(start,start+size),page:safe,pages,total,start};}
+/* Show entries "-" = FIT: as many rows as the table body shows on THIS screen, so the body never needs a
+   scrollbar. The scroller here is the <tbody> itself (display:block; overflow:auto), so its clientHeight is the
+   room and a painted row's height is the divisor - floor only, never a row that would overflow. Each of the four
+   tabs has its own table and its own size select (all bound with onchange), so the fit is kept per select. */
+const FIT_BODY={rulePageSize:'rebateRows',batchPageSize:'batchRows',auditPageSize:'auditRows',reconPageSize:'reconRows'};
+const fitLock={},fitStreak={};
+const isAutoSize=v=>{const s=String(v==null?'-':v).trim();return s===''||s==='-'||/^auto$/i.test(s);};
+function fitRows(id){const b=$(FIT_BODY[id]);return b?[...b.querySelectorAll('tr')].filter(r=>r.querySelectorAll('td').length>2):[];}
+/* Floor only, deliberately without a lower clamp: a clamp is a promise to overflow. At a 650px-high window this
+   body holds 3 rows, and the earlier `Math.max(5, ...)` kept 5 - the scrollbar that followed was exactly the two
+   rows it had promised could not fit. */
+function fitFor(id,rowH){const b=$(FIT_BODY[id]);if(!b||!b.clientHeight)return null;return Math.max(1,Math.min(200,Math.floor(Math.floor(b.clientHeight)/Math.max(30,rowH))||1));}
+/* The real average, not ceil(): a 59.25px row rounded up to 60 costs a whole row on a 1200px-tall window
+   (12 painted, 776px of room, 13 would have fitted with 5.75px to spare). The overflow guard below is what keeps
+   a fractional average from painting one row too many, so the rounding is not needed for safety. */
+function fitRowH(id){const r=fitRows(id);return r.length?r.reduce((s,x)=>s+x.getBoundingClientRect().height,0)/r.length:0;}
 function pageSize(id,fallback){
   const el=$(id);const raw=String(el&&el.value!=null?el.value:(fallback||20)).trim();
   if(/^all$/i.test(raw)) return 10000;
-  if(raw===''||raw==='-'||/^auto$/i.test(raw)) return Number(fallback)||20;
+  if(isAutoSize(raw)){
+    if(fitLock[id]==null){const f=fitFor(id,fitRowH(id)||59);if(f==null)return Number(fallback)||20;fitLock[id]=f;}
+    return fitLock[id];
+  }
   const n=Number(raw);
   return Number.isFinite(n)&&n>0?n:(Number(fallback)||20);
+}
+/* The first fit is measured before any row exists, so after the rows are painted re-fit from the real ones
+   (measured average row height, one row fewer while the body still overflows) and re-render through the select's
+   own onchange. Bounded so uneven rows cannot flip-flop: asking twice for the same count is refused, and at most
+   four corrections run inside two seconds. */
+function settleFit(id){
+  const sel=$(id),b=$(FIT_BODY[id]);
+  if(!sel||!b||!isAutoSize(sel.value)||!b.clientHeight)return;
+  const rows=fitRows(id);if(!rows.length)return;
+  let want=fitFor(id,fitRowH(id));if(want==null)return;
+  if(b.scrollHeight>b.clientHeight+1)want=Math.max(1,Math.min(want,rows.length-1));
+  if(want===fitLock[id])return;
+  const now=Date.now(),st=fitStreak[id]||{n:0,t:0,last:null};
+  st.n=now-st.t<2000?st.n+1:1;st.t=now;fitStreak[id]=st;
+  if(st.n>4||st.last===want)return;
+  st.last=want;fitLock[id]=want;sel.dispatchEvent(new Event('change'));
+}
+function settleAllFits(){Object.keys(FIT_BODY).forEach(settleFit);}
+/* Two observers, because the room changes in two different ways: a repaint (MutationObserver on the body) and the
+   page layout moving around the table - expanding the settlement-schedule panel took this body from 388px to
+   125px while the row count stayed at 6, and only a resize of the BODY itself reports that. Bound through a window
+   slot so a second run of this file (the router re-runs it on every entry into the page) replaces the observers
+   instead of stacking them, per CLAUDE.md rule 3. */
+function bindFits(){
+  if(window.__boRebateFit){try{window.__boRebateFit.stop();}catch(e){}window.__boRebateFit=null;}
+  const offs=[];
+  Object.keys(FIT_BODY).forEach(id=>{
+    const b=$(FIT_BODY[id]);if(!b)return;
+    let t=0;const kick=()=>{clearTimeout(t);t=setTimeout(()=>settleFit(id),30);};
+    const mo=new MutationObserver(kick);mo.observe(b,{childList:true});
+    let ro=null;
+    if(window.ResizeObserver){ro=new ResizeObserver(()=>{fitStreak[id]=null;kick();});ro.observe(b);}
+    offs.push(()=>{clearTimeout(t);mo.disconnect();if(ro)ro.disconnect();});
+  });
+  let rt=0;
+  const onResize=()=>{clearTimeout(rt);rt=setTimeout(()=>{Object.keys(FIT_BODY).forEach(id=>{const sel=$(id);if(!sel||!isAutoSize(sel.value))return;const before=fitLock[id];fitLock[id]=null;fitStreak[id]=null;const f=fitFor(id,fitRowH(id)||59);if(f==null){fitLock[id]=before;return;}fitLock[id]=f;if(f!==before)sel.dispatchEvent(new Event('change'));});},200);};
+  window.addEventListener('resize',onResize);
+  const tabs=document.querySelector('.rebate-tabs');
+  const onTabClick=()=>setTimeout(settleAllFits,120);
+  if(tabs)tabs.addEventListener('click',onTabClick);
+  window.__boRebateFit={stop(){offs.forEach(f=>f());window.removeEventListener('resize',onResize);if(tabs)tabs.removeEventListener('click',onTabClick);}};
 }
 function switchTab(name){
   document.querySelectorAll('[data-tab]').forEach(b=>{
@@ -270,5 +330,6 @@ $('reconPageSize').onchange=()=>{state.reconPage=0;loadRecon();};$('refreshRecon
    MutationObserver watches `class`/`aria-selected`, so one mount covers every later click. */
 const rebateTabs=document.querySelector('.rebate-tabs');
 if(rebateTabs&&window.BO_SEG_BOUNCE) window.BO_SEG_BOUNCE.mount(rebateTabs,{button:':scope > .bo-tx-tab',anim:'bounce'});
+bindFits();
 loadWorkerSetting();loadRules();loadBatches();
 })();

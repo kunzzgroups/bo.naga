@@ -532,9 +532,9 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebat
 .rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(10){width:128px}
 
 .rebate-page [data-panel="rules"] .standard-data-table thead th:nth-child(1),
-.rebate-page [data-panel="rules"] .standard-data-table tbody td:nth-child(1){width:56px}
+.rebate-page [data-panel="rules"] .standard-data-table tbody td:nth-child(1){width:76px}
 .rebate-page [data-panel="rules"] .standard-data-table thead th:nth-child(8),
-.rebate-page [data-panel="rules"] .standard-data-table tbody td:nth-child(8){width:90px}
+.rebate-page [data-panel="rules"] .standard-data-table tbody td:nth-child(8){width:136px}
 .rebate-page [data-panel="rules"] .standard-data-table thead th:nth-child(9),
 .rebate-page [data-panel="rules"] .standard-data-table tbody td:nth-child(9){width:88px}
 /* Audit and Reconciliation carried no column sync at all, so with `table-layout:fixed` every
@@ -1096,4 +1096,21 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-pane
 @media(prefers-reduced-motion:reduce){
   .rebate-schedule-chevron{transition:none}
   .rebate-schedule-body{animation:none}
+}
+
+/* Tab pills at the panel's 36px (they were 40-41px, padding-driven; the active "Rules" one was 41 because of
+   the heavier weight + icon). Same 36px / 12.5px / 700 the other tab rows use; the segmented thumb follows. */
+.rebate-page .rebate-tabs .bo-tx-tab,
+.rebate-page .rebate-tabs .mad-tab{
+  box-sizing:border-box!important;
+  height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
+  padding:0 14px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  font-size:12.5px!important;
+  font-weight:700!important;
+  line-height:1!important;
 }
