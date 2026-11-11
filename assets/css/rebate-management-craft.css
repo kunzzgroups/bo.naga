@@ -533,26 +533,30 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebat
 }
 /* Column sync — colgroup does not apply when thead/tbody are display:table/block */
 .rebate-page [data-panel="batches"] .standard-data-table{min-width:1180px}
+/* Batches column widths are the measured need of the content (Batch 172 for a long id, Settlement Date 144 for its
+   header, Status 130 for the pill, Executed By 160 for SYSTEM_CATCHUP), and they sum to 1182px: under the 1260px
+   content area at a 1534px window, so the fixed layout never scales them DOWN below what they hold. The old
+   64 / 120 / 128 cut the id (#10...), the header (SETTLEMENT DA...) and SYSTEM_CATC... */
 .rebate-page [data-panel="batches"] .standard-data-table thead th:nth-child(1),
-.rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(1){width:64px}
+.rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(1){width:172px}
 .rebate-page [data-panel="batches"] .standard-data-table thead th:nth-child(2),
-.rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(2){width:120px}
+.rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(2){width:144px}
 .rebate-page [data-panel="batches"] .standard-data-table thead th:nth-child(3),
-.rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(3){width:118px}
+.rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(3){width:130px}
 .rebate-page [data-panel="batches"] .standard-data-table thead th:nth-child(4),
-.rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(4),
+.rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(4){width:96px}
 .rebate-page [data-panel="batches"] .standard-data-table thead th:nth-child(5),
-.rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(5),
+.rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(5){width:84px}
 .rebate-page [data-panel="batches"] .standard-data-table thead th:nth-child(6),
-.rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(6){width:88px}
+.rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(6){width:68px}
 .rebate-page [data-panel="batches"] .standard-data-table thead th:nth-child(7),
-.rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(7){width:110px}
+.rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(7){width:112px}
 .rebate-page [data-panel="batches"] .standard-data-table thead th:nth-child(8),
-.rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(8),
+.rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(8){width:108px}
 .rebate-page [data-panel="batches"] .standard-data-table thead th:nth-child(9),
-.rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(9){width:158px}
+.rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(9){width:108px}
 .rebate-page [data-panel="batches"] .standard-data-table thead th:nth-child(10),
-.rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(10){width:128px}
+.rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(10){width:160px}
 
 .rebate-page [data-panel="rules"] .standard-data-table thead th:nth-child(1),
 .rebate-page [data-panel="rules"] .standard-data-table tbody td:nth-child(1){width:76px}
@@ -568,24 +572,37 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebat
    IP 132, VIEW 84. The prose DETAIL column ellipsizes and carries its full text in a title, the
    way every long-text cell in this back office does. */
 .rebate-page [data-panel="reconciliation"] .standard-data-table{min-width:1140px}
+/* Reconciliation column widths are the measured need of each column (Date 105, Member 104, Provider 148 for
+   PRAGMATIC_PLAY, Expected Main 121, Expected Bonus 131, Actual 109, Difference 96, Status 156 for PENDING_REVIEW), and Session / Member /
+   Provider - the identifiers whose length the feed does not bound (a 19-digit session id, PRAGMATIC_PLAY) -
+   wrap anywhere instead of ending in an ellipsis. Together with Detail (two lines, see below) they sum to
+   the 1260px content area at a 1534px window; the old 76 / 76 / 88 cut the session id, the member id and
+   the actual balance. */
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(2),
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(3),
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(4){
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+  text-overflow:clip!important;
+}
 .rebate-page [data-panel="reconciliation"] .standard-data-table thead th:nth-child(1),
-.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(1){width:120px}
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(1){width:108px}
 .rebate-page [data-panel="reconciliation"] .standard-data-table thead th:nth-child(2),
-.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(2){width:76px}
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(2){width:112px}
 .rebate-page [data-panel="reconciliation"] .standard-data-table thead th:nth-child(3),
-.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(3){width:76px}
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(3){width:108px}
 .rebate-page [data-panel="reconciliation"] .standard-data-table thead th:nth-child(4),
-.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(4){width:142px}
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(4){width:150px}
 .rebate-page [data-panel="reconciliation"] .standard-data-table thead th:nth-child(5),
-.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(5){width:130px}
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(5){width:124px}
 .rebate-page [data-panel="reconciliation"] .standard-data-table thead th:nth-child(6),
-.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(6){width:158px}
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(6){width:132px}
 .rebate-page [data-panel="reconciliation"] .standard-data-table thead th:nth-child(7),
-.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(7){width:88px}
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(7){width:112px}
 .rebate-page [data-panel="reconciliation"] .standard-data-table thead th:nth-child(8),
-.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(8){width:122px}
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(8){width:100px}
 .rebate-page [data-panel="reconciliation"] .standard-data-table thead th:nth-child(9),
-.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(9){width:152px}
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td:nth-child(9){width:160px}
 
 .rebate-page [data-panel="audit"] .standard-data-table{min-width:1080px}
 .rebate-page [data-panel="audit"] .standard-data-table thead th:nth-child(1),
@@ -1147,3 +1164,25 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-pane
 html body.rebate-page #rwTimeZone{border-radius:8px!important}
 html[data-bo-theme="dark"] body.rebate-page:not(#bo-rb-r-1):not(#bo-rb-r-2):not(#bo-rb-r-3):not(#bo-rb-r-4):not(#bo-rb-r-5):not(#bo-rb-r-6):not(#bo-rb-r-7):not(#bo-rb-r-8):not(#bo-rb-r-9):not(#bo-rb-r-10) .rebate-schedule-field #rwTimeZone{border-radius:8px!important}
 html:not([data-bo-theme="dark"]) body.rebate-page:not(#bo-rb-l-1):not(#bo-rb-l-2):not(#bo-rb-l-3):not(#bo-rb-l-4):not(#bo-rb-l-5):not(#bo-rb-l-6):not(#bo-rb-l-7):not(#bo-rb-l-8):not(#bo-rb-l-9):not(#bo-rb-l-10) .rebate-schedule-field #rwTimeZone{border-radius:8px!important}
+
+/* Audit / Reconciliation detail: two lines at most. The sentence used to wrap without a limit, so one record
+   with a long URL made a 275px row (the last line cut by the body's edge, a scrollbar, and the fit - which
+   divides the room by the AVERAGE row height - landing on 2 rows). The full text is already the cell's title
+   and the row's eye button opens it, so nothing is lost; rows are now 1-2 lines and the fit can count them. */
+.rebate-page [data-panel="audit"] .standard-data-table tbody td.detail-cell .detail-clamp,
+.rebate-page [data-panel="reconciliation"] .standard-data-table tbody td.detail-cell .detail-clamp{
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  line-clamp:2;
+  overflow:hidden;
+  overflow-wrap:anywhere;
+  line-height:1.35;
+}
+
+/* Batch id: any length. It wraps (anywhere) instead of ending in an ellipsis, so the whole id is always readable. */
+.rebate-page [data-panel="batches"] .standard-data-table tbody td:nth-child(1){
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+  text-overflow:clip!important;
+}

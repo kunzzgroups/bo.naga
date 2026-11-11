@@ -1607,9 +1607,12 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .clean-b
     padding:0 10px;
     font-size:12px;
   }
+  /* the desktop rule above states `minmax(0,1fr) auto auto` with !important, so this one - without the flag -
+     never applied: at 768 the search spanned both columns while the row still had three tracks, and the amber
+     Search button stretched to 522px next to a 128px Clear. Two equal halves now, search above them. */
   body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar,
   body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar{
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:1fr 1fr!important;
   }
   body.bo-wallet-tx.bulk-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search,
   body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-toolbar .mad-search.bulk-member-search,
