@@ -22,6 +22,18 @@
   const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const money=v=>Number(v||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
   const date=v=>window.BO_FORMAT?.dateTime?window.BO_FORMAT.dateTime(v):(v?String(v).replace('T',' ').slice(0,19):'-');
+  /* Date cell = DD/MM/YYYY with the time on hover (tip installed once by member-deposit.js /
+     member-withdraw.js, both loaded in the All workspace) - same cell as the Deposit/Withdraw views. */
+  function dtCell(v){
+    const full=date(v);
+    if(!full||full==='-') return '-';
+    const m=String(full).match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})\s+(.+)$/);
+    if(!m) return `<span class="bo-tx-datetime">${esc(full)}</span>`;
+    const tm=String(m[4]).trim().match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+    const time=tm?`${String(tm[1]).padStart(2,'0')}:${tm[2]}:${tm[3]||'00'}`:String(m[4]).trim().slice(0,8);
+    const day=`${String(m[3]).padStart(2,'0')}/${String(m[2]).padStart(2,'0')}/${m[1]}`;
+    return `<span class="bo-tx-datetime" tabindex="0" data-tip="${esc(time)}">${esc(day)}</span>`;
+  }
   const endpoint=k=>API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS[k];
   async function api(url){
     const res=await fetch(url,{headers:{...BO_AUTH.authHeader()}});
@@ -36,9 +48,56 @@
       size:$(id('Size'))?.value||'-'
     };
   }
+  /* Show entries = "-" means FIT: as many rows as the table area holds on THIS screen, so the
+     table never needs a scrollbar. Same rule the Deposit / Withdraw modules use: floor(available
+     height / row height), measured from a real row, never a row that would overflow. */
+  let autoLocked=null,settleStreak=0,settleAt=0;
+  const isAuto=v=>{const s=String(v==null?'-':v).trim();return s===''||s==='-'||/^auto$/i.test(s);};
+  const scrollEl=()=>document.querySelector('.bo-tx-table-body');
+  function fitFor(rowH){
+    const sc=scrollEl();
+    if(!sc)return 12;
+    return Math.max(5,Math.min(200,Math.floor(Math.floor(sc.clientHeight)/Math.max(38,rowH))||12));
+  }
+  function sampleRowH(){
+    const td=scrollEl()?.querySelector('tbody tr:not(.bo-table-fill) td');
+    return td?Math.ceil(td.getBoundingClientRect().height):44;
+  }
   function pageSize(){
-    const n=Number(controls().size);
-    return Number.isFinite(n)&&n>0?n:(String(controls().size).toLowerCase()==='all'?10000:20);
+    const raw=controls().size;
+    if(isAuto(raw)){if(autoLocked==null)autoLocked=fitFor(sampleRowH());return autoLocked;}
+    const n=Number(raw);
+    return Number.isFinite(n)&&n>0?n:(String(raw).toLowerCase()==='all'?10000:20);
+  }
+  /* The first measurement may come from the "Loading..." row, whose height is not a data row's.
+     After the rows are painted, re-fit from a real row; at most twice in a row so rows of uneven
+     height cannot make the size flip-flop. */
+  function settleAutoFit(){
+    if(!isAuto(controls().size))return;
+    const body=$(id('Body'));
+    const trs=body?[...body.querySelectorAll('tr')].filter(r=>r.querySelectorAll('td').length>1):[];
+    if(!trs.length)return;
+    /* Row heights are fractional on scaled displays (46.4 / 46.8 at 125%): average them and round
+       UP, and never keep a page that still overflows - one row fewer is the safe direction. */
+    const avg=trs.reduce((s,r)=>s+r.getBoundingClientRect().height,0)/trs.length;
+    let want=fitFor(Math.ceil(avg));
+    const sc=scrollEl();
+    if(sc&&sc.scrollHeight>sc.clientHeight+1)want=Math.max(5,Math.min(want,trs.length-1));
+    if(want===autoLocked)return;
+    const now=Date.now();
+    settleStreak=now-settleAt<2000?settleStreak+1:1;
+    settleAt=now;
+    if(settleStreak>2)return;
+    autoLocked=want;state.page=1;
+    reload();
+  }
+  function publishPagerMeta(pagination){
+    const card=document.querySelector('.table-card');
+    if(!card)return;
+    const total=Number(pagination?.totalElements);
+    if(Number.isFinite(total)&&total>=0)card.dataset.boTotal=String(total);else delete card.dataset.boTotal;
+    card.dataset.boPageSize=String(pageSize());
+    card.dataset.boPage=String(state.page);
   }
   function pageButtons(){
     const out=[];const add=n=>{if(n>=1&&n<=state.totalPages&&!out.includes(n))out.push(n);};
@@ -143,15 +202,16 @@
       const actions=pending
         ? `<div class="bo-tx-actions"><button type="button" class="bo-tx-action-btn is-approve" data-tab-approve="${esc(r.id)}" title="Approve" aria-label="Approve"><i class="bi bi-check-lg"></i></button><button type="button" class="bo-tx-action-btn is-reject" data-tab-reject="${esc(r.id)}" title="Reject" aria-label="Reject"><i class="bi bi-x-lg"></i></button></div>`
         : '-';
-      const common=`<td>${date(r.createdAt||r.created_at)}</td><td>${esc(r.username||'-')}</td><td>${money(r.amount)}</td>`;
+      const common=`<td>${dtCell(r.createdAt||r.created_at)}</td><td>${esc(r.username||'-')}</td><td>${money(r.amount)}</td>`;
       const bank=withdraw?(r.bankName||'-'):(r.bankName||r.paymentMethodDisplayName||r.paymentMethodBankName||r.paymentMethod||'-');
       const cells=withRemark
         ? `${common}<td><b>${esc(bank)}</b></td><td>${esc(r.referenceNo||'-')}</td><td>${esc(r.remark||'-')}</td>`
         : `${common}<td><b>${esc(bank)}</b></td><td>${esc(r.referenceNo||'-')}</td>`;
-      return `<tr>${cells}<td><span class="status-pill ${status==='APPROVED'?'active':status==='REJECTED'?'off':''}">${esc(r.status||'-')}</span></td><td>${esc(date(r.processedAt))}</td><td>${actions}</td></tr>`;
+      return `<tr>${cells}<td><span class="status-pill ${status==='APPROVED'?'active':status==='REJECTED'?'off':''}">${esc(r.status||'-')}</span></td><td>${dtCell(r.processedAt)}</td><td>${actions}</td></tr>`;
     }).join('');
     $(id('Pager')).innerHTML=pageButtons();
     $(id('PrevBtn')).disabled=state.page<=1;$(id('NextBtn')).disabled=state.page>=state.totalPages;
+    publishPagerMeta(pagination);
   }
   async function refreshTabCounts(){
     const generation=++countGeneration;
@@ -240,6 +300,7 @@
         pagination={totalElements:total,totalPages,page:state.page,size:requestedSize};
       }
       render(rows,pagination);
+      settleAutoFit();
       refreshTabCounts();
     }catch(e){if(generation!==reloadGeneration)return;if(body)body.innerHTML=`<tr><td colspan="${state.type==='withdraw'||state.type==='all'?9:8}" class="text-danger">${esc(e.message)}</td></tr>`;}
   }
@@ -353,6 +414,17 @@
     await waitForDateRangeReady();
     state.page=1;
     reload();
+  });
+  /* A different window height means a different number of rows fits: re-fit when Show entries is "-". */
+  let fitResizeTimer=0;
+  window.addEventListener('resize',()=>{
+    clearTimeout(fitResizeTimer);
+    fitResizeTimer=setTimeout(()=>{
+      if(!ownsAll()||!isAuto(controls().size))return;
+      const before=autoLocked;
+      autoLocked=null;
+      if(pageSize()!==before){state.page=1;settleStreak=0;reload();}
+    },200);
   });
   window.BO_MEMBER_TX_ALL_PAGE={reinit:init};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
