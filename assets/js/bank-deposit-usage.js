@@ -65,7 +65,9 @@
     lockedAutoSize=measureAutoPageSize();
     return lockedAutoSize;
   }
-  function clearLockedAutoSize(){lockedAutoSize=null;}
+  /* `overflowAt` = the smallest page size already seen to overflow, so growing never goes back to it. */
+  let overflowAt=Infinity,lastFilteredCount=0;
+  function clearLockedAutoSize(){lockedAutoSize=null;overflowAt=Infinity;}
   function isAutoPageSize(raw){
     const v=String(raw??'-').trim();
     return v===''||v==='-'||/^auto$/i.test(v);
@@ -95,9 +97,29 @@
     autofitRaf=requestAnimationFrame(()=>{
       const scroll=usageScroller();
       if(!scroll) return;
-      if(scroll.scrollHeight<=scroll.clientHeight+1){autofitPasses=0;return;}
+      if(scroll.scrollHeight<=scroll.clientHeight+1){
+        /* Fits - but the first fit was a fallback (12) taken before any row existed, and this pass
+           only ever stepped DOWN, so a tall window stayed half empty. Step UP while more rows exist
+           and the painted rows say they would still fit (never back to a size that overflowed). */
+        const metrics=usageRowMetrics(scroll);
+        if(metrics&&lastFilteredCount>metrics.n&&autofitPasses<6){
+          const head=scroll.querySelector('thead');
+          const headH=head?Math.ceil(head.getBoundingClientRect().height):0;
+          const avail=Math.max(0,Math.floor(scroll.clientHeight)-headH);
+          const target=Math.min(Math.max(5,Math.min(200,Math.floor(avail/metrics.rowH))),overflowAt-1);
+          if(target>(lockedAutoSize??0)){
+            autofitPasses++;
+            lockedAutoSize=target;
+            listPage=1;
+            rerenderUsage();
+            return;
+          }
+        }
+        autofitPasses=0;return;
+      }
       if(autofitPasses>=6) return;
       autofitPasses++;
+      overflowAt=Math.min(overflowAt,lockedAutoSize??Infinity);
       /* Step DOWN from the value that overflowed instead of re-measuring it: the
          painted rows are exactly the ones that did not fit, so a re-measure of the
          same sample returns the same number and the loop never converges (measured: 11
@@ -286,6 +308,7 @@
       if(kw&&!paymentKeys(m).some(k=>k.includes(kw)))return false;
       return true;
     });
+    lastFilteredCount=filtered.length;
     const pageSize=resolvePageSize();
     const totalPages=Math.max(1,Math.ceil(filtered.length/pageSize)||1);
     listPage=Math.max(1,Math.min(listPage,totalPages));

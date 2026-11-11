@@ -338,3 +338,15 @@ body.bo-wallet-tx .report-main .gateway-list-card > .table-footer.bo-pagination-
 .pg-advanced-fields{display:grid!important;grid-column:1/-1!important;
   grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:16px 18px!important}
 .pg-advanced-fields .pg-field.full:not(:has(textarea)){grid-column:auto!important}
+
+/* Dark theme counterparts for the list row. The rules above are light-only (cream #FFF8EB / #F5EBDC,
+   mint #DCFCE7, rose #FEE2E2), so in dark the Edit button and the pills stayed light islands on the
+   #383A46 panel. Same dark recipe as the rest of the panel: icon action = #2A2C36 well + amber glyph
+   (Bank Deposit Usage), mint/rose pills = tinted fill + light ink (DESIGN.md status pills). */
+html[data-bo-theme="dark"] .gateway-action-btn.bo-ui-icon-button{background:#2A2C36;border-color:rgba(255,255,255,.14);color:#FBBF24}
+html[data-bo-theme="dark"] .gateway-action-btn.bo-ui-icon-button:hover,html[data-bo-theme="dark"] .gateway-action-btn.bo-ui-icon-button:focus-visible{background:#F59E0B;border-color:#FBBF24;color:#2A2C36}
+html[data-bo-theme="dark"] .pg-pill{background:rgba(255,255,255,.08);color:#F5F5F4}
+html[data-bo-theme="dark"] .pg-pill.on{background:rgba(16,185,129,.14);color:#6EE7B7}
+html[data-bo-theme="dark"] .pg-pill.off{background:rgba(239,68,68,.16);color:#FCA5A5}
+html[data-bo-theme="dark"] .pg-capability{background:rgba(255,255,255,.08);color:#D4D4D8}
+html[data-bo-theme="dark"] .pg-capability.off{background:rgba(255,255,255,.05);color:#A1A1AA}

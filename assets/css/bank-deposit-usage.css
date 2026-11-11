@@ -637,6 +637,57 @@ body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table .usage-meter-line{
 .usage-fill.over{background:#EF4444}
 .usage-muted{color:var(--bo-muted,#78716C)}
 
+/* Desktop layout (> 1024px). Two things this page's rules above intended but lost:
+   1. The filter row is ONE line. bo-ui-standard.css states `flex-wrap:wrap` on every .bo-filter-row at
+      two id steps, which beat the single-line rule here, so a toolbar that was a few px too narrow split
+      the date and the search onto two lines. The row stays whole (nowrap, 10px gap, date 240 = the
+      Deposit Approval filter) and, when the toolbar cannot hold tabs + filters + buttons, the ACTIONS
+      block wraps under the tabs, right-aligned, instead of the row being cut in two.
+   2. The table fits a 1260px content area (1534px window at 125% scaling) without a horizontal
+      scrollbar: percent columns total 66% + 430px of fixed columns, min-width 1240px (was 1480px, which
+      cut the Action column off). Narrower content still scrolls inside .table-wrap. */
+@media (min-width:1025px){
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card > .bank-usage-toolbar{
+    flex-wrap:wrap!important;
+  }
+  html body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bank-usage-filter.bo-filter-row{
+    flex-flow:row nowrap!important;
+    gap:10px!important;
+    align-items:center!important;
+  }
+  html body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bank-usage-filter.bo-filter-row > .bo-filter-range-item,
+  html body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bank-usage-filter.bo-filter-row > .bo-range-field{
+    flex:0 0 240px!important;width:240px!important;min-width:240px!important;max-width:240px!important;
+  }
+  html body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bank-usage-filter.bo-filter-row > .bank-usage-keyword-field{
+    flex:0 0 260px!important;width:260px!important;min-width:260px!important;max-width:260px!important;
+  }
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table{min-width:1240px!important}
+  /* 10px side padding (was 14px) on the percent columns: the room the narrower columns lose is
+     given back to the text, so "Hong Leong Bank" and "10.00 - 50,000.00" are not cut. */
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(-n+7),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(-n+7){
+    padding-left:10px!important;padding-right:10px!important;
+  }
+  html body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(7),
+  html body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(7){
+    padding-left:6px!important;padding-right:6px!important; /* "20,000.00" in a 6% column */
+  }
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(1),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(1){width:11%!important;} /* Bank */
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(2),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(2){width:10%!important;} /* Account */
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(3),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(3){width:11%!important;} /* Transaction Range */
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(4),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(4){width:9%!important;} /* Deposits */
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(5),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(5){width:9%!important;} /* Withdrawals */
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(6),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(6){width:10%!important;} /* Net Used / Max */
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(7),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(7){width:6%!important;} /* Daily Threshold */
+}
 @media (max-width:1280px){
   body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-list-card > .bank-usage-toolbar{
     flex-wrap:wrap!important;
