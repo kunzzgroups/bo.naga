@@ -875,3 +875,23 @@ body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(3){
   text-overflow:clip!important;
   overflow-wrap:anywhere!important;
 }
+
+/* The Usage note "No max configured" broke inside its longest word ("configure" / "d"): the cell wrapped
+   anywhere and the column was 84-90px for a 65px word plus 24px of padding. It wraps at spaces now and the
+   column is 98px at every width. At tablet widths (<=1100px) the room comes from Status (112 -> 100), Show
+   (66 -> 62) and Bank (145 -> 141); Deposits gets +4 because its "16 deposit(s)" line needed 65px of a 63px
+   cell. The table still sums to its frame. */
+html:not(#bo-bdu-usage-off) body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-bdu-usage-off-2) .bank-usage-table td:nth-child(8),
+html:not(#bo-bdu-usage-off) body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-bdu-usage-off-2) .bank-usage-table td:nth-child(8) .usage-muted{overflow-wrap:normal!important;word-break:normal!important}
+html:not(#bo-bdu-usage-off) body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-bdu-usage-off-2) .bank-usage-table th:nth-child(8),
+html:not(#bo-bdu-usage-off) body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-bdu-usage-off-2) .bank-usage-table td:nth-child(8){width:98px!important;min-width:98px!important;max-width:98px!important}
+@media (max-width:1100.98px){
+  html:not(#bo-bdu-usage-off) body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-bdu-usage-off-2) .bank-usage-table th:nth-child(1),
+  html:not(#bo-bdu-usage-off) body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-bdu-usage-off-2) .bank-usage-table td:nth-child(1){width:141px!important;min-width:141px!important;max-width:141px!important}
+  html:not(#bo-bdu-usage-off) body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-bdu-usage-off-2) .bank-usage-table th:nth-child(3),
+  html:not(#bo-bdu-usage-off) body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-bdu-usage-off-2) .bank-usage-table td:nth-child(3){width:92px!important;min-width:92px!important;max-width:92px!important}
+  html:not(#bo-bdu-usage-off) body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-bdu-usage-off-2) .bank-usage-table th:nth-child(9),
+  html:not(#bo-bdu-usage-off) body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-bdu-usage-off-2) .bank-usage-table td:nth-child(9){width:100px!important;min-width:100px!important;max-width:100px!important}
+  html:not(#bo-bdu-usage-off) body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-bdu-usage-off-2) .bank-usage-table th:nth-child(10),
+  html:not(#bo-bdu-usage-off) body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-bdu-usage-off-2) .bank-usage-table td:nth-child(10){width:62px!important;min-width:62px!important;max-width:62px!important}
+}
