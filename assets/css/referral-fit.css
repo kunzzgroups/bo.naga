@@ -1,0 +1,15 @@
+/* Referral Network page sheet. reports.css gives .ref-member-name b/small `overflow:hidden; text-overflow:ellipsis;
+   white-space:nowrap`, so a 12-digit username in a 134px Member cell showed "0123456..." (the cell leaves 71px for the
+   name at 1440; 73-94px at 1024-1560). Names wrap anywhere and stop at two lines instead; the full text is in the
+   tooltip. Rules sit in their own sheet linked last so the shared reports.css is untouched. */
+html:not(#bo-ref-off) body:not(#bo-ref-off-2).referral-page .ref-table .ref-member-name b,
+html:not(#bo-ref-off) body:not(#bo-ref-off-2).referral-page .ref-table .ref-member-name small{
+  display:-webkit-box!important;
+  -webkit-box-orient:vertical!important;
+  -webkit-line-clamp:2!important;
+  white-space:normal!important;
+  overflow:hidden!important;
+  text-overflow:clip!important;
+  overflow-wrap:anywhere!important;
+  line-height:1.25!important;
+}

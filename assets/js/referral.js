@@ -135,7 +135,7 @@
   function memberNameHtml(r){
     const username=esc(firstVal(r,['username','mobile','id'],'-'));
     const full=esc(firstVal(r,['fullName','name'],''));
-    return `<div class="ref-member-cell"><span class="ref-avatar">${initials(r)}</span><div class="ref-member-name"><b>${username}</b>${full?`<small>${full}</small>`:''}</div></div>`;
+    return `<div class="ref-member-cell"><span class="ref-avatar">${initials(r)}</span><div class="ref-member-name"><b title="${username}">${username}</b>${full?`<small title="${full}">${full}</small>`:''}</div></div>`;
   }
   function referrerMember(r){
     const parentId=firstVal(r,['referrerMemberId','referrer_member_id','referredByMemberId'],null);
@@ -154,7 +154,7 @@
     const user=directUser||firstVal(parent,['username','mobile'],null);
     const full=firstVal(r,['referrerFullName','referredByName','uplineName','agentName'],null)||firstVal(parent,['fullName','name'],null);
     if(!user&&!full) return '<span class="text-secondary">-</span>';
-    return `<div class="ref-member-name"><b>${esc(user||full)}</b>${full&&String(full)!==String(user)?`<small>${esc(full)}</small>`:''}</div>`;
+    return `<div class="ref-member-name"><b title="${esc(user||full)}">${esc(user||full)}</b>${full&&String(full)!==String(user)?`<small title="${esc(full)}">${esc(full)}</small>`:''}</div>`;
   }
   function rewardSettingHtml(r){
     const enabled=Number(firstVal(r,['rewardEnabled'],0))===1;
