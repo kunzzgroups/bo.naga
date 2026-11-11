@@ -5,8 +5,11 @@ a `<table>` (116 pages), at 1440 / 1280 / 1024 / 768 px wide and 900 px tall, da
 local fake-data server does not answer render their empty state, so a ✓ there means "the empty table fits"; those
 rows are marked *(empty)* in the last section and their ✓ is provisional.
 
-- **CLIP** — the table is wider than its container and the container cannot be scrolled: the columns on the right
-  are unreachable.
+- **CLIP** — the table is wider than its container, the container cannot be scrolled by the user, AND scrolling the
+  page's other scroll box does not move it: the columns on the right are unreachable. The wide-listing pattern in
+  this repo mounts a head wrapper with overflow:hidden above a body wrapper that scrolls, and a scroll listener
+  mirrors body.scrollLeft onto the head, so the test scrolls the nearest scrolling sibling and checks whether the
+  clipped box followed before calling it unreachable.
 - **scroll** — the content is wider, but reachable by dragging a horizontal scrollbar.
 - **hard min-width** — the table's computed `min-width`. Where that is a fixed 1080/1240/1560px the width is a
   number written into CSS, not the content, which is the cheapest kind to remove.
@@ -15,37 +18,28 @@ rows are marked *(empty)* in the last section and their ✓ is provisional.
 
 | state | pages |
 |---|---|
-| CLIP (unreachable) | 14 |
-| scroll at 1440 or 1280 (laptop) | 24 |
-| scroll only at 1024 / 768 (tablet) | 19 |
-| fits at every width | 59 |
+| CLIP (unreachable) | 0 |
+| scroll at 1440 or 1280 (laptop) | 30 |
+| scroll only at 1024 / 768 (tablet) | 24 |
+| fits at every width | 62 |
 
 ## P0 — clipped, content unreachable
 
-| page | cols | hard min-width | 1440 \| 1280 \| 1024 \| 768 | first broken |
-|---|---|---|---|---|
-| `casino-deposit-withdraw-report.html` | 14 | — | CLIP 1355 | CLIP 1515 | CLIP 1771 | scroll 1789 | 1440 |
-| `member-top-deposit-report.html` | 18 | — | CLIP 1201 | CLIP 1361 | CLIP 1617 | scroll 1635 | 1440 |
-| `casino-breakdown-report.html` | 12 | — | CLIP 368 | CLIP 528 | CLIP 784 | scroll 802 | 1440 |
-| `agent-performance-detail.html` | 16 | — | CLIP 326 | CLIP 486 | CLIP 742 | scroll 760 | 1440 |
-| `agent-performance-report.html` | 16 | — | CLIP 326 | CLIP 486 | CLIP 742 | scroll 760 | 1440 |
-| `transaction-report.html` | 14 | 1460px | CLIP 300 | CLIP 460 | CLIP 716 | CLIP 734 | 1440 |
-| `main-merchant-detail.html` | 11 | 1180px | CLIP 22 | CLIP 182 | ✓ | ✓ | 1440 |
-| `vip-exp-log.html` | 8 | 980px | ✓ | ✓ | CLIP 232 | CLIP 250 | 1024 |
-| `casino-provider-transactions.html` | 10 | — | ✓ | ✓ | CLIP 181 | scroll 199 | 1024 |
-| `casino-provider-winloss-report.html` | 10 | — | ✓ | ✓ | CLIP 181 | scroll 199 | 1024 |
-| `main-admin-security.html` | 6 | 820px | ✓ | ✓ | CLIP 88 | scroll 170 | 1024 |
-| `main-merchant-security.html` | 6 | 820px | ✓ | ✓ | CLIP 88 | scroll 170 | 1024 |
-| `frequently-played-games.html` | 10 | — | ✓ | ✓ | CLIP 79 | scroll 97 | 1024 |
-| `highest-turnover-games.html` | 10 | — | ✓ | ✓ | CLIP 79 | scroll 97 | 1024 |
+_None._ Every table wider than its box can be reached, in its own box or through the head/body mirror.
 
 ## P1 — horizontal scroll on a laptop (1440 / 1280)
 
 | page | cols | hard min-width | 1440 \| 1280 \| 1024 \| 768 | first broken |
 |---|---|---|---|---|
+| `casino-deposit-withdraw-report.html` | 14 | — | scroll 1355 | scroll 1515 | scroll 1771 | scroll 1789 | 1440 |
 | `member-wallet.html` | 1 | 2360px | scroll 1217 | scroll 1377 | scroll 1633 | scroll 1651 | 1440 |
+| `member-top-deposit-report.html` | 18 | — | scroll 1201 | scroll 1361 | scroll 1617 | scroll 1635 | 1440 |
 | `wallet-ledger.html` | 1 | — | scroll 897 | scroll 1057 | scroll 1313 | scroll 1331 | 1440 |
 | `online-users.html` | 12 | 1560px | scroll 394 | scroll 554 | scroll 810 | scroll 828 | 1440 |
+| `casino-breakdown-report.html` | 12 | — | scroll 368 | scroll 528 | scroll 784 | scroll 802 | 1440 |
+| `agent-performance-detail.html` | 16 | — | scroll 326 | scroll 486 | scroll 742 | scroll 760 | 1440 |
+| `agent-performance-report.html` | 16 | — | scroll 326 | scroll 486 | scroll 742 | scroll 760 | 1440 |
+| `transaction-report.html` | 14 | 1460px | scroll 300 | scroll 460 | scroll 716 | scroll 734 | 1440 |
 | `daily-rebate-report.html` | 12 | 1100px | scroll 119 | scroll 279 | scroll 535 | scroll 553 | 1440 |
 | `rebate-log.html` | 12 | 1100px | scroll 119 | scroll 279 | scroll 535 | scroll 553 | 1440 |
 | `manual-rebate-approval.html` | 9 | 1100px | scroll 73 | scroll 233 | scroll 489 | scroll 503 | 1440 |
@@ -72,9 +66,12 @@ rows are marked *(empty)* in the last section and their ✓ is provisional.
 
 | page | cols | hard min-width | 1440 \| 1280 \| 1024 \| 768 | first broken |
 |---|---|---|---|---|
+| `vip-exp-log.html` | 8 | 980px | ✓ | ✓ | scroll 232 | scroll 250 | 1024 |
 | `promotion-debug.html` | 9 | 980px | ✓ | ✓ | scroll 230 | scroll 248 | 1024 |
 | `main-provider-merchant-list.html` | 8 | 960px | ✓ | ✓ | scroll 229 | scroll 230 | 1024 |
 | `main-accounting-settlement.html` | 8 | 980px | ✓ | ✓ | scroll 216 | scroll 242 | 1024 |
+| `casino-provider-transactions.html` | 10 | — | ✓ | ✓ | scroll 181 | scroll 199 | 1024 |
+| `casino-provider-winloss-report.html` | 10 | — | ✓ | ✓ | scroll 181 | scroll 199 | 1024 |
 | `agent-management.html` | 9 | 100% | ✓ | ✓ | scroll 176 | scroll 194 | 1024 |
 | `manual-rebate-detail.html` | 1 | 920px | ✓ | ✓ | scroll 176 | scroll 194 | 1024 |
 | `agent-payout-admin.html` | 10 | 900px | ✓ | ✓ | scroll 152 | scroll 174 | 1024 |
@@ -84,6 +81,8 @@ rows are marked *(empty)* in the last section and their ✓ is provisional.
 | `main-merchant-settlement.html` | 8 | 960px | ✓ | ✓ | scroll 221 | ✓ | 1024 |
 | `main-provider-credentials.html` | 8 | 960px | ✓ | ✓ | scroll 221 | ✓ | 1024 |
 | `payment-method.html` | 7 | 920px | ✓ | ✓ | scroll 170 | scroll 28 | 1024 |
+| `frequently-played-games.html` | 10 | — | ✓ | ✓ | scroll 79 | scroll 97 | 1024 |
+| `highest-turnover-games.html` | 10 | — | ✓ | ✓ | scroll 79 | scroll 97 | 1024 |
 | `main-report.html` | 12 | 100% | ✓ | ✓ | scroll 22 | scroll 48 | 1024 |
 | `topup-reward.html` | 6 | — | ✓ | ✓ | scroll 14 | scroll 40 | 1024 |
 | `brand-detail.html` | 5 | 760px | ✓ | ✓ | scroll 4 | scroll 22 | 1024 |
@@ -94,4 +93,4 @@ rows are marked *(empty)* in the last section and their ✓ is provisional.
 
 ## Fits at every width
 
-`account-lock.html`, `admin-login-log.html`, `admin-user.html`, `agent-bet-report.html` *(empty)*, `agent-bonus.html` *(empty)*, `agent-commission-admin.html`, `agent-dashboard.html` *(empty)*, `agent-detail.html` *(empty)*, `agent-player-detail.html` *(empty)*, `agent-player-game-report.html` *(empty)*, `agent-players.html` *(empty)*, `agent-products.html` *(empty)*, `agent-referral-v2.html`, `agent-reimbursement-admin.html`, `agent-wallet.html` *(empty)*, `agent-withdraw.html` *(empty)*, `brand-management.html`, `bulk-adjustment.html`, `bulk-bonus-adjustment.html`, `casino-bonus-report.html`, `contact-sync.html`, `duplicate-ip.html`, `index.html`, `ip-whitelist-security.html`, `main_merchant_report.html`, `main_provider_report.html`, `main-accounting-due.html`, `main-admin-detail.html`, `main-balance-adjustment.html` *(empty)*, `main-balance-overview.html`, `main-merchant-profit.html`, `main-merchant-transactions.html`, `main-provider-detail.html`, `main-provider-transactions.html`, `main-settlement-report.html`, `main-stat-detail.html`, `main-transaction-history.html`, `member-detail.html` *(empty)*, `merchant-referral-v2.html`, `payment-gateway-transactions.html`, `payment-gateway.html`, `promotion-report.html`, `provider-bet-report.html`, `referral-v2-approval.html`, `referral-v2.html` *(empty)*, `referral.html`, `role-create.html` *(empty)*, `role.html`, `root-control.html`, `spin2-management.html`, `t1-kyc.html`, `t1-missions.html`, `t1-pages.html`, `t1-points-report.html`, `t1-redemptions.html`, `t1-rewards.html`, `vip-reward-log.html`, `wbet-bet-limit.html`, `win-lose-report.html`
+`account-lock.html`, `admin-login-log.html`, `admin-user.html`, `agent-bet-report.html` *(empty)*, `agent-bonus.html` *(empty)*, `agent-commission-admin.html`, `agent-dashboard.html` *(empty)*, `agent-detail.html` *(empty)*, `agent-player-detail.html` *(empty)*, `agent-player-game-report.html` *(empty)*, `agent-players.html` *(empty)*, `agent-products.html` *(empty)*, `agent-referral-v2.html`, `agent-reimbursement-admin.html`, `agent-wallet.html` *(empty)*, `agent-withdraw.html` *(empty)*, `brand-management.html`, `bulk-adjustment.html`, `bulk-bonus-adjustment.html`, `casino-bonus-report.html`, `contact-sync.html`, `duplicate-ip.html`, `index.html`, `ip-whitelist-security.html`, `main_merchant_report.html`, `main_provider_report.html`, `main-accounting-due.html`, `main-admin-detail.html`, `main-admin-security.html`, `main-balance-adjustment.html` *(empty)*, `main-balance-overview.html`, `main-merchant-detail.html`, `main-merchant-profit.html`, `main-merchant-security.html`, `main-merchant-transactions.html`, `main-provider-detail.html`, `main-provider-transactions.html`, `main-settlement-report.html`, `main-stat-detail.html`, `main-transaction-history.html`, `member-detail.html` *(empty)*, `merchant-referral-v2.html`, `payment-gateway-transactions.html`, `payment-gateway.html`, `promotion-report.html`, `provider-bet-report.html`, `referral-v2-approval.html`, `referral-v2.html` *(empty)*, `referral.html`, `role-create.html` *(empty)*, `role.html`, `root-control.html`, `spin2-management.html`, `t1-kyc.html`, `t1-missions.html`, `t1-pages.html`, `t1-points-report.html`, `t1-redemptions.html`, `t1-rewards.html`, `vip-reward-log.html`, `wbet-bet-limit.html`, `win-lose-report.html`

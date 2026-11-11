@@ -456,3 +456,21 @@ body.main-admin-security-page .mas-detail-reason{
     position:fixed;inset:0;z-index:10000;border:0;border-radius:0;
   }
 }
+
+/* Tablet (1024) and a half-screen laptop: the px recipe below sums to 820, which is the floor the table was
+   built at - and at 1024 the frame is 732, so 88px hung off the right edge. The body scrolled (its wrapper is
+   overflow-x:auto) while the HEAD did not (its wrapper was overflow-x:hidden), so the last header was cut and
+   would not have travelled with the body anyway. Rather than teach two wrappers to scroll together, the six
+   columns are given the width the 732px frame can actually pay for, and the two long headings wrap to a second
+   line instead of truncating. */
+@media (max-width:1100.98px){
+  body.main-admin-security-page .mas-table{min-width:0!important}
+  body.main-admin-security-page .mas-table .mas-col-time{width:84px!important}
+  body.main-admin-security-page .mas-table .mas-col-admin{width:114px!important}
+  body.main-admin-security-page .mas-table .mas-col-event{width:150px!important}
+  body.main-admin-security-page .mas-table .mas-col-target{width:104px!important}
+  body.main-admin-security-page .mas-table .mas-col-ip{width:158px!important}
+  body.main-admin-security-page .mas-table .mas-col-status{width:92px!important}
+  body.main-admin-security-page .mas-table th{white-space:normal!important;line-height:1.15!important}
+  body.main-admin-security-page .mas-table-head{overflow-x:hidden!important}
+}
