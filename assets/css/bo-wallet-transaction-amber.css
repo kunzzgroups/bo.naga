@@ -5325,3 +5325,14 @@ body.bo-wallet-tx .bo-bank-card{flex:1 1 168px!important;min-width:168px!importa
   body.bo-wallet-tx.deposit-approval-page .bo-tx-head-table .bo-tx-col-action,
   body.bo-wallet-tx.deposit-approval-page .bo-tx-body-table .bo-tx-col-action{width:84px!important}
 }
+
+/* Member Wallet: the Adjustment / Bonus / Rebate detail amounts are links coloured navy (#1e3a5f) by
+   bo-targeted-fixes.css, which vanishes on the dark table. Dark: ink text, amber on hover. */
+html[data-bo-theme="dark"] body.bo-wallet-tx.member-wallet-page .bo-tx-body-table td a.wallet-total-link:not(.provider-wallet-total-link){
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.member-wallet-page .bo-tx-body-table td a.wallet-total-link:not(.provider-wallet-total-link):hover,
+html[data-bo-theme="dark"] body.bo-wallet-tx.member-wallet-page .bo-tx-body-table td a.wallet-total-link:not(.provider-wallet-total-link):focus-visible{
+  color:#FBBF24!important;
+  text-decoration:underline;
+}
