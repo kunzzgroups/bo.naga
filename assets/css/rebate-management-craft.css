@@ -273,12 +273,27 @@ body.report-body.bo-charcoal.rebate-page .report-content > .rebate-summary,
 body.report-body.bo-charcoal.rebate-page .report-content > .rebate-schedule{
   flex:0 0 auto;
 }
-.rebate-page .rebate-chrome{
+/* One card, one frame — the construction the approved listing pages use (.table-card: an 8px surface with a
+   1px border and NO second rounded box inside it). This page sits directly inside .standard-list-card, which
+   bo-charcoal-legacy paints at 16px, and around .standard-data-table, which it paints at 14px with its own
+   border; measured in light, the two roundings stacked into a visibly double frame, and in dark the frame had
+   been killed outright (see the dark block below) so the row strip floated on the page background. */
+.rebate-page .rebate-chrome,
+.rebate-page .standard-list-card.rebate-chrome{
   display:flex;flex-direction:column;gap:0;
   flex:1 1 auto;min-height:0;
   margin:0;padding:0;overflow:hidden;
-  background:#FFF8EB;border:1px solid #EADCC8;border-radius:12px;
-  box-shadow:0 1px 2px rgba(92,74,48,.04);
+  background:#FFF8EB;border:1px solid #EADCC8;border-radius:8px;
+  box-shadow:0 1px 2px rgba(24,25,28,.04),0 2px 8px rgba(60,48,32,.05);
+}
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .standard-list-card.rebate-chrome{
+  background:#FFF8EB!important;border:1px solid #EADCC8!important;border-radius:8px!important;
+}
+/* the table inside the card draws no frame of its own, in either theme */
+.rebate-page .rebate-chrome .standard-table-wrap,
+.rebate-page .rebate-chrome .standard-data-table,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebate-chrome .standard-data-table{
+  border:0!important;border-radius:0!important;box-shadow:none!important;
 }
 .rebate-chrome-bar{
   display:flex;align-items:center;justify-content:space-between;gap:12px;
@@ -834,21 +849,25 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebat
 }
 
 /* ---- Dark schedule ---- */
-/* Kill the workbench card frame — .standard-list-card was still painting #383A46 */
+/* The dark listing surface the approved pages use (.table-card): #383A46, 1px rgba(255,255,255,.14), 8px, no
+   shadow. This block used to paint the card transparent so the workbench would not read as "a second card" - the
+   measured result was no card, no border and rows floating on the page background, i.e. no table at all in dark. */
 html[data-bo-theme="dark"] .rebate-page .rebate-chrome,
 html[data-bo-theme="dark"] .rebate-page .standard-list-card.rebate-chrome,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .standard-list-card.rebate-chrome{
-  background:transparent!important;background-color:transparent!important;background-image:none!important;
-  border:0!important;border-color:transparent!important;
-  border-radius:0!important;box-shadow:none!important;outline:0!important;
+  background:#383A46!important;background-color:#383A46!important;background-image:none!important;
+  border:1px solid rgba(255,255,255,.14)!important;border-color:rgba(255,255,255,.14)!important;
+  border-radius:8px!important;box-shadow:none!important;outline:0!important;
 }
+/* the tab row is the card's head band, so it keeps the separator the light theme draws (rgba(255,255,255,.12)
+   is the dark value of the same line) and the same inset - the padding zeros only existed because the card
+   frame around it was gone. */
 html[data-bo-theme="dark"] .rebate-chrome-bar,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome-bar,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .standard-list-card.rebate-chrome > .rebate-chrome-bar{
   background:transparent!important;background-color:transparent!important;
-  border:0!important;border-bottom:0!important;
-  padding-left:0!important;padding-right:0!important;
+  border:0!important;border-bottom:1px solid rgba(255,255,255,.12)!important;
   box-shadow:none!important;
 }
 /* Beat legacy dark .rebate-tabs #2A2C36 + border box (bo-charcoal-legacy) */
@@ -868,8 +887,8 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chro
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-panel .table-footer,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome .table-footer.rebate-table-footer,
 html[data-bo-theme="dark"] .rebate-panel .table-footer{
-  background:transparent!important;background-color:transparent!important;
-  border:0!important;border-top:1px solid rgba(255,255,255,.10)!important;
+  background:#383A46!important;background-color:#383A46!important;
+  border:0!important;border-top:1px solid rgba(255,255,255,.14)!important;
   box-shadow:none!important;
 }
 html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-chrome .rebate-tabs .bo-tx-tab,
