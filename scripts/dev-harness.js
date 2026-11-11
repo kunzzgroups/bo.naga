@@ -92,6 +92,14 @@ window.fetch=function(url,opt){
     var sl=all.slice(pgNo*sz,pgNo*sz+sz),tp=Math.max(1,Math.ceil(all.length/sz));
     data={content:sl,totalElements:all.length,totalPages:tp,number:pgNo,numberOfElements:sl.length,size:sz,first:pgNo===0,last:pgNo>=tp-1};
   }
+  /* Rebate log: server-paged like the real feed, 37 rows so a fitted size has something to fit. */
+  else if(/admin\\/rebate\\/logs/.test(u)){
+    var ql=new URLSearchParams(u.split('?')[1]||''),szl=Number(ql.get('size'))||20,pgl=Math.max(0,Number(ql.get('page'))||0),lg=[];
+    for(var lgi=1;lgi<=37;lgi++){var tvb=50+lgi*7.5,elig=tvb*0.98,lock=lgi%4?0:3.25;
+      lg.push({periodDate:'2026-10-'+(String(8+ (lgi%20)).padStart(2,'0')),memberId:100+lgi,providerCode:['PGSOFT','PLAYTECH','ALL'][lgi%3],gameCategory:['SLOT','LIVE','ALL'][lgi%3],totalValidBet:tvb,eligibleValidBet:elig,lockedValidBet:lock,providerRate:0.5,vipRate:lgi%2?0:0.2,effectiveRate:lgi%2?0.5:0.7,combinationMode:lgi%2?'HIGHER_RATE':'SUM',rebateAmount:elig*0.005,status:['CALCULATED','AVAILABLE','CREDITED','CLAIM_LOCKED'][lgi%4],referenceNo:'RB-202610-'+String(1000+lgi)});}
+    var lsl=lg.slice(pgl*szl,pgl*szl+szl),ltp=Math.max(1,Math.ceil(lg.length/szl));
+    data={content:lsl,totalElements:lg.length,totalPages:ltp,number:pgl,numberOfElements:lsl.length,size:szl,first:pgl===0,last:pgl>=ltp-1};
+  }
   else if(/admin\\/rebate\\/batches/.test(u)) data=[{id:1,status:'COMPLETED',processedCount:2,businessDate:'2026-10-08'}];
   else if(/auth\\/admin\\/me/.test(u)) data=JSON.parse(localStorage.getItem('bo_admin_user'));
   return Promise.resolve(new Response(JSON.stringify({status:'success',message:'ok',data:data,pagination:pg}),{status:200,headers:{'Content-Type':'application/json'}}));

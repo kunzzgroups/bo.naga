@@ -1198,3 +1198,21 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .standard-da
    has this pager; kept in this sheet rather than bo-charcoal-cms so the cache key moves for 8 rebate-family
    pages instead of 36 unrelated ones. */
 html body.manual-rebate-approval-page.report-body.bo-charcoal:not(#bo-charcoal-off) .page-btn.active:disabled { opacity: 1 !important; cursor: default !important; }
+
+/* Column widths for the rebate log. Under `table-layout:fixed` the twelve columns were an equal 107px each, and
+   three headers need more than that (PROVIDER / CATEGORY 146, TOTAL VALID BET 114, EFFECTIVE RATE 109 measured),
+   so the words ran into their neighbours instead of ellipsizing and a CLAIM LOCKED badge spilled into the
+   REFERENCE cell. Widths are the measured need of what each column actually carries; the sum stays under the
+   1286px the card has at a 1560px window, so nothing was pushed into a horizontal scroll. */
+.rebate-log-table thead th:nth-child(1),.rebate-log-table tbody td:nth-child(1){width:100px}
+.rebate-log-table thead th:nth-child(2),.rebate-log-table tbody td:nth-child(2){width:84px}
+.rebate-log-table thead th:nth-child(3),.rebate-log-table tbody td:nth-child(3){width:150px}
+.rebate-log-table thead th:nth-child(4),.rebate-log-table tbody td:nth-child(4){width:116px}
+.rebate-log-table thead th:nth-child(5),.rebate-log-table tbody td:nth-child(5){width:92px}
+.rebate-log-table thead th:nth-child(6),.rebate-log-table tbody td:nth-child(6){width:88px}
+.rebate-log-table thead th:nth-child(7),.rebate-log-table tbody td:nth-child(7){width:106px}
+.rebate-log-table thead th:nth-child(8),.rebate-log-table tbody td:nth-child(8){width:84px}
+.rebate-log-table thead th:nth-child(9),.rebate-log-table tbody td:nth-child(9){width:112px}
+.rebate-log-table thead th:nth-child(10),.rebate-log-table tbody td:nth-child(10){width:90px}
+.rebate-log-table thead th:nth-child(11),.rebate-log-table tbody td:nth-child(11){width:126px}
+.rebate-log-table thead th:nth-child(12),.rebate-log-table tbody td:nth-child(12){width:136px}
