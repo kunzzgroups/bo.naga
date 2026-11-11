@@ -369,3 +369,34 @@ html[data-bo-theme="dark"] .pg-capability.off{background:rgba(255,255,255,.05);c
   body.bo-wallet-tx .pg-list-table col.pg-c-status{width:86px!important}
   body.bo-wallet-tx .pg-list-table col.pg-c-action{width:66px!important}
 }
+
+/* Dark editor: the Edit/Add Gateway form painted its section cards, endpoint cards, notes and the sticky
+   action bar in the light cream (#FFFCF7 / #FFF8EB / #F5EBDC) with only the inputs dark, so the light label text
+   (#E7E5E4) sat on cream and "Gateway Code", "Capabilities", "Base API URL" could not be read. Surfaces follow
+   the dark ladder: section #383A46 on the #2C2E38 editor, endpoint cards and notes #2A2C36, borders white 10%. */
+html[data-bo-theme="dark"] .pg-section,
+html[data-bo-theme="dark"] #pgEndpointForms .pg-endpoint-details{background:#383A46;border-color:rgba(255,255,255,.10)}
+html[data-bo-theme="dark"] .pg-section-head,
+html[data-bo-theme="dark"] #pgEndpointForms summary,
+html[data-bo-theme="dark"] .pg-endpoint-details[open]>summary,
+html[data-bo-theme="dark"] #pgEndpointForms .pg-endpoint-details{border-bottom-color:rgba(255,255,255,.10)}
+html[data-bo-theme="dark"] .pg-section-head h4,
+html[data-bo-theme="dark"] .pg-section h4{color:#FBBF24}
+html[data-bo-theme="dark"] .pg-section-head p,
+html[data-bo-theme="dark"] .pg-section .pg-note{color:#A1A1AA}
+html[data-bo-theme="dark"] .pg-section-ico{background:rgba(245,158,11,.16);color:#F59E0B}
+html[data-bo-theme="dark"] .pg-endpoint,
+html[data-bo-theme="dark"] .pg-panel-note,
+html[data-bo-theme="dark"] .gateway-help{background:#2A2C36;border-color:rgba(255,255,255,.10);color:#D6D3D1}
+html[data-bo-theme="dark"] .pg-logo-preview,
+html[data-bo-theme="dark"] .gateway-list-logo{background:#2A2C36;border-color:rgba(255,255,255,.12);color:#A1A1AA}
+html[data-bo-theme="dark"] .pg-table th{background:#2A2C36;color:#F5F5F4}
+html[data-bo-theme="dark"] .pg-table th,
+html[data-bo-theme="dark"] .pg-table td{border-bottom-color:rgba(255,255,255,.10)}
+html[data-bo-theme="dark"] .pg-editor-head{border-bottom-color:rgba(255,255,255,.10)}
+html[data-bo-theme="dark"] body .pg-editor-actions{background:#2C2E38;border-top-color:rgba(255,255,255,.10)}
+
+/* Capabilities: "Deposit" and "Withdraw" sat side by side in a 150px field (nowrap), so Withdraw ran 9px past the
+   section card at tablet widths. They wrap onto a second line when the field is narrow. */
+html:not(#pg-caps-off) body .pg-section .pg-caps{flex-wrap:wrap!important;row-gap:6px!important}
+html[data-bo-theme="dark"] #pgEndpointForms summary b{color:#FBBF24}
