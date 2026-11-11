@@ -45,36 +45,61 @@ const PAGES = fs.readdirSync(path.join(__dirname, '..'))
   .sort();
 
 const PROBE = `
-  const out = [];
-  for (const t of document.querySelectorAll('table')) {
-    if (!t.offsetParent) continue;
-    const r = t.getBoundingClientRect();
-    if (r.width < 40) continue;
-    let el = t.parentElement, box = null;
-    while (el && el !== document.documentElement) {
-      const c = getComputedStyle(el);
-      if (/auto|scroll/.test(c.overflowX) || /hidden|clip/.test(c.overflowX) || /hidden|clip/.test(c.overflow)) {
-        box = { el, canScroll: /auto|scroll/.test(c.overflowX), cw: el.clientWidth, sw: el.scrollWidth };
-        break;
+  return (async () => {
+    const out = [];
+    for (const t of document.querySelectorAll('table')) {
+      if (!t.offsetParent) continue;
+      const r = t.getBoundingClientRect();
+      if (r.width < 40) continue;
+      let el = t.parentElement, box = null;
+      while (el && el !== document.documentElement) {
+        const c = getComputedStyle(el);
+        if (/auto|scroll/.test(c.overflowX) || /hidden|clip/.test(c.overflowX) || /hidden|clip/.test(c.overflow)) {
+          box = el; break;
+        }
+        el = el.parentElement;
       }
-      el = el.parentElement;
+      const cs = getComputedStyle(t);
+      const item = {
+        tableW: Math.round(r.width),
+        cols: t.querySelectorAll('thead th').length || t.querySelectorAll('tbody tr:first-child td').length,
+        minW: cs.minWidth,
+        boxW: box ? box.clientWidth : null,
+        hidden: box ? Math.max(0, box.scrollWidth - box.clientWidth) : 0,
+        canScroll: box ? /auto|scroll/.test(getComputedStyle(box).overflowX) : true,
+        synced: false,
+        noData: !!t.querySelector('tbody td.table-empty, tbody td[colspan]'),
+      };
+      /* A head table whose wrapper clips can still be reached: the wide listing pattern mounts a head wrapper with
+         overflow:hidden above a body wrapper with overflow-x:auto, and a scroll listener mirrors body.scrollLeft
+         onto the head. Test it - scroll the nearest scrolling sibling and see whether the clipped box followed -
+         instead of calling it unreachable on its overflow value alone. */
+      if (box && item.hidden > 0 && !item.canScroll) {
+        let scope = box.parentElement, scroller = null, hops = 0;
+        while (scope && hops++ < 4 && !scroller) {
+          scroller = [...scope.querySelectorAll('*')].find((n) => {
+            const c = getComputedStyle(n);
+            return /auto|scroll/.test(c.overflowX) && n.scrollWidth > n.clientWidth + 1;
+          }) || null;
+          scope = scope.parentElement;
+        }
+        if (scroller) {
+          const before = box.scrollLeft;
+          scroller.scrollLeft = 200;
+          await new Promise((done) => setTimeout(done, 150));
+          item.synced = box.scrollLeft !== before;
+          scroller.scrollLeft = 0;
+          await new Promise((done) => setTimeout(done, 60));
+        }
+      }
+      out.push(item);
     }
-    const cs = getComputedStyle(t);
-    out.push({
-      tableW: Math.round(r.width),
-      cols: t.querySelectorAll('thead th').length || t.querySelectorAll('tbody tr:first-child td').length,
-      minW: cs.minWidth,
-      boxW: box ? box.cw : null,
-      hidden: box ? Math.max(0, box.sw - box.cw) : 0,
-      canScroll: box ? box.canScroll : true,
-      noData: !!t.querySelector('tbody td.table-empty, tbody td[colspan]'),
-    });
-  }
-  return {
-    docOver: Math.max(0, document.documentElement.scrollWidth - innerWidth),
-    tables: out.slice(0, 3),
-    worst: out.reduce((a, x) => (x.hidden > (a ? a.hidden : 0) ? x : a), null),
-  };
+    return {
+      docOver: Math.max(0, document.documentElement.scrollWidth - innerWidth),
+      tables: out.slice(0, 3),
+      worst: out.reduce((a, x) => (x.hidden > (a ? a.hidden : 0) ? x : a), null),
+    };
+  })()
 `;
 
 const stateAt = (rec, w) => {
@@ -82,8 +107,8 @@ const stateAt = (rec, w) => {
   if (!r) return { state: 'ERR', n: 0 };
   const hidden = Math.max(r.docOver, r.worst ? r.worst.hidden : 0);
   if (!hidden) return { state: 'ok', n: 0 };
-  const canScroll = r.docOver > 0 ? false : (r.worst ? r.worst.canScroll : true);
-  return { state: canScroll ? 'scroll' : 'clip', n: hidden };
+  const reachable = r.docOver > 0 ? false : (r.worst ? (r.worst.canScroll || r.worst.synced) : true);
+  return { state: reachable ? 'scroll' : 'clip', n: hidden };
 };
 
 function summarize(data) {
@@ -126,8 +151,11 @@ a \`<table>\` (${s.rows.length} pages), at 1440 / 1280 / 1024 / 768 px wide and 
 local fake-data server does not answer render their empty state, so a ✓ there means "the empty table fits"; those
 rows are marked *(empty)* in the last section and their ✓ is provisional.
 
-- **CLIP** — the table is wider than its container and the container cannot be scrolled: the columns on the right
-  are unreachable.
+- **CLIP** — the table is wider than its container, the container cannot be scrolled by the user, AND scrolling the
+  page's other scroll box does not move it: the columns on the right are unreachable. The wide-listing pattern in
+  this repo mounts a head wrapper with overflow:hidden above a body wrapper that scrolls, and a scroll listener
+  mirrors body.scrollLeft onto the head, so the test scrolls the nearest scrolling sibling and checks whether the
+  clipped box followed before calling it unreachable.
 - **scroll** — the content is wider, but reachable by dragging a horizontal scrollbar.
 - **hard min-width** — the table's computed \`min-width\`. Where that is a fixed 1080/1240/1560px the width is a
   number written into CSS, not the content, which is the cheapest kind to remove.
@@ -143,8 +171,7 @@ rows are marked *(empty)* in the last section and their ✓ is provisional.
 ${s.err.length ? `| could not load | ${s.err.length} |\n` : ''}
 ## P0 — clipped, content unreachable
 
-${head}
-${s.p0.map(line).join('\n')}
+${s.p0.length ? head + '\n' + s.p0.map(line).join('\n') : '_None._ Every table wider than its box can be reached, in its own box or through the head/body mirror.'}
 
 ## P1 — horizontal scroll on a laptop (1440 / 1280)
 

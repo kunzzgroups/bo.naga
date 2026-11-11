@@ -1816,16 +1816,20 @@ body.report-body.bo-charcoal .report-avatar:not(:has(> i))::before{
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-account-role{
   color:#F59E0B!important;
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-account-link .report-avatar,
+/* Account avatar in dark = the shell's own avatar (bo-shell.css): flat #D97706, white glyph, no glow. This rule
+   used to light it to #F59E0B with a 16px amber halo and a dark glyph, so every bo-charcoal page glowed while the
+   pages without that class (Deposit Approval ...) did not. One avatar everywhere; hover is the same darker amber
+   the light theme uses. */
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-avatar{
-  background:#F59E0B!important;
-  color:#2A2C36!important;
-  box-shadow:0 0 0 1px rgba(245,158,11,.25),0 4px 16px rgba(245,158,11,.35)!important;
+  background:#D97706!important;
+  color:#FFFFFF!important;
+  box-shadow:none!important;
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-avatar i{
-  color:#2A2C36!important;
+  color:#FFFFFF!important;
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .report-avatar:not(:has(> i))::before{
-  color:#2A2C36!important;
+  color:#FFFFFF!important;
 }html[data-bo-theme="dark"] body.report-body.bo-charcoal .bo-account-link:hover .report-avatar{
-  background:#FBBF24!important;
+  background:#B45309!important;
 }/* Dark hover tips — soft charcoal + amber (replace navy/cyan) */
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-time-tip::after,
 html[data-bo-theme="dark"] body.report-body.bo-charcoal .mad-icon-btn[data-tip]::after{
