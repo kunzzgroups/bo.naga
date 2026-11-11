@@ -13,3 +13,10 @@ html:not(#bo-ref-off) body:not(#bo-ref-off-2).referral-page .ref-table .ref-memb
   overflow-wrap:anywhere!important;
   line-height:1.25!important;
 }
+
+/* Referral Reward Configuration dialog in the dark theme: the title was ink (#18191C) and the subtitle #57534E on
+   the #383A46 dialog (unreadable), and the Cancel / Save bar was the light cream #F5EBDC under dark fields. */
+html[data-bo-theme="dark"]:not(#bo-ref-off) body:not(#bo-ref-off-2).referral-page .ref-reward-dialog .ref-reward-dialog-head h3{color:#F5F5F4!important}
+html[data-bo-theme="dark"]:not(#bo-ref-off) body:not(#bo-ref-off-2).referral-page .ref-reward-dialog .ref-reward-dialog-head p{color:#A1A1AA!important}
+html[data-bo-theme="dark"]:not(#bo-ref-off) body:not(#bo-ref-off-2).referral-page .ref-reward-dialog .ref-reward-dialog-head{border-bottom-color:rgba(255,255,255,.10)!important}
+html[data-bo-theme="dark"]:not(#bo-ref-off) body:not(#bo-ref-off-2).referral-page .ref-reward-dialog .ref-reward-dialog-actions{background:#2C2E38!important;border-top:1px solid rgba(255,255,255,.10)!important}
