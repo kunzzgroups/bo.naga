@@ -1113,3 +1113,44 @@ body.bo-wallet-tx.promotion-log-page .pl-table-footer .page-btn:disabled{
     min-height:44px!important;
   }
 }
+
+/* Dark fixes for the footer and filter row (Promotion Log).
+   The dark rules above lost on specificity: the light "Show N" recipe is stated with
+   `.report-main .table-footer.pl-table-footer > .entries-control ...` (7 classes), the dark ones without
+   `.report-main` / `.table-footer` (6), so in dark the size select stayed a cream island and the
+   "Show" / "entries" words stayed #57534E on #383A46. These carry 8 and win on weight, not on order. */
+html[data-bo-theme="dark"] body.bo-wallet-tx.promotion-log-page .report-main .table-footer.pl-table-footer > .entries-control{
+  color:#D4D4D8!important;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.promotion-log-page .report-main .table-footer.pl-table-footer > .entries-control .rounded-select-btn{
+  background:#2A2C36!important;
+  background-color:#2A2C36!important;
+  background-image:none!important;
+  border-color:rgba(255,255,255,.12)!important;
+  color:#F5F5F4!important;
+  -webkit-text-fill-color:#F5F5F4;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.promotion-log-page .report-main .table-footer.pl-table-footer > .entries-control .rounded-select-btn .bi{
+  color:#A1A1AA!important;
+  -webkit-text-fill-color:#A1A1AA;
+}
+html[data-bo-theme="dark"] body.bo-wallet-tx.promotion-log-page .report-main .table-footer.pl-table-footer > .entries-control .rounded-select-btn.open,
+html[data-bo-theme="dark"] body.bo-wallet-tx.promotion-log-page .report-main .table-footer.pl-table-footer > .entries-control .rounded-select-btn:focus{
+  border-color:#F59E0B!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.18)!important;
+}
+/* The current page is not "unavailable": with a single page every button is disabled, and the
+   .45 opacity above turned the amber "1" into a muddy brown. Arrows stay dimmed; the current page does not. */
+html body.bo-wallet-tx.promotion-log-page .pl-table-footer .page-btn.active:disabled{
+  opacity:1!important;
+  cursor:default!important;
+}
+/* Keyword box: radius 8 like the date trigger beside it (reports.css `.field input` forces 10). */
+html body.bo-wallet-tx.promotion-log-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .promotion-log-ops .bo-filter-row #dbgKeyword{
+  border-radius:8px!important;
+}
+/* ...and in dark, reports.css states `.report-content input:not(...)...` at 10px with 9 :not(#id) steps, so the
+   keyword box needs the same ID weight on top of the rule above. */
+html[data-bo-theme="dark"] body.bo-wallet-tx.promotion-log-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy):not(#bo-pl-r-1):not(#bo-pl-r-2):not(#bo-pl-r-3):not(#bo-pl-r-4):not(#bo-pl-r-5):not(#bo-pl-r-6):not(#bo-pl-r-7) .report-main .promotion-log-ops .bo-filter-row #dbgKeyword{
+  border-radius:8px!important;
+}
