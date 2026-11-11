@@ -1,0 +1,96 @@
+/* Online Users — the table at laptop and tablet widths.
+   ----------------------------------------------------------------------------------------------
+   This page shares .user-main-table with User Management, and bo-charcoal-legacy pins that table at
+   width:max(100%,1560px); min-width:1560px. Its twelve columns measure 1559 naturally, so the floor
+   only mattered below a ~1820px window - and below it the card scrolled: measured 274px hidden at
+   1560, 394 at 1440, 554 at 1280, 810 at 1024, 828 at 768.
+
+   The columns that go are the ones this list is not read for. "Online Users" answers who is on, how
+   to reach them, what they hold, whether the account is live, when they were last seen; Register
+   Date, Last Login, VIP Level and KYC Status all live on the member's own screens.
+
+     1820+   12 columns, unchanged (the natural 1559 fits its 1558 frame)
+     1450     minus Last Login, VIP Level, KYC Status        -> 1187
+     1232     minus Register Date                            -> 970
+     1108     minus Bank                                     -> 846
+     <=1107   minus Main Wallet                              -> 707
+
+   Every width below is the measured need of that column at 13px/700 (header or cell, whichever is
+   wider), in px rather than percentages: a reduced set with percentage widths still asked for its
+   share of a 1560px table and the headings ellipsised themselves (the same miss as rebate-log).
+
+   Selectors carry three :not(#id) steps. bo-charcoal-legacy states the floor twice - once for light
+   and once under html[data-bo-theme="dark"] - with two id steps and !important, so two steps of our
+   own would lose in dark mode wherever the attribute outranked the class count. */
+
+/* the floor, per page rather than per family */
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table{
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  table-layout:fixed!important;
+}
+
+/* column widths by position: this table is static markup, so nth-child is stable */
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table th:nth-child(1),
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table td:nth-child(1){width:44px}
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table th:nth-child(2),
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table td:nth-child(2){width:217px}
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table th:nth-child(3),
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table td:nth-child(3){width:186px}
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table th:nth-child(4),
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table td:nth-child(4){width:186px}
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table th:nth-child(5),
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table td:nth-child(5){width:124px}
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table th:nth-child(6),
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table td:nth-child(6){width:139px}
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table th:nth-child(7),
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table td:nth-child(7){width:124px}
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table th:nth-child(8),
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table td:nth-child(8){width:124px}
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table th:nth-child(9),
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table td:nth-child(9){width:124px}
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table th:nth-child(10),
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table td:nth-child(10){width:108px}
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table th:nth-child(11),
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table td:nth-child(11){width:93px}
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table th:nth-child(12),
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table td:nth-child(12){width:90px}
+
+/* headers were nowrap + ellipsis in the legacy sheet; two short lines read, "REGISTER DA…" does not */
+html:not(#bo-online-users-off):not(#bo-ou-base):not(#bo-ou-base-2) body.online-users-page.report-body.bo-charcoal .user-main-table thead th{
+  white-space:normal!important;
+  text-overflow:clip!important;
+  overflow:visible!important;
+  line-height:1.15!important;
+}
+
+@media (max-width:1819.98px){
+  html:not(#bo-online-users-off):not(#bo-ou-a):not(#bo-ou-a-2) body.online-users-page.report-body.bo-charcoal .user-main-table th:nth-child(7),
+  html:not(#bo-online-users-off):not(#bo-ou-a):not(#bo-ou-a-2) body.online-users-page.report-body.bo-charcoal .user-main-table td:nth-child(7){display:none!important}
+  html:not(#bo-online-users-off):not(#bo-ou-a):not(#bo-ou-a-2) body.online-users-page.report-body.bo-charcoal .user-main-table th:nth-child(8),
+  html:not(#bo-online-users-off):not(#bo-ou-a):not(#bo-ou-a-2) body.online-users-page.report-body.bo-charcoal .user-main-table td:nth-child(8){display:none!important}
+  html:not(#bo-online-users-off):not(#bo-ou-a):not(#bo-ou-a-2) body.online-users-page.report-body.bo-charcoal .user-main-table th:nth-child(9),
+  html:not(#bo-online-users-off):not(#bo-ou-a):not(#bo-ou-a-2) body.online-users-page.report-body.bo-charcoal .user-main-table td:nth-child(9){display:none!important}
+}
+@media (max-width:1449.98px){
+  html:not(#bo-online-users-off):not(#bo-ou-b):not(#bo-ou-b-2) body.online-users-page.report-body.bo-charcoal .user-main-table th:nth-child(2),
+  html:not(#bo-online-users-off):not(#bo-ou-b):not(#bo-ou-b-2) body.online-users-page.report-body.bo-charcoal .user-main-table td:nth-child(2){display:none!important}
+}
+@media (max-width:1231.98px){
+  html:not(#bo-online-users-off):not(#bo-ou-c):not(#bo-ou-c-2) body.online-users-page.report-body.bo-charcoal .user-main-table th:nth-child(5),
+  html:not(#bo-online-users-off):not(#bo-ou-c):not(#bo-ou-c-2) body.online-users-page.report-body.bo-charcoal .user-main-table td:nth-child(5){display:none!important}
+}
+@media (max-width:1107.98px){
+  html:not(#bo-online-users-off):not(#bo-ou-d):not(#bo-ou-d-2) body.online-users-page.report-body.bo-charcoal .user-main-table th:nth-child(6),
+  html:not(#bo-online-users-off):not(#bo-ou-d):not(#bo-ou-d-2) body.online-users-page.report-body.bo-charcoal .user-main-table td:nth-child(6){display:none!important}
+}
+
+/* and the action row above the table: at 1024 it ran 146px past the card - "Export" and "User
+   Management" were cut off with nothing to scroll (measured right 1146 against a card ending at
+   1000). It wraps inside the card now, like the rest of the toolbar. */
+@media (max-width:1231.98px){
+  html:not(#bo-online-users-off):not(#bo-ou-act):not(#bo-ou-act-2) body.online-users-page.report-body.bo-charcoal .user-toolbar-actions{
+    flex-wrap:wrap!important;width:100%!important;max-width:100%!important;justify-content:flex-end!important;margin-left:0!important;
+  }
+}
