@@ -23,8 +23,30 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
+const https = require('https');
 const ROOT = path.resolve(__dirname, '..');
-const PORT = Number(process.argv[2] || 8123);
+const ARGS = process.argv.slice(2);
+const PORT = Number(ARGS.find((a) => /^\d+$/.test(a)) || 8123);
+/* --live: no fake login, no fake data. Pages are served from this repo, and every /api/ request is
+   forwarded to the REAL backend (same origin for the browser, so no CORS). You sign in yourself at
+   /login.html with your own account. This is the production API: approving/rejecting/saving here
+   changes real data. Override the target with BO_UPSTREAM=https://host. */
+const LIVE = ARGS.includes('--live');
+const UPSTREAM = new URL(process.env.BO_UPSTREAM || 'https://bo.titanx7.com');
+const LIVE_STUB = `<script>(function(){try{
+  localStorage.setItem('bo_api_base',location.origin+'/api');
+  var t=new URLSearchParams(location.search).get('theme'); if(t==='dark'||t==='light') localStorage.setItem('bo_theme',t);
+}catch(e){}})();</script>`;
+function proxy(req, res) {
+  const headers = { ...req.headers, host: UPSTREAM.host };
+  delete headers.origin; delete headers.referer;
+  const up = https.request({ hostname: UPSTREAM.hostname, port: UPSTREAM.port || 443, method: req.method, path: req.url, headers }, (r) => {
+    res.writeHead(r.statusCode, r.headers);
+    r.pipe(res);
+  });
+  up.on('error', (e) => { res.writeHead(502, { 'Content-Type': 'text/plain' }); res.end('proxy error: ' + e.message); });
+  req.pipe(up);
+}
 const TYPES = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json',
   '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.gif': 'image/gif', '.webp': 'image/webp',
@@ -57,7 +79,9 @@ window.fetch=function(url,opt){
   var list=[], data={content:list,items:list,list:list,rows:list,records:list,totalPages:1,totalElements:0,total:0,page:1,size:20};
   var pg={totalPages:1,totalElements:0,page:1,size:20};
   if(/member-deposit\\/list|member-withdraw\\/list/.test(u)){ var p=pageOf(u); pg={totalPages:p.pages,totalElements:p.total,page:p.page,size:p.size}; data={content:p.slice,items:p.slice,list:p.slice,pagination:pg,totalPages:p.pages,totalElements:p.total,total:p.total,page:p.page,size:p.size}; }
-  else if(/payment-method\\/list/.test(u)) data=[{id:1,name:'TEST2',bankName:'TEST2',bankUsage:99},{id:2,name:'Maybank',bankName:'Maybank',bankUsage:0}];
+  else if(/payment-method\\/list/.test(u)){ var names=['TEST2','Maybank','Hong Leong Bank','TEST BANK','Test 123','CIMB','Public Bank','RHB'];
+    data=[];for(var m=0;m<30;m++){var nm=names[m%names.length]+(m>=names.length?' '+(m+1):'');data.push({id:m+1,name:nm,bankName:nm,displayName:nm,accountName:'Account '+(m+1),accountNumber:'1234567'+(100+m),minAmount:10,maxAmount:m%3===0?0:50000,dailyLimit:m%2?20000:0,status:m%4===3?0:1,visible:true,showOnDeposit:true,isShow:true,bankUsage:m*10});} }
+  else if(/payment-gateway\\/list/.test(u)) data={content:[{id:1,gatewayCode:'S1PAY',displayName:'S1PAY',baseUrl:'https://s.s1pay.site',status:1,logoUrl:'',endpoints:[{actionType:'DEPOSIT',enabled:true},{actionType:'WITHDRAW',enabled:true}],channels:[{id:1},{id:2},{id:3},{id:4}]}]};
   else if(/auth\\/admin\\/me/.test(u)) data=JSON.parse(localStorage.getItem('bo_admin_user'));
   return Promise.resolve(new Response(JSON.stringify({status:'success',message:'ok',data:data,pagination:pg}),{status:200,headers:{'Content-Type':'application/json'}}));
 };
@@ -65,6 +89,7 @@ window.fetch=function(url,opt){
 
 http.createServer((req, res) => {
   const p = decodeURIComponent(String(req.url || '/').split('?')[0]);
+  if (LIVE && p.startsWith('/api/')) return proxy(req, res);
   if (p.startsWith('/api/')) {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     return res.end('{"status":"success","data":{}}');
@@ -75,7 +100,7 @@ http.createServer((req, res) => {
     if (err) { res.writeHead(404); return res.end('not found'); }
     const ext = path.extname(file).toLowerCase();
     res.writeHead(200, { 'Content-Type': TYPES[ext] || 'application/octet-stream', 'Cache-Control': 'no-store' });
-    if (ext === '.html') return res.end(buf.toString('utf8').replace(/<head>/i, '<head>' + STUB));
+    if (ext === '.html') return res.end(buf.toString('utf8').replace(/<head>/i, '<head>' + (LIVE ? LIVE_STUB : STUB)));
     res.end(buf);
   });
-}).listen(PORT, '127.0.0.1', () => console.log('dev harness: http://127.0.0.1:' + PORT + '/index.html'));
+}).listen(PORT, '127.0.0.1', () => console.log((LIVE ? 'LIVE (real API via ' + UPSTREAM.host + ')' : 'dev harness (fake data)') + ': http://127.0.0.1:' + PORT + (LIVE ? '/login.html' : '/index.html')));
