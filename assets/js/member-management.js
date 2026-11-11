@@ -64,7 +64,22 @@
   /* Default View: Register Date · Name / Username · Mobile · Main Wallet · Status · Web Status · VIP · Last Login · KYC · Remark · Action */
   const DEFAULT_MEMBER_COLUMNS = ['select','registerDate','name','mobile','mainWallet','status','webStatus','vipLevel','lastLogin','kycStatus','remark','action'];
   const UNSORTABLE_COLS = new Set(['select','action']);
-  let visibleMemberColumns = new Set(DEFAULT_MEMBER_COLUMNS);
+  /* Columns by screen, because this table has twelve of them and a tablet does not: measured, it is 1560px wide
+     against a 750px frame on an iPad in landscape and 732px in portrait - twice the screen. Below 1440 the two
+     reference-heavy columns go; on a tablet - and on any window narrow enough that the sidebar is open and the frame is under the ten-column
+     need, which is what an iPad in landscape at 1024 does - only the six a member list is
+     actually read for are kept: who, how to reach them, what they hold, whether the account is live, and the row
+     action. The Columns menu still offers all twelve and Default View restores this set, not the full one. */
+  const LAPTOP_MEMBER_COLUMNS = ['select','registerDate','name','mobile','mainWallet','status','vipLevel','lastLogin','kycStatus','action'];
+  const TABLET_MEMBER_COLUMNS = ['select','name','mobile','mainWallet','status','action'];
+  function defaultMemberColumns(){
+    try{
+      if(window.matchMedia('(max-width:1225.98px)').matches) return TABLET_MEMBER_COLUMNS.slice();
+      if(window.matchMedia('(max-width:1439.98px)').matches) return LAPTOP_MEMBER_COLUMNS.slice();
+    }catch(e){}
+    return DEFAULT_MEMBER_COLUMNS.slice();
+  }
+  let visibleMemberColumns = new Set(defaultMemberColumns());
   let memberCurrentPage = 1;
   let memberPageSize = 12;
   let memberFilteredRows = [];
@@ -83,7 +98,9 @@
     const avail=Math.max(0,Math.floor(scroll.clientHeight)-headH);
     const sample=scroll.querySelector('tbody tr td');
     const rowH=sample?Math.max(38,Math.round(sample.getBoundingClientRect().height)):41;
-    return Math.max(5,Math.min(200,Math.floor(avail/rowH)||12));
+    /* floor only: the old Math.max(5, ...) is a promise to overflow - on a 1024-wide iPad the body has room for
+       3 rows, not 5 (measured: 288px of rows inside a 213px scroller, so the last row was cut in half). */
+    return Math.max(1,Math.min(200,Math.floor(avail/rowH)||12));
   }
   function autoFitPageSize(){
     if(lockedAutoSize!=null) return lockedAutoSize;
@@ -745,7 +762,7 @@
       const disabled = !checked && limitReached;
       return `<label class="${disabled?'is-disabled':''}"><input type="checkbox" data-member-col="${c.key}" ${checked?'checked':''} ${disabled?'disabled':''}> <span>${esc(c.label)}</span></label>`;
     }).join('') + '<button type="button" class="column-default-btn" id="memberColumnsDefaultBtn">Default View</button>';
-    document.getElementById('memberColumnsDefaultBtn')?.addEventListener('click', function(){ visibleMemberColumns = new Set(DEFAULT_MEMBER_COLUMNS); buildColumnsMenu(); applySearch(); });
+    document.getElementById('memberColumnsDefaultBtn')?.addEventListener('click', function(){ visibleMemberColumns = new Set(defaultMemberColumns()); buildColumnsMenu(); applySearch(); });
   }
   function bindColumnTools(){
     buildColumnsMenu();
