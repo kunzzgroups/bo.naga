@@ -515,7 +515,9 @@ html[data-bo-theme="dark"] body.bo-wallet-tx.bulk-bonus-adjustment-page .member-
 body.bo-wallet-tx.bulk-adjustment-page .member-picker-grid,
 body.bo-wallet-tx.bulk-bonus-adjustment-page .member-picker-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  /* 280, not 200: a card needs ~290px for avatar + ID/mobile line + VIP chip + balance; at 200-250 the
+     member line was cut to 'Member 1 · 011000…' at every width. One column below that. */
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
   gap:8px;
   align-content:start;
   width:100%;
