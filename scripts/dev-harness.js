@@ -84,6 +84,14 @@ window.fetch=function(url,opt){
   else if(/payment-gateway\\/list/.test(u)) data={content:[{id:1,gatewayCode:'S1PAY',displayName:'S1PAY',baseUrl:'https://s.s1pay.site',status:1,logoUrl:'',endpoints:[{actionType:'DEPOSIT',enabled:true},{actionType:'WITHDRAW',enabled:true}],channels:[{id:1},{id:2},{id:3},{id:4}]}]};
   else if(/admin\\/rebate\\/rules$|admin\\/rebate\\/rules\\?/.test(u)){ data=[];for(var k=1;k<=24;k++)data.push({id:k,name:'Test '+k,priority:k,providerCode:k%3?'':'PGSOFT',gameCategory:k%2?'':'SLOT',minValidBet:1,maxValidBet:k%4?0:5000,rebateRate:k%5+0.5,maxRebate:k%4?0:200,combinationMode:'HIGHER_RATE',claimMode:k%2?'AUTO':'MANUAL',settlementCycle:'DAILY',status:k%6?1:0}); }
   else if(/admin\\/rebate\\/worker-settings/.test(u)) data={enabled:true,timeZone:'Asia/Kuala_Lumpur',dailyTime:'00:01',weeklyOffDay:'MONDAY',monthlyDay:1};
+  /* Manual rebate approval: server-paged, so the fake list honours page/size the way the real one does. */
+  else if(/admin\\/rebate\\/manual-approval/.test(u)&&!/\\/approve/.test(u)){
+    var qa=new URLSearchParams(u.split('?')[1]||''),sz=Number(qa.get('size'))||20,pgNo=Math.max(0,Number(qa.get('page'))||0),all=[];
+    for(var ma=1;ma<=37;ma++){var lv=ma%3?0:12.5,sv=ma*1.8,sc=ma%4?0:3;
+      all.push({memberId:100+ma,username:['0123456789','testboo','abc123'][ma%3]+ma,approvable:ma%5!==0,liveValidTurnover:lv,slotValidTurnover:sv,soccerValidTurnover:sc,totalValidTurnover:lv+sv+sc,totalRebateAmount:(lv+sv+sc)/100,status:ma%3===0?'CREDITED':ma%2?'PENDING_APPROVAL':'AVAILABLE'});}
+    var sl=all.slice(pgNo*sz,pgNo*sz+sz),tp=Math.max(1,Math.ceil(all.length/sz));
+    data={content:sl,totalElements:all.length,totalPages:tp,number:pgNo,numberOfElements:sl.length,size:sz,first:pgNo===0,last:pgNo>=tp-1};
+  }
   else if(/admin\\/rebate\\/batches/.test(u)) data=[{id:1,status:'COMPLETED',processedCount:2,businessDate:'2026-10-08'}];
   else if(/auth\\/admin\\/me/.test(u)) data=JSON.parse(localStorage.getItem('bo_admin_user'));
   return Promise.resolve(new Response(JSON.stringify({status:'success',message:'ok',data:data,pagination:pg}),{status:200,headers:{'Content-Type':'application/json'}}));

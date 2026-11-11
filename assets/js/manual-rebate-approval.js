@@ -3,7 +3,46 @@ function headers(json){const h=Object.assign({},window.BO_AUTH&&BO_AUTH.authHead
 async function request(url,opt){opt=opt||{};opt.headers=Object.assign(headers(!!opt.body),opt.headers||{});const r=await fetch(url,opt),j=await r.json().catch(()=>({}));if(!r.ok||j.status==='error')throw Error(j.message||'Request failed');return j.data;}
 function today(){if(window.BO_FORMAT?.today)return BO_FORMAT.today();const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}function modal(id,on){const e=$(id);e.classList.toggle('show',on);e.setAttribute('aria-hidden',on?'false':'true');}
 function status(v){const x=String(v||'').toUpperCase(),ok=x==='CREDITED',warn=x==='PENDING_APPROVAL'||x==='AVAILABLE';return '<span class="standard-status '+(ok?'active':warn?'pending':'inactive')+'"><i></i>'+esc(x.replaceAll('_',' '))+'</span>';}
-function resolvePageSize(raw){const v=String(raw??'20').trim();if(v==='-'||v==='')return 20;if(/^all$/i.test(v))return 10000;const n=Number(v);return Number.isFinite(n)&&n>0?n:20;}
+/* Show entries "-" = FIT, the rebate-management recipe: as many rows as this screen's table area shows, so the
+   list never needs a scrollbar. The scroller here is .standard-table-wrap with the thead inside it (measured
+   547px of room at 1560x890, header 40), so the room for rows is the wrap minus that header. The list is
+   server-paged, so the count is discovered in two steps - ask with the remembered size, measure the rows that
+   come back, then ask once for the count that fits. Bound like the other page: asking twice for the same count
+   is refused, and at most four corrections run inside two seconds. */
+const fitBody=$('rows');
+const fitWrap=fitBody?fitBody.closest('.standard-table-wrap'):null;
+const fitState={lock:null,last:null,n:0,t:0};
+const isAutoSize=()=>{const v=String($('pageSize').value??'-').trim();return v===''||v==='-'||/^auto$/i.test(v);};
+function fitRows(){return [...fitBody.querySelectorAll('tr')].filter(r=>r.querySelectorAll('td').length>2);}
+function fitRoom(){if(!fitWrap)return 0;const head=fitWrap.querySelector('thead');return Math.max(0,fitWrap.clientHeight-(head?head.getBoundingClientRect().height:0));}
+function fitWant(){
+  const rows=fitRows(),room=fitRoom();if(!rows.length||!room)return null;
+  const rowH=rows.reduce((s,x)=>s+x.getBoundingClientRect().height,0)/rows.length;
+  let want=Math.max(1,Math.min(200,Math.floor(room/Math.max(30,rowH))));
+  if(fitWrap.scrollHeight>fitWrap.clientHeight+1)want=Math.max(1,Math.min(want,rows.length-1));
+  return want;
+}
+function settleFit(requested,painted){
+  if(!isAutoSize()){fitState.lock=null;fitState.last=null;return;}
+  const room=fitWant();if(room==null)return;
+  const want=Math.max(1,painted<requested?Math.min(room,painted):room);   /* last page: cannot grow past what exists */
+  if(want===painted){fitState.lock=want;return;}                           /* already exactly right: no extra request */
+  if(want===fitState.lock)return;
+  const now=Date.now();fitState.n=now-fitState.t<2000?fitState.n+1:1;fitState.t=now;
+  if(fitState.n>4||fitState.last===want)return;
+  fitState.last=want;fitState.lock=want;load();
+}
+function bindFit(){
+  if(window.__boMraFit){try{window.__boMraFit.stop();}catch(e){}window.__boMraFit=null;}
+  let t=0;
+  const kick=()=>{if(!isAutoSize()||fitState.lock==null)return;const w=fitWant();if(w==null||w===fitState.lock||w===fitRows().length)return;fitState.last=null;fitState.lock=w;load();};
+  const later=()=>{clearTimeout(t);t=setTimeout(kick,180);};
+  let ro=null;
+  if(fitWrap&&window.ResizeObserver){ro=new ResizeObserver(later);ro.observe(fitWrap);}
+  window.addEventListener('resize',later);
+  window.__boMraFit={stop(){clearTimeout(t);if(ro)ro.disconnect();window.removeEventListener('resize',later);}};
+}
+function resolvePageSize(raw){const v=String(raw??'20').trim();if(v==='-'||v==='')return fitState.lock||20;if(/^all$/i.test(v))return 10000;const n=Number(v);return Number.isFinite(n)&&n>0?n:20;}
 function updateSelection(){const n=allMatching?Number($('sumMembers').textContent.replace(/,/g,''))||0:selected.size;$('sumSelected').textContent=n.toLocaleString('en-US');const hint=$('selectionHint');if(hint)hint.textContent=allMatching?'All matching results selected':n+' member(s) selected';$('selectAllResults').checked=allMatching;$('headerCheck').checked=current.filter(x=>x.approvable).length>0&&current.filter(x=>x.approvable).every(x=>selected.has(x.memberId)||allMatching);}
 function syncRange(){const f=$('manualFrom'),t=$('manualTo');if(f&&t){const from=f.value||today(),to=t.value||from;f.value=from;t.value=to;$('dateFilter').value=to;return{from,to};}const d=$('dateFilter').value||today();return{from:d,to:d};}
 /* Only the newest request may write: a filter change fires load() while an earlier request is
@@ -23,7 +62,7 @@ async function loadAllTimeTotals(){
     $('sumDate').textContent='All time';
   }catch(e){/* leave the strip rather than show a partial total */}
 }
-async function load(){const seq=++loadSeq;const range=syncRange();const size=resolvePageSize($('pageSize').value),q=new URLSearchParams({date:range.to,dateFrom:range.from,dateTo:range.to,page,size});if($('searchFilter').value.trim())q.set('search',$('searchFilter').value.trim());if($('statusFilter').value)q.set('status',$('statusFilter').value);$('rows').innerHTML='<tr><td colspan="9" class="table-empty">Loading...</td></tr>';try{const d=await request(base+'/api/admin/rebate/manual-approval?'+q)||{};if(seq!==loadSeq)return;current=d.content||[];last=Math.max(0,(d.totalPages||0)-1);$('rows').innerHTML=current.length?current.map(x=>'<tr><td><input class="row-check" type="checkbox" data-id="'+x.memberId+'" '+(!x.approvable?'disabled':'')+' '+(selected.has(x.memberId)||allMatching?'checked':'')+'></td><td><div class="table-primary">'+esc(x.username)+'</div><small>#'+esc(x.memberId)+'</small></td><td>'+money(x.liveValidTurnover)+'</td><td>'+money(x.slotValidTurnover)+'</td><td>'+money(x.soccerValidTurnover)+'</td><td><b>'+money(x.totalValidTurnover)+'</b></td><td><b>'+money(x.totalRebateAmount)+'</b></td><td>'+status(x.status)+'</td><td><button class="icon-action-btn view" data-detail="'+x.memberId+'" title="View"><i class="bi bi-eye"></i></button></td></tr>').join(''):'<tr><td colspan="9" class="table-empty">No rebate records found.</td></tr>';const from=d.numberOfElements?d.number*size+1:0,to=d.number*size+(d.numberOfElements||0);$('showing').textContent='Showing '+from+' to '+to+' of '+(d.totalElements||0)+' entries';/* Tiles: loadAllTimeTotals() paints them from an all-time call (see below). */renderPager(d.number||0,d.totalPages||0);updateSelection();}catch(e){if(seq!==loadSeq)return;$('rows').innerHTML='<tr><td colspan="9" class="table-empty">'+esc(e.message)+'</td></tr>';if(window.BO_DIALOG)BO_DIALOG.alert(e.message,{title:'Unable to Load',type:'error'});}}
+async function load(){const seq=++loadSeq;const range=syncRange();const size=resolvePageSize($('pageSize').value),q=new URLSearchParams({date:range.to,dateFrom:range.from,dateTo:range.to,page,size});if($('searchFilter').value.trim())q.set('search',$('searchFilter').value.trim());if($('statusFilter').value)q.set('status',$('statusFilter').value);$('rows').innerHTML='<tr><td colspan="9" class="table-empty">Loading...</td></tr>';try{const d=await request(base+'/api/admin/rebate/manual-approval?'+q)||{};if(seq!==loadSeq)return;current=d.content||[];last=Math.max(0,(d.totalPages||0)-1);$('rows').innerHTML=current.length?current.map(x=>'<tr><td><input class="row-check" type="checkbox" data-id="'+x.memberId+'" '+(!x.approvable?'disabled':'')+' '+(selected.has(x.memberId)||allMatching?'checked':'')+'></td><td><div class="table-primary">'+esc(x.username)+'</div><small>#'+esc(x.memberId)+'</small></td><td>'+money(x.liveValidTurnover)+'</td><td>'+money(x.slotValidTurnover)+'</td><td>'+money(x.soccerValidTurnover)+'</td><td><b>'+money(x.totalValidTurnover)+'</b></td><td><b>'+money(x.totalRebateAmount)+'</b></td><td>'+status(x.status)+'</td><td><button class="icon-action-btn view" data-detail="'+x.memberId+'" title="View"><i class="bi bi-eye"></i></button></td></tr>').join(''):'<tr><td colspan="9" class="table-empty">No rebate records found.</td></tr>';const from=d.numberOfElements?d.number*size+1:0,to=d.number*size+(d.numberOfElements||0);$('showing').textContent='Showing '+from+' to '+to+' of '+(d.totalElements||0)+' entries';/* Tiles: loadAllTimeTotals() paints them from an all-time call (see below). */renderPager(d.number||0,d.totalPages||0);updateSelection();settleFit(size,current.length);}catch(e){if(seq!==loadSeq)return;$('rows').innerHTML='<tr><td colspan="9" class="table-empty">'+esc(e.message)+'</td></tr>';if(window.BO_DIALOG)BO_DIALOG.alert(e.message,{title:'Unable to Load',type:'error'});}}
 function renderPager(cur,total){
   const pages=Math.max(1,Number(total)||0);
   const page=Math.max(0,Math.min(Number(cur)||0,Math.max(0,pages-1)));
@@ -61,5 +100,6 @@ try{
   if($('manualTo'))$('manualTo').value=y;
 }
 $('dateFilter').value=$('manualTo')?$('manualTo').value:y;
+bindFit();
 load();
 loadAllTimeTotals();})();

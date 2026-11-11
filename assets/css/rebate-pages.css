@@ -1190,3 +1190,11 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .standard-da
   .clean-btn,.icon-action-btn,.page-btn{transition:none}
   .clean-btn:hover,.clean-btn:active{transform:none}
 }
+
+/* The current page is not "unavailable": with an empty result renderPager marks "1" as the current page AND
+   disables it (there is nowhere to go), and bo-charcoal-cms's .page-btn:disabled{opacity:.45} then turned the
+   amber button into a muddy grey one - read as "my pager is grey" on Rebate Approval. Same miss that was fixed
+   on Promotion Log: the arrows stay dimmed, the current page keeps its full colour. Scoped to the one page that
+   has this pager; kept in this sheet rather than bo-charcoal-cms so the cache key moves for 8 rebate-family
+   pages instead of 36 unrelated ones. */
+html body.manual-rebate-approval-page.report-body.bo-charcoal:not(#bo-charcoal-off) .page-btn.active:disabled { opacity: 1 !important; cursor: default !important; }
