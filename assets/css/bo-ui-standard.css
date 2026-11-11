@@ -1035,3 +1035,45 @@ html[data-bo-theme="dark"] .report-main .bo-filter-row input::placeholder{
   -webkit-text-fill-color:#A1A1AA!important;
   opacity:1!important;
 }
+
+/* Table headers wrap instead of ending in "...". A header that does not fit its column is a bug in the
+   column's width, but the stock answer - white-space:nowrap + text-overflow:ellipsis set in reports.css -
+   hides the words that say what the column is ("Collect from Merch...", "Progression Steps" cut in half).
+   Headers may now break between words onto a second line; the row height follows. html body.report-body
+   carries enough weight to beat the per-sheet nowrap rules (reports.css, reports-dashboard-original.css).
+   bo-charcoal-legacy.css states nowrap!important per page (`.online-users-page ... thead th`, `.user-main-table thead
+   th`) at two ID steps, so this carries three `:not(#id)` steps (three ids: the kill switches below, unused). */
+html:not(#bo-th-wrap-off) body.report-body:not(#bo-th-wrap-off-2) table:not(#bo-th-wrap-off-3) thead th{
+  white-space:normal!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  line-height:1.3!important;
+  overflow-wrap:normal!important;
+}
+
+/* Table body text. Two kinds of cell, two rules:
+   - A LONG sentence (a detail, a user agent, an audit note) is marked td.detail-cell with a div.detail-clamp inside.
+     It shows two lines and an ellipsis; the full text is the cell's title, so nothing is lost, and the row height
+     stays bounded (an unbounded sentence made one 241px row in the operation log).
+   - Every other cell may wrap at spaces, so a bank name or a usage note is never ellipsized. A single token too long
+     for its column breaks as a last resort. `.nowrap` opts a cell out (dates, IDs that must stay on one line).
+   Three :not(#id) steps, as the header rule: per-page sheets state nowrap / overflow:hidden with more weight. */
+html:not(#bo-td-wrap-off) body.report-body:not(#bo-td-wrap-off-2) .report-main table tbody td:not(.nowrap):not(.detail-cell):not(#bo-td-wrap-off-3){
+  white-space:normal!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  overflow-wrap:break-word!important;
+}
+html:not(#bo-td-wrap-off) body.report-body:not(#bo-td-wrap-off-2) .report-main table tbody td.detail-cell:not(#bo-td-wrap-off-3){
+  white-space:normal!important;
+  overflow:visible!important;
+  overflow-wrap:anywhere!important;
+}
+html:not(#bo-td-wrap-off) body.report-body:not(#bo-td-wrap-off-2) .report-main table tbody td.detail-cell .detail-clamp:not(#bo-td-wrap-off-3){
+  display:-webkit-box!important;
+  -webkit-box-orient:vertical!important;
+  -webkit-line-clamp:2!important;
+  line-clamp:2!important;
+  overflow:hidden!important;
+  line-height:1.35!important;
+}
