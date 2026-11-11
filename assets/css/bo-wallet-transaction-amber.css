@@ -3547,15 +3547,51 @@ body.bo-wallet-tx.withdraw-approval-page .report-content{
   gap:clamp(10px,1.2vw,14px)!important;
 }
 /* trimmed: mojibake bloat removed */
-@media (max-width:1456px){
-  body.bo-wallet-tx.deposit-approval-page .bo-tx-datetime-time,
-body.bo-wallet-tx.withdraw-approval-page .bo-tx-datetime-time{
-    display:none!important;
-  }
-  body.bo-wallet-tx.deposit-approval-page .bo-tx-datetime,
+/* Date cell: DD/MM/YYYY, time on hover (member-deposit.js / member-withdraw.js / the All switcher
+   write `data-tip` = HH:MM:SS). The cell never truncates; the tip is the shared cream pill. */
+body.bo-wallet-tx.deposit-approval-page .bo-tx-datetime,
 body.bo-wallet-tx.withdraw-approval-page .bo-tx-datetime{
-    cursor:help;
+  display:inline-block;white-space:nowrap;font-variant-numeric:tabular-nums;
+}
+body.bo-wallet-tx.deposit-approval-page .bo-tx-datetime[data-tip],
+body.bo-wallet-tx.withdraw-approval-page .bo-tx-datetime[data-tip]{
+  cursor:help;
+}
+/* Deposit / Withdraw / All filter row: one search control + one type scale.
+   - The search is the site's `.bo-search-control` (bo-input-fill.css §5). The wallet-tx family
+     hides every direct-child <label> of a filter item as a caption and caps input items at 140px,
+  so the wrapper label is un-hidden by bo-input-fill's 4-id block and, from 1440px up, the item
+     gets 300px here (the placeholder "Username / mobile / bank / reference" needs ~212px of text;
+     below 1440px the sheet's own 260px floor applies).
+   - Date trigger, search input and status select all read 12px/700 (the locked field type). */
+@media (min-width:1440px){
+  html body.bo-wallet-tx.deposit-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls > .field:has(#depositKeyword),
+  html body.bo-wallet-tx.withdraw-approval-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bo-tx-toolbar > .user-search-grid.bo-filter-row.bo-tx-filter-controls > .field:has(#withdrawKeyword){
+    flex:0 0 300px!important;width:300px!important;min-width:300px!important;max-width:300px!important;
   }
+}
+html body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy):not(#bo-tx-filter-off) .report-main .bo-filter-row.bo-tx-filter-controls .bo-range-trigger,
+html body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy):not(#bo-tx-filter-off) .report-main .bo-filter-row.bo-tx-filter-controls .rounded-select-btn,
+html body.bo-wallet-tx:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy):not(#bo-tx-filter-off) .report-main .bo-filter-row.bo-tx-filter-controls .bo-search-control > input{
+  font-size:12px!important;font-weight:700!important;
+}
+.bo-tx-time-tip{
+  position:fixed!important;z-index:40000!important;left:0;top:0;
+  pointer-events:none!important;padding:7px 14px!important;border-radius:999px!important;
+  font-size:12.5px!important;font-weight:700!important;letter-spacing:.01em!important;
+  line-height:1!important;font-variant-numeric:tabular-nums!important;white-space:nowrap!important;
+  opacity:0;visibility:hidden;transform:none!important;
+  transition:opacity .12s ease,visibility .12s ease!important;
+  background:#FFF8EB!important;color:#6b360c!important;
+  border:1px solid rgba(217,119,6,.28)!important;
+  box-shadow:0 8px 22px rgba(60,48,32,.16)!important;
+}
+.bo-tx-time-tip.is-on{opacity:1!important;visibility:visible!important}
+.bo-tx-time-tip::before,.bo-tx-time-tip::after{content:none!important;display:none!important}
+html[data-bo-theme="dark"] .bo-tx-time-tip{
+  background:#40424E!important;color:#F5F5F4!important;
+  border:1px solid rgba(245,158,11,.35)!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.35)!important;
 }
 body.bo-wallet-tx.deposit-approval-page .table-card,
 body.bo-wallet-tx.withdraw-approval-page .table-card{

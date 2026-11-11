@@ -49,19 +49,58 @@
     return html;
   }
   function endpoint(key){return API_CONFIG.BASE_URL+API_CONFIG.ENDPOINTS[key];} function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));} function num(v){const n=Number(v||0);return Number.isFinite(n)?n:0;} function money(v){return num(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});} function dt(v){return window.BO_FORMAT&&window.BO_FORMAT.dateTime?window.BO_FORMAT.dateTime(v):(v?String(v).replace('T',' ').slice(0,19):'-');}
+  /* Date cell = DD/MM/YYYY; the time (HH:MM:SS) is a cream pill tip on hover - the same cell the
+     Member listing and Wallet Ledger use. The tip is one document-level delegation, installed
+     once per document by whichever of deposit / withdraw / all-switcher loads first. */
   function dtParts(v){
     const full=dt(v);
     if(!full||full==='-') return {full:'-',day:'-',time:''};
-    const m=String(full).match(/^(\d{4}[-/]\d{1,2}[-/]\d{1,2})\s+(.+)$/);
-    if(m) return {full,day:m[1],time:m[2]};
+    const m=String(full).match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})\s+(.+)$/);
+    if(m){
+      const tm=String(m[4]).trim().match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+      const time=tm?`${String(tm[1]).padStart(2,'0')}:${tm[2]}:${tm[3]||'00'}`:String(m[4]).trim().slice(0,8);
+      return {full,day:`${String(m[3]).padStart(2,'0')}/${String(m[2]).padStart(2,'0')}/${m[1]}`,time};
+    }
     return {full,day:full,time:''};
   }
   function dtCell(v){
     const p=dtParts(v);
     if(p.full==='-') return '-';
-    if(!p.time) return `<span class="bo-tx-datetime" title="${esc(p.full)}">${esc(p.day)}</span>`;
-    return `<span class="bo-tx-datetime" title="${esc(p.full)}"><span class="bo-tx-datetime-day">${esc(p.day)}</span><span class="bo-tx-datetime-time"> ${esc(p.time)}</span></span>`;
+    if(!p.time) return `<span class="bo-tx-datetime">${esc(p.day)}</span>`;
+    return `<span class="bo-tx-datetime" tabindex="0" data-tip="${esc(p.time)}">${esc(p.day)}</span>`;
   }
+  (function installTimeTip(){
+    if(window.__boTxTimeTip) return; window.__boTxTimeTip=true;
+    const SEL='.bo-tx-datetime[data-tip]';
+    function tipEl(){
+      let t=document.getElementById('boTxTimeTip');
+      if(t) return t;
+      t=document.createElement('div'); t.id='boTxTimeTip'; t.className='bo-tx-time-tip';
+      t.setAttribute('role','tooltip'); t.setAttribute('aria-hidden','true');
+      document.body.appendChild(t); return t;
+    }
+    function hide(){ const t=document.getElementById('boTxTimeTip'); if(t) t.classList.remove('is-on','is-below'); }
+    function show(el){
+      const t=tipEl(); t.textContent=el.getAttribute('data-tip')||''; if(!t.textContent){ hide(); return; }
+      t.classList.add('is-on'); t.classList.remove('is-below');
+      const r=el.getBoundingClientRect(), tr=t.getBoundingClientRect();
+      let top=r.top-tr.height-8, below=false;
+      if(top<8){ below=true; top=r.bottom+8; }
+      t.classList.toggle('is-below',below);
+      t.style.left=Math.round(Math.max(8,Math.min(r.left+r.width/2-tr.width/2,window.innerWidth-tr.width-8)))+'px';
+      t.style.top=Math.round(top)+'px';
+    }
+    const find=e=>e.target.closest&&e.target.closest(SEL);
+    const leave=e=>{ const el=find(e); if(el&&!(e.relatedTarget&&el.contains(e.relatedTarget))) hide(); };
+    document.addEventListener('mouseover',e=>{ const el=find(e); if(el) show(el); });
+    document.addEventListener('mouseout',leave);
+    document.addEventListener('focusin',e=>{ const el=find(e); if(el) show(el); });
+    document.addEventListener('focusout',leave);
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape') hide(); });
+    document.addEventListener('bo:spa:before',hide);
+    window.addEventListener('scroll',hide,true);
+    window.addEventListener('resize',hide);
+  })();
   async function api(url,opt){const res=await fetch(url,opt||{headers:{...BO_AUTH.authHeader()}});const json=await res.json().catch(()=>({}));if(!res.ok||json.status==='error')throw new Error(json.message||'Request failed');return json;}
 
   /* The strip has two ids in the wild. The dedicated Withdraw page names it `withdrawBankCards`
@@ -103,6 +142,31 @@
   function measureAutoPageSize(){const scroll=tableBodyScroll();if(!scroll)return 12;const avail=Math.max(0,Math.floor(scroll.clientHeight));const rowH=naturalRowHeight(scroll);return Math.max(5,Math.min(200,Math.floor(avail/rowH)||12));}
   function autoFitPageSize(){if(lockedAutoSize!=null)return lockedAutoSize;lockedAutoSize=measureAutoPageSize();return lockedAutoSize;}
   function clearLockedAutoSize(){lockedAutoSize=null;}
+  /* Show entries "-" must fit the screen with no scrollbar. The size is locked from a measurement
+     taken BEFORE the rows exist (the "Loading..." row, and a table area the bank strip and footer
+     may still resize), so after the rows are painted re-fit from the real rows: average the
+     fractional row heights (46.4 / 46.8 at 125% scaling), round UP, and never keep a page that still
+     overflows. At most twice in a row so uneven rows cannot flip-flop. Returns true when it
+     re-loaded. */
+  let settleStreak=0,settleAt=0;
+  function settleAutoFit(){
+    if(!isAutoPageSize(document.getElementById('withdrawSize')?.value))return false;
+    const body=document.getElementById('withdrawBody');
+    const scroll=tableBodyScroll(body?.closest('.table-wrap'));
+    if(!body||!scroll)return false;
+    const rows=[...body.querySelectorAll('tr')].filter(tr=>!isPlaceholderRow(tr)&&!tr.classList.contains('bo-table-fill'));
+    if(!rows.length)return false;
+    const avg=rows.reduce((s,r)=>s+r.getBoundingClientRect().height,0)/rows.length;
+    let want=Math.max(5,Math.min(200,Math.floor(Math.floor(scroll.clientHeight)/Math.max(38,Math.ceil(avg)))||12));
+    if(scroll.scrollHeight>scroll.clientHeight+1)want=Math.max(5,Math.min(want,rows.length-1));
+    if(want===lockedAutoSize)return false;
+    const now=Date.now();
+    settleStreak=now-settleAt<2000?settleStreak+1:1;
+    settleAt=now;
+    if(settleStreak>2)return false;
+    lockedAutoSize=want;page=1;load();
+    return true;
+  }
   function isAutoPageSize(raw){const v=String(raw??'-').trim();return v===''||v==='-'||/^auto$/i.test(v);}
   function resolvePageSize(raw){const v=String(raw??'-').trim();if(isAutoPageSize(v))return autoFitPageSize();if(/^all$/i.test(v))return 10000;const n=Number(v);return Number.isFinite(n)&&n>0?n:autoFitPageSize();}
   function isPlaceholderRow(tr){const cells=tr.querySelectorAll('td');if(cells.length<=1)return true;const text=(tr.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();return !text||text.startsWith('loading')||text.startsWith('no withdraw');}
@@ -314,7 +378,7 @@
   }
   function statusClass(status){status=String(status||'').toUpperCase();if(status==='APPROVED')return'active';if(status==='REJECTED')return'off';return'';}
 
-  function render(rows,pagination){currentRows=rows;const body=document.getElementById('withdrawBody');if(!body)return;if(!rows.length)body.innerHTML='<tr><td colspan="9">No withdraw request found.</td></tr>';else body.innerHTML=rows.map(r=>{const pending=String(r.status||'').toUpperCase()==='PENDING';const bankLabel=formatBankLabel(r);return `<tr><td>${dtCell(r.createdAt||r.created_at)}</td><td>${esc(r.username||'-')}</td><td>${money(r.amount)}</td><td><b>${esc(bankLabel)}</b></td><td>${esc(r.referenceNo||'-')}</td><td>${esc(r.remark||'-')}</td><td><span class="status-pill ${statusClass(r.status)}">${esc(r.status||'-')}</span></td><td>${esc(dt(r.processedAt))}</td><td>${pending?`<div class="bo-tx-actions"><button type="button" class="bo-tx-action-btn is-approve" data-approve="${esc(r.id)}" title="Approve" aria-label="Approve"><i class="bi bi-check-lg" aria-hidden="true"></i></button><button type="button" class="bo-tx-action-btn is-reject" data-reject="${esc(r.id)}" title="Reject" aria-label="Reject"><i class="bi bi-x-lg" aria-hidden="true"></i></button></div>`:`<div class="bo-tx-actions"><a class="bo-tx-action-btn is-ledger" href="wallet-ledger.html?memberId=${encodeURIComponent(r.memberId)}" title="Ledger" aria-label="Ledger"><i class="bi bi-journal-text" aria-hidden="true"></i></a></div>`}</td></tr>`;}).join('');totalPages=Number(pagination?.totalPages)||1;const pageSize=resolvePageSize(document.getElementById('withdrawSize')?.value);publishPagerMeta(pagination,pageSize);document.getElementById('withdrawPager').innerHTML=pageButtons(page,totalPages);document.getElementById('withdrawPrevBtn').disabled=page<=1;document.getElementById('withdrawNextBtn').disabled=page>=totalPages;requestAnimationFrame(()=>scheduleEvenFill());}
+  function render(rows,pagination){currentRows=rows;const body=document.getElementById('withdrawBody');if(!body)return;if(!rows.length)body.innerHTML='<tr><td colspan="9">No withdraw request found.</td></tr>';else body.innerHTML=rows.map(r=>{const pending=String(r.status||'').toUpperCase()==='PENDING';const bankLabel=formatBankLabel(r);return `<tr><td>${dtCell(r.createdAt||r.created_at)}</td><td>${esc(r.username||'-')}</td><td>${money(r.amount)}</td><td><b>${esc(bankLabel)}</b></td><td>${esc(r.referenceNo||'-')}</td><td>${esc(r.remark||'-')}</td><td><span class="status-pill ${statusClass(r.status)}">${esc(r.status||'-')}</span></td><td>${dtCell(r.processedAt)}</td><td>${pending?`<div class="bo-tx-actions"><button type="button" class="bo-tx-action-btn is-approve" data-approve="${esc(r.id)}" title="Approve" aria-label="Approve"><i class="bi bi-check-lg" aria-hidden="true"></i></button><button type="button" class="bo-tx-action-btn is-reject" data-reject="${esc(r.id)}" title="Reject" aria-label="Reject"><i class="bi bi-x-lg" aria-hidden="true"></i></button></div>`:`<div class="bo-tx-actions"><a class="bo-tx-action-btn is-ledger" href="wallet-ledger.html?memberId=${encodeURIComponent(r.memberId)}" title="Ledger" aria-label="Ledger"><i class="bi bi-journal-text" aria-hidden="true"></i></a></div>`}</td></tr>`;}).join('');totalPages=Number(pagination?.totalPages)||1;const pageSize=resolvePageSize(document.getElementById('withdrawSize')?.value);publishPagerMeta(pagination,pageSize);document.getElementById('withdrawPager').innerHTML=pageButtons(page,totalPages);document.getElementById('withdrawPrevBtn').disabled=page<=1;document.getElementById('withdrawNextBtn').disabled=page>=totalPages;if(settleAutoFit())return;requestAnimationFrame(()=>scheduleEvenFill());}
 
   /* Only the newest load may paint. Selecting a bank reads every page of the current
      filters while a plain filter change reads one, so responses can arrive out of order and
