@@ -2,9 +2,10 @@
 
 /* ---- KPI strip ---- */
 .rebate-page .rebate-summary{gap:10px}
+/* 8px: one radius for every card on this page (the KPI strip, the schedule card and the table card). */
 .rebate-page .rebate-summary-card{
   min-height:84px;padding:14px 16px;column-gap:14px;
-  grid-template-columns:40px minmax(0,1fr);border-radius:12px;
+  grid-template-columns:40px minmax(0,1fr);border-radius:8px;
 }
 .rebate-page .rebate-summary-icon,
 html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebate-summary-icon{
@@ -20,7 +21,14 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebat
    is a later sibling of the schedule card). It has to sit ABOVE the chrome bar (z-index:3, which
    the Audit pickers' own menus need so they clear the table): at 2 the bar band covered the
    Daily card's Status menu instead - measured, "Disabled" was under the tab row. */
-.rebate-page .rebate-worker-card.rebate-schedule{border-radius:12px;position:relative;z-index:4}
+.rebate-page .rebate-worker-card.rebate-schedule{position:relative;z-index:4}
+/* This card also carries .standard-list-card, and bo-charcoal-legacy paints that class at 16px !important, so
+   the 12px written here never applied (measured 16px in both themes). Pinned to the page's 8px. */
+.rebate-page .standard-list-card.rebate-schedule,
+html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .standard-list-card.rebate-schedule,
+html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .standard-list-card.rebate-schedule{
+  border-radius:8px!important;
+}
 .rebate-schedule-bar{
   display:flex;align-items:center;gap:12px;
   padding:10px 14px;min-height:56px;
@@ -70,7 +78,7 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebat
 .rebate-schedule-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .rebate-cycle-card{
   display:flex;flex-direction:column;gap:0;
-  background:#FFF8EB;border:1px solid #EADCC8;border-radius:10px;
+  background:#FFF8EB;border:1px solid #EADCC8;border-radius:8px;
   /* NOT `overflow:hidden`: it used to clip the header's square corners, and it also clipped the
      Status/Day dropdown menus that reports.js opens below their trigger - measured with the
      card's own children: the menu's option was hit-tested onto the tab row / table underneath,
@@ -79,7 +87,7 @@ html:not([data-bo-theme="dark"]) body.report-body.bo-charcoal.rebate-page .rebat
 }
 .rebate-cycle-card header{
   display:flex;align-items:center;gap:8px;
-  margin:0;padding:8px 12px;border-radius:9px 9px 0 0;
+  margin:0;padding:8px 12px;border-radius:7px 7px 0 0;
   font-size:13px;font-weight:800;color:#18191C;
   background:#F5EBDC;border-bottom:1px solid #EADCC8;
 }
