@@ -187,8 +187,8 @@ html[data-bo-theme="dark"] .wallet-ledger-page .bo-tx-table-body::-webkit-scroll
 .wallet-ledger-page .bo-tx-table-head::-webkit-scrollbar-button:single-button{display:none!important;height:0!important;width:0!important}
 .wallet-ledger-page .report-table{
   table-layout:fixed!important;
-  width:max(100%,2056px)!important;
-  min-width:2056px!important;
+  width:max(100%,1876px)!important;
+  min-width:1876px!important;
   max-width:none!important;
   box-sizing:border-box!important;
 }
@@ -202,23 +202,25 @@ html[data-bo-theme="dark"] .wallet-ledger-page .bo-tx-table-body::-webkit-scroll
   font-weight:700!important;
 }
 /* Column widths in px — each is the rendered max(heading, widest data) at the real
-   fonts, plus ~2px headroom, measured on the page; the sum (2056) is the table's
+   fonts, plus ~2px headroom, measured on the page; the sum (1876) is the table's
    `min-width`, so no column can be squeezed below its content. Both tables carry the
    same colgroup so head and body stay pixel-locked. */
 .wallet-ledger-page .wl-col-created{width:110px}
 .wallet-ledger-page .wl-col-posted{width:104px}
 .wallet-ledger-page .wl-col-member{width:130px}
 .wallet-ledger-page .wl-col-provider{width:110px}
-.wallet-ledger-page .wl-col-type{width:146px}
+.wallet-ledger-page .wl-col-type{width:124px}
 .wallet-ledger-page .wl-col-amount{width:112px}
 .wallet-ledger-page .wl-col-before{width:112px}
 .wallet-ledger-page .wl-col-after{width:112px}
-.wallet-ledger-page .wl-col-game{width:110px}
+.wallet-ledger-page .wl-col-game{width:120px}
 .wallet-ledger-page .wl-col-createdby{width:120px}
 .wallet-ledger-page .wl-col-approvedby{width:110px}
-.wallet-ledger-page .wl-col-reason{width:110px}
-.wallet-ledger-page .wl-col-ref{width:240px}
-.wallet-ledger-page .wl-col-remark{width:340px}
+.wallet-ledger-page .wl-col-reason{width:152px}
+.wallet-ledger-page .wl-col-ref{width:150px}
+.wallet-ledger-page .wl-col-remark{width:220px}
+/* Game, Reason, Reference and Remark are free text: they wrap (two lines, full text in the tooltip) instead of
+   getting the width of the longest value ever seen (Reference 240, Remark 340 = 2056px for the table). */
 .wallet-ledger-page .wl-col-status{width:90px}
 
 /* v1.0.33 - Compact Wallet Ledger filter row (36px controls). */
@@ -518,7 +520,7 @@ html[data-bo-theme="dark"] .wallet-ledger-page .bo-tx-datetime{color:#D4D4D8}
 <script src="assets/js/auth.js?v=791132c4"></script>
 <script src="assets/js/reports.js?v=a96450f8"></script>
 <script src="assets/js/bo-date-range.js?v=b1113dc8"></script>
-<script src="assets/js/wallet-ledger.js?v=282e0af7"></script>
+<script src="assets/js/wallet-ledger.js?v=0106dade"></script>
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>

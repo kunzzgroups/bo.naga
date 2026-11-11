@@ -610,12 +610,12 @@
         <td class="ledger-amt ${amtClass(amt)}">${money(amt)}</td>
         <td class="ledger-amt">${money(r.beforeBalance)}</td>
         <td class="ledger-amt">${money(r.afterBalance)}</td>
-        <td>${esc(r.gameCode || '-')}</td>
+        <td class="detail-cell" title="${esc(r.gameCode || '-')}"><div class="detail-clamp">${esc(r.gameCode || '-')}</div></td>
         <td>${esc(r.createdBy || r.adjustedBy || '-')}</td>
         <td>${esc(r.approvedBy || r.reviewedBy || '-')}</td>
-        <td>${esc(r.reasonCode || r.reason || '-')}</td>
-        <td title="${esc(r.relatedId || r.referenceNo || r.depositId || r.withdrawalId || r.bonusId || r.rebateId || '-')}">${esc(r.relatedId || r.referenceNo || r.depositId || r.withdrawalId || r.bonusId || r.rebateId || '-')}</td>
-        <td title="${esc(r.remark || '-')}">${esc(r.remark || '-')}</td>
+        <td class="detail-cell" title="${esc(r.reasonCode || r.reason || '-')}"><div class="detail-clamp">${esc(r.reasonCode || r.reason || '-')}</div></td>
+        <td class="detail-cell" title="${esc(r.relatedId || r.referenceNo || r.depositId || r.withdrawalId || r.bonusId || r.rebateId || '-')}"><div class="detail-clamp">${esc(r.relatedId || r.referenceNo || r.depositId || r.withdrawalId || r.bonusId || r.rebateId || '-')}</div></td>
+        <td class="detail-cell" title="${esc(r.remark || '-')}"><div class="detail-clamp">${esc(r.remark || '-')}</div></td>
         <td><span class="status-pill ${statusCls}">${esc(status)}</span></td>
       </tr>`;
     }).join('');
