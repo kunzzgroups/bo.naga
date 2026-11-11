@@ -1308,8 +1308,11 @@ html[data-bo-theme="dark"] .md-account-stack .admin-remark-meta{ color:#A8A29E; 
     border-bottom:1px solid rgba(92,74,48,.14);
     gap:8px;
   }
+  /* flex-direction:row: the base rule is a column, and this block only set wrap/overflow, so at 768 the
+     eight tabs stacked into a 380px list above the content instead of the scrolling tab rows it describes. */
   body.member-detail-page .md-rail-group{
     display:flex;
+    flex-direction:row;
     flex-wrap:nowrap;
     gap:4px;
     overflow-x:auto;
@@ -1366,4 +1369,11 @@ html[data-bo-theme="dark"] .md-account-stack .admin-remark-meta{ color:#A8A29E; 
   .md-action-btns{ margin-left:0; width:100%; }
   .md-action-btns .md-btn{ flex:1 1 auto; width:100%; }
   .md-pane-head .md-btn{ width:100%; }
+}
+
+/* "Member not found" painted a cream #FFF8EB box with dark-grey text inside the dark page. */
+html[data-bo-theme="dark"] body.member-detail-page .member-detail-error{
+  background:#383A46;
+  border-color:rgba(255,255,255,.12);
+  color:#D6D3D1;
 }
