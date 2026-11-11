@@ -745,3 +745,86 @@ body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table .usage-meter-line{
   }
   body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table{min-width:620px!important}
 }
+
+/* Responsive ladder for the usage table, and a toolbar that stops wasting a row.
+
+   Measured at 1917 / 1560 / 1440 / 1280 / 1024 / 834 / 768. Two faults:
+
+   1. The base rule states min-width:1480px and only two bands override it - >=1025 gets 1240, <=768 gets 780.
+      The 769-1024 band therefore kept the LARGEST floor of all: a 1024 window has a 750px frame and the
+      table was 1480, so 730px - half the table - sat behind a scrollbar. The floor is derived from the content
+      at each width now, and the columns that go are the ones a tablet can read without. Widths are px, not
+      percent: with the percent recipe a reduced column set still asked for 77% of the table and the headings
+      ellipsised themselves (measured "Withdrawals" clamped at 1280).
+
+        >=1480   all 11 columns, content floor 1217 (frame 1643 / 1286 / 1210 at 1917 / 1560 / 1480)
+        1280     minus Daily Threshold and Transaction Range  -> 9 columns, 989 (frame 1006)
+        <=1100   minus Account and Net Used / Max              -> 7 columns, 711 (frame 750 / 798 / 732)
+
+      Account goes before Bank because the bank is what the row is about and the account number is on the
+      payment-method screen; those two are also the only ones that can go without a horizontal scroll.
+
+   2. At <=1280 the filter row claimed width:100% inside .user-toolbar-actions (bo-ui-standard states it with
+      two id steps), so the two buttons had to wrap underneath: the toolbar was 153px - tabs / filter /
+      buttons - with half a row of nothing beside the buttons. The filter shares its line with them now
+      (153 -> 84). */
+@media (max-width:1479.98px){
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(7),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(7){display:none!important}
+  /* content of the remaining ten columns, measured: 1119 against the 1166 a 1440 window has */
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table{min-width:1120px!important}
+}
+@media (max-width:1339.98px){
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(3),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(3){display:none!important}
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table{min-width:1000px!important}
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(1),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(1){width:150px!important;min-width:150px!important;max-width:150px!important}
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(2),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(2){width:100px!important;min-width:100px!important;max-width:100px!important}
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(4),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(4){width:90px!important;min-width:90px!important;max-width:90px!important}
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(5),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(5){width:116px!important;min-width:116px!important;max-width:116px!important}
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(6),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(6){width:139px!important;min-width:139px!important;max-width:139px!important}
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(8),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(8){width:88px!important;min-width:88px!important;max-width:88px!important}
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(9),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(9){width:112px!important;min-width:112px!important;max-width:112px!important}
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(10),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(10){width:72px!important;min-width:72px!important;max-width:72px!important}
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(11),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(11){width:118px!important;min-width:118px!important;max-width:118px!important}
+}
+@media (max-width:1280px){
+  html body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy) .report-main .bank-usage-list-card .user-toolbar-actions > .user-search-grid.bo-filter-row{
+    flex:1 1 auto!important;width:auto!important;min-width:0!important;max-width:none!important;
+  }
+}
+@media (max-width:1100.98px){
+  /* the keyword box gives the width back so the two buttons climb onto the filter's line: 410 + 292 fits
+     722 at 1024 and 732 at 768, where the previous 240px search pushed them onto a row of their own */
+  html body.bo-wallet-tx.bank-deposit-usage-page:not(#bo-filter-standard-off):not(#bo-filter-standard-legacy):not(#bo-bdu-keyword):not(#bo-bdu-keyword-2) .report-main .bank-usage-list-card .user-toolbar-actions > .user-search-grid > .bank-usage-keyword-field{
+    flex:0 0 150px!important;width:150px!important;min-width:150px!important;max-width:150px!important;
+  }
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(2),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(2){display:none!important}
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(6),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(6){display:none!important}
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table{min-width:720px!important}
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(1),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(1){width:145px!important;min-width:145px!important;max-width:145px!important}
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(4),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(4){width:86px!important;min-width:86px!important;max-width:86px!important}
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(5),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(5){width:110px!important;min-width:110px!important;max-width:110px!important}
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(8),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(8){width:84px!important;min-width:84px!important;max-width:84px!important}
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(9),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(9){width:108px!important;min-width:108px!important;max-width:108px!important}
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(10),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(10){width:66px!important;min-width:66px!important;max-width:66px!important}
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table th:nth-child(11),
+  body.bo-wallet-tx.bank-deposit-usage-page .bank-usage-table td:nth-child(11){width:112px!important;min-width:112px!important;max-width:112px!important}
+}
