@@ -75,6 +75,11 @@
 /* v2.0.1 safe legacy pagination normalization */
 .pagination-clean-inner{display:flex!important;align-items:center!important;gap:8px!important;margin:0!important;padding:0!important;color:inherit!important}
 .pagination-clean-inner>.smart-pagination{display:flex!important;align-items:center!important;gap:8px!important;margin:0!important}
+/* The other host shape: `.pagination-clean` wrapping `<div class="smart-pagination">` (Bank Deposit Usage,
+   Wallet Ledger, Member Wallet, Member list, Agent admin). That wrapper was a plain block, so its
+   buttons touched (0px between them) while the Deposit/Withdraw pager, whose host is the flex row
+   itself, has 6px. Same flex row + gap as the rule above, at the same 6px the footer shows elsewhere. */
+.pagination-clean>.smart-pagination{display:flex!important;align-items:center!important;gap:6px!important;margin:0!important}
 .pagination-clean-inner .smart-page-summary{display:none!important}
 .pagination-clean-inner .smart-page.first,.pagination-clean-inner .smart-page.last{min-width:34px!important;width:34px!important;height:34px!important;padding:0!important}
 .pagination-clean-inner>.text-muted,.pagination-clean-inner.small{margin:0!important}

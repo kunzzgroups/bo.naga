@@ -95,6 +95,7 @@
 
 - **测试所有页面用这个**：`node scripts/dev-harness.js [端口]`（默认 8123）→ 打开 `http://127.0.0.1:8123/<页面>.html?theme=dark|light`。
   它注入假的 ROOT 登录和空的接口响应，BO / Main / 各页面都能直接打开，不连真实后端、不改仓库文件；侧栏菜单为空，列表页显示空状态（充值/提现列表有几行假数据）。
+  **和线上一样（真实数据）**：`node scripts/dev-harness.js 8123 --live` → 打开 `http://127.0.0.1:8123/login.html`，用自己的账号登录。页面来自本地仓库，`/api/` 转发到线上后端（生产数据，审批/保存会真的生效）。
   量尺寸用 `getComputedStyle`；视口用 1917 宽、DPR 1.25 才和用户的截图一致。
 - 本地服务（只提供文件，无登录假数据，会跳登录页）：`node scripts/serve-static.js [端口]`（默认 8098，127.0.0.1）；`serve.json` 给 `npx serve`（cleanUrls）。指本地 API：`localStorage.setItem('bo_api_base','http://localhost:8080/api')`。
 - pre-commit（**每个克隆手动装**：`cp scripts/git-hooks/pre-commit .git/hooks/pre-commit`）依次跑：shell-drift → asset-pins → global-collisions → spa-readiness → `pin-spa --check` → 删除守卫（防止过期工作区把别人的文件当删除提交）。Python 守卫、`audit-spa-swaps.js`、测试不在钩子里，需手动跑。
