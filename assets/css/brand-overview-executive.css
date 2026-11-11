@@ -123,7 +123,8 @@ body.brand-management-page .report-sidebar{
 body.brand-exec-page .report-brand,
 body.brand-management-page .report-brand{
   height:64px;
-  padding:0 16px;
+  /* padding:0 16px removed: it put the account avatar 2px further right on this page than on every other BO page
+     (the shell's .report-brand is 14px, reports.css). Shell metrics live in bo-shell.css / reports.css. */
   border-bottom:1px solid rgba(255,255,255,.1)!important;
   color:#fff!important;
   font-size:15px;

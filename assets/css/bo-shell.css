@@ -611,6 +611,38 @@ body.report-body .report-sidebar .bo-rail-account .bo-account-link .report-avata
 body.report-body .report-sidebar .bo-rail-account .bo-account-link .report-avatar::before{
   font-size:16px!important;
   color:#FFFFFF!important;
+  /* One glyph box on every page. Without these the glyph took whatever the page sheet gave the avatar:
+     reports.css `.report-avatar{font-weight:900}` (a faux-bold person on pages without bo-charcoal, e.g.
+     Deposit Approval) and the inherited 18.4px line box (the glyph sat ~1px lower than on a bo-charcoal page,
+     where bo-charcoal-shell.css zeroes the avatar's font and line-height). */
+  font-weight:400!important;
+  line-height:16px!important;
+}
+body.report-body .report-sidebar .bo-rail-account .bo-account-link .report-avatar{
+  font-size:0!important;
+  font-weight:400!important;
+  line-height:0!important;
+}
+/* Hover: the same darker amber bo-charcoal pages already state (bo-charcoal-shell.css), so a page without that
+   class no longer lacks the response. */
+body.report-body .report-sidebar .bo-rail-account .bo-account-link:hover .report-avatar{
+  background:#B45309!important;
+}
+/* The account avatar has ONE home in a BO page: the rail. auth.js still paints the chip into the header host first
+   (a 40px avatar at the top right) and bo-account-chip.js moves the link into the rail a frame or more later - and
+   auth.js re-paints that host on every /me refresh, so the avatar flashed at the top right and jumped across to the
+   rail on every load, swap and refresh (the "icon jumps" report). The header copy is never meant to be seen in this
+   shell, so it is not drawn: the script still finds and moves it (display:none does not hide it from
+   querySelector / appendChild), and the pending-operation counters beside it are untouched. Once moved it is
+   inside .bo-rail-account, which neither selector matches. `body.report-body` is in the selector because
+   bo-charcoal-shell.css states `display:inline-flex!important` on `body.report-body.bo-charcoal .report-actions
+   .bo-account-link` (one class lighter than this without it), and most BO pages carry bo-charcoal; bo-charcoal-legacy.css
+   states it again per page (`html body.referral-page.report-body.bo-charcoal .report-actions > [data-bo-profile]
+   .bo-account-link`, six classes), so this carries an ID step (`:not(#...)`, an id nothing has) and wins over any
+   class-only display rule a page sheet adds. */
+html[data-bo-shell="bo"]:not(#bo-account-header-copy-off) body.report-body .report-actions .bo-account-link,
+html[data-bo-shell="bo"]:not(#bo-account-header-copy-off) body.report-body [data-bo-profile] .bo-account-link{
+  display:none!important;
 }
 body.report-body .report-sidebar .bo-rail-account .bo-account-name{
   max-width:100%!important;
