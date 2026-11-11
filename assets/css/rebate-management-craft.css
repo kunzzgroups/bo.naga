@@ -1141,3 +1141,9 @@ html[data-bo-theme="dark"] body.report-body.bo-charcoal.rebate-page .rebate-pane
   font-weight:700!important;
   line-height:1!important;
 }
+
+/* Time zone box: radius 8 like the Enabled select beside it. In dark, reports.css states 10px for every
+   `.report-content input` at 9 id steps, so this carries 11 (10 :not(#id) + #rwTimeZone). */
+html body.rebate-page #rwTimeZone{border-radius:8px!important}
+html[data-bo-theme="dark"] body.rebate-page:not(#bo-rb-r-1):not(#bo-rb-r-2):not(#bo-rb-r-3):not(#bo-rb-r-4):not(#bo-rb-r-5):not(#bo-rb-r-6):not(#bo-rb-r-7):not(#bo-rb-r-8):not(#bo-rb-r-9):not(#bo-rb-r-10) .rebate-schedule-field #rwTimeZone{border-radius:8px!important}
+html:not([data-bo-theme="dark"]) body.rebate-page:not(#bo-rb-l-1):not(#bo-rb-l-2):not(#bo-rb-l-3):not(#bo-rb-l-4):not(#bo-rb-l-5):not(#bo-rb-l-6):not(#bo-rb-l-7):not(#bo-rb-l-8):not(#bo-rb-l-9):not(#bo-rb-l-10) .rebate-schedule-field #rwTimeZone{border-radius:8px!important}
