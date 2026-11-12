@@ -28,3 +28,50 @@ html[data-bo-theme="dark"] body.page-game.report-body:not(#bo-gm-off-1):not(#bo-
 }
 /* The game name ("Wild Sea Empress Of The Deep") was cut with an ellipsis in a 200px cell; it wraps. */
 html body.page-game.report-body:not(#bo-gm-off-1):not(#bo-gm-off-2):not(#bo-gm-off-3):not(#bo-gm-off-4):not(#bo-gm-off-5):not(#bo-gm-off-6):not(#bo-gm-off-7):not(#bo-gm-off-8):not(#bo-gm-off-9):not(#bo-gm-off-10) .game-main-cell > b{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere}
+
+/* Filter strip: one row where it can fit, and no void where it cannot.
+   ----------------------------------------------------------------------------------------------
+   Measured at 1917 / 1560 / 1440 / 1280 / 1024 / 960 / 834 / 768. The strip is search (150) + four
+   selects (180 each) + the action group (299), and the action group carries `order:99` plus
+   `margin-left:auto`, so it is always the last item and always pushed to the right edge.
+
+     >=1560  everything on one row                                   strip 61px
+     1440    the five filters take row 1, the action group lands alone on row 2 - a 107px strip whose
+             second row holds one item at the right edge           strip 107px
+     1024    four filters on row 1, the sort select alone on row 2 beside the action group at the far
+             right: measured 243px of nothing between them           strip 107px
+     960     383-413px of nothing between the sort select and the group
+     768     the group wraps to its own row                          strip 107px
+
+   Two changes, at the two widths where they apply:
+
+   A. 1300-1559: the selects are 165 instead of 180, which brings the five filters (150 + 660) and the
+      group (299) plus gaps to 1159 - inside the 1160 a 1440 window has, and inside 1280 at 1560. One
+      row, 107px -> 61px, and the CTA keeps its place at the right edge.
+
+   B. <=1100: the spacer and the auto margin are dropped, so the action group follows the last control
+      instead of running to the far edge. Row 2 becomes "Newest | Refresh | Add Game" packed together:
+      measured 413px of void at 960 -> 10px, and 243px at 1024 -> 10px.
+
+   The spacers keep their 8px floor elsewhere; nothing here changes the count of visible controls. */
+
+@media (min-width:1300px) and (max-width:1559.98px){
+  html body.page-game.report-body:not(#bo-gf-1):not(#bo-gf-2):not(#bo-gf-3):not(#bo-gf-4):not(#bo-gf-5) .report-main .game-filter-card.bo-filter-row > .bo-filter-select-item{
+    flex:0 0 155px!important;
+    width:155px!important;
+    min-width:155px!important;
+    max-width:155px!important;
+  }
+}
+
+@media (max-width:1299.98px){
+  html body.page-game.report-body:not(#bo-gf-1):not(#bo-gf-2):not(#bo-gf-3):not(#bo-gf-4):not(#bo-gf-5) .report-main .game-filter-card.bo-filter-row > .game-filter-spacer{
+    display:none!important;
+  }
+  html body.page-game.report-body:not(#bo-gf-1):not(#bo-gf-2):not(#bo-gf-3):not(#bo-gf-4):not(#bo-gf-5) .report-main .game-filter-card .game-toolbar-title{
+    margin-left:0!important;
+  }
+  html body.page-game.report-body:not(#bo-gf-1):not(#bo-gf-2):not(#bo-gf-3):not(#bo-gf-4):not(#bo-gf-5) .report-main .game-filter-card.bo-filter-row > .game-toolbar-title{
+    margin-left:0!important;
+  }
+}
