@@ -69,7 +69,7 @@ html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data
 html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table tbody td{white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important}
 
 @media (min-width:1897px){
-  html:not(#bo-cbr-all-x):not(#bo-cbr-all-x2):not(#bo-cbr-all-x3) body.bo-report-family[data-report-page="breakdown"] .report-table{width:1635px!important;min-width:1635px!important;max-width:1635px!important}
+  html:not(#bo-cbr-all-x):not(#bo-cbr-all-x2):not(#bo-cbr-all-x3) body.bo-report-family[data-report-page="breakdown"] .report-table{width:100%!important;min-width:1635px!important;max-width:none!important}
 }
 @media (max-width:1896.98px){
   html:not(#bo-cbr-a):not(#bo-cbr-a-2):not(#bo-cbr-a-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(3),
@@ -78,22 +78,22 @@ html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data
   html:not(#bo-cbr-a):not(#bo-cbr-a-2):not(#bo-cbr-a-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(6){display:none!important}
   html:not(#bo-cbr-a):not(#bo-cbr-a-2):not(#bo-cbr-a-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(7),
   html:not(#bo-cbr-a):not(#bo-cbr-a-2):not(#bo-cbr-a-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(7){display:none!important}
-  html:not(#bo-cbr-a-x):not(#bo-cbr-a-x2):not(#bo-cbr-a-x3) body.bo-report-family[data-report-page="breakdown"] .report-table{width:1205px!important;min-width:1205px!important;max-width:1205px!important}
+  html:not(#bo-cbr-a-x):not(#bo-cbr-a-x2):not(#bo-cbr-a-x3) body.bo-report-family[data-report-page="breakdown"] .report-table{width:100%!important;min-width:1205px!important;max-width:none!important}
 }
 @media (max-width:1466.98px){
   html:not(#bo-cbr-b):not(#bo-cbr-b-2):not(#bo-cbr-b-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(4),
   html:not(#bo-cbr-b):not(#bo-cbr-b-2):not(#bo-cbr-b-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(4){display:none!important}
-  html:not(#bo-cbr-b-x):not(#bo-cbr-b-x2):not(#bo-cbr-b-x3) body.bo-report-family[data-report-page="breakdown"] .report-table{width:1083px!important;min-width:1083px!important;max-width:1083px!important}
+  html:not(#bo-cbr-b-x):not(#bo-cbr-b-x2):not(#bo-cbr-b-x3) body.bo-report-family[data-report-page="breakdown"] .report-table{width:100%!important;min-width:1083px!important;max-width:none!important}
 }
 @media (max-width:1344.98px){
   html:not(#bo-cbr-c):not(#bo-cbr-c-2):not(#bo-cbr-c-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(2),
   html:not(#bo-cbr-c):not(#bo-cbr-c-2):not(#bo-cbr-c-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(2){display:none!important}
-  html:not(#bo-cbr-c-x):not(#bo-cbr-c-x2):not(#bo-cbr-c-x3) body.bo-report-family[data-report-page="breakdown"] .report-table{width:968px!important;min-width:968px!important;max-width:968px!important}
+  html:not(#bo-cbr-c-x):not(#bo-cbr-c-x2):not(#bo-cbr-c-x3) body.bo-report-family[data-report-page="breakdown"] .report-table{width:100%!important;min-width:968px!important;max-width:none!important}
 }
 @media (max-width:1229.98px){
   html:not(#bo-cbr-d):not(#bo-cbr-d-2):not(#bo-cbr-d-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(9),
   html:not(#bo-cbr-d):not(#bo-cbr-d-2):not(#bo-cbr-d-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(9){display:none!important}
   html:not(#bo-cbr-d):not(#bo-cbr-d-2):not(#bo-cbr-d-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(12),
   html:not(#bo-cbr-d):not(#bo-cbr-d-2):not(#bo-cbr-d-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(12){display:none!important}
-  html:not(#bo-cbr-d-x):not(#bo-cbr-d-x2):not(#bo-cbr-d-x3) body.bo-report-family[data-report-page="breakdown"] .report-table{width:646px!important;min-width:646px!important;max-width:646px!important}
+  html:not(#bo-cbr-d-x):not(#bo-cbr-d-x2):not(#bo-cbr-d-x3) body.bo-report-family[data-report-page="breakdown"] .report-table{width:100%!important;min-width:646px!important;max-width:none!important}
 }

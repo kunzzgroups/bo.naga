@@ -111,7 +111,29 @@
     return out;
   }
 
+  /* A page sheet may hide columns at a breakpoint (casino-breakdown-fit.css drops the member/count
+     columns on a laptop so the twelve daily figures fit). When it does, this file has to step aside
+     completely - and BEFORE it touches anything: `naturalWidths` leaves the head table on
+     `width:max-content !important; table-layout:auto !important` while it measures, and a failure after
+     that point used to leave it there. The head then sized itself to its own content (1205) while the
+     body filled its wrapper (1280), so every heading sat 65px off its column - measured at 1560 with
+     the breakdown sheet hiding its columns. One display:none cell means the page owns the geometry. */
+  function ownsCellVisibility(t){
+    var row = t.table.querySelector('tbody tr');
+    if(!row || row.querySelector('td[colspan]')) return false;
+    var cells = row.children;
+    for(var i = 0; i < cells.length; i++){
+      if(!cells[i].getBoundingClientRect().width) return true;
+    }
+    return false;
+  }
+
   function measure(t){
+    if(ownsCellVisibility(t)){
+      /* undo what a previous pass left on either table, so the page sheet's own rules apply */
+      [t.headTable, t.table].forEach(clearOverrides);
+      return null;
+    }
     [t.headTable, t.table].forEach(clearOverrides);
 
     var hw = naturalWidths(t.headTable, 'thead tr');
