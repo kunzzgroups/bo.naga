@@ -90,7 +90,7 @@ html:has(.report-topbar[data-bo-topbar]){
    page switch. This replaces the per-page rule that retired bo-group-tabs.css used to carry
    for the Member pages, and covers the Transaction module row with it. Desktop only, like
    the two insets above. */
-@media (min-width:1024px){
+@media (min-width:576px){
   html:not(#bo-charcoal-off) body.report-body .report-shell .report-main .report-content:has(> .bo-module-tabs){
     padding-top:8px!important;
   }
@@ -736,6 +736,21 @@ html[data-bo-theme="dark"] .report-shell .report-main .report-topbar[data-bo-top
   font-size:18px!important;
   line-height:1!important;
 }
+/* 3b. The same glyph slot on every page. bo-wallet-transaction-amber.css (every bo-wallet-tx page: Provider Transactions, Member Wallet, Wallet Ledger,
+   ...) positions the icon with inset:0 only and, unlike bo-charcoal-shell.css, sets neither width/height:100% nor transform:none, so after the
+   sun/moon swap animation (bo-theme.js animates a transform on it) the glyph could stay offset inside the 36px overflow:hidden slot - the half-cut
+   moon on Provider Transactions next to the intact one on Provider Bet Report. One rule for both, above either sheet. */
+html body .report-topbar[data-bo-topbar] .bo-theme-btn i[data-theme-icon]{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  display:grid!important;
+  place-items:center!important;
+  margin:0!important;
+  padding:0!important;
+  transform:none!important;
+}
 
 /* Deliberately no mobile step: one size at every width is what makes the header
    consistent, and 1b above removes the reason the sheets used to shrink it (an
@@ -897,7 +912,8 @@ body.report-body.topup-reward-page .report-content{
   html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .report-content > .filter-card:has(+ .table-card),
   html:not(#bo-cp-off):not(#bo-cp-off-2) body:not(#bo-cp-off-3).bo-report-family[data-report-page="provider"] .report-content > .filter-card:has(+ .table-card),
   html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page .report-content > .perf-filter-card:has(+ .table-card),
-  html:not(#bo-mt-off):not(#bo-mt-off-2) body:not(#bo-mt-off-3):not(#bo-mt-off-4):not(#bo-mt-off-5).member-top-deposit-report-page .report-content > .filter-card:has(+ .table-card){padding:12px 16px!important}
+  html:not(#bo-mt-off):not(#bo-mt-off-2) body:not(#bo-mt-off-3):not(#bo-mt-off-4):not(#bo-mt-off-5).member-top-deposit-report-page .report-content > .filter-card:has(+ .table-card),
+  html:not(#bo-pb-off):not(#bo-pb-off-2) body:not(#bo-pb-off-3):not(#bo-pb-off-4).provider-bet-report-page .report-content > .filter-card:has(+ .table-card){padding:12px 16px!important}
 }
 
 /* --------------------------------------------------------------------------
@@ -914,9 +930,41 @@ body.report-body.topup-reward-page .report-content{
 @media (max-width:991.98px){
   body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-shell{height:100dvh;min-height:0;overflow:hidden}
   body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-main{height:100dvh;max-height:100dvh;display:flex;flex-direction:column;overflow:hidden;min-width:0}
-  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:16px;overflow:hidden;overflow-y:auto}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:0;overflow:hidden;overflow-y:auto}
   body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > *{margin-bottom:0!important;flex:0 0 auto}
+  /* 16px between blocks as a margin, not a flex gap: a gap cannot be cancelled, and the filter strip + table card are ONE card that the page sheets join. */
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > * + *{margin-top:16px!important}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > :is(.filter-card,.perf-filter-card,.ops-filter,.bo-filter-row) + .table-card{margin-top:0!important}
   body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > .table-card{flex:1 1 auto;min-height:360px;display:flex;flex-direction:column}
   body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .table-card > .table-wrap{flex:1 1 auto;min-height:0;overflow:auto}
   body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .table-card > .mad-footer{flex:0 0 auto}
+}
+
+/* 0c-3. Header and module row on tablet widths (576-991px), on every page that carries a module tab row. Measured on the Design pages at
+   731px, they disagreed with each other: the header gutter was 12px on Banner Management / Image To URL and 20px on the rest, the hamburger
+   42px wide on three pages and 36px on the others, the gap from the header to the tab row 0 (Frontend Display) / 12 / 14 / 16px (0c-1 above now
+   makes it 8px from 576px up, the value desktop already had), and the gap below the row 12px except 26px (Page Customize) and 28px
+   (Image To URL), whose content columns add their own 14/16px flex gap on top of the row's margin. One value each: 20px gutter, 36px hamburger,
+   8px above the row, 12px below it. */
+@media (min-width:576px) and (max-width:991.98px){
+  html:not(#bo-charcoal-off) body.report-body .report-shell .report-main:has(> .report-content > .bo-module-tabs) > .report-topbar{
+    padding-left:20px!important;padding-right:20px!important;
+  }
+  html:not(#bo-charcoal-off) body.report-body .report-shell .report-main:has(> .report-content > .bo-module-tabs) > .report-topbar .hamb{
+    width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;
+  }
+  html:not(#bo-charcoal-off) body.report-body:is(.page-customize-page,.image-to-url-page) .report-content > .bo-module-tabs{
+    margin-bottom:0!important;
+  }
+  html:not(#bo-charcoal-off) body.report-body:is(.page-customize-page,.image-to-url-page) .report-content:has(> .bo-module-tabs){
+    row-gap:12px!important;gap:12px!important;
+  }
+  /* Game Management: Provider Transactions (a bo-wallet-tx page, a 16px flex column) put 12px of row margin on top of that gap = 28px under the
+     row; Provider Bet Report (report family) got 16 from its own spacing rule. Both are 12px, like Provider / Sessions / Category / Game. */
+  html:not(#bo-charcoal-off) body.report-body.bo-wallet-tx:not(.deposit-approval-page):not(.withdraw-approval-page) .report-content > .bo-module-tabs{
+    margin-bottom:-4px!important;
+  }
+  html body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > .bo-module-tabs + *{
+    margin-top:12px!important;
+  }
 }

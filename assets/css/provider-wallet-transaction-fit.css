@@ -1,0 +1,23 @@
+/* Provider Transactions: table-layout fixed at a 1040px minimum with 100px columns, so Provider and Type broke mid-word ("PRAGMATI/C_PLAY",
+   "EVOLUTION/_LIVE_CASI/NO_INTL", "CREATE_PL/AYER") and every row was 55-73px. Provider 190 and Type 130 hold a whole code on one line (only the longest
+   code wraps, at 190px, in two lines); the API URL column takes what is left (216px at the 1164px minimum, wider on a big screen). */
+html body.provider-transaction-page.pwt-page:not(#bo-pw-off):not(#bo-pw-off-2):not(#bo-pw-off-3):not(#bo-pw-off-4) .report-table thead th:nth-child(1),
+html body.provider-transaction-page.pwt-page:not(#bo-pw-off):not(#bo-pw-off-2):not(#bo-pw-off-3):not(#bo-pw-off-4) table thead th:nth-child(1){width:80px!important}
+html body.provider-transaction-page.pwt-page:not(#bo-pw-off):not(#bo-pw-off-2):not(#bo-pw-off-3):not(#bo-pw-off-4) .report-table thead th:nth-child(2),
+html body.provider-transaction-page.pwt-page:not(#bo-pw-off):not(#bo-pw-off-2):not(#bo-pw-off-3):not(#bo-pw-off-4) table thead th:nth-child(2){width:190px!important}
+html body.provider-transaction-page.pwt-page:not(#bo-pw-off):not(#bo-pw-off-2):not(#bo-pw-off-3):not(#bo-pw-off-4) .report-table thead th:nth-child(3),
+html body.provider-transaction-page.pwt-page:not(#bo-pw-off):not(#bo-pw-off-2):not(#bo-pw-off-3):not(#bo-pw-off-4) table thead th:nth-child(3){width:130px!important}
+html body.provider-transaction-page.pwt-page:not(#bo-pw-off):not(#bo-pw-off-2):not(#bo-pw-off-3):not(#bo-pw-off-4) .report-table thead th:nth-child(4),
+html body.provider-transaction-page.pwt-page:not(#bo-pw-off):not(#bo-pw-off-2):not(#bo-pw-off-3):not(#bo-pw-off-4) table thead th:nth-child(4){width:100px!important}
+html body.provider-transaction-page.pwt-page:not(#bo-pw-off):not(#bo-pw-off-2):not(#bo-pw-off-3):not(#bo-pw-off-4) .report-table thead th:nth-child(5),
+html body.provider-transaction-page.pwt-page:not(#bo-pw-off):not(#bo-pw-off-2):not(#bo-pw-off-3):not(#bo-pw-off-4) table thead th:nth-child(5){width:100px!important}
+html body.provider-transaction-page.pwt-page:not(#bo-pw-off):not(#bo-pw-off-2):not(#bo-pw-off-3):not(#bo-pw-off-4) .report-table thead th:nth-child(6),
+html body.provider-transaction-page.pwt-page:not(#bo-pw-off):not(#bo-pw-off-2):not(#bo-pw-off-3):not(#bo-pw-off-4) table thead th:nth-child(6){width:64px!important}
+html body.provider-transaction-page.pwt-page:not(#bo-pw-off):not(#bo-pw-off-2):not(#bo-pw-off-3):not(#bo-pw-off-4) .report-table thead th:nth-child(8),
+html body.provider-transaction-page.pwt-page:not(#bo-pw-off):not(#bo-pw-off-2):not(#bo-pw-off-3):not(#bo-pw-off-4) table thead th:nth-child(8){width:160px!important}
+html body.provider-transaction-page.pwt-page:not(#bo-pw-off):not(#bo-pw-off-2):not(#bo-pw-off-3):not(#bo-pw-off-4) .report-table thead th:nth-child(9),
+html body.provider-transaction-page.pwt-page:not(#bo-pw-off):not(#bo-pw-off-2):not(#bo-pw-off-3):not(#bo-pw-off-4) table thead th:nth-child(9){width:124px!important}
+html body.provider-transaction-page.pwt-page:not(#bo-pw-off):not(#bo-pw-off-2):not(#bo-pw-off-3):not(#bo-pw-off-4) .report-table,
+html body.provider-transaction-page.pwt-page:not(#bo-pw-off):not(#bo-pw-off-2):not(#bo-pw-off-3):not(#bo-pw-off-4) .table-wrap > table{min-width:1164px!important}
+html body.provider-transaction-page.pwt-page:not(#bo-pw-off):not(#bo-pw-off-2):not(#bo-pw-off-3):not(#bo-pw-off-4) #txBody td:nth-child(2) b,
+html body.provider-transaction-page.pwt-page:not(#bo-pw-off):not(#bo-pw-off-2):not(#bo-pw-off-3):not(#bo-pw-off-4) #txBody td:nth-child(3){overflow-wrap:anywhere;word-break:normal}

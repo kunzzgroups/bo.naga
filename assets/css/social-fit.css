@@ -1,0 +1,13 @@
+/* Social. (1) The card grid packed down to 240px (<=1280) and 220px (<=768) columns, so an 834px tablet drew THREE 243px cards across where
+   1024px drew two 348px ones, with the link wrapping to three lines inside each. Cards are at least 280px at every width above the phone
+   layout (one column from 576px down, as before). (2) At tablet width the two toolbar buttons (Refresh, Create Social Link) were each a
+   full-width bar stacked on top of the cards; they sit on one row, right-aligned, at their own width from 576px up. */
+@media (min-width:576px){
+  html body.social-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-so-off):not(#bo-so-off-2) .social-card-grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))!important}
+  html body.social-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-so-off):not(#bo-so-off-2) .social-list-card > .user-toolbar{justify-content:flex-end!important}
+  html body.social-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-so-off):not(#bo-so-off-2) .social-list-card .user-toolbar-actions{width:auto!important;margin:0 0 0 auto!important;justify-content:flex-end!important;flex-wrap:nowrap!important}
+  html body.social-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-so-off):not(#bo-so-off-2) .social-list-card .user-toolbar-actions .clean-btn{flex:0 0 auto!important;width:auto!important}
+}
+/* Dark theme: the Create / Edit Social Link dialog's footer band (Cancel | Create Social Link, .pm-modal-actions from the shared CRUD modal) kept its
+   cream light-theme fill (#FFF8EB) under a dark dialog - a light strip across the bottom. It takes the dialog's dark tier and hairline. */
+html[data-bo-theme="dark"] body.social-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-so-off):not(#bo-so-off-2):not(#bo-so-off-3):not(#bo-so-off-4):not(#bo-so-off-5) .social-modal .pm-modal-actions{background:#383A46!important;border-top-color:rgba(255,255,255,.12)!important}

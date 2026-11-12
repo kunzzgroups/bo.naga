@@ -1,0 +1,16 @@
+/* Page Customize. (1) Below 1001px the pages list stacks above the editor, but the editor's form stayed a scroll window of its own inside a card
+   that is itself inside the scrolling grid: at 834x800 the form showed ~170px (a field and a half) and at 390px ~130px, with the two action rows
+   taking the rest, i.e. one could hardly edit anything. The form now takes its full height, the grid scrolls as one column, and the action
+   bar stays pinned to the bottom of that column. The pages list keeps its own (short) scroll. (2) From 1001 to 1199px the pages column was
+   still 298px, leaving the form 426px; the column is 240px there. */
+@media (max-width:1199.98px){
+  html body.page-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-pc-off):not(#bo-pc-off-2) .pc-grid{grid-template-columns:minmax(200px,240px) minmax(0,1fr)!important}
+}
+@media (max-width:1000px){
+  html body.page-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-pc-off):not(#bo-pc-off-2) .pc-grid{grid-template-columns:1fr!important;align-content:start!important;align-items:start!important}
+  html body.page-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-pc-off):not(#bo-pc-off-2) .pc-card--editor{min-height:0!important;overflow:visible!important}
+  html body.page-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-pc-off):not(#bo-pc-off-2) .pc-card--editor .pc-form{flex:0 0 auto!important}
+  html body.page-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-pc-off):not(#bo-pc-off-2) .pc-card--editor .pc-form-scroll{flex:0 0 auto!important;overflow:visible!important}
+  html body.page-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-pc-off):not(#bo-pc-off-2) .pc-card--editor .pc-actions{position:sticky!important;bottom:0!important;z-index:5!important}
+  html body.page-customize-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-pc-off):not(#bo-pc-off-2) .pc-list-scroll{max-height:260px!important}
+}

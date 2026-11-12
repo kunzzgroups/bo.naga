@@ -1,0 +1,37 @@
+/* Layout Section. The three code panes (HTML | CSS | JS) sit side by side from 1281px up, but the section menu takes 240px of the row, so at
+   1366 each pane is 264px, at 1440 289px and at 1560 329px: about 30-40 characters of code per line, every CSS rule and tag wrapping two or
+   three times (the owner's laptop widths). The stacked layout the page already uses up to 1280px (one pane per row, 280px tall, the grid
+   scrolls) now runs up to 1699px; three across needs the room above it (376px a pane at 1700, 448px at 1917). */
+@media (min-width:1280.02px) and (max-width:1699.98px){
+  html body.layout-section-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-ls-off):not(#bo-ls-off-2) .layout-code-grid{grid-template-columns:1fr!important;grid-template-rows:none!important;overflow:auto!important}
+  html body.layout-section-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-ls-off):not(#bo-ls-off-2) .layout-code-pane{height:auto!important;min-height:280px!important}
+  html body.layout-section-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-ls-off):not(#bo-ls-off-2) .layout-code-editor,
+  html body.layout-section-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-ls-off):not(#bo-ls-off-2) .layout-code-input-wrap,
+  html body.layout-section-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-ls-off):not(#bo-ls-off-2) .layout-code-highlight,
+  html body.layout-section-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-ls-off):not(#bo-ls-off-2) .layout-code-pane textarea,
+  html body.layout-section-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-ls-off):not(#bo-ls-off-2) .layout-cm6-host{min-height:280px!important;height:280px!important}
+}
+/* Stacked mode (<=1699px): the grid was a small scrolling window of its own inside a window that is already locked to the viewport - at
+   889x675 only ~410px of it showed, the HTML pane filled it, the CSS pane was a one-line sliver and the JS pane was out of sight behind a
+   second scrollbar. The three panes now take their own 280px each and the whole editor area (title row, find bar, panes, status) scrolls as
+   one column. */
+@media (max-width:1699.98px){
+  html body.layout-section-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-ls-off):not(#bo-ls-off-2) .layout-code-grid{flex:0 0 auto!important;overflow:visible!important;height:auto!important}
+  html body.layout-section-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-ls-off):not(#bo-ls-off-2) .layout-editor-main{overflow:visible!important;height:auto!important;min-height:0!important}
+  html body.layout-section-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-ls-off):not(#bo-ls-off-2) .layout-editor-shell{overflow-y:auto!important}
+}
+/* (1) The section list had no room below 1025px. There it becomes a row of chips above the editor (bo-layout-section-md.css max-width:1024),
+   but the shell is a grid whose first row was left to size itself to a scroller that has overflow hidden/auto - which sizes to 0 - so the 17
+   sections (CSS Styling, Frontend Header, Home: Referrer Panel ...) were clipped away and there was nothing to choose. The shell is a plain
+   column now: the chip row keeps its own height (one line, scrolls sideways), the editor under it. */
+@media (max-width:1024px){
+  html body.layout-section-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-ls-off):not(#bo-ls-off-2) .layout-editor-shell{display:flex!important;flex-direction:column!important;overflow-y:auto!important;overflow-x:hidden!important}
+  html body.layout-section-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-ls-off):not(#bo-ls-off-2) .layout-section-menu{flex:0 0 auto!important;min-height:52px!important;max-height:none!important;align-items:center!important}
+  html body.layout-section-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-ls-off):not(#bo-ls-off-2) .layout-editor-main{flex:0 0 auto!important}
+}
+/* (2) This page's sheet pins the sidebar at z-index 1040 at every width, which beats the drawer rule in reports.css (9100, under 992px) while
+   the dimming overlay is 9000: opening the drawer on a small screen put the overlay OVER it - the menu was grey and a tap on it hit the
+   overlay (closing it) instead of the menu item. The drawer sits above its overlay again. */
+@media (max-width:991.98px){
+  html body.layout-section-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-ls-off):not(#bo-ls-off-2) .report-sidebar{z-index:9100!important}
+}

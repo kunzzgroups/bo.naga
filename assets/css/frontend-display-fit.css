@@ -13,9 +13,12 @@
 }
 html body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .display-setting-copy,
 html body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .display-setting-copy p{overflow-wrap:anywhere}
-/* Dark theme. (1) The bold words inside a description ("Real Transactions", "Random Demo" under Live Transaction Data) were #3F3F46 - dark grey on the
-   dark panel - so the sentence read "uses deposits/withdrawals.      generates masked activity." with holes. (2) The marquee preview bar keeps the
-   background colour the admin picked (inline style, cream by default), but its text had no colour of its own and inherited the dark theme's near-white:
-   white on cream. With no colour chosen it is dark ink; a chosen text colour is an inline style and still wins. */
+/* Dark theme: the bold words inside a description ("Real Transactions", "Random Demo" under Live Transaction Data) were #3F3F46 - dark grey on the
+   dark panel - so the sentence read "uses deposits/withdrawals.      generates masked activity." with holes. */
 html[data-bo-theme="dark"] body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .display-setting-copy p b{color:#F5F5F4!important}
-html[data-bo-theme="dark"] body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .marquee-preview-inner{color:#18191C}
+/* The Header Marquee row (.display-setting-row.is-stack) has a single track written as `1fr`, i.e. minmax(auto,1fr): the track will not be
+   narrower than its content, and the editor + live preview carry a long single line, so at 830px the track grew to 991px inside a 794px
+   panel - the editor, its toolbar and the preview ran under the panel's right edge and the scrollbar (the editor text was cut at "Your Ow").
+   The track may shrink (minmax(0,1fr)) and the wrap fills the panel; the editor scrolls its own text, the preview strip clips its own. */
+html body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .display-setting-row.is-stack{grid-template-columns:minmax(0,1fr)!important}
+html body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .marquee-editor-wrap{min-width:0!important;max-width:100%!important}

@@ -1,0 +1,17 @@
+/* Provider Sessions: the table is table-layout:fixed with a colgroup, and the Provider column was 110px: a code like PRAGMATIC_PLAY (14 characters) or
+   EVOLUTION_LIVE_CASINO_INTL broke into two or three lines, and Game and the two date-times ("2026-11-12 08:15:30") wrapped too, so rows were
+   60-79px. Widths now follow the content (sum 1244): Provider 170, Game 150, the date-times 140 each and on one line; only a very long code wraps.
+   (The table already scrolls sideways under ~1250px, as before.) */
+html body.provider-session-page:not(#bo-ps-off):not(#bo-ps-off-2):not(#bo-ps-off-3) .report-table colgroup col:nth-child(1){width:64px!important}
+html body.provider-session-page:not(#bo-ps-off):not(#bo-ps-off-2):not(#bo-ps-off-3) .report-table colgroup col:nth-child(2){width:168px!important}
+html body.provider-session-page:not(#bo-ps-off):not(#bo-ps-off-2):not(#bo-ps-off-3) .report-table colgroup col:nth-child(3){width:170px!important}
+html body.provider-session-page:not(#bo-ps-off):not(#bo-ps-off-2):not(#bo-ps-off-3) .report-table colgroup col:nth-child(4){width:150px!important}
+html body.provider-session-page:not(#bo-ps-off):not(#bo-ps-off-2):not(#bo-ps-off-3) .report-table colgroup col:nth-child(5){width:104px!important}
+html body.provider-session-page:not(#bo-ps-off):not(#bo-ps-off-2):not(#bo-ps-off-3) .report-table colgroup col:nth-child(6){width:104px!important}
+html body.provider-session-page:not(#bo-ps-off):not(#bo-ps-off-2):not(#bo-ps-off-3) .report-table colgroup col:nth-child(7){width:112px!important}
+html body.provider-session-page:not(#bo-ps-off):not(#bo-ps-off-2):not(#bo-ps-off-3) .report-table colgroup col:nth-child(8){width:92px!important}
+html body.provider-session-page:not(#bo-ps-off):not(#bo-ps-off-2):not(#bo-ps-off-3) .report-table colgroup col:nth-child(9){width:140px!important}
+html body.provider-session-page:not(#bo-ps-off):not(#bo-ps-off-2):not(#bo-ps-off-3) .report-table colgroup col:nth-child(10){width:140px!important}
+html body.provider-session-page:not(#bo-ps-off):not(#bo-ps-off-2):not(#bo-ps-off-3) .report-table tbody td:nth-child(3){overflow-wrap:anywhere}
+html body.provider-session-page:not(#bo-ps-off):not(#bo-ps-off-2):not(#bo-ps-off-3) .report-table tbody td:nth-child(9),
+html body.provider-session-page:not(#bo-ps-off):not(#bo-ps-off-2):not(#bo-ps-off-3) .report-table tbody td:nth-child(10){white-space:nowrap}

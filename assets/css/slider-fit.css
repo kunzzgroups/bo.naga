@@ -5,3 +5,12 @@
 html body.banner-management-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-sl-off):not(#bo-sl-off-2):not(#bo-sl-off-3) .banner-gallery{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))!important}
 html body.banner-management-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-sl-off):not(#bo-sl-off-2):not(#bo-sl-off-3) .banner-card-facts dd{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important}
 html body.banner-management-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-sl-off):not(#bo-sl-off-2):not(#bo-sl-off-3) .banner-card-facts > div:nth-child(5) dd{white-space:nowrap!important}
+/* From 576 to 768px the filter bar became a column of four bars (search, status, Refresh, Add Banner), each on its own line and the buttons
+   a half-width 280px - four rows above the cards on a tablet held upright. They stay on one row (wrapping only if they must): the search
+   takes the room, the status and the two buttons keep their own width. */
+@media (min-width:576px) and (max-width:768px){
+  html body.banner-management-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-sl-off):not(#bo-so-x1):not(#bo-so-x2):not(#bo-so-x3):not(#bo-so-x4):not(#bo-so-x5):not(#bo-so-x6):not(#bo-so-x7):not(#bo-so-x8):not(#bo-so-x9):not(#bo-so-x10):not(#bo-so-x11) .report-main .banner-filterbar{flex-direction:row!important;align-items:center!important}
+  html body.banner-management-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-sl-off):not(#bo-so-x1):not(#bo-so-x2):not(#bo-so-x3):not(#bo-so-x4):not(#bo-so-x5):not(#bo-so-x6):not(#bo-so-x7):not(#bo-so-x8):not(#bo-so-x9):not(#bo-so-x10):not(#bo-so-x11) .report-main .banner-filterbar > .banner-search{flex:1 1 200px!important;max-width:none!important;width:auto!important;min-width:180px!important}
+  html body.banner-management-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-sl-off):not(#bo-so-x1):not(#bo-so-x2):not(#bo-so-x3):not(#bo-so-x4):not(#bo-so-x5):not(#bo-so-x6):not(#bo-so-x7):not(#bo-so-x8):not(#bo-so-x9):not(#bo-so-x10):not(#bo-so-x11) .report-main .banner-filterbar > #refreshSliderBtn,
+  html body.banner-management-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-sl-off):not(#bo-so-x1):not(#bo-so-x2):not(#bo-so-x3):not(#bo-so-x4):not(#bo-so-x5):not(#bo-so-x6):not(#bo-so-x7):not(#bo-so-x8):not(#bo-so-x9):not(#bo-so-x10):not(#bo-so-x11) .report-main .banner-filterbar > #addBannerBtn{width:auto!important;flex:0 0 auto!important}
+}
