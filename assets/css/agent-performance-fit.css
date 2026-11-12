@@ -1,0 +1,61 @@
+/* Agent Performance Report: 16 columns. report-table-split.js pins both tables to the natural (max-content) widths, so each column was
+   sized by its heading ("Total Players" 118px over a 3-digit count) and the agent cell by its longest name on one line (284px): the
+   table was 2034px wide and scrolled sideways even at 1917. Headings and names may wrap; each column gets a preferred width from its
+   figures (sum 1622). */
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page table.report-table thead th:nth-child(1){width:44px!important}
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page table.report-table thead th:nth-child(2){width:190px!important}
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page table.report-table thead th:nth-child(3){width:70px!important}
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page table.report-table thead th:nth-child(4){width:70px!important}
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page table.report-table thead th:nth-child(5){width:66px!important}
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page table.report-table thead th:nth-child(6){width:112px!important}
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page table.report-table thead th:nth-child(7){width:112px!important}
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page table.report-table thead th:nth-child(8){width:120px!important}
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page table.report-table thead th:nth-child(9){width:112px!important}
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page table.report-table thead th:nth-child(10){width:112px!important}
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page table.report-table thead th:nth-child(11){width:110px!important}
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page table.report-table thead th:nth-child(12){width:116px!important}
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page table.report-table thead th:nth-child(13){width:116px!important}
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page table.report-table thead th:nth-child(14){width:124px!important}
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page table.report-table thead th:nth-child(15){width:88px!important}
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page table.report-table thead th:nth-child(16){width:60px!important}
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page table.report-table thead th .bo-tx-sort-btn{white-space:normal!important;line-height:1.25!important}
+/* The split script sizes a column to the widest CELL, and a cell without a width contributes its whole line ("Evergreen Affiliates International" = 260px), so the name cells carry the preferred width too. */
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page table.report-table tbody td:nth-child(2){width:190px!important}
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page .perf-agent-cell b,
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page .perf-agent-cell small{white-space:normal!important;overflow-wrap:anywhere!important}
+/* KPI strip: six across needs >=1700px for a figure like "RM 2,345,678,901.23" to stay on one line; 3 across from 1201 to 1699, then the
+   family's own 2 across (agent-performance-report.css, max-width:1200px). */
+@media (min-width:1201px) and (max-width:1699.98px){
+  html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page #perfKpis.quick-stats{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page #perfKpis.quick-stats .metric strong{white-space:nowrap!important}
+/* Footer: the entry count takes the room between Show and the pager; under 1100px the |< and >| buttons are dropped. */
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page .mad-footer{grid-template-columns:auto minmax(0,1fr) auto!important;gap:12px!important}
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page .mad-footer-info{padding:0 12px!important;white-space:nowrap!important}
+html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page .mad-pager{flex-wrap:nowrap!important}
+@media (max-width:1100px){
+  html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page .mad-pager > .smart-page:first-child,
+  html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page .mad-pager > .smart-page:last-child{display:none!important}
+}
+/* Date strip and table are ONE card below 992px too (bo-report-family.css section 19 joins them from 992px up only). Padding: bo-shell.css 2e. */
+@media (max-width:991.98px){
+  html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page .report-content > .perf-filter-card:has(+ .table-card){
+    margin-bottom:0!important;
+    border-bottom:0!important;
+    border-bottom-left-radius:0!important;
+    border-bottom-right-radius:0!important;
+    box-shadow:none!important;
+  }
+  html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page .report-content > .perf-filter-card + .table-card{
+    border-top:0!important;
+    border-top-left-radius:0!important;
+    border-top-right-radius:0!important;
+  }
+}
+/* Below 992px the table is one natural-flow table: the name broke letter by letter ("Alp/ha/Net/work") and the figures wrapped ("RM" over
+   "-42,222.22"). Names wrap between words only and the figure cells stay on one line (the table scrolls sideways instead). */
+@media (max-width:991.98px){
+  html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page .perf-agent-cell b,
+  html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page .perf-agent-cell small{overflow-wrap:normal!important}
+  html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3):not(#bo-ap-off-4):not(#bo-ap-off-5).agent-performance-report-page table.report-table tbody td:not(:nth-child(2)){white-space:nowrap!important}
+}
