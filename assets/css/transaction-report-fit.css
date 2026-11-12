@@ -1,0 +1,32 @@
+/* Transaction Report — the footer, and why this page keeps its horizontal scroll.
+   ----------------------------------------------------------------------------------------------
+   The table here is fourteen columns of ledger detail with a documented floor (see
+   transaction-report-polish.css §"the table fits a 1260px content area"): the owner asked for the data
+   to be readable in full rather than squeezed, so the body scrolls sideways below 1917 and every column
+   keeps the width its content needs (measured needs sum to 1461: 181px hidden at 1560, 301 at 1440, 461
+   at 1280, 717 at 1024). Nothing is clipped at any of those widths - measured, no clamped heading and no
+   clamped cell - and the horizontal scrollbar is the stated trade, not a fault.
+
+   What was wrong is the footer: `.mad-footer` states fixed columns (217 / 260 / 217 at 1024) while the
+   pager needs 308, so the "Showing 1 to 20 of …" text ran UNDER the arrow buttons - measured 101px of
+   overlap at 1024, 49 at 946, 5 at 768. The recipe is the one win-lose-fit.css already uses: entries /
+   info / pager as auto / minmax(0,1fr) / auto with a 12px gap, and the info line ellipsising instead of
+   pushing. Measured after: 0 overlap at 1560 / 1280 / 1024 / 946 / 768.
+
+   Three :not(#id) steps, as the rest of the family's sheets. */
+
+html:not(#bo-tr-f):not(#bo-tr-f-2):not(#bo-tr-f-3) body.transaction-report-page .mad-footer{
+  grid-template-columns:auto minmax(0,1fr) auto!important;
+  gap:12px!important;
+}
+html:not(#bo-tr-f):not(#bo-tr-f-2):not(#bo-tr-f-3) body.transaction-report-page .mad-footer .mad-footer-info{
+  padding:0 12px!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  /* the info line is wider than its track at 1024 (193 in 158), and a grid item overflows its track
+     unless it is allowed to shrink - that is the 5px it put over the entries control and the pager */
+  min-width:0!important;
+  max-width:100%!important;
+  justify-self:stretch!important;
+}
