@@ -1,0 +1,28 @@
+/* Casino Bonus Report — the date strip joins the table below 992px.
+   ----------------------------------------------------------------------------------------------
+   This page's table needed nothing: five columns (Date · Reference / Promotion · Members · Claims ·
+   Amount) fill the card at every width measured (1917 / 1560 / 1440 / 1280 / 1024 / 946 / 834 / 768),
+   the head table and the rows agree to the pixel, and no cell or heading is clipped.
+
+   What was wrong is the same thing win-lose-fit.css and casino-dw-fit.css already fix for their pages:
+   below 992 the report column is plain block flow and each card keeps its own margin, so the date picker
+   sat in a rounded box of its own with a 16px gap above the table (measured at 946 / 834 / 768). The
+   shared join in bo-report-family.css section 19 is stated for min-width:992px only.
+
+   Same join, scoped to this page so nothing else moves. If the family ever wants it everywhere, section 19
+   is the place for it and this block can go. Three :not(#id) steps, as the rest of the family's sheets. */
+
+@media (max-width:991.98px){
+  html:not(#bo-cn-off):not(#bo-cn-off-2):not(#bo-cn-off-3) body.bo-report-family[data-report-page="bonus"] .report-content > .filter-card:has(+ .table-card){
+    margin-bottom:0!important;
+    border-bottom:0!important;
+    border-bottom-left-radius:0!important;
+    border-bottom-right-radius:0!important;
+    box-shadow:none!important;
+  }
+  html:not(#bo-cn-off):not(#bo-cn-off-2):not(#bo-cn-off-3) body.bo-report-family[data-report-page="bonus"] .report-content > .filter-card + .table-card{
+    border-top:0!important;
+    border-top-left-radius:0!important;
+    border-top-right-radius:0!important;
+  }
+}
