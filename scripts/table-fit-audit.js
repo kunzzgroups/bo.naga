@@ -75,21 +75,30 @@ const PROBE = `
          onto the head. Test it - scroll the nearest scrolling sibling and see whether the clipped box followed -
          instead of calling it unreachable on its overflow value alone. */
       if (box && item.hidden > 0 && !item.canScroll) {
-        let scope = box.parentElement, scroller = null, hops = 0;
-        while (scope && hops++ < 4 && !scroller) {
-          scroller = [...scope.querySelectorAll('*')].find((n) => {
+        /* Every scrollable box in the card, widest overflow first: the head follows the one the page's
+           sync listens on, and picking a narrower one made the test lie. Each candidate is scrolled and
+           checked for actually moving. */
+        let scope = box.parentElement, hops = 0, candidates = [];
+        while (scope && hops++ < 4) {
+          for (const n of scope.querySelectorAll('*')) {
             const c = getComputedStyle(n);
-            return /auto|scroll/.test(c.overflowX) && n.scrollWidth > n.clientWidth + 1;
-          }) || null;
+            if (/auto|scroll/.test(c.overflowX) && n.scrollWidth > n.clientWidth + 1) candidates.push(n);
+          }
+          if (candidates.length) break;
           scope = scope.parentElement;
         }
-        if (scroller) {
+        candidates.sort((a, b) => (b.scrollWidth - b.clientWidth) - (a.scrollWidth - a.clientWidth));
+        for (const scroller of candidates.slice(0, 3)) {
           const before = box.scrollLeft;
           scroller.scrollLeft = 200;
-          await new Promise((done) => setTimeout(done, 150));
-          item.synced = box.scrollLeft !== before;
+          await new Promise((done) => setTimeout(done, 260));
+          if (box.scrollLeft !== before) { item.synced = true; }
+          else { await new Promise((done) => setTimeout(done, 200)); scroller.scrollLeft = 220; await new Promise((done) => setTimeout(done, 260)); if (box.scrollLeft !== before) item.synced = true; }
+          const moved = scroller.scrollLeft > 0;
           scroller.scrollLeft = 0;
           await new Promise((done) => setTimeout(done, 60));
+          if (item.synced) break;
+          if (!moved) continue;
         }
       }
       out.push(item);
@@ -205,7 +214,7 @@ ${s.ok.map((r) => '`' + r.page + '`' + (r.provisional ? ' *(empty)*' : '')).join
           let ok = true;
           try { await page.goto(`${BASE}/${file}?theme=dark`, { waitFor: "document.querySelector('table')", timeout: 9000 }); }
           catch { ok = false; }
-          await cdp.sleep(260);
+          await cdp.sleep(700);
           rec[w] = ok ? await page.evaluate(PROBE).catch(() => null) : null;
         }
         data[file] = rec;
