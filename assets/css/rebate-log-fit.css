@@ -1,0 +1,34 @@
+/* Rebate Log (and Daily Rebate Report, which links this sheet too: same .rebate-log-table). The twelve columns were sized so every
+   heading and every value sat on ONE line (sum 1284px, tuned for a 1560 window): 118px hidden at 1440, 278px at 1280,
+   ~520px on a tablet. Headings wrap now, and the two free-text columns (Provider / Category, Status) may use two
+   lines, so the widths follow the numbers and IDs, which never split. Sum 1171px (the date needs 112px: at 104 it split as 2026-10- / 09); the table still fills any wider
+   frame. */
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table{width:max(100%,1171px)!important;min-width:1171px!important;table-layout:fixed!important}
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table thead th:nth-child(1),
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table tbody td:nth-child(1){width:112px!important}
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table thead th:nth-child(2),
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table tbody td:nth-child(2){width:76px!important}
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table thead th:nth-child(3),
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table tbody td:nth-child(3){width:112px!important}
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table thead th:nth-child(4),
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table tbody td:nth-child(4){width:100px!important}
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table thead th:nth-child(5),
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table tbody td:nth-child(5){width:80px!important}
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table thead th:nth-child(6),
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table tbody td:nth-child(6){width:76px!important}
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table thead th:nth-child(7),
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table tbody td:nth-child(7){width:100px!important}
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table thead th:nth-child(8),
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table tbody td:nth-child(8){width:78px!important}
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table thead th:nth-child(9),
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table tbody td:nth-child(9){width:100px!important}
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table thead th:nth-child(10),
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table tbody td:nth-child(10){width:80px!important}
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table thead th:nth-child(11),
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table tbody td:nth-child(11){width:120px!important}
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table thead th:nth-child(12),
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table tbody td:nth-child(12){width:137px!important}
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table tbody td:nth-child(1),
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table tbody td:nth-child(2),
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table tbody td:nth-child(n+4):nth-child(-n+10),
+html:not(#bo-rl-off):not(#bo-rl-off-2) body:not(#bo-rl-off-3).rebate-page .rebate-log-table tbody td:nth-child(12){white-space:nowrap!important}

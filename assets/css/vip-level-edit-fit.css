@@ -1,0 +1,19 @@
+/* VIP Level edit page, dark theme. Four texts kept their light-theme colours: the "VIP badge image" field label
+   (#6B360C brown on #383A46), the upload hint (#57534E), the "0 step(s) . 0 EXP total" line (#57534E) and the
+   "No image uploaded" placeholder (#78716C). The rules that set them are light-only (vip-pages-targeted.css
+   .vle-image-field .vle-field-label ...), so they win over the dark label rule. */
+html[data-bo-theme="dark"]:not(#bo-vle-off) body:not(#bo-vle-off-2).vip-level-edit-page.report-body .vle-image-field .vle-field-label{color:#E7E5E4!important}
+html[data-bo-theme="dark"]:not(#bo-vle-off) body:not(#bo-vle-off-2).vip-level-edit-page.report-body .vip-image-controls small,
+html[data-bo-theme="dark"]:not(#bo-vle-off) body:not(#bo-vle-off-2).vip-level-edit-page.report-body .vip-step-toolbar > span{color:#A1A1AA!important}
+html[data-bo-theme="dark"]:not(#bo-vle-off) body:not(#bo-vle-off-2).vip-level-edit-page.report-body .vip-image-preview > span{color:#A1A1AA!important}
+
+/* Progression steps (dark): the per-step Upload buttons and the step Remove button kept the light theme (cream
+   gradient with ink text, #FEF3F2 pink with #B42318 icon), while the same Upload / Remove buttons in section 1 are dark.
+   The hint lines under the step title and the artwork heading were #57534E (1.6:1 on #383A46) and "No image" #78716C
+   (2.9:1). Values below are the ones section 1's buttons already use. */
+html[data-bo-theme="dark"]:not(#bo-vle-off) body:not(#bo-vle-off-2).vip-level-edit-page.report-body .vip-step-artwork .vip-step-image-actions .clean-btn.bo-ui-button-secondary{
+  background:linear-gradient(#4A4C58 0%,#383A46 55%,#2C2E38 100%)!important;
+  border-color:rgba(255,255,255,.12)!important;color:#F5F5F4!important;box-shadow:0 1px 2px rgba(0,0,0,.28)!important}
+html[data-bo-theme="dark"]:not(#bo-vle-off) body:not(#bo-vle-off-2).vip-level-edit-page.report-body .vip-step-remove.clean-btn{background:rgba(239,68,68,.14)!important;border-color:rgba(239,68,68,.4)!important;color:#FF8A90!important}
+html[data-bo-theme="dark"]:not(#bo-vle-off) body:not(#bo-vle-off-2).vip-level-edit-page.report-body [data-step-row] small{color:#A1A1AA!important}
+html[data-bo-theme="dark"]:not(#bo-vle-off) body:not(#bo-vle-off-2).vip-level-edit-page.report-body .vip-step-image-box > span{color:#A1A1AA!important}
