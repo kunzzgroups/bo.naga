@@ -1265,3 +1265,77 @@ html:not(#bo-charcoal-off) body.bo-access-control.admin-operation-log-page .stan
 }
 html:not(#bo-charcoal-off) body.bo-access-control.admin-operation-log-page .standard-data-table th:nth-child(7),
 html:not(#bo-charcoal-off) body.bo-access-control.admin-operation-log-page .standard-data-table td:nth-child(7){width:104px!important}
+/* Admin Management on a laptop or tablet: the nine columns are fixed-layout and share 750 / 786 / 732px,
+   and three of them were narrower than their own content - the ROLE chip needed 96 in 79, the STATUS pill 92
+   in 79, the "Created By" header 79 in 66 (measured at 1024, 822 and 768). The percentages in reports.css
+   divide the frame evenly; below 1101 the columns are px, sized to what each one carries (sum 716, inside the
+   732 a 768 window has). Nothing changes at 1101 and above. */
+@media (max-width:1100px){
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(1),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(1){width:32px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(2),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(2){width:108px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(3),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(3){width:94px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(4),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(4){width:90px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(5),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(5){width:86px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(6),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(6){width:88px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(7),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(7){width:88px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(8),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(8){width:78px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(9),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(9){width:52px!important}
+}
+
+/* Admin Management on a laptop or tablet: nine fixed-layout columns share 750 / 786 / 732px and four of
+   them were narrower than their own content - the ROLE chip needed 96 in 79, the STATUS pill 92 in 79, the
+   "Created By" header 79 in 66, ACTION needs 84 for its two icon buttons, and a date cell ("2026-11-10" plus
+   the time under it) needs 118: at 90 the date itself broke in two (measured at 1024, 822 and 768).
+
+   Below 1101 the columns are px at what they carry and Created By goes - it is a system label ("system" /
+   "admin"), the least informative of the nine. 30+100+108+96+92+118+118+84 = 746, inside the 750 a 1024 window
+   has. Under 820 CREATED goes too - LAST LOGIN is what answers "is this account still in use" - which brings
+   the row to 628, inside the 732 a 768 window has. Nothing changes at 1101 and above. */
+@media (max-width:1100px){
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(1),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(1){width:30px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(2),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(2){width:100px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(3),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(3){width:108px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(4),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(4){width:96px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(5),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(5){width:92px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(6),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(6){width:118px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(7),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(7){width:118px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(9),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(9){width:84px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(8),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(8){display:none!important}
+}
+
+@media (max-width:820px){
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(1),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(1){width:30px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(2),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(2){width:100px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(3),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(3){width:108px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(4),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(4){width:96px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(5),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(5){width:92px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(6),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(6){width:118px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(9),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(9){width:84px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(7),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(7){display:none!important}
+}
