@@ -43,6 +43,31 @@ body.site-customize-page #reactTemplateAssets .row > label {display:block!import
 body.site-customize-page #reactTemplateAssets .form-control {width:100%!important;min-width:0!important;box-sizing:border-box}
 body.site-customize-page #reactTemplateAssets .d-flex {flex-wrap:wrap!important}
 @media (max-width:767px){body.site-customize-page #reactTemplateAssets .row > label{width:100%!important;flex:0 0 100%!important;max-width:100%!important}}
+</style><style id="react-assets-visual-style">
+body.site-customize-page #reactTemplateAssets.react-assets-panel{margin:24px 0 8px!important;padding:22px!important;background:var(--bs-body-bg,#fffaf1)!important;border:1px solid #e3d2b9;border-radius:12px;box-sizing:border-box;max-width:100%;min-width:0;height:auto!important;overflow:visible!important}
+#reactTemplateAssets .react-assets-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:20px}
+#reactTemplateAssets .react-assets-top h3{font-size:20px!important;font-weight:750;line-height:1.35;margin:0 0 7px}
+#reactTemplateAssets .react-assets-top p{font-size:13px;line-height:1.6;color:var(--bs-secondary-color,#766e62);margin:0;max-width:840px}
+#reactTemplateAssets .react-assets-pill{border:1px solid #e3d2b9;border-radius:30px;padding:5px 12px;font-size:12px;white-space:nowrap}
+#reactTemplateAssets .react-assets-group{margin:0 0 22px}
+#reactTemplateAssets .react-assets-group h4{font-size:15px;font-weight:750;margin:0 0 12px;padding-bottom:10px;border-bottom:1px solid #e3d2b9}
+#reactTemplateAssets .react-assets-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px!important}
+#reactTemplateAssets .react-assets-item{display:block!important;min-width:0!important;padding:15px!important;border:1px solid #e6d8c6;border-radius:10px;background:var(--bs-body-bg,#fff);height:auto!important}
+#reactTemplateAssets .react-assets-item-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#reactTemplateAssets .react-assets-item label{font-weight:700;font-size:13px;margin:0}
+#reactTemplateAssets .react-assets-type{font-size:11px;opacity:.7;white-space:nowrap}
+#reactTemplateAssets .react-assets-hint{font-size:12px;color:var(--bs-secondary-color,#766e62);margin:6px 0 10px;line-height:1.5}
+#reactTemplateAssets .react-assets-input{display:block;width:100%!important;min-width:0!important;min-height:40px;padding:9px 12px;border:1px solid #e3d2b9;border-radius:8px;background:var(--bs-body-bg,#fffaf1);color:inherit;font-size:13px;box-sizing:border-box}
+#reactTemplateAssets textarea.react-assets-input{resize:vertical;min-height:70px}
+#reactTemplateAssets .react-assets-preview{height:145px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px dashed #dcc7a8;border-radius:8px;background:rgba(140,120,90,.055);margin:0 0 10px}
+#reactTemplateAssets .react-assets-preview img{width:100%;height:100%;object-fit:contain}
+#reactTemplateAssets .react-assets-preview img[hidden]{display:none!important}
+#reactTemplateAssets .react-assets-empty{font-size:12px;opacity:.65;text-align:center;padding:12px}
+#reactTemplateAssets .react-assets-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px}
+#reactTemplateAssets .react-assets-clear{border:1px solid #e3d2b9;border-radius:6px;background:transparent;color:inherit;font-size:12px;padding:5px 10px;cursor:pointer}
+#reactTemplateAssets .react-assets-help{font-size:11px;opacity:.65}
+#reactTemplateAssets .react-assets-footer{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding-top:12px;border-top:1px solid #e3d2b9}
+@media(max-width:850px){#reactTemplateAssets .react-assets-grid{grid-template-columns:minmax(0,1fr)!important}#reactTemplateAssets .react-assets-top{flex-wrap:wrap}}
 </style></head>
   <body class="report-body bo-charcoal bo-account-chip site-customize-page">
     <div class="report-shell">
@@ -81,29 +106,90 @@ body.site-customize-page #reactTemplateAssets .d-flex {flex-wrap:wrap!important}
             <div class="custom-tab-panel active" id="main-layout" data-assets-locale="en">
                 <div class="brand-assets-card" id="brandAssetsMount"></div>
                 <div class="custom-status" id="customizeStatus"></div>
-<section class="react-assets-panel" id="reactTemplateAssets">
-<h3 class="react-assets-heading">Third React Template — Merchant Site Assets</h3>
-<p class="text-muted">Controls third-template content for the active Merchant. Stored in your existing brand-isolated Layout Section (react-template-assets). Empty fields hide unsupported sponsor/store panels instead of displaying sample data.</p>
-<div class="row"><label class="col-md-6 mb-2"><span class="d-block mb-1">Ambassador name</span><input type="text" class="form-control" data-react-asset="sponsor.name" placeholder="HTTPS image/media URL or text" autocomplete="off"></label>
-<label class="col-md-6 mb-2"><span class="d-block mb-1">Ambassador description</span><input type="text" class="form-control" data-react-asset="sponsor.description" placeholder="HTTPS image/media URL or text" autocomplete="off"></label>
-<label class="col-md-6 mb-2"><span class="d-block mb-1">Ambassador followers label</span><input type="text" class="form-control" data-react-asset="sponsor.followers" placeholder="HTTPS image/media URL or text" autocomplete="off"></label>
-<label class="col-md-6 mb-2"><span class="d-block mb-1">Ambassador video HTTPS URL</span><input type="text" class="form-control" data-react-asset="sponsor.video" placeholder="HTTPS image/media URL or text" autocomplete="off"></label>
-<label class="col-md-6 mb-2"><span class="d-block mb-1">Ambassador portrait image URL</span><input type="text" class="form-control" data-react-asset="sponsor.image" placeholder="HTTPS image/media URL or text" autocomplete="off"></label>
-<label class="col-md-6 mb-2"><span class="d-block mb-1">Ambassador Instagram HTTPS URL</span><input type="text" class="form-control" data-react-asset="sponsor.instagram" placeholder="HTTPS image/media URL or text" autocomplete="off"></label>
-<label class="col-md-6 mb-2"><span class="d-block mb-1">App download headline</span><input type="text" class="form-control" data-react-asset="download.headline" placeholder="HTTPS image/media URL or text" autocomplete="off"></label>
-<label class="col-md-6 mb-2"><span class="d-block mb-1">App download description</span><input type="text" class="form-control" data-react-asset="download.description" placeholder="HTTPS image/media URL or text" autocomplete="off"></label>
-<label class="col-md-6 mb-2"><span class="d-block mb-1">App download background image URL</span><input type="text" class="form-control" data-react-asset="download.desktopImage" placeholder="HTTPS image/media URL or text" autocomplete="off"></label>
-<label class="col-md-6 mb-2"><span class="d-block mb-1">App Store HTTPS link</span><input type="text" class="form-control" data-react-asset="download.appStoreUrl" placeholder="HTTPS image/media URL or text" autocomplete="off"></label>
-<label class="col-md-6 mb-2"><span class="d-block mb-1">Google Play HTTPS link</span><input type="text" class="form-control" data-react-asset="download.googlePlayUrl" placeholder="HTTPS image/media URL or text" autocomplete="off"></label>
-<label class="col-md-6 mb-2"><span class="d-block mb-1">Number game card image URL</span><input type="text" class="form-control" data-react-asset="entries.numbergame" placeholder="HTTPS image/media URL or text" autocomplete="off"></label>
-<label class="col-md-6 mb-2"><span class="d-block mb-1">Ranking card image URL</span><input type="text" class="form-control" data-react-asset="entries.ranking" placeholder="HTTPS image/media URL or text" autocomplete="off"></label>
-<label class="col-md-6 mb-2"><span class="d-block mb-1">Prediction card image URL</span><input type="text" class="form-control" data-react-asset="entries.prediction" placeholder="HTTPS image/media URL or text" autocomplete="off"></label>
-<label class="col-md-6 mb-2"><span class="d-block mb-1">Achievement card image URL</span><input type="text" class="form-control" data-react-asset="entries.personal" placeholder="HTTPS image/media URL or text" autocomplete="off"></label>
-<label class="col-md-6 mb-2"><span class="d-block mb-1">Ranking desktop banner URL</span><input type="text" class="form-control" data-react-asset="ranking.heroDesktop" placeholder="HTTPS image/media URL or text" autocomplete="off"></label>
-<label class="col-md-6 mb-2"><span class="d-block mb-1">Ranking mobile banner URL</span><input type="text" class="form-control" data-react-asset="ranking.heroMobile" placeholder="HTTPS image/media URL or text" autocomplete="off"></label>
-<label class="col-md-6 mb-2"><span class="d-block mb-1">Ranking prize background URL</span><input type="text" class="form-control" data-react-asset="ranking.prizeBackground" placeholder="HTTPS image/media URL or text" autocomplete="off"></label></div>
-<div class="d-flex align-items-center gap-3 mt-3"><button class="clean-btn primary" id="reactAssetsSave" type="button">Save React Template Assets</button><span id="reactAssetsStatus" role="status"></span></div>
-</section>
+<section class="react-assets-panel" id="reactTemplateAssets" aria-labelledby="reactAssetsHeading">
+<div class="react-assets-top"><div><h3 id="reactAssetsHeading">Third React Template — Merchant Site Assets</h3><p>Manage images, video links and text for the active Merchant. Image previews show the configured URL, not an uploaded file. Existing Site Customize image uploads remain separate.</p></div><span class="react-assets-pill">18 settings</span></div>
+<div class="react-assets-groups">
+<div class="react-assets-group"><h4>Ambassador section</h4><div class="react-assets-grid">
+<div class="react-assets-item" data-react-kind="text"><div class="react-assets-item-top"><label for="react-sponsor-name">Ambassador name</label><span class="react-assets-type">Text</span></div><p class="react-assets-hint">Display name shown in the ambassador panel</p>
+<input id="react-sponsor-name" type="text" class="react-assets-input" data-react-asset="sponsor.name" placeholder="Enter text" autocomplete="off">
+</div>
+<div class="react-assets-item" data-react-kind="textarea"><div class="react-assets-item-top"><label for="react-sponsor-description">Ambassador description</label><span class="react-assets-type">Text</span></div><p class="react-assets-hint">Short introduction about the ambassador</p>
+<textarea rows="2" id="react-sponsor-description" class="react-assets-input" data-react-asset="sponsor.description" placeholder="Enter text"></textarea>
+</div>
+<div class="react-assets-item" data-react-kind="text"><div class="react-assets-item-top"><label for="react-sponsor-followers">Followers label</label><span class="react-assets-type">Text</span></div><p class="react-assets-hint">Followers or audience label</p>
+<input id="react-sponsor-followers" type="text" class="react-assets-input" data-react-asset="sponsor.followers" placeholder="Enter text" autocomplete="off">
+</div>
+<div class="react-assets-item" data-react-kind="video"><div class="react-assets-item-top"><label for="react-sponsor-video">Ambassador video</label><span class="react-assets-type">Video</span></div><p class="react-assets-hint">HTTPS video address</p>
+<input id="react-sponsor-video" type="url" class="react-assets-input" data-react-asset="sponsor.video" placeholder="https://example.com/..." autocomplete="off">
+</div>
+<div class="react-assets-item" data-react-kind="image"><div class="react-assets-item-top"><label for="react-sponsor-image">Ambassador portrait</label><span class="react-assets-type">Image</span></div><p class="react-assets-hint">Portrait image of the ambassador</p>
+<div class="react-assets-preview" data-react-preview="sponsor.image"><div class="react-assets-empty">No image configured</div><img alt="Ambassador portrait preview" loading="lazy" hidden></div>
+<input id="react-sponsor-image" type="url" class="react-assets-input" data-react-asset="sponsor.image" placeholder="https://example.com/image.webp" autocomplete="off">
+<div class="react-assets-actions"><button type="button" class="react-assets-clear" data-react-clear="sponsor.image">Clear URL</button><span class="react-assets-help">Paste a public HTTPS image URL</span></div>
+</div>
+<div class="react-assets-item" data-react-kind="link"><div class="react-assets-item-top"><label for="react-sponsor-instagram">Instagram link</label><span class="react-assets-type">Link</span></div><p class="react-assets-hint">Instagram profile link</p>
+<input id="react-sponsor-instagram" type="url" class="react-assets-input" data-react-asset="sponsor.instagram" placeholder="https://example.com/..." autocomplete="off">
+</div>
+</div></div>
+<div class="react-assets-group"><h4>App download section</h4><div class="react-assets-grid">
+<div class="react-assets-item" data-react-kind="text"><div class="react-assets-item-top"><label for="react-download-headline">Download headline</label><span class="react-assets-type">Text</span></div><p class="react-assets-hint">Headline above the app download area</p>
+<input id="react-download-headline" type="text" class="react-assets-input" data-react-asset="download.headline" placeholder="Enter text" autocomplete="off">
+</div>
+<div class="react-assets-item" data-react-kind="textarea"><div class="react-assets-item-top"><label for="react-download-description">Download description</label><span class="react-assets-type">Text</span></div><p class="react-assets-hint">Supporting description</p>
+<textarea rows="2" id="react-download-description" class="react-assets-input" data-react-asset="download.description" placeholder="Enter text"></textarea>
+</div>
+<div class="react-assets-item" data-react-kind="image"><div class="react-assets-item-top"><label for="react-download-desktopImage">App download background</label><span class="react-assets-type">Image</span></div><p class="react-assets-hint">Background image for app download</p>
+<div class="react-assets-preview" data-react-preview="download.desktopImage"><div class="react-assets-empty">No image configured</div><img alt="App download background preview" loading="lazy" hidden></div>
+<input id="react-download-desktopImage" type="url" class="react-assets-input" data-react-asset="download.desktopImage" placeholder="https://example.com/image.webp" autocomplete="off">
+<div class="react-assets-actions"><button type="button" class="react-assets-clear" data-react-clear="download.desktopImage">Clear URL</button><span class="react-assets-help">Paste a public HTTPS image URL</span></div>
+</div>
+<div class="react-assets-item" data-react-kind="link"><div class="react-assets-item-top"><label for="react-download-appStoreUrl">App Store link</label><span class="react-assets-type">Link</span></div><p class="react-assets-hint">Official App Store destination</p>
+<input id="react-download-appStoreUrl" type="url" class="react-assets-input" data-react-asset="download.appStoreUrl" placeholder="https://example.com/..." autocomplete="off">
+</div>
+<div class="react-assets-item" data-react-kind="link"><div class="react-assets-item-top"><label for="react-download-googlePlayUrl">Google Play link</label><span class="react-assets-type">Link</span></div><p class="react-assets-hint">Official Google Play destination</p>
+<input id="react-download-googlePlayUrl" type="url" class="react-assets-input" data-react-asset="download.googlePlayUrl" placeholder="https://example.com/..." autocomplete="off">
+</div>
+</div></div>
+<div class="react-assets-group"><h4>Home entry cards</h4><div class="react-assets-grid">
+<div class="react-assets-item" data-react-kind="image"><div class="react-assets-item-top"><label for="react-entries-numbergame">Number game card</label><span class="react-assets-type">Image</span></div><p class="react-assets-hint">Number game card artwork</p>
+<div class="react-assets-preview" data-react-preview="entries.numbergame"><div class="react-assets-empty">No image configured</div><img alt="Number game card preview" loading="lazy" hidden></div>
+<input id="react-entries-numbergame" type="url" class="react-assets-input" data-react-asset="entries.numbergame" placeholder="https://example.com/image.webp" autocomplete="off">
+<div class="react-assets-actions"><button type="button" class="react-assets-clear" data-react-clear="entries.numbergame">Clear URL</button><span class="react-assets-help">Paste a public HTTPS image URL</span></div>
+</div>
+<div class="react-assets-item" data-react-kind="image"><div class="react-assets-item-top"><label for="react-entries-ranking">Ranking card</label><span class="react-assets-type">Image</span></div><p class="react-assets-hint">Ranking entry card artwork</p>
+<div class="react-assets-preview" data-react-preview="entries.ranking"><div class="react-assets-empty">No image configured</div><img alt="Ranking card preview" loading="lazy" hidden></div>
+<input id="react-entries-ranking" type="url" class="react-assets-input" data-react-asset="entries.ranking" placeholder="https://example.com/image.webp" autocomplete="off">
+<div class="react-assets-actions"><button type="button" class="react-assets-clear" data-react-clear="entries.ranking">Clear URL</button><span class="react-assets-help">Paste a public HTTPS image URL</span></div>
+</div>
+<div class="react-assets-item" data-react-kind="image"><div class="react-assets-item-top"><label for="react-entries-prediction">Prediction card</label><span class="react-assets-type">Image</span></div><p class="react-assets-hint">Prediction entry card artwork</p>
+<div class="react-assets-preview" data-react-preview="entries.prediction"><div class="react-assets-empty">No image configured</div><img alt="Prediction card preview" loading="lazy" hidden></div>
+<input id="react-entries-prediction" type="url" class="react-assets-input" data-react-asset="entries.prediction" placeholder="https://example.com/image.webp" autocomplete="off">
+<div class="react-assets-actions"><button type="button" class="react-assets-clear" data-react-clear="entries.prediction">Clear URL</button><span class="react-assets-help">Paste a public HTTPS image URL</span></div>
+</div>
+<div class="react-assets-item" data-react-kind="image"><div class="react-assets-item-top"><label for="react-entries-personal">Achievement card</label><span class="react-assets-type">Image</span></div><p class="react-assets-hint">Personal achievement entry artwork</p>
+<div class="react-assets-preview" data-react-preview="entries.personal"><div class="react-assets-empty">No image configured</div><img alt="Achievement card preview" loading="lazy" hidden></div>
+<input id="react-entries-personal" type="url" class="react-assets-input" data-react-asset="entries.personal" placeholder="https://example.com/image.webp" autocomplete="off">
+<div class="react-assets-actions"><button type="button" class="react-assets-clear" data-react-clear="entries.personal">Clear URL</button><span class="react-assets-help">Paste a public HTTPS image URL</span></div>
+</div>
+</div></div>
+<div class="react-assets-group"><h4>Ranking Board</h4><div class="react-assets-grid">
+<div class="react-assets-item" data-react-kind="image"><div class="react-assets-item-top"><label for="react-ranking-heroDesktop">Ranking desktop banner</label><span class="react-assets-type">Image</span></div><p class="react-assets-hint">Top banner for desktop layout</p>
+<div class="react-assets-preview" data-react-preview="ranking.heroDesktop"><div class="react-assets-empty">No image configured</div><img alt="Ranking desktop banner preview" loading="lazy" hidden></div>
+<input id="react-ranking-heroDesktop" type="url" class="react-assets-input" data-react-asset="ranking.heroDesktop" placeholder="https://example.com/image.webp" autocomplete="off">
+<div class="react-assets-actions"><button type="button" class="react-assets-clear" data-react-clear="ranking.heroDesktop">Clear URL</button><span class="react-assets-help">Paste a public HTTPS image URL</span></div>
+</div>
+<div class="react-assets-item" data-react-kind="image"><div class="react-assets-item-top"><label for="react-ranking-heroMobile">Ranking mobile banner</label><span class="react-assets-type">Image</span></div><p class="react-assets-hint">Top banner for mobile layout</p>
+<div class="react-assets-preview" data-react-preview="ranking.heroMobile"><div class="react-assets-empty">No image configured</div><img alt="Ranking mobile banner preview" loading="lazy" hidden></div>
+<input id="react-ranking-heroMobile" type="url" class="react-assets-input" data-react-asset="ranking.heroMobile" placeholder="https://example.com/image.webp" autocomplete="off">
+<div class="react-assets-actions"><button type="button" class="react-assets-clear" data-react-clear="ranking.heroMobile">Clear URL</button><span class="react-assets-help">Paste a public HTTPS image URL</span></div>
+</div>
+<div class="react-assets-item" data-react-kind="image"><div class="react-assets-item-top"><label for="react-ranking-prizeBackground">Ranking prize background</label><span class="react-assets-type">Image</span></div><p class="react-assets-hint">Background behind the ranking prize area</p>
+<div class="react-assets-preview" data-react-preview="ranking.prizeBackground"><div class="react-assets-empty">No image configured</div><img alt="Ranking prize background preview" loading="lazy" hidden></div>
+<input id="react-ranking-prizeBackground" type="url" class="react-assets-input" data-react-asset="ranking.prizeBackground" placeholder="https://example.com/image.webp" autocomplete="off">
+<div class="react-assets-actions"><button type="button" class="react-assets-clear" data-react-clear="ranking.prizeBackground">Clear URL</button><span class="react-assets-help">Paste a public HTTPS image URL</span></div>
+</div>
+</div></div>
+</div><div class="react-assets-footer"><button class="clean-btn primary" id="reactAssetsSave" type="button">Save React Template Assets</button><span id="reactAssetsStatus" role="status" aria-live="polite"></span></div></section>
               </div>
             </div>
 
@@ -120,7 +206,7 @@ body.site-customize-page #reactTemplateAssets .d-flex {flex-wrap:wrap!important}
     <script src="assets/js/dynamic-translation.js?v=8797093e"></script>
     <script src="assets/js/site-customize-layout.js?v=480be898"></script>
     <script src="assets/js/site-customize.js?v=ac19c753" data-bo-spa-rerun></script>
-    <script src="assets/js/react-template-assets.js?v=20261112-merged" data-bo-spa-rerun></script>
+    <script src="assets/js/react-template-assets.js?v=1.0.20" data-bo-spa-rerun></script>
       <script src="assets/js/dynamic-translation-init.js?v=d0dc7e1e"></script>
 
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->

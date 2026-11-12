@@ -32,6 +32,7 @@
       if(brand!==activeBrand())throw Error('Merchant changed while loading. Reload the page.');
       original=data&&typeof data==='object'&&!Array.isArray(data)?data:{};
       fields.forEach(input=>{input.value=String(getValue(original,input.dataset.reactAsset));});
+      previewFields.forEach(updatePreview);
       loadedBrandId=brand;save.disabled=false;writeStatus('Loaded for Merchant '+brand);
     }catch(e){writeStatus(e.message||'Loading failed',true);}
   }
@@ -48,6 +49,30 @@
       if(loadedBrandId!==activeBrand())throw Error('Merchant changed while saving; reload.');
       original=data;writeStatus('Saved for Merchant '+loadedBrandId);
     }catch(e){writeStatus(e.message||'Save failed',true);}finally{save.disabled=false;}
+  });
+  // Preview-only UI; never changes persistence or selected Merchant.
+  const previewFields=fields.filter(input=>input.closest('[data-react-kind="image"]'));
+  function updatePreview(input){
+    const wrapper=input.closest('.react-assets-item');
+    const preview=wrapper&&wrapper.querySelector('.react-assets-preview');
+    if(!preview)return;
+    const img=preview.querySelector('img');
+    const empty=preview.querySelector('.react-assets-empty');
+    const value=input.value.trim();
+    img.hidden=true;img.removeAttribute('src');empty.hidden=false;
+    empty.textContent=value?'Loading preview…':'No image configured';
+    if(!/^https:\/\/[^\s]+$/i.test(value)&&!/^\/(?!\/)[^\\]*$/.test(value)){
+      if(value)empty.textContent='Enter an HTTPS image URL';
+      return;
+    }
+    img.onload=()=>{if(input.value.trim()!==value)return;img.hidden=false;empty.hidden=true;};
+    img.onerror=()=>{if(input.value.trim()===value)empty.textContent='Image preview unavailable';};
+    img.src=value;
+  }
+  previewFields.forEach(input=>{
+    input.addEventListener('input',()=>updatePreview(input));
+    const clear=input.closest('.react-assets-item').querySelector('[data-react-clear]');
+    if(clear)clear.addEventListener('click',()=>{input.value='';updatePreview(input);input.focus();});
   });
   void load();
 })();
