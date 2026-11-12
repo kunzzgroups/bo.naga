@@ -4,9 +4,9 @@
    split: the page script marks those cells nowrap); the footer's three items get their own widths and |< / >| are
    dropped under 1100px, as on the other agent pages. */
 @media (min-width:576px){
-  html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-promotion-page .table-wrap table{width:max(100%,730px)!important;min-width:730px!important;table-layout:fixed!important}
+  html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-promotion-page .table-wrap table{width:100%!important;min-width:min(730px,100%)!important;table-layout:fixed!important}
   html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-promotion-page .table-wrap table thead th:nth-child(1),
-  html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-promotion-page .table-wrap table tbody td:nth-child(1){width:260px!important}
+  html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-promotion-page .table-wrap table tbody td:nth-child(1){width:256px!important}
   html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-promotion-page .table-wrap table thead th:nth-child(2),
   html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-promotion-page .table-wrap table tbody td:nth-child(2){width:90px!important}
   html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-promotion-page .table-wrap table thead th:nth-child(3),

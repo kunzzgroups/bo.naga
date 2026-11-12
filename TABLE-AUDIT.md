@@ -20,8 +20,8 @@ rows are marked *(empty)* in the last section and their ✓ is provisional.
 |---|---|
 | CLIP (unreachable) | 1 |
 | scroll at 1440 or 1280 (laptop) | 28 |
-| scroll only at 1024 / 768 (tablet) | 25 |
-| fits at every width | 62 |
+| scroll only at 1024 / 768 (tablet) | 20 |
+| fits at every width | 67 |
 
 ## P0 — clipped, content unreachable
 
@@ -83,15 +83,10 @@ rows are marked *(empty)* in the last section and their ✓ is provisional.
 | `payment-method.html` | 7 | 920px | ✓ | ✓ | scroll 170 | scroll 28 | 1024 |
 | `frequently-played-games.html` | 10 | — | ✓ | ✓ | scroll 79 | scroll 97 | 1024 |
 | `highest-turnover-games.html` | 10 | — | ✓ | ✓ | scroll 79 | scroll 97 | 1024 |
-| `main-report.html` | 12 | 100% | ✓ | ✓ | scroll 22 | scroll 48 | 1024 |
-| `topup-reward.html` | 6 | — | ✓ | ✓ | scroll 14 | scroll 40 | 1024 |
-| `brand-detail.html` | 5 | 760px | ✓ | ✓ | scroll 4 | scroll 22 | 1024 |
-| `currency-management.html` | 6 | — | ✓ | ✓ | scroll 12 | ✓ | 1024 |
 | `main-merchant-repayments.html` | 9 | 860px | ✓ | ✓ | ✓ | scroll 188 | 768 |
 | `compliance-policy.html` | 7 | 920px | ✓ | ✓ | ✓ | scroll 180 | 768 |
 | `main-provider-health.html` | 7 | 840px | ✓ | ✓ | ✓ | scroll 96 | 768 |
-| `agent-promotion-admin.html` | 5 | 730px | ✓ | ✓ | ✓ | scroll 4 | 768 |
 
 ## Fits at every width
 
-`account-lock.html`, `admin-login-log.html`, `admin-operation-log.html`, `admin-user.html`, `agent-bet-report.html` *(empty)*, `agent-bonus.html` *(empty)*, `agent-dashboard.html` *(empty)*, `agent-detail.html` *(empty)*, `agent-player-detail.html` *(empty)*, `agent-player-game-report.html` *(empty)*, `agent-players.html` *(empty)*, `agent-products.html` *(empty)*, `agent-referral-v2.html`, `agent-wallet.html` *(empty)*, `agent-withdraw.html` *(empty)*, `bank-deposit-usage.html`, `brand-management.html`, `bulk-adjustment.html`, `bulk-bonus-adjustment.html`, `casino-bonus-report.html`, `casino-breakdown-report.html`, `contact-sync.html`, `duplicate-ip.html`, `index.html`, `ip-whitelist-security.html`, `main_merchant_report.html`, `main_provider_report.html`, `main-accounting-due.html`, `main-admin-detail.html`, `main-admin-security.html`, `main-balance-adjustment.html` *(empty)*, `main-balance-overview.html`, `main-merchant-detail.html`, `main-merchant-profit.html`, `main-merchant-security.html`, `main-merchant-transactions.html`, `main-provider-detail.html`, `main-provider-transactions.html`, `main-settlement-report.html`, `main-stat-detail.html`, `main-transaction-history.html`, `member-deposit.html`, `member-detail.html` *(empty)*, `merchant-referral-v2.html`, `online-users.html`, `payment-gateway-transactions.html`, `payment-gateway.html`, `promotion-report.html`, `referral-v2-approval.html`, `referral-v2.html` *(empty)*, `referral.html`, `role-create.html` *(empty)*, `role.html`, `root-control.html`, `spin2-management.html`, `t1-kyc.html`, `t1-missions.html`, `t1-pages.html`, `t1-points-report.html`, `t1-redemptions.html`, `t1-rewards.html`, `wbet-bet-limit.html`
+`account-lock.html`, `admin-login-log.html`, `admin-operation-log.html`, `admin-user.html`, `agent-bet-report.html` *(empty)*, `agent-bonus.html` *(empty)*, `agent-dashboard.html` *(empty)*, `agent-detail.html` *(empty)*, `agent-player-detail.html` *(empty)*, `agent-player-game-report.html` *(empty)*, `agent-players.html` *(empty)*, `agent-products.html` *(empty)*, `agent-promotion-admin.html`, `agent-referral-v2.html`, `agent-wallet.html` *(empty)*, `agent-withdraw.html` *(empty)*, `bank-deposit-usage.html`, `brand-detail.html`, `brand-management.html`, `bulk-adjustment.html`, `bulk-bonus-adjustment.html`, `casino-bonus-report.html`, `casino-breakdown-report.html`, `contact-sync.html`, `currency-management.html`, `duplicate-ip.html`, `index.html`, `ip-whitelist-security.html`, `main_merchant_report.html`, `main_provider_report.html`, `main-accounting-due.html`, `main-admin-detail.html`, `main-admin-security.html`, `main-balance-adjustment.html` *(empty)*, `main-balance-overview.html`, `main-merchant-detail.html`, `main-merchant-profit.html`, `main-merchant-security.html`, `main-merchant-transactions.html`, `main-provider-detail.html`, `main-provider-transactions.html`, `main-report.html`, `main-settlement-report.html`, `main-stat-detail.html`, `main-transaction-history.html`, `member-deposit.html`, `member-detail.html` *(empty)*, `merchant-referral-v2.html`, `online-users.html`, `payment-gateway-transactions.html`, `payment-gateway.html`, `promotion-report.html`, `referral-v2-approval.html`, `referral-v2.html` *(empty)*, `referral.html`, `role-create.html` *(empty)*, `role.html`, `root-control.html`, `spin2-management.html`, `t1-kyc.html`, `t1-missions.html`, `t1-pages.html`, `t1-points-report.html`, `t1-redemptions.html`, `t1-rewards.html`, `topup-reward.html`, `wbet-bet-limit.html`
