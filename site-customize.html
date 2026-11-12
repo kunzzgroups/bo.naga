@@ -24,7 +24,26 @@
 <link href="assets/css/bo-field-standard.css?v=6673ed98" rel="stylesheet">
 <link href="assets/css/bo-module-tabs.css?v=0c2b4ebb" rel="stylesheet"/>
 <link href="assets/css/bo-shell.css?v=15b4582d" rel="stylesheet" />
-<link href="assets/css/bo-global-quicknav.css?v=0d429385" rel="stylesheet" data-bo-quicknav-css="1"/></head>
+<link href="assets/css/bo-global-quicknav.css?v=0d429385" rel="stylesheet" data-bo-quicknav-css="1"/><style id="react-assets-layout-fix">
+/* Keep React assets within the existing Site Customize scroll panel. */
+body.site-customize-page #reactTemplateAssets.react-assets-panel {
+  display:block!important; width:100%!important; min-width:0!important;
+  height:auto!important; min-height:0!important; max-height:none!important;
+  margin:24px 0 8px!important; padding:20px!important;
+  border:1px solid #e3d2b9; border-radius:10px;
+  background:var(--bs-body-bg, #fffaf1);
+  overflow:visible!important; box-sizing:border-box;
+}
+body.site-customize-page #reactTemplateAssets .react-assets-heading {
+  font-size:18px!important; font-weight:750!important; line-height:1.35!important;
+  margin:0 0 10px!important; white-space:normal!important;
+}
+body.site-customize-page #reactTemplateAssets .row {display:flex!important;flex-wrap:wrap!important;margin-left:-8px;margin-right:-8px}
+body.site-customize-page #reactTemplateAssets .row > label {display:block!important;min-width:0!important;padding:0 8px!important;margin-bottom:16px!important}
+body.site-customize-page #reactTemplateAssets .form-control {width:100%!important;min-width:0!important;box-sizing:border-box}
+body.site-customize-page #reactTemplateAssets .d-flex {flex-wrap:wrap!important}
+@media (max-width:767px){body.site-customize-page #reactTemplateAssets .row > label{width:100%!important;flex:0 0 100%!important;max-width:100%!important}}
+</style></head>
   <body class="report-body bo-charcoal bo-account-chip site-customize-page">
     <div class="report-shell">
       <aside class="report-sidebar" id="reportSidebar">
@@ -62,11 +81,8 @@
             <div class="custom-tab-panel active" id="main-layout" data-assets-locale="en">
                 <div class="brand-assets-card" id="brandAssetsMount"></div>
                 <div class="custom-status" id="customizeStatus"></div>
-              </div>
-            </div>
-
-<div class="customize-card" id="reactTemplateAssets" style="margin-top:20px;padding:22px;display:block;visibility:visible">
-<h3>Third React Template — Merchant Site Assets</h3>
+<section class="react-assets-panel" id="reactTemplateAssets">
+<h3 class="react-assets-heading">Third React Template — Merchant Site Assets</h3>
 <p class="text-muted">Controls third-template content for the active Merchant. Stored in your existing brand-isolated Layout Section (react-template-assets). Empty fields hide unsupported sponsor/store panels instead of displaying sample data.</p>
 <div class="row"><label class="col-md-6 mb-2"><span class="d-block mb-1">Ambassador name</span><input type="text" class="form-control" data-react-asset="sponsor.name" placeholder="HTTPS image/media URL or text" autocomplete="off"></label>
 <label class="col-md-6 mb-2"><span class="d-block mb-1">Ambassador description</span><input type="text" class="form-control" data-react-asset="sponsor.description" placeholder="HTTPS image/media URL or text" autocomplete="off"></label>
@@ -87,7 +103,11 @@
 <label class="col-md-6 mb-2"><span class="d-block mb-1">Ranking mobile banner URL</span><input type="text" class="form-control" data-react-asset="ranking.heroMobile" placeholder="HTTPS image/media URL or text" autocomplete="off"></label>
 <label class="col-md-6 mb-2"><span class="d-block mb-1">Ranking prize background URL</span><input type="text" class="form-control" data-react-asset="ranking.prizeBackground" placeholder="HTTPS image/media URL or text" autocomplete="off"></label></div>
 <div class="d-flex align-items-center gap-3 mt-3"><button class="clean-btn primary" id="reactAssetsSave" type="button">Save React Template Assets</button><span id="reactAssetsStatus" role="status"></span></div>
-</div>
+</section>
+              </div>
+            </div>
+
+
         </section>
       </main>
     </div>
