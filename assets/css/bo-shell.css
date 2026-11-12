@@ -891,5 +891,6 @@ body.report-body.topup-reward-page .report-content{
    (colours/borders in casino-dw-fit.css / win-lose-fit.css); its padding is a layout metric, so it lives here. */
 @media (max-width:991.98px){
   html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] .report-content > .filter-card:has(+ .table-card),
-  html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .report-content > .filter-card:has(+ .table-card){padding:12px 16px!important}
+  html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .report-content > .filter-card:has(+ .table-card),
+  html:not(#bo-cp-off):not(#bo-cp-off-2) body:not(#bo-cp-off-3).bo-report-family[data-report-page="provider"] .report-content > .filter-card:has(+ .table-card){padding:12px 16px!important}
 }

@@ -1,0 +1,37 @@
+/* Provider Win/Loss Report: 10 columns. report-table-split.js pins both tables to the natural (max-content) widths and a heading's
+   max-content is its whole text on one line ("Company Win/Loss" 147px over a 90px figure), so the table was 1028px and scrolled
+   sideways on a 1280 laptop. Headings may wrap; each column gets a preferred width from its figures (sum 948). */
+html:not(#bo-cp-off):not(#bo-cp-off-2) body:not(#bo-cp-off-3).bo-report-family[data-report-page="provider"] table.report-table thead th:nth-child(1){width:80px!important}
+html:not(#bo-cp-off):not(#bo-cp-off-2) body:not(#bo-cp-off-3).bo-report-family[data-report-page="provider"] table.report-table thead th:nth-child(2){width:128px!important}
+html:not(#bo-cp-off):not(#bo-cp-off-2) body:not(#bo-cp-off-3).bo-report-family[data-report-page="provider"] table.report-table thead th:nth-child(3){width:78px!important}
+html:not(#bo-cp-off):not(#bo-cp-off-2) body:not(#bo-cp-off-3).bo-report-family[data-report-page="provider"] table.report-table thead th:nth-child(4){width:72px!important}
+html:not(#bo-cp-off):not(#bo-cp-off-2) body:not(#bo-cp-off-3).bo-report-family[data-report-page="provider"] table.report-table thead th:nth-child(5){width:108px!important}
+html:not(#bo-cp-off):not(#bo-cp-off-2) body:not(#bo-cp-off-3).bo-report-family[data-report-page="provider"] table.report-table thead th:nth-child(6){width:108px!important}
+html:not(#bo-cp-off):not(#bo-cp-off-2) body:not(#bo-cp-off-3).bo-report-family[data-report-page="provider"] table.report-table thead th:nth-child(7){width:72px!important}
+html:not(#bo-cp-off):not(#bo-cp-off-2) body:not(#bo-cp-off-3).bo-report-family[data-report-page="provider"] table.report-table thead th:nth-child(8){width:116px!important}
+html:not(#bo-cp-off):not(#bo-cp-off-2) body:not(#bo-cp-off-3).bo-report-family[data-report-page="provider"] table.report-table thead th:nth-child(9){width:116px!important}
+html:not(#bo-cp-off):not(#bo-cp-off-2) body:not(#bo-cp-off-3).bo-report-family[data-report-page="provider"] table.report-table thead th:nth-child(10){width:70px!important}
+html:not(#bo-cp-off):not(#bo-cp-off-2) body:not(#bo-cp-off-3).bo-report-family[data-report-page="provider"] table.report-table thead th .bo-tx-sort-btn{white-space:normal!important;line-height:1.25!important}
+/* Footer: the entry count takes the room between Show and the pager; under 1100px the |< and >| buttons are dropped. */
+html:not(#bo-cp-off):not(#bo-cp-off-2) body:not(#bo-cp-off-3).bo-report-family[data-report-page="provider"] .mad-footer{grid-template-columns:auto minmax(0,1fr) auto!important;gap:12px!important}
+html:not(#bo-cp-off):not(#bo-cp-off-2) body:not(#bo-cp-off-3).bo-report-family[data-report-page="provider"] .mad-footer-info{padding:0 12px!important;white-space:nowrap!important}
+html:not(#bo-cp-off):not(#bo-cp-off-2) body:not(#bo-cp-off-3).bo-report-family[data-report-page="provider"] .mad-pager{flex-wrap:nowrap!important}
+@media (max-width:1100px){
+  html:not(#bo-cp-off):not(#bo-cp-off-2) body:not(#bo-cp-off-3).bo-report-family[data-report-page="provider"] .mad-pager .smart-page.first,
+  html:not(#bo-cp-off):not(#bo-cp-off-2) body:not(#bo-cp-off-3).bo-report-family[data-report-page="provider"] .mad-pager .smart-page.last{display:none!important}
+}
+/* Date strip and table are ONE card below 992px too (bo-report-family.css section 19 joins them from 992px up only). Padding is in bo-shell.css 2e. */
+@media (max-width:991.98px){
+  html:not(#bo-cp-off):not(#bo-cp-off-2) body:not(#bo-cp-off-3).bo-report-family[data-report-page="provider"] .report-content > .filter-card:has(+ .table-card){
+    margin-bottom:0!important;
+    border-bottom:0!important;
+    border-bottom-left-radius:0!important;
+    border-bottom-right-radius:0!important;
+    box-shadow:none!important;
+  }
+  html:not(#bo-cp-off):not(#bo-cp-off-2) body:not(#bo-cp-off-3).bo-report-family[data-report-page="provider"] .report-content > .filter-card + .table-card{
+    border-top:0!important;
+    border-top-left-radius:0!important;
+    border-top-right-radius:0!important;
+  }
+}
