@@ -1,0 +1,8 @@
+/* Casino Overview Report. Seventeen KPI tiles in a fixed four-column grid. The text next to each icon is only ~122px wide
+   at 1280 (the icon takes 52px of a 233px tile), so a real figure ("23,456,789.12", "21,890,123.40") ran out of its tile at
+   1280 and 1440: wrapped onto two lines or cut by the next tile. The columns now follow the room (minimum 280px, so
+   four across only when the window can hold them, three on a laptop, two on a tablet), the icon is 44px, and a figure
+   never wraps. */
+html:not(#bo-co-off):not(#bo-co-off-2) body:not(#bo-co-off-3).bo-report-family[data-report-page="overview"] .overview-metric-grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))!important}
+html:not(#bo-co-off):not(#bo-co-off-2) body:not(#bo-co-off-3).bo-report-family[data-report-page="overview"] .overview-metric-grid .metric .bo-summary-icon{width:44px!important;height:44px!important;flex:0 0 44px!important}
+html:not(#bo-co-off):not(#bo-co-off-2) body:not(#bo-co-off-3).bo-report-family[data-report-page="overview"] .overview-metric-grid .metric strong{white-space:nowrap!important}
