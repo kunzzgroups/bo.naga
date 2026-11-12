@@ -41,3 +41,10 @@ html:not(#bo-as-off):not(#bo-as-off-2) body:not(#bo-as-off-3).agent-settlement-p
 @media (min-width:1300px){
   html:not(#bo-as-off):not(#bo-as-off-2) body:not(#bo-as-off-3).agent-settlement-page .table-wrap table tbody td br{display:none!important}
 }
+/* Filter row at 1101px and up: the date range kept its 390px width, so tabs (452) + date (390) + search (190) needed 1052px
+   of a 920px row and the search box dropped alone onto a second line. The date field is 250px, which is the width its
+   text needs, and all three share one row. */
+@media (min-width:1101px){
+  html:not(#bo-as-off):not(#bo-as-off-2) body:not(#bo-as-off-3).agent-settlement-page .filter-card .bo-range-field{flex:0 0 250px!important;width:250px!important;min-width:250px!important}
+  html:not(#bo-as-off):not(#bo-as-off-2) body:not(#bo-as-off-3).agent-settlement-page .filter-card .bo-range-field .bo-range-trigger{width:100%!important;min-width:0!important;max-width:100%!important}
+}

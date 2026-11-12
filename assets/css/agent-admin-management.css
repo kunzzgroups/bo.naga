@@ -2116,3 +2116,30 @@ html[data-bo-theme="dark"] body.agent-claim-page .table-card .report-table tbody
     grid-row:1;
   }
 }
+
+/* Pager buttons on every Agent page. Only Agent Commission and Agent Reimbursement gave .smart-pagination a flex row with
+   a 6px gap; on Agent Management, Settlement, Promotion (and the payout stub) it stayed display:block with no gap, so
+   the |< < 1 2 3 ... > >| buttons touched each other (measured gaps 0, 0, 0, 0, 0) and the "..." sat jammed between two
+   buttons. One rule for the whole family: same row, same 6px gap, same 40 x 36 button. */
+body.brand-agent-standard .table-footer .pagination-clean > .smart-pagination{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:6px!important;
+}
+body.brand-agent-standard .table-footer .smart-page{
+  box-sizing:border-box;
+  min-width:40px;
+  height:36px;
+  padding:0 14px;
+}
+
+/* KPI tiles on a laptop: "RM 103,703.04" wrapped into "RM" / "103,703.04" (four tiles in ~950px). A figure is never split, so
+   it stays on one line and is a little smaller between 1101 and 1366px, where four tiles share the row. */
+body.brand-agent-standard .agent-admin-metrics .metric strong,
+body.brand-agent-standard .agent-admin-metrics .metric b{white-space:nowrap!important}
+@media (min-width:1101px) and (max-width:1366px){
+  body.brand-agent-standard .agent-admin-metrics .metric{padding:16px 14px!important;column-gap:14px!important}
+  body.brand-agent-standard .agent-admin-metrics .metric .bo-summary-icon{width:44px!important;height:44px!important;flex:0 0 44px!important}
+  body.brand-agent-standard .agent-admin-metrics .metric strong,
+  body.brand-agent-standard .agent-admin-metrics .metric b{font-size:18px!important}
+}

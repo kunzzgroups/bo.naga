@@ -389,9 +389,10 @@ html:not(#bo-charcoal-off) body.report-body.online-users-page .report-shell .rep
    Narrow widths only: the clip box lands on the last glyph's antialiased column, so
    enabling it at every width shaved 1 pixel column off "User Management" on desktop
    (6 pixels of 208000). Truncation is only needed where the title can actually run out
-   of room, which is what this breakpoint gates; the 22px size itself is unchanged at
+   of room, which is what this breakpoint gates (1366, not 1023: an iPad held sideways is 1024 and a 13" laptop is 1280-1366, and "Reimbursement / Ad Claim -
+   Pending Approval" wrapped onto a second line at both, pushing the header taller); the 22px size itself is unchanged at
    every width. */
-@media (max-width:1023.98px){
+@media (max-width:1366px){
   .report-topbar[data-bo-topbar] .user-title-wrap{min-width:0}
   .report-topbar[data-bo-topbar] .user-title-wrap > div{min-width:0}
   .report-topbar[data-bo-topbar] .user-title-wrap h1{
