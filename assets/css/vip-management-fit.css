@@ -1,0 +1,32 @@
+/* VIP Management, level table. Ten columns shared an equal 108px under a 1080px floor, so the Level cell (icon + name +
+   key, 221px of content) showed "VIP1_BRO..." and "Legendary Elit..." at every width up to 1917, while Order (8px of
+   content) got the same 108. Widths now follow the content: Level wraps (name and key break anywhere instead of an
+   ellipsis), the two multi-part cells (Rebate "x% / y% / z%", Monthly / Weekly) wrap at the slashes, numbers never
+   split. Sum 1030px, so a 1440 window shows the whole table (was 1080 + clipped text; 76px hidden at 1280). */
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table{width:max(100%,1030px)!important;min-width:1030px!important;table-layout:fixed!important}
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table thead th:nth-child(1),
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table tbody td:nth-child(1){width:64px!important}
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table thead th:nth-child(2),
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table tbody td:nth-child(2){width:160px!important}
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table thead th:nth-child(3),
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table tbody td:nth-child(3){width:120px!important}
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table thead th:nth-child(4),
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table tbody td:nth-child(4){width:84px!important}
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table thead th:nth-child(5),
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table tbody td:nth-child(5){width:104px!important}
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table thead th:nth-child(6),
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table tbody td:nth-child(6){width:124px!important}
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table thead th:nth-child(7),
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table tbody td:nth-child(7){width:80px!important}
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table thead th:nth-child(8),
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table tbody td:nth-child(8){width:100px!important}
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table thead th:nth-child(9),
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table tbody td:nth-child(9){width:102px!important}
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table thead th:nth-child(10),
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table tbody td:nth-child(10){width:92px!important}
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table .vip-level-name b,
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table .vip-level-name small{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important}
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table tbody td:nth-child(6),
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table tbody td:nth-child(8){white-space:normal!important}
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table tbody td:nth-child(n+3):nth-child(-n+5),
+html:not(#bo-vip-off):not(#bo-vip-off-2) body:not(#bo-vip-off-3).vip-management-page .vip-admin-table tbody td:nth-child(7){white-space:nowrap!important}
