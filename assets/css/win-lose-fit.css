@@ -1,0 +1,35 @@
+/* Win/Lose Report. The four KPI tiles carry 12-digit figures ("98,765,432,109.12") in a fixed four-column row: at 1280 a tile was ~178px
+   and the figure ran 87-102px out of it (151-166px at 1024). Two by two up to 1439px, four across above it; the icon is 44px and a
+   figure never wraps. */
+html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .quick-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+@media (min-width:1440px){
+  html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .quick-stats{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+@media (max-width:420px){
+  html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .quick-stats{grid-template-columns:minmax(0,1fr)!important}
+}
+html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .quick-stats .metric .bo-summary-icon{width:44px!important;height:44px!important;flex:0 0 44px!important}
+html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .quick-stats .metric strong{white-space:nowrap!important}
+/* Footer: the entry count takes the room between Show and the pager; under 1100px the |< and >| buttons are dropped. */
+html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .mad-footer{grid-template-columns:auto minmax(0,1fr) auto!important;gap:12px!important}
+html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .mad-footer-info{padding:0 12px!important;white-space:nowrap!important}
+html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .mad-pager{flex-wrap:nowrap!important}
+@media (max-width:1100px){
+  html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .mad-pager .smart-page.first,
+  html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .mad-pager .smart-page.last{display:none!important}
+}
+/* Date strip and table are ONE card below 992px as well (bo-report-family.css section 19 joins them from 992px up only). */
+@media (max-width:991.98px){
+  html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .report-content > .filter-card:has(+ .table-card){
+    margin-bottom:0!important;
+    border-bottom:0!important;
+    border-bottom-left-radius:0!important;
+    border-bottom-right-radius:0!important;
+    box-shadow:none!important;
+  }
+  html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .report-content > .filter-card + .table-card{
+    border-top:0!important;
+    border-top-left-radius:0!important;
+    border-top-right-radius:0!important;
+  }
+}

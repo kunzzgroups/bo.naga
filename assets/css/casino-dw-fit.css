@@ -1,0 +1,60 @@
+/* Casino Deposit / Withdraw Report: 14 columns, 2561px wide. report-table-split.js pins both tables to the natural
+   (max-content) column widths, and a heading's max-content is its WHOLE text on one line ("Deposit Approved Members" =
+   ~204px, "Withdraw Approved Members" = 220px), so every column was sized for its heading rather than its figures and
+   the table needed 1300px of sideways scroll on a 1534 laptop. The headings may wrap (two or three lines), so each
+   column gets a preferred width from its figures (sum 1534px); the script still pins both tables to what the browser
+   resolves, so head and body stay locked. */
+html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] table.report-table thead th:nth-child(1){width:100px!important}
+html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] table.report-table thead th:nth-child(2){width:92px!important}
+html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] table.report-table thead th:nth-child(3){width:92px!important}
+html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] table.report-table thead th:nth-child(4){width:128px!important}
+html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] table.report-table thead th:nth-child(5){width:128px!important}
+html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] table.report-table thead th:nth-child(6){width:92px!important}
+html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] table.report-table thead th:nth-child(7){width:118px!important}
+html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] table.report-table thead th:nth-child(8){width:92px!important}
+html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] table.report-table thead th:nth-child(9){width:92px!important}
+html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] table.report-table thead th:nth-child(10){width:128px!important}
+html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] table.report-table thead th:nth-child(11){width:128px!important}
+html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] table.report-table thead th:nth-child(12){width:92px!important}
+html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] table.report-table thead th:nth-child(13){width:118px!important}
+html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] table.report-table thead th:nth-child(14){width:134px!important}
+/* The heading text sits in report-table-sort.js's .bo-tx-sort-btn, an inline-flex with white-space:nowrap, so a heading could
+   never wrap and its minimum width was its whole text (the th width above was ignored). It wraps here. */
+html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] table.report-table thead th .bo-tx-sort-btn{white-space:normal!important;line-height:1.25!important}
+/* Footer (.mad-footer on this page) at tablet widths: the entry count was drawn over the pager. The count takes the room
+   between Show and the pager, and under 1100px the |< and >| buttons are dropped. */
+html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] .mad-footer{grid-template-columns:auto minmax(0,1fr) auto!important;gap:12px!important}
+html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] .mad-footer-info{padding:0 12px!important;white-space:nowrap!important}
+html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] .mad-pager{flex-wrap:nowrap!important}
+@media (max-width:1100px){
+  html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] .mad-pager .smart-page.first,
+  html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] .mad-pager .smart-page.last{display:none!important}
+}
+/* The four KPI tiles carried 12-digit figures ("25,612,2..." cut at 1024) in a fixed four-column row: 177px tiles with ~100px of
+   text. Two by two up to 1439px, four across above it where each tile is at least 280px, the icon 44px, and a figure never wraps. */
+html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] .quick-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+@media (min-width:1440px){
+  html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] .quick-stats{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] .quick-stats .metric .bo-summary-icon{width:44px!important;height:44px!important;flex:0 0 44px!important}
+html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] .quick-stats .metric strong{white-space:nowrap!important}
+/* Date strip and table are ONE card below 992px as well. bo-report-family.css section 19 joins them for min-width:992px only ("below
+   992 the column is plain block flow with each card's own margin-bottom, and stacked cards are the right shape there"), so on a
+   tablet held upright (967 in the report: an iPad in a narrow window) the date picker sat in a rounded box of its own with a gap above
+   the table. Same join as section 19, minus its -16px margin (the block-flow gap here is the strip's own margin-bottom, which goes to 0). */
+@media (max-width:991.98px){
+  html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] .report-content > .filter-card:has(+ .table-card){
+    margin-bottom:0!important;
+    border-bottom:0!important;
+    border-bottom-left-radius:0!important;
+    border-bottom-right-radius:0!important;
+    box-shadow:none!important;
+  }
+  html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] .report-content > .filter-card + .table-card{
+    border-top:0!important;
+    border-top-left-radius:0!important;
+    border-top-right-radius:0!important;
+  }
+}
+/* Below 992px the table is one natural-flow table and its date column got an even share, so "2026-11-12" broke into "2026-" / "11-12". */
+html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] #crStatusBody td:first-child{white-space:nowrap!important}

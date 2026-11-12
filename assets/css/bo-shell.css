@@ -886,3 +886,10 @@ body.report-body.topup-reward-page .report-content{
   html:not(#bo-ma-off):not(#bo-ma-off-2) body:not(#bo-ma-off-3).bo-wallet-tx.deposit-approval-page .report-content > .table-card,
   html:not(#bo-ma-off):not(#bo-ma-off-2) body:not(#bo-ma-off-3).bo-wallet-tx.withdraw-approval-page .report-content > .table-card{flex:0 0 auto!important;min-height:480px!important}
 }
+
+/* 2e. Casino Deposit/Withdraw and Win/Lose reports below 992px: the date strip is the top half of ONE card with the table
+   (colours/borders in casino-dw-fit.css / win-lose-fit.css); its padding is a layout metric, so it lives here. */
+@media (max-width:991.98px){
+  html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] .report-content > .filter-card:has(+ .table-card),
+  html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .report-content > .filter-card:has(+ .table-card){padding:12px 16px!important}
+}
