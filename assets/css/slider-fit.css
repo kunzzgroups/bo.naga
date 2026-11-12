@@ -1,0 +1,7 @@
+/* Banner Management (slider.html). The gallery packed cards down to 220px (3 across at 1024) and the fact rows keep a 108px label column,
+   so a value had ~80px: "Welcome B...", "No link conf...", and the Updated At date cut to "2026-11-10 ..." - data hidden by an ellipsis.
+   Cards are at least 300px wide (the value column is then ~150px, enough for a date and a time), the grid reflows 4/3/2/1 across, and a name
+   or a destination that is longer than the column wraps instead of being cut off. */
+html body.banner-management-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-sl-off):not(#bo-sl-off-2):not(#bo-sl-off-3) .banner-gallery{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))!important}
+html body.banner-management-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-sl-off):not(#bo-sl-off-2):not(#bo-sl-off-3) .banner-card-facts dd{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important}
+html body.banner-management-page.report-body.bo-charcoal:not(#bo-charcoal-off):not(#bo-sl-off):not(#bo-sl-off-2):not(#bo-sl-off-3) .banner-card-facts > div:nth-child(5) dd{white-space:nowrap!important}

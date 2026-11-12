@@ -131,9 +131,12 @@ html:has(.report-topbar[data-bo-topbar]){
    Measured with the row painted: gap = row bottom -> first block top.
 
    Desktop only, like the insets above; bo-module-tabs.css already carries 12px of its own
-   for the narrow layout. */
+   for the narrow layout.
+   992-1023px included: the rule used to start at 1024 while the narrow layout (bo-module-tabs.css, 12px) ends at 991, so a window
+   in between (1005 in the owner's screenshot) had the row welded to the card (gap 0) again.
+   */
 
-@media (min-width:1024px){
+@media (min-width:992px){
   html:not(#bo-charcoal-off) body.report-body:is(.banner-management-page,.site-customize-page,.advertisement-popup-page,.frontend-display-page,.social-page,.layout-section-page,.livechat-template-page,.page-game-provider,.provider-session-page,.page-game-category,.page-game-sub-category,.page-game,.promotion-bonus-page) .report-shell .report-main .report-content:has(> .bo-module-tabs) > .bo-module-tabs{
     margin-bottom:16px!important;
   }

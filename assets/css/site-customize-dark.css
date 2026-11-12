@@ -1,0 +1,24 @@
+/* Site Customize, dark theme: the "Third React Template - Merchant Site Assets" panel was a light island. Its inline styles paint the panel and
+   every item with var(--bs-body-bg), which is #fff in dark, while the text takes the dark theme's near-white ink - so the title, the group
+   headings and the field labels were white on white (invisible) and the hint text was dark grey on white. It now uses the page's own dark
+   tiers: card #383A46 > panel #2A2C36 > item #32343E (the same ladder as .asset-zone > .asset-slot above it), with the dark hairline
+   rgba(255,255,255,.12) instead of the cream #e3d2b9 border. Light theme is untouched. */
+html[data-bo-theme="dark"] body.site-customize-page #reactTemplateAssets.react-assets-panel{background:#2A2C36!important;border-color:rgba(255,255,255,.12)!important;color:#F5F5F4!important}
+html[data-bo-theme="dark"] body.site-customize-page #reactTemplateAssets .react-assets-top h3,
+html[data-bo-theme="dark"] body.site-customize-page #reactTemplateAssets .react-assets-group h4,
+html[data-bo-theme="dark"] body.site-customize-page #reactTemplateAssets .react-assets-item label{color:#F5F5F4!important}
+html[data-bo-theme="dark"] body.site-customize-page #reactTemplateAssets .react-assets-top p,
+html[data-bo-theme="dark"] body.site-customize-page #reactTemplateAssets .react-assets-hint{color:#A1A1AA!important}
+html[data-bo-theme="dark"] body.site-customize-page #reactTemplateAssets .react-assets-type,
+html[data-bo-theme="dark"] body.site-customize-page #reactTemplateAssets .react-assets-help,
+html[data-bo-theme="dark"] body.site-customize-page #reactTemplateAssets .react-assets-empty{color:#A1A1AA!important;opacity:1!important}
+html[data-bo-theme="dark"] body.site-customize-page #reactTemplateAssets .react-assets-pill{border-color:rgba(255,255,255,.16)!important;color:#D4D4D8!important}
+html[data-bo-theme="dark"] body.site-customize-page #reactTemplateAssets .react-assets-group h4{border-bottom-color:rgba(255,255,255,.12)!important}
+html[data-bo-theme="dark"] body.site-customize-page #reactTemplateAssets .react-assets-item{background:#32343E!important;border-color:rgba(255,255,255,.12)!important}
+html[data-bo-theme="dark"] body.site-customize-page #reactTemplateAssets .react-assets-input{background:#2A2C36!important;border-color:rgba(255,255,255,.12)!important;color:#F5F5F4!important}
+html[data-bo-theme="dark"] body.site-customize-page #reactTemplateAssets .react-assets-input::placeholder{color:#A1A1AA!important;opacity:1}
+html[data-bo-theme="dark"] body.site-customize-page #reactTemplateAssets .react-assets-input:focus{border-color:#F59E0B!important;box-shadow:0 0 0 3px rgba(245,158,11,.16)!important;outline:0}
+html[data-bo-theme="dark"] body.site-customize-page #reactTemplateAssets .react-assets-preview{background:#2A2C36!important;border-color:rgba(255,255,255,.18)!important}
+html[data-bo-theme="dark"] body.site-customize-page #reactTemplateAssets .react-assets-clear{background:#383A46!important;border-color:rgba(255,255,255,.12)!important;color:#F5F5F4!important}
+html[data-bo-theme="dark"] body.site-customize-page #reactTemplateAssets .react-assets-clear:hover{background:#444654!important;border-color:rgba(255,255,255,.2)!important}
+html[data-bo-theme="dark"] body.site-customize-page #reactTemplateAssets .react-assets-footer{border-top-color:rgba(255,255,255,.12)!important}
