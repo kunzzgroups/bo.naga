@@ -22,3 +22,5 @@ html:not(#bo-mt-off):not(#bo-mt-off-2) body:not(#bo-mt-off-3):not(#bo-mt-off-4):
     border-top-right-radius:0!important;
   }
 }
+/* The "Sort" caption sat above the dropdown as a row of its own; it is the first words of each option now ("Sort: Deposit Amount ..."), so the strip is one row, and the select keeps room for the longest option. */
+html:not(#bo-mt-off):not(#bo-mt-off-2) body:not(#bo-mt-off-3):not(#bo-mt-off-4):not(#bo-mt-off-5).member-top-deposit-report-page .filter-card #mtdSort{min-width:300px!important}
