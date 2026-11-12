@@ -1,0 +1,63 @@
+/* Agent Management at <=768px. agent-admin-management.css turns the filter row into a COLUMN and gives its children
+   `flex:1 1 auto`; in a column that means "grow vertically", so the filter-right block (date range + search) stretched
+   to 436px and the whole filter card to 558px, a 400px empty band between the date picker and the search box, which
+   pushed the table below the fold. Inside a column the children size to their content. */
+@media (max-width:768px){
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-mgmt-filter-row,
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-mgmt-filter-right,
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-mgmt-filter-right > .field,
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-mgmt-filter-right > .bo-range-field,
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-mgmt-actions{flex:0 0 auto!important;height:auto!important;min-height:0!important}
+}
+
+/* The nine columns ran at an equal share of a 760px floor, so a figure split as "RM / 12,345.60" and the joined date
+   as "2026- / 10-11" at tablet widths. Widths now follow the values (sum 912px, numbers and the date never wrap;
+   the agent name may use several lines), and the footer's entry count gets the room the pager used to cover. */
+@media (min-width:576px){
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-admin-table{width:max(100%,912px)!important;min-width:912px!important;table-layout:fixed!important}
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-admin-table thead th:nth-child(1),
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-admin-table tbody td:nth-child(1){width:140px!important}
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-admin-table thead th:nth-child(2),
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-admin-table tbody td:nth-child(2){width:72px!important}
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-admin-table thead th:nth-child(3),
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-admin-table tbody td:nth-child(3){width:80px!important}
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-admin-table thead th:nth-child(4),
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-admin-table tbody td:nth-child(4){width:124px!important}
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-admin-table thead th:nth-child(5),
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-admin-table tbody td:nth-child(5){width:112px!important}
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-admin-table thead th:nth-child(6),
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-admin-table tbody td:nth-child(6){width:124px!important}
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-admin-table thead th:nth-child(7),
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-admin-table tbody td:nth-child(7){width:92px!important}
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-admin-table thead th:nth-child(8),
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-admin-table tbody td:nth-child(8){width:104px!important}
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-admin-table thead th:nth-child(9),
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-admin-table tbody td:nth-child(9){width:64px!important}
+}
+html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-admin-table tbody td:nth-child(n+2):nth-child(-n+6),
+html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-admin-table tbody td:nth-child(8){white-space:nowrap!important}
+html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .table-footer{grid-template-columns:auto minmax(0,1fr) auto!important;gap:12px!important}
+html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .table-footer .table-info{padding:0 12px!important;white-space:nowrap!important}
+html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .table-footer .pagination-clean{flex-wrap:nowrap!important}
+/* Below ~820px the three footer items (Show, count, 7-button pager) need ~760px of a 733px footer, so the count was
+   drawn over both neighbours. A second line for the count fell outside the fixed card, so instead the "first page" and
+   "last page" buttons (|< and >|, the previous / next arrows stay) are dropped, which takes the pager from 402px to ~320px
+   and lets all three fit on one line. */
+@media (max-width:820px){
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .table-footer .pagination-clean .smart-pagination > :first-child,
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .table-footer .pagination-clean .smart-pagination > :last-child{display:none!important}
+}
+
+/* 769-1100px (an iPad held sideways, a small laptop): the filter stacked into four lines (tabs / date range / search /
+   Create Agent, 205px) and left the table 162px, one and a half rows on a 768px-high screen. Tabs keep their own line;
+   date range, search and Create Agent share the second one. The date trigger keeps its 390px width from reports.css
+   (wallet-ledger rule), so inside a 220px field it spilled 170px over the search box: it is now 100% of its field. */
+@media (min-width:769px) and (max-width:1100px){
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-mgmt-filter-row{flex-direction:row!important;flex-wrap:wrap!important;align-items:center!important}
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-mgmt-filter-row > .agent-status-tabs{flex:1 1 100%!important;width:100%!important}
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-mgmt-filter-right{flex:1 1 0!important;min-width:0!important;width:auto!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;gap:10px!important}
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-mgmt-filter-right > .bo-range-field{flex:0 0 250px!important;width:250px!important;min-width:250px!important}
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-mgmt-filter-right .bo-range-trigger{width:100%!important;min-width:0!important;max-width:100%!important}
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-mgmt-filter-right > .agent-mgmt-search{flex:1 1 0!important;width:auto!important;min-width:0!important}
+  html:not(#bo-am-off):not(#bo-am-off-2) body:not(#bo-am-off-3).agent-management-page .agent-mgmt-actions{flex:0 0 auto!important;width:auto!important}
+}

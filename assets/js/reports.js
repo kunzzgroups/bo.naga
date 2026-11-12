@@ -1092,3 +1092,36 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
 })();
+
+/* Below 992px the hamburger opens the sidebar DRAWER. Its handlers were bound straight onto the elements that existed
+   when the page first loaded (guarded by __boReportsShellBound, so once per document). After a page switch bo-spa
+   replaces the topbar (the rail's hamburger is created again), the new button has no handler, and the hamburger is dead
+   until a full reload: the very symptom "after I switch pages the hamburger does nothing, refresh fixes it".
+   Delegated on the document through the same single slot as the other bindings here (SPA.md), so it survives every
+   swap and is never stacked. A button that still has its own first-load handler stops the event there (it calls
+   stopPropagation), so this never toggles twice. Desktop (>=992) is handled by the SidebarToggle slot above. */
+boDocSlot('SidebarDrawer', 'click', function(e){
+  var t = e.target;
+  if(!t || !t.closest) return;
+  var sidebar = document.getElementById('reportSidebar');
+  var overlay = document.getElementById('reportOverlay') || document.querySelector('.sidebar-overlay,.sidebar-backdrop');
+  function setOpen(on){
+    if(!sidebar) return;
+    sidebar.classList.toggle('show', on);
+    if(overlay) overlay.classList.toggle('show', on);
+    document.body.classList.toggle('sidebar-open', on);
+  }
+  if(window.innerWidth >= 992) return;
+  if(t.closest('[data-open-sidebar], .hamb')){
+    if(!sidebar) return;
+    e.preventDefault();
+    setOpen(!sidebar.classList.contains('show'));
+    return;
+  }
+  if(t.closest('[data-close-sidebar], .sidebar-overlay, .sidebar-backdrop')){
+    e.preventDefault();
+    setOpen(false);
+    return;
+  }
+  if(t.closest('.report-nav a')) setOpen(false);
+});
