@@ -1,0 +1,21 @@
+/* Frontend Display. The settings rows are a two-column grid (label | control) and the control column wants ~220-280px, so in a panel that is
+   only ~330-560px wide (two panels side by side from 901px up, i.e. every laptop and the 1005px window) the label got what was left:
+   96-142px, and "Collapsed Sidebar - Choose how submenu items open while the BO sidebar is collapsed." broke into 5 lines and spilled out of
+   its column. A row whose control is a select / input stacks (label above, control full width) when its panel is narrower than 560px -
+   the page's own .is-stack shape - and keeps the side-by-side layout when there is room. Switch rows (a small toggle) are not touched. */
+.fd-panel{container-type:inline-size;container-name:fdp}
+@container fdp (max-width: 560px){
+  html body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .display-setting-row:has(.fd-control :is(.rounded-select-wrap,.display-setting-select,.display-range-control,input:not([type="checkbox"]):not([type="radio"]),select)){grid-template-columns:minmax(0,1fr)!important;align-items:stretch!important}
+  html body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .display-setting-row:has(.fd-control :is(.rounded-select-wrap,.display-setting-select,.display-range-control,input:not([type="checkbox"]):not([type="radio"]),select)) .fd-control{justify-content:stretch!important}
+  /* The Telegram / Messenger rows (.fd-social-field, shown for brands that may use them) are label | 200-320px field; in a 370px panel the
+     label was 7px wide and its text ran down the panel one letter per line. */
+  html body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) #fd-sec-visibility .fd-social-field{grid-template-columns:minmax(0,1fr)!important;align-items:stretch!important}
+}
+html body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .display-setting-copy,
+html body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .display-setting-copy p{overflow-wrap:anywhere}
+/* Dark theme. (1) The bold words inside a description ("Real Transactions", "Random Demo" under Live Transaction Data) were #3F3F46 - dark grey on the
+   dark panel - so the sentence read "uses deposits/withdrawals.      generates masked activity." with holes. (2) The marquee preview bar keeps the
+   background colour the admin picked (inline style, cream by default), but its text had no colour of its own and inherited the dark theme's near-white:
+   white on cream. With no colour chosen it is dark ink; a chosen text colour is an inline style and still wins. */
+html[data-bo-theme="dark"] body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .display-setting-copy p b{color:#F5F5F4!important}
+html[data-bo-theme="dark"] body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .marquee-preview-inner{color:#18191C}
