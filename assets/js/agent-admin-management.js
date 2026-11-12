@@ -47,8 +47,9 @@ function measureAutoPageSize(bodyId){
   const sampleRows=[...wrap.querySelectorAll('tbody tr')].filter(tr=>!tr.querySelector('.table-empty'));
   const sample=sampleRows[0];
   const rowH=sample?Math.max(38,Math.round(sample.getBoundingClientRect().height)):48;
-  /* Floor only — never add a row that overflow:hidden would clip (VIP Log recipe). */
-  return Math.max(5,Math.min(200,Math.floor(avail/rowH)||10));
+  /* Floor only — never add a row that overflow:hidden would clip (VIP Log recipe). The floor is 1, not 5: with a 5-row
+     floor a 162px box (tablet landscape, filters stacked) was handed five 60px rows and showed one and a half. */
+  return Math.max(1,Math.min(200,Math.floor(avail/rowH)||10));
 }
 function autoFitPageSize(bodyId){
   if(AGENT_ADMIN_AUTO_SIZE[bodyId]!=null) return AGENT_ADMIN_AUTO_SIZE[bodyId];
@@ -96,16 +97,16 @@ function evenFillTableRows(bodyId,selectId,render){
     const natural=rows.reduce((sum,tr)=>sum+Math.ceil(tr.getBoundingClientRect().height),0);
     const rowH=Math.max(38,Math.round(natural/rows.length)||48);
     const overflow=wrap.scrollHeight>wrap.clientHeight+1||natural>avail+1;
-    let target=Math.max(5,Math.min(200,Math.floor(avail/rowH)||rows.length));
-    if(overflow) target=Math.max(5,Math.min(target,rows.length-1));
+    let target=Math.max(1,Math.min(200,Math.floor(avail/rowH)||rows.length));
+    if(overflow) target=Math.max(1,Math.min(target,rows.length-1));
     if(target!==rows.length&&render&&!body.dataset.boAutofitSettled){
       AGENT_ADMIN_AUTO_SIZE[bodyId]=target;
       AGENT_ADMIN_AUTOFIT_BUSY[bodyId]=true;
       Promise.resolve(render(true)).finally(()=>{
         AGENT_ADMIN_AUTOFIT_BUSY[bodyId]=false;
         requestAnimationFrame(()=>{
-          if(wrap.scrollHeight>wrap.clientHeight+1&&AGENT_ADMIN_AUTO_SIZE[bodyId]>5){
-            AGENT_ADMIN_AUTO_SIZE[bodyId]=Math.max(5,AGENT_ADMIN_AUTO_SIZE[bodyId]-1);
+          if(wrap.scrollHeight>wrap.clientHeight+1&&AGENT_ADMIN_AUTO_SIZE[bodyId]>1){
+            AGENT_ADMIN_AUTO_SIZE[bodyId]=Math.max(1,AGENT_ADMIN_AUTO_SIZE[bodyId]-1);
             AGENT_ADMIN_AUTOFIT_BUSY[bodyId]=true;
             Promise.resolve(render(true)).finally(()=>{AGENT_ADMIN_AUTOFIT_BUSY[bodyId]=false;evenFillTableRows(bodyId,selectId,render);});
             return;
@@ -116,8 +117,8 @@ function evenFillTableRows(bodyId,selectId,render){
       });
       return;
     }
-    if(overflow&&AGENT_ADMIN_AUTO_SIZE[bodyId]>5&&render&&!body.dataset.boAutofitSettled){
-      AGENT_ADMIN_AUTO_SIZE[bodyId]=Math.max(5,(AGENT_ADMIN_AUTO_SIZE[bodyId]||rows.length)-1);
+    if(overflow&&AGENT_ADMIN_AUTO_SIZE[bodyId]>1&&render&&!body.dataset.boAutofitSettled){
+      AGENT_ADMIN_AUTO_SIZE[bodyId]=Math.max(1,(AGENT_ADMIN_AUTO_SIZE[bodyId]||rows.length)-1);
       AGENT_ADMIN_AUTOFIT_BUSY[bodyId]=true;
       Promise.resolve(render(true)).finally(()=>{AGENT_ADMIN_AUTOFIT_BUSY[bodyId]=false;evenFillTableRows(bodyId,selectId,render);});
       return;
@@ -263,7 +264,7 @@ async function agentsPage(runToken){
     if(currentPage>totalPages)currentPage=totalPages;
     const start=Number.isFinite(size)?(currentPage-1)*size:0;
     const pageRows=Number.isFinite(size)?all.slice(start,start+size):all;
-    $('adminAgentsRows').innerHTML=pageRows.map(a=>`<tr><td class="agent-name-cell"><b>${esc(a.code||('AGT'+a.id))}</b><small class="d-block">${esc(a.name||'-')}</small></td><td>${whole(a.memberCount)}</td><td>${whole(a.memberCount)}</td><td>${moneyCell(a.totalBetMtd)}</td><td>${moneyCell(a.commissionMtd)}</td><td>${moneyCell(a.pendingSettlement)}</td><td>${status(Number(a.status)===1?'Active':'Suspended')}</td><td>${esc(d(a.createdAt)||'-')}</td><td><a class="agent-admin-action" title="View Details" href="agent-detail.html?id=${encodeURIComponent(a.id)}"><i class="bi bi-eye"></i></a></td></tr>`).join('')||'<tr><td colspan="9" class="table-empty">No agents found.</td></tr>';
+    $('adminAgentsRows').innerHTML=pageRows.map(a=>`<tr><td class="agent-name-cell"><b>${esc(a.code||('AGT'+a.id))}</b><small class="d-block">${esc(a.name||'-')}</small></td><td class="nowrap">${whole(a.memberCount)}</td><td class="nowrap">${whole(a.memberCount)}</td><td class="nowrap">${moneyCell(a.totalBetMtd)}</td><td class="nowrap">${moneyCell(a.commissionMtd)}</td><td class="nowrap">${moneyCell(a.pendingSettlement)}</td><td>${status(Number(a.status)===1?'Active':'Suspended')}</td><td class="nowrap">${esc(d(a.createdAt)||'-')}</td><td><a class="agent-admin-action" title="View Details" href="agent-detail.html?id=${encodeURIComponent(a.id)}"><i class="bi bi-eye"></i></a></td></tr>`).join('')||'<tr><td colspan="9" class="table-empty">No agents found.</td></tr>';
     const from2=total?start+1:0,to2=total?Math.min(start+pageRows.length,total):0;
     $('adminAgentsShowing').textContent=`Showing ${from2} to ${to2} of ${total} entries`;
     $('adminAgentsPager').innerHTML=pageButtons(currentPage,totalPages,'agent-page','Agent table');
