@@ -1,0 +1,30 @@
+/* Manual Rebate Approval page sheet. The table carried the shared `.standard-data-table` floor of 1100px (rebate-pages.css,
+   used by 8 pages), so it hid 93px at 1280, 349px at 1024 and 363px at 768 with nothing but a scroll bar to find them.
+   The nine columns need ~906px (the status pill alone 150px): headings wrap (two lines), numbers never split, the status pill may use two lines.
+   The floor is set here, for this page only, and the table still fills any wider frame. */
+html:not(#bo-mra-off):not(#bo-mra-off-2) body:not(#bo-mra-off-3).manual-rebate-approval-page .standard-data-table{width:max(100%,906px)!important;min-width:906px!important;table-layout:fixed!important}
+html:not(#bo-mra-off):not(#bo-mra-off-2) body:not(#bo-mra-off-3).manual-rebate-approval-page .standard-data-table th:nth-child(1),
+html:not(#bo-mra-off):not(#bo-mra-off-2) body:not(#bo-mra-off-3).manual-rebate-approval-page .standard-data-table td:nth-child(1){width:44px!important}
+html:not(#bo-mra-off):not(#bo-mra-off-2) body:not(#bo-mra-off-3).manual-rebate-approval-page .standard-data-table th:nth-child(2),
+html:not(#bo-mra-off):not(#bo-mra-off-2) body:not(#bo-mra-off-3).manual-rebate-approval-page .standard-data-table td:nth-child(2){width:120px!important}
+html:not(#bo-mra-off):not(#bo-mra-off-2) body:not(#bo-mra-off-3).manual-rebate-approval-page .standard-data-table th:nth-child(3),
+html:not(#bo-mra-off):not(#bo-mra-off-2) body:not(#bo-mra-off-3).manual-rebate-approval-page .standard-data-table td:nth-child(3){width:100px!important}
+html:not(#bo-mra-off):not(#bo-mra-off-2) body:not(#bo-mra-off-3).manual-rebate-approval-page .standard-data-table th:nth-child(4),
+html:not(#bo-mra-off):not(#bo-mra-off-2) body:not(#bo-mra-off-3).manual-rebate-approval-page .standard-data-table td:nth-child(4){width:100px!important}
+html:not(#bo-mra-off):not(#bo-mra-off-2) body:not(#bo-mra-off-3).manual-rebate-approval-page .standard-data-table th:nth-child(5),
+html:not(#bo-mra-off):not(#bo-mra-off-2) body:not(#bo-mra-off-3).manual-rebate-approval-page .standard-data-table td:nth-child(5){width:100px!important}
+html:not(#bo-mra-off):not(#bo-mra-off-2) body:not(#bo-mra-off-3).manual-rebate-approval-page .standard-data-table th:nth-child(6),
+html:not(#bo-mra-off):not(#bo-mra-off-2) body:not(#bo-mra-off-3).manual-rebate-approval-page .standard-data-table td:nth-child(6){width:104px!important}
+html:not(#bo-mra-off):not(#bo-mra-off-2) body:not(#bo-mra-off-3).manual-rebate-approval-page .standard-data-table th:nth-child(7),
+html:not(#bo-mra-off):not(#bo-mra-off-2) body:not(#bo-mra-off-3).manual-rebate-approval-page .standard-data-table td:nth-child(7){width:104px!important}
+html:not(#bo-mra-off):not(#bo-mra-off-2) body:not(#bo-mra-off-3).manual-rebate-approval-page .standard-data-table th:nth-child(8),
+html:not(#bo-mra-off):not(#bo-mra-off-2) body:not(#bo-mra-off-3).manual-rebate-approval-page .standard-data-table td:nth-child(8){width:150px!important}
+html:not(#bo-mra-off):not(#bo-mra-off-2) body:not(#bo-mra-off-3).manual-rebate-approval-page .standard-data-table th:nth-child(9),
+html:not(#bo-mra-off):not(#bo-mra-off-2) body:not(#bo-mra-off-3).manual-rebate-approval-page .standard-data-table td:nth-child(9){width:84px!important}
+html:not(#bo-mra-off):not(#bo-mra-off-2) body:not(#bo-mra-off-3).manual-rebate-approval-page .standard-data-table td:nth-child(n+3):nth-child(-n+7){white-space:nowrap!important}
+
+/* Footer at tablet widths: the pager sat in the third of three equal grid columns (257px) while its seven buttons need
+   316px, so it broke into two rows (|< < 1 2 3 / > >|) with the entry count dropped under it. The outer columns take
+   what their content needs, the entry count gets the rest, and the buttons stay on one line. */
+html:not(#bo-mra-off):not(#bo-mra-off-2) body:not(#bo-mra-off-3).manual-rebate-approval-page .table-footer.standard-pagination{grid-template-columns:auto minmax(0,1fr) auto!important;gap:12px!important}
+html:not(#bo-mra-off):not(#bo-mra-off-2) body:not(#bo-mra-off-3).manual-rebate-approval-page .table-footer.standard-pagination #pager{flex-wrap:nowrap!important}
