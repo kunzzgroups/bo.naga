@@ -326,7 +326,7 @@ async function commissionPage(runToken){
     const start=Number.isFinite(size)?(currentPage-1)*size:0;
     const pageReports=Number.isFinite(size)?reports.slice(start,start+size):reports;
     $('agentCommissionRows').innerHTML=pageReports.map(({a,r})=>
-      '<tr><td><b>'+esc(a.code)+'</b><small class="d-block">'+esc(a.name)+'</small></td><td>'+whole(a.memberCount)+'</td><td>RM '+money(r.totalTurnover)+'</td><td class="'+(Number(r.customerLoss||0)>=0?'money-positive':'money-negative')+'">RM '+money(r.customerLoss)+'</td><td>'+money(a.commissionPercent)+'%</td><td>RM '+money(r.availableCommission)+'</td><td>RM '+money(a.walletBalance)+'</td></tr>'
+      '<tr><td><b>'+esc(a.code)+'</b><small class="d-block">'+esc(a.name)+'</small></td><td class="nowrap">'+whole(a.memberCount)+'</td><td class="nowrap">RM '+money(r.totalTurnover)+'</td><td class="nowrap '+(Number(r.customerLoss||0)>=0?'money-positive':'money-negative')+'">RM '+money(r.customerLoss)+'</td><td class="nowrap">'+money(a.commissionPercent)+'%</td><td class="nowrap">RM '+money(r.availableCommission)+'</td><td class="nowrap">RM '+money(a.walletBalance)+'</td></tr>'
     ).join('')||'<tr><td colspan="7" class="table-empty">No commission records.</td></tr>';
     const from2=total?start+1:0,to2=total?Math.min(start+pageReports.length,total):0;
     $('agentCommissionShowing').textContent='Showing '+from2+' to '+to2+' of '+total+' entries';
