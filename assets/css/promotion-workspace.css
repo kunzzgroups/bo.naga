@@ -475,3 +475,29 @@ html:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-pb-toolbar-off) body
 html:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-pb-toolbar-off) body.promotion-bonus-page.report-body .report-main .standardized-toolbar-title > .clean-btn.primary .btn-label{
   margin:0!important;
 }
+
+/* Promotion list at tablet widths.
+   1) The code chip ("PROMO-1005") and long titles ended in an ellipsis ("PR...", "Invite A Frien..."): the chip row
+      was nowrap + overflow hidden and the title one line. The chips wrap to a second line instead and the title
+      takes two lines (the row's tooltip has the full text), so nothing is cut.
+   2) bo-charcoal-cms.css switches the category rows to the PHONE layout (one column: thumbnail, status and actions
+      stacked, 194px tall) at max-width:768px, which includes an iPad held upright (768). Phones are 640 and below;
+      from 641 to 768 the rows keep the four-column grid, with the status and action columns trimmed so the two
+      row kinds stay aligned (the phone rule also hides the drag column, which is what puts the
+      first cell into the 26px gutter, so it is shown again). */
+html:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-pw-fit-off) body.promotion-workspace-page.promotion-bonus-page .promotion-row .promo-meta{flex-wrap:wrap!important;overflow:visible!important;row-gap:4px!important}
+html:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-pw-fit-off) body.promotion-workspace-page.promotion-bonus-page .promotion-row .promo-code{flex:0 0 auto!important;overflow:visible!important;text-overflow:clip!important}
+html:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-pw-fit-off) body.promotion-workspace-page.promotion-bonus-page .promotion-row .promo-title{display:-webkit-box!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:2!important;white-space:normal!important;overflow:hidden!important;text-overflow:clip!important;overflow-wrap:anywhere!important}
+@media (min-width:641px) and (max-width:768px){
+  html:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-pw-fit-off) body.promotion-workspace-page.promotion-bonus-page .bonus-title-table-row,
+  html:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-pw-fit-off) body.promotion-workspace-page.promotion-bonus-page .promotion-row{grid-template-columns:26px minmax(0,1fr) 112px 104px!important}
+  html:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-pw-fit-off) body.promotion-workspace-page.promotion-bonus-page .bonus-title-table-row > .category-drag{display:block!important}
+}
+/* 3) reports.css, at max-width:1100px, moves a promotion's status cell to column 1 and its action cell to row 2
+      ("grid-area:2 / 2"): every promotion row became two lines (121px against 75px) under category rows that stay
+      on one line, and the status pills no longer sat under the category's. From 641 to 1100 they go back to
+      columns 3 and 4 of the row they share with the name. */
+@media (min-width:641px) and (max-width:1100px){
+  html:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-pw-fit-off) body.promotion-workspace-page.promotion-bonus-page .promotion-row > .promotion-status-cell{grid-column:3!important;grid-row:1!important}
+  html:not(#bo-charcoal-off):not(#bo-charcoal-legacy):not(#bo-pw-fit-off) body.promotion-workspace-page.promotion-bonus-page .promotion-row > .promotion-action-cell{grid-column:4!important;grid-row:1!important;grid-area:1 / 4!important}
+}

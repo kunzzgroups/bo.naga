@@ -314,7 +314,7 @@
                                : '<i class="bi bi-image" aria-hidden="true"></i>') +
             '</div>' +
             '<div class="promotion-copy">' +
-              '<b class="promo-title">' + esc(p.name || 'Untitled promotion') + '</b>' +
+              '<b class="promo-title" title="' + esc(p.name || 'Untitled promotion') + '">' + esc(p.name || 'Untitled promotion') + '</b>' +
               '<div class="promo-meta">' +
                 '<span class="promo-code">' + esc(code) + '</span>' +
                 '<span class="promo-order">Order ' + esc(p.displayOrder == null ? 0 : p.displayOrder) + '</span>' +
