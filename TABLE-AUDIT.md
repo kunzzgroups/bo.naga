@@ -18,39 +18,44 @@ rows are marked *(empty)* in the last section and their ✓ is provisional.
 
 | state | pages |
 |---|---|
-| CLIP (unreachable) | 0 |
-| scroll at 1440 or 1280 (laptop) | 25 |
-| scroll only at 1024 / 768 (tablet) | 24 |
-| fits at every width | 67 |
+| CLIP (unreachable) | 1 |
+| scroll at 1440 or 1280 (laptop) | 28 |
+| scroll only at 1024 / 768 (tablet) | 25 |
+| fits at every width | 62 |
 
 ## P0 — clipped, content unreachable
 
-_None._ Every table wider than its box can be reached, in its own box or through the head/body mirror.
+| page | cols | hard min-width | 1440 \| 1280 \| 1024 \| 768 | first broken |
+|---|---|---|---|---|
+| `win-lose-report.html` | 6 | — | ✓ | ✓ | CLIP 6 | ✓ | 1024 |
 
 ## P1 — horizontal scroll on a laptop (1440 / 1280)
 
 | page | cols | hard min-width | 1440 \| 1280 \| 1024 \| 768 | first broken |
 |---|---|---|---|---|
-| `casino-deposit-withdraw-report.html` | 14 | — | scroll 1355 | scroll 1515 | scroll 1771 | scroll 1789 | 1440 |
-| `member-wallet.html` | 1 | 2360px | scroll 1217 | scroll 1377 | scroll 1633 | scroll 1651 | 1440 |
-| `member-top-deposit-report.html` | 18 | — | scroll 1201 | scroll 1361 | scroll 1617 | scroll 1635 | 1440 |
-| `wallet-ledger.html` | 1 | — | scroll 897 | scroll 1057 | scroll 1313 | scroll 1331 | 1440 |
-| `agent-performance-detail.html` | 16 | — | scroll 326 | scroll 486 | scroll 742 | scroll 760 | 1440 |
-| `agent-performance-report.html` | 16 | — | scroll 326 | scroll 486 | scroll 742 | scroll 760 | 1440 |
-| `transaction-report.html` | 14 | 1460px | scroll 300 | scroll 460 | scroll 716 | scroll 734 | 1440 |
-| `daily-rebate-report.html` | 12 | 1100px | scroll 119 | scroll 279 | scroll 535 | scroll 553 | 1440 |
-| `rebate-log.html` | 12 | 1100px | scroll 119 | scroll 279 | scroll 535 | scroll 553 | 1440 |
-| `manual-rebate-approval.html` | 9 | 1100px | scroll 73 | scroll 233 | scroll 489 | scroll 503 | 1440 |
-| `player-provider-session.html` | 10 | 1080px | scroll 51 | scroll 211 | scroll 467 | scroll 493 | 1440 |
+| `member-top-deposit-report.html` | 18 | — | scroll 1450 | scroll 1610 | scroll 1866 | scroll 1624 | 1440 |
+| `wallet-ledger.html` | 15 | — | scroll 717 | scroll 877 | scroll 1133 | scroll 1151 | 1440 |
+| `agent-performance-report.html` | 16 | — | scroll 678 | scroll 838 | scroll 1094 | scroll 1071 | 1440 |
+| `agent-performance-detail.html` | 16 | — | scroll 678 | scroll 832 | scroll 1088 | scroll 1071 | 1440 |
+| `member-wallet.html` | 16 | 1792px | scroll 633 | scroll 793 | scroll 1049 | scroll 1067 | 1440 |
+| `transaction-report.html` | 14 | 1460px | scroll 402 | scroll 562 | scroll 818 | scroll 836 | 1440 |
+| `casino-deposit-withdraw-report.html` | 14 | — | scroll 379 | scroll 539 | scroll 795 | scroll 546 | 1440 |
+| `provider-bet-report.html` | 11 | — | scroll 266 | scroll 426 | scroll 682 | scroll 411 | 1440 |
+| `player-provider-session.html` | 10 | 1080px | scroll 77 | scroll 237 | scroll 493 | scroll 519 | 1440 |
+| `vip-reward-log.html` | 10 | 1232px | scroll 68 | scroll 228 | scroll 484 | scroll 502 | 1440 |
+| `daily-rebate-report.html` | 12 | 1171px | scroll 6 | scroll 166 | scroll 422 | scroll 440 | 1440 |
+| `rebate-log.html` | 12 | 1171px | scroll 6 | scroll 166 | scroll 422 | scroll 440 | 1440 |
 | `main-provider-settlement.html` | 10 | 1200px | scroll 115 | scroll 218 | scroll 471 | ✓ | 1440 |
-| `main-merchant-balance.html` | 15 | — | scroll 96 | scroll 92 | ✓ | ✓ | 1440 |
-| `main-provider-balance.html` | 15 | — | scroll 96 | scroll 92 | ✓ | ✓ | 1440 |
+| `main-merchant-balance.html` | 15 | — | scroll 63 | scroll 57 | ✓ | ✓ | 1440 |
+| `main-provider-balance.html` | 15 | — | scroll 63 | scroll 57 | ✓ | ✓ | 1440 |
+| `provider-wallet-transaction.html` | 9 | 1164px | ✓ | scroll 158 | scroll 414 | scroll 432 | 1280 |
+| `agent-payout-admin.html` | 10 | 1160px | ✓ | scroll 156 | scroll 412 | scroll 434 | 1280 |
+| `agent-settlement-admin.html` | 10 | 1160px | ✓ | scroll 156 | scroll 412 | scroll 434 | 1280 |
 | `daily-rebate-setting.html` | 9 | 1100px | ✓ | scroll 94 | scroll 350 | scroll 368 | 1280 |
 | `main-merchant-provider-report.html` | 9 | 1080px | ✓ | scroll 96 | scroll 349 | scroll 350 | 1280 |
 | `brand-overview.html` | 8 | 1040px | ✓ | scroll 82 | scroll 338 | scroll 356 | 1280 |
-| `vip-management.html` | 10 | 1080px | ✓ | scroll 76 | scroll 332 | scroll 350 | 1280 |
 | `rebate-management.html` | 9 | 1080px | ✓ | scroll 74 | scroll 330 | scroll 352 | 1280 |
-| `provider-wallet-transaction.html` | 9 | 1040px | ✓ | scroll 34 | scroll 290 | scroll 308 | 1280 |
+| `vip-management.html` | 10 | 1030px | ✓ | scroll 26 | scroll 282 | scroll 300 | 1280 |
 | `main-accounting-report.html` | 7 | 1040px | ✓ | scroll 28 | scroll 276 | scroll 302 | 1280 |
 | `provider-detail.html` | 7 | 1040px | ✓ | scroll 28 | scroll 276 | scroll 302 | 1280 |
 | `member-withdraw.html` | 9 | 1080px | ✓ | scroll 109 | scroll 365 | scroll 119 | 1280 |
@@ -61,18 +66,18 @@ _None._ Every table wider than its box can be reached, in its own box or through
 
 | page | cols | hard min-width | 1440 \| 1280 \| 1024 \| 768 | first broken |
 |---|---|---|---|---|
-| `vip-exp-log.html` | 8 | 980px | ✓ | ✓ | scroll 232 | scroll 250 | 1024 |
 | `promotion-debug.html` | 9 | 980px | ✓ | ✓ | scroll 230 | scroll 248 | 1024 |
 | `main-provider-merchant-list.html` | 8 | 960px | ✓ | ✓ | scroll 229 | scroll 230 | 1024 |
 | `main-accounting-settlement.html` | 8 | 980px | ✓ | ✓ | scroll 216 | scroll 242 | 1024 |
-| `casino-provider-transactions.html` | 10 | — | ✓ | ✓ | scroll 181 | scroll 199 | 1024 |
-| `casino-provider-winloss-report.html` | 10 | — | ✓ | ✓ | scroll 181 | scroll 199 | 1024 |
-| `agent-management.html` | 9 | 100% | ✓ | ✓ | scroll 176 | scroll 194 | 1024 |
+| `casino-provider-transactions.html` | 10 | — | ✓ | ✓ | scroll 217 | scroll 163 | 1024 |
+| `casino-provider-winloss-report.html` | 10 | — | ✓ | ✓ | scroll 217 | scroll 163 | 1024 |
+| `agent-reimbursement-admin.html` | 8 | 924px | ✓ | ✓ | scroll 176 | scroll 198 | 1024 |
 | `manual-rebate-detail.html` | 1 | 920px | ✓ | ✓ | scroll 176 | scroll 194 | 1024 |
-| `agent-payout-admin.html` | 10 | 900px | ✓ | ✓ | scroll 152 | scroll 174 | 1024 |
-| `agent-promotion-admin.html` | 5 | 900px | ✓ | ✓ | scroll 152 | scroll 174 | 1024 |
-| `agent-settlement-admin.html` | 10 | 900px | ✓ | ✓ | scroll 152 | scroll 174 | 1024 |
+| `vip-exp-log.html` | 8 | 916px | ✓ | ✓ | scroll 168 | scroll 186 | 1024 |
+| `agent-management.html` | 9 | 912px | ✓ | ✓ | scroll 162 | scroll 180 | 1024 |
+| `manual-rebate-approval.html` | 9 | 906px | ✓ | ✓ | scroll 156 | scroll 170 | 1024 |
 | `main-win-lose-merchant.html` | 8 | 880px | ✓ | ✓ | scroll 149 | scroll 150 | 1024 |
+| `agent-commission-admin.html` | 7 | 874px | ✓ | ✓ | scroll 126 | scroll 148 | 1024 |
 | `main-merchant-settlement.html` | 8 | 960px | ✓ | ✓ | scroll 221 | ✓ | 1024 |
 | `main-provider-credentials.html` | 8 | 960px | ✓ | ✓ | scroll 221 | ✓ | 1024 |
 | `payment-method.html` | 7 | 920px | ✓ | ✓ | scroll 170 | scroll 28 | 1024 |
@@ -85,7 +90,8 @@ _None._ Every table wider than its box can be reached, in its own box or through
 | `main-merchant-repayments.html` | 9 | 860px | ✓ | ✓ | ✓ | scroll 188 | 768 |
 | `compliance-policy.html` | 7 | 920px | ✓ | ✓ | ✓ | scroll 180 | 768 |
 | `main-provider-health.html` | 7 | 840px | ✓ | ✓ | ✓ | scroll 96 | 768 |
+| `agent-promotion-admin.html` | 5 | 730px | ✓ | ✓ | ✓ | scroll 4 | 768 |
 
 ## Fits at every width
 
-`account-lock.html`, `admin-login-log.html`, `admin-operation-log.html`, `admin-user.html`, `agent-bet-report.html` *(empty)*, `agent-bonus.html` *(empty)*, `agent-commission-admin.html`, `agent-dashboard.html` *(empty)*, `agent-detail.html` *(empty)*, `agent-player-detail.html` *(empty)*, `agent-player-game-report.html` *(empty)*, `agent-players.html` *(empty)*, `agent-products.html` *(empty)*, `agent-referral-v2.html`, `agent-reimbursement-admin.html`, `agent-wallet.html` *(empty)*, `agent-withdraw.html` *(empty)*, `bank-deposit-usage.html`, `brand-management.html`, `bulk-adjustment.html`, `bulk-bonus-adjustment.html`, `casino-bonus-report.html`, `casino-breakdown-report.html`, `contact-sync.html`, `duplicate-ip.html`, `index.html`, `ip-whitelist-security.html`, `main_merchant_report.html`, `main_provider_report.html`, `main-accounting-due.html`, `main-admin-detail.html`, `main-admin-security.html`, `main-balance-adjustment.html` *(empty)*, `main-balance-overview.html`, `main-merchant-detail.html`, `main-merchant-profit.html`, `main-merchant-security.html`, `main-merchant-transactions.html`, `main-provider-detail.html`, `main-provider-transactions.html`, `main-settlement-report.html`, `main-stat-detail.html`, `main-transaction-history.html`, `member-deposit.html`, `member-detail.html` *(empty)*, `merchant-referral-v2.html`, `online-users.html`, `payment-gateway-transactions.html`, `payment-gateway.html`, `promotion-report.html`, `provider-bet-report.html`, `referral-v2-approval.html`, `referral-v2.html` *(empty)*, `referral.html`, `role-create.html` *(empty)*, `role.html`, `root-control.html`, `spin2-management.html`, `t1-kyc.html`, `t1-missions.html`, `t1-pages.html`, `t1-points-report.html`, `t1-redemptions.html`, `t1-rewards.html`, `vip-reward-log.html`, `wbet-bet-limit.html`, `win-lose-report.html`
+`account-lock.html`, `admin-login-log.html`, `admin-operation-log.html`, `admin-user.html`, `agent-bet-report.html` *(empty)*, `agent-bonus.html` *(empty)*, `agent-dashboard.html` *(empty)*, `agent-detail.html` *(empty)*, `agent-player-detail.html` *(empty)*, `agent-player-game-report.html` *(empty)*, `agent-players.html` *(empty)*, `agent-products.html` *(empty)*, `agent-referral-v2.html`, `agent-wallet.html` *(empty)*, `agent-withdraw.html` *(empty)*, `bank-deposit-usage.html`, `brand-management.html`, `bulk-adjustment.html`, `bulk-bonus-adjustment.html`, `casino-bonus-report.html`, `casino-breakdown-report.html`, `contact-sync.html`, `duplicate-ip.html`, `index.html`, `ip-whitelist-security.html`, `main_merchant_report.html`, `main_provider_report.html`, `main-accounting-due.html`, `main-admin-detail.html`, `main-admin-security.html`, `main-balance-adjustment.html` *(empty)*, `main-balance-overview.html`, `main-merchant-detail.html`, `main-merchant-profit.html`, `main-merchant-security.html`, `main-merchant-transactions.html`, `main-provider-detail.html`, `main-provider-transactions.html`, `main-settlement-report.html`, `main-stat-detail.html`, `main-transaction-history.html`, `member-deposit.html`, `member-detail.html` *(empty)*, `merchant-referral-v2.html`, `online-users.html`, `payment-gateway-transactions.html`, `payment-gateway.html`, `promotion-report.html`, `referral-v2-approval.html`, `referral-v2.html` *(empty)*, `referral.html`, `role-create.html` *(empty)*, `role.html`, `root-control.html`, `spin2-management.html`, `t1-kyc.html`, `t1-missions.html`, `t1-pages.html`, `t1-points-report.html`, `t1-redemptions.html`, `t1-rewards.html`, `wbet-bet-limit.html`
