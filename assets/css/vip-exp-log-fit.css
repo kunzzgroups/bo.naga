@@ -1,0 +1,26 @@
+/* VIP EXP Log. Three things made the log hard to read below a 1560 window:
+   1) Remark got 96px at 1024 and 120px at 1280 (280px only at 1440), so a remark ended in an ellipsis after a few
+      characters, and the Member name, the Reference and the Remark were all single-line ellipsis cells;
+   2) from 768 down vip-exp-log.css hid the Remark column altogether although the table still scrolled sideways by
+      250px, so the page paid for the width and still dropped the column;
+   3) every column was a round number set on the <col> (140 / 150 / 130 / 88 / 88 / 88 / 200 / 96).
+   Widths now follow the content (sum 916px, so a 1280 window shows the lot and a tablet scrolls ~180px), free text
+   wraps up to two lines with the full text in the tooltip, numbers never split, and Remark stays visible down to
+   the phone breakpoint (575) where the page already hides Reference. */
+html:not(#bo-vxl-off):not(#bo-vxl-off-2) body:not(#bo-vxl-off-3).vip-exp-log-page .vip-admin-table{width:max(100%,916px)!important;min-width:916px!important;table-layout:fixed!important}
+html:not(#bo-vxl-off):not(#bo-vxl-off-2) body:not(#bo-vxl-off-3).vip-exp-log-page .vip-admin-table col:nth-child(1){width:118px!important}
+html:not(#bo-vxl-off):not(#bo-vxl-off-2) body:not(#bo-vxl-off-3).vip-exp-log-page .vip-admin-table col:nth-child(2){width:130px!important}
+html:not(#bo-vxl-off):not(#bo-vxl-off-2) body:not(#bo-vxl-off-3).vip-exp-log-page .vip-admin-table col:nth-child(3){width:134px!important}
+html:not(#bo-vxl-off):not(#bo-vxl-off-2) body:not(#bo-vxl-off-3).vip-exp-log-page .vip-admin-table col:nth-child(4){width:80px!important}
+html:not(#bo-vxl-off):not(#bo-vxl-off-2) body:not(#bo-vxl-off-3).vip-exp-log-page .vip-admin-table col:nth-child(5){width:84px!important}
+html:not(#bo-vxl-off):not(#bo-vxl-off-2) body:not(#bo-vxl-off-3).vip-exp-log-page .vip-admin-table col:nth-child(6){width:84px!important}
+html:not(#bo-vxl-off):not(#bo-vxl-off-2) body:not(#bo-vxl-off-3).vip-exp-log-page .vip-admin-table col:nth-child(7){width:130px!important}
+html:not(#bo-vxl-off):not(#bo-vxl-off-2) body:not(#bo-vxl-off-3).vip-exp-log-page .vip-admin-table col:nth-child(8){width:156px!important}
+@media (min-width:576px){
+  html:not(#bo-vxl-off):not(#bo-vxl-off-2) body:not(#bo-vxl-off-3).vip-exp-log-page .vip-admin-table th.vip-col-remark{display:table-cell!important}
+  html:not(#bo-vxl-off):not(#bo-vxl-off-2) body:not(#bo-vxl-off-3).vip-exp-log-page .vip-admin-table td.vip-col-remark{display:table-cell!important}
+}
+html:not(#bo-vxl-off):not(#bo-vxl-off-2) body:not(#bo-vxl-off-3).vip-exp-log-page .vip-admin-table .vip-log-member b,
+html:not(#bo-vxl-off):not(#bo-vxl-off-2) body:not(#bo-vxl-off-3).vip-exp-log-page .vip-admin-table .vip-log-member small{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important}
+html:not(#bo-vxl-off):not(#bo-vxl-off-2) body:not(#bo-vxl-off-3).vip-exp-log-page .vip-admin-table .vip-log-clip{display:-webkit-box!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:2!important;white-space:normal!important;overflow:hidden!important;text-overflow:clip!important;overflow-wrap:anywhere!important}
+html:not(#bo-vxl-off):not(#bo-vxl-off-2) body:not(#bo-vxl-off-3).vip-exp-log-page .vip-admin-table tbody td:nth-child(n+4):nth-child(-n+6){white-space:nowrap!important}
