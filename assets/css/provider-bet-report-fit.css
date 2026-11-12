@@ -1,0 +1,52 @@
+/* Provider Bet Report. report-table-split pins the table to its max-content width, so a long username (234px), provider code (228), game name (264) and
+   bet id (243) each set their column and the table was 1624px - a sideways scroll on every laptop. Each column gets a preferred width on its head AND its
+   body cells (the split script sizes by the widest cell, which carries the width too): sum 1348; long values wrap inside their column instead.
+   Also: the footer (a three-column grid with fixed tracks) overlapped at 1024 and below, and below 992px the filter strip sat apart from the table. */
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table thead th:nth-child(1),
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table tbody td:nth-child(1){width:48px!important}
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table thead th:nth-child(2),
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table tbody td:nth-child(2){width:170px!important}
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table thead th:nth-child(3),
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table tbody td:nth-child(3){width:150px!important}
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table thead th:nth-child(4),
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table tbody td:nth-child(4){width:170px!important}
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table thead th:nth-child(5),
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table tbody td:nth-child(5){width:190px!important}
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table thead th:nth-child(6),
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table tbody td:nth-child(6){width:78px!important}
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table thead th:nth-child(7),
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table tbody td:nth-child(7){width:96px!important}
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table thead th:nth-child(8),
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table tbody td:nth-child(8){width:96px!important}
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table thead th:nth-child(9),
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table tbody td:nth-child(9){width:96px!important}
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table thead th:nth-child(10),
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table tbody td:nth-child(10){width:104px!important}
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table thead th:nth-child(11),
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table tbody td:nth-child(11){width:150px!important}
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table thead th .bo-tx-sort-btn{white-space:normal!important;line-height:1.25!important}
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table tbody td:nth-child(2) b,
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table tbody td:nth-child(3),
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table tbody td:nth-child(4),
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) table.report-table tbody td:nth-child(5){overflow-wrap:anywhere;white-space:normal!important}
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) .mad-footer{grid-template-columns:auto minmax(0,1fr) auto!important;gap:12px!important}
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) .mad-footer-info{padding:0 12px!important;white-space:nowrap!important}
+html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) .mad-pager{flex-wrap:nowrap!important}
+@media (max-width:1100px){
+  html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) .mad-pager .smart-page.first,
+  html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) .mad-pager .smart-page.last{display:none!important}
+}
+@media (max-width:991.98px){
+  html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) .report-content > .filter-card:has(+ .table-card){
+    margin-bottom:0!important;
+    border-bottom:0!important;
+    border-bottom-left-radius:0!important;
+    border-bottom-right-radius:0!important;
+    box-shadow:none!important;
+  }
+  html body.provider-bet-report-page:not(#bo-pb-off):not(#bo-pb-off-2):not(#bo-pb-off-3):not(#bo-pb-off-4) .report-content > .filter-card + .table-card{
+    border-top:0!important;
+    border-top-left-radius:0!important;
+    border-top-right-radius:0!important;
+  }
+}

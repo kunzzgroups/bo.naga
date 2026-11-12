@@ -1,0 +1,30 @@
+/* Game. (1) The Details cell is a flex row with no wrap and overflow:hidden, and every chip is cut with an ellipsis: ID / Category / Sub Category / Provider /
+   Game Code / Sort / Image read "ID:", "Cate", "Sub Ca", "Provider: (", "Game Co" at every width, even on a 1917px screen (all seven were cut).
+   The chips wrap onto as many lines as they need (the row grows) and show in full; only the two that can be long (Provider, Game Code) may break inside
+   the value. (2) Footer: a three-column grid with fixed tracks - the count was drawn over the pager from 1280px down (-102px at 1070, -284 on a phone). The
+   count takes the room between Show and the pager, the pager stays on one line, under 1100px the |< and >| buttons are dropped, and on a phone the pager takes
+   its own row. (3) Dark theme: "Showing 1 to 5 of 18837 entries" used the light theme's #57534E on the dark footer (barely legible). */
+html body.page-game.report-body:not(#bo-gm-off-1):not(#bo-gm-off-2):not(#bo-gm-off-3):not(#bo-gm-off-4):not(#bo-gm-off-5):not(#bo-gm-off-6):not(#bo-gm-off-7):not(#bo-gm-off-8):not(#bo-gm-off-9):not(#bo-gm-off-10) .game-detail-cell{flex-wrap:wrap!important;overflow:visible!important;align-content:center!important;gap:4px 16px!important}
+html body.page-game.report-body:not(#bo-gm-off-1):not(#bo-gm-off-2):not(#bo-gm-off-3):not(#bo-gm-off-4):not(#bo-gm-off-5):not(#bo-gm-off-6):not(#bo-gm-off-7):not(#bo-gm-off-8):not(#bo-gm-off-9):not(#bo-gm-off-10) .game-detail-cell > span{flex:0 0 auto!important;max-width:100%!important;overflow:visible!important;text-overflow:clip!important;white-space:nowrap!important}
+html body.page-game.report-body:not(#bo-gm-off-1):not(#bo-gm-off-2):not(#bo-gm-off-3):not(#bo-gm-off-4):not(#bo-gm-off-5):not(#bo-gm-off-6):not(#bo-gm-off-7):not(#bo-gm-off-8):not(#bo-gm-off-9):not(#bo-gm-off-10) .game-detail-cell > span:nth-child(4),
+html body.page-game.report-body:not(#bo-gm-off-1):not(#bo-gm-off-2):not(#bo-gm-off-3):not(#bo-gm-off-4):not(#bo-gm-off-5):not(#bo-gm-off-6):not(#bo-gm-off-7):not(#bo-gm-off-8):not(#bo-gm-off-9):not(#bo-gm-off-10) .game-detail-cell > span:nth-child(5){white-space:normal!important;overflow-wrap:anywhere}
+html body.page-game.report-body:not(#bo-gm-off-1):not(#bo-gm-off-2):not(#bo-gm-off-3):not(#bo-gm-off-4):not(#bo-gm-off-5):not(#bo-gm-off-6):not(#bo-gm-off-7):not(#bo-gm-off-8):not(#bo-gm-off-9):not(#bo-gm-off-10) .game-table-row{height:auto!important}
+html body.page-game.report-body:not(#bo-gm-off-1):not(#bo-gm-off-2):not(#bo-gm-off-3):not(#bo-gm-off-4):not(#bo-gm-off-5):not(#bo-gm-off-6):not(#bo-gm-off-7):not(#bo-gm-off-8):not(#bo-gm-off-9):not(#bo-gm-off-10) .game-table-footer{grid-template-columns:auto minmax(0,1fr) auto!important;gap:12px!important}
+html body.page-game.report-body:not(#bo-gm-off-1):not(#bo-gm-off-2):not(#bo-gm-off-3):not(#bo-gm-off-4):not(#bo-gm-off-5):not(#bo-gm-off-6):not(#bo-gm-off-7):not(#bo-gm-off-8):not(#bo-gm-off-9):not(#bo-gm-off-10) .game-table-footer .mad-footer-info{padding:0 12px!important;white-space:nowrap!important}
+html body.page-game.report-body:not(#bo-gm-off-1):not(#bo-gm-off-2):not(#bo-gm-off-3):not(#bo-gm-off-4):not(#bo-gm-off-5):not(#bo-gm-off-6):not(#bo-gm-off-7):not(#bo-gm-off-8):not(#bo-gm-off-9):not(#bo-gm-off-10) .game-table-footer .pagination-clean{flex-wrap:nowrap!important}
+@media (max-width:1100px){
+  html body.page-game.report-body:not(#bo-gm-off-1):not(#bo-gm-off-2):not(#bo-gm-off-3):not(#bo-gm-off-4):not(#bo-gm-off-5):not(#bo-gm-off-6):not(#bo-gm-off-7):not(#bo-gm-off-8):not(#bo-gm-off-9):not(#bo-gm-off-10) .game-table-footer .pagination-clean > :first-child,
+  html body.page-game.report-body:not(#bo-gm-off-1):not(#bo-gm-off-2):not(#bo-gm-off-3):not(#bo-gm-off-4):not(#bo-gm-off-5):not(#bo-gm-off-6):not(#bo-gm-off-7):not(#bo-gm-off-8):not(#bo-gm-off-9):not(#bo-gm-off-10) .game-table-footer .pagination-clean > :last-child{display:none!important}
+}
+@media (max-width:575.98px){
+  html body.page-game.report-body:not(#bo-gm-off-1):not(#bo-gm-off-2):not(#bo-gm-off-3):not(#bo-gm-off-4):not(#bo-gm-off-5):not(#bo-gm-off-6):not(#bo-gm-off-7):not(#bo-gm-off-8):not(#bo-gm-off-9):not(#bo-gm-off-10) .game-table-footer{display:flex!important;flex-wrap:wrap!important;row-gap:8px!important;justify-content:space-between}
+  html body.page-game.report-body:not(#bo-gm-off-1):not(#bo-gm-off-2):not(#bo-gm-off-3):not(#bo-gm-off-4):not(#bo-gm-off-5):not(#bo-gm-off-6):not(#bo-gm-off-7):not(#bo-gm-off-8):not(#bo-gm-off-9):not(#bo-gm-off-10) .game-table-footer .pagination-clean{flex:1 1 100%!important;justify-content:center!important}
+}
+html[data-bo-theme="dark"] body.page-game.report-body:not(#bo-gm-off-1):not(#bo-gm-off-2):not(#bo-gm-off-3):not(#bo-gm-off-4):not(#bo-gm-off-5):not(#bo-gm-off-6):not(#bo-gm-off-7):not(#bo-gm-off-8):not(#bo-gm-off-9):not(#bo-gm-off-10) .game-table-footer .mad-footer-info{color:#D4D4D8!important}
+/* Phone / small tablet (<=699px): the seven chips sit in two columns (four lines) instead of one chip per line (five to seven lines). */
+@media (max-width:699.98px){
+  html body.page-game.report-body:not(#bo-gm-off-1):not(#bo-gm-off-2):not(#bo-gm-off-3):not(#bo-gm-off-4):not(#bo-gm-off-5):not(#bo-gm-off-6):not(#bo-gm-off-7):not(#bo-gm-off-8):not(#bo-gm-off-9):not(#bo-gm-off-10) .game-detail-cell{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:4px 12px!important}
+  html body.page-game.report-body:not(#bo-gm-off-1):not(#bo-gm-off-2):not(#bo-gm-off-3):not(#bo-gm-off-4):not(#bo-gm-off-5):not(#bo-gm-off-6):not(#bo-gm-off-7):not(#bo-gm-off-8):not(#bo-gm-off-9):not(#bo-gm-off-10) .game-detail-cell > span{white-space:normal!important;overflow-wrap:anywhere!important}
+}
+/* The game name ("Wild Sea Empress Of The Deep") was cut with an ellipsis in a 200px cell; it wraps. */
+html body.page-game.report-body:not(#bo-gm-off-1):not(#bo-gm-off-2):not(#bo-gm-off-3):not(#bo-gm-off-4):not(#bo-gm-off-5):not(#bo-gm-off-6):not(#bo-gm-off-7):not(#bo-gm-off-8):not(#bo-gm-off-9):not(#bo-gm-off-10) .game-main-cell > b{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere}

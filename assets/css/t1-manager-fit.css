@@ -1,0 +1,63 @@
+/* T1 manager pages - one design with the rest of the BO (both themes). They were stock Bootstrap: cream pill buttons wrapping onto two rows, a
+   24px heading repeating the page title, a plain striped table with bare-text statuses and blue outline buttons. Now: the section links are one
+   compact row of small pills (scrolls sideways, the current one amber-tinted), the heading is the BO section-title size, the table is the BO
+   table (tinted 11px uppercase header, 13px rows, hairlines, row hover, first column bold), statuses are pills (.t1-status, rendered by
+   t1-manager.js statusCell), and the buttons use the BO amber primary and cream/charcoal secondary. Colours come from --t1-* tokens per theme. */
+.t1-manager{--t1-ink:#18191C;--t1-mut:#78716C;--t1-line:#EADCC8;--t1-row:#F0E4D0;--t1-surface:#FFFCF7;--t1-head:#FFE8CC;--t1-head-ink:#6B360C;--t1-hover:#FFF8EB;--t1-amber:#D97706;--t1-amber-ink:#8A4B08;--t1-amber-soft:rgba(217,119,6,.12)}
+html[data-bo-theme="dark"] .t1-manager{--t1-ink:#F5F5F4;--t1-mut:#A1A1AA;--t1-line:rgba(255,255,255,.12);--t1-row:rgba(255,255,255,.08);--t1-surface:#2A2C36;--t1-head:#383A46;--t1-head-ink:#D4D4D8;--t1-hover:#32343E;--t1-amber:#F59E0B;--t1-amber-ink:#FBBF24;--t1-amber-soft:rgba(245,158,11,.16)}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager{gap:16px}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-links{display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;padding:0 0 14px;border-bottom:1px solid var(--t1-line);scrollbar-width:none}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-links::-webkit-scrollbar{display:none}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-menu-link{flex:0 0 auto;display:inline-flex;align-items:center;height:32px;padding:0 14px;border-radius:999px;border:1px solid var(--t1-line);background:transparent;color:var(--t1-mut);font-size:12.5px;font-weight:700;white-space:nowrap;text-decoration:none;transition:color .15s,border-color .15s,background .15s}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-menu-link:hover{color:var(--t1-ink);border-color:var(--t1-amber)}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-menu-link.is-active{background:var(--t1-amber-soft);border-color:var(--t1-amber);color:var(--t1-amber-ink)}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-head{align-items:flex-start}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-head h2{margin:0 0 2px;font-size:18px;font-weight:800;letter-spacing:-.01em;color:var(--t1-ink)}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-head p{margin:0;font-size:12.5px;color:var(--t1-mut)!important}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-head-actions{gap:8px}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-head-actions .btn{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:8px;font-size:12.5px;font-weight:800;line-height:1}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .btn-warning{background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 55%,#EA8608 100%);border:0;color:#18191C;box-shadow:none}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .btn-warning:hover{background:linear-gradient(0deg,#FBBF24 0%,#F59E0B 55%,#EA8608 100%);color:#18191C}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .btn-outline-secondary,
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .btn-outline-primary{background:linear-gradient(180deg,#FFFCF7 0%,#F5EBDC 48%,#EADCC8 100%);border:1px solid #DCC9A8;color:#18191C;box-shadow:none}
+html[data-bo-theme="dark"] body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .btn-outline-secondary,
+html[data-bo-theme="dark"] body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .btn-outline-primary{background:linear-gradient(180deg,#4A4C58 0%,#383A46 48%,#2C2E38 100%);border-color:rgba(255,255,255,.12);color:#F5F5F4}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .btn-outline-secondary:hover,
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .btn-outline-primary:hover{background:linear-gradient(0deg,#FFFCF7 0%,#F5EBDC 48%,#EADCC8 100%);border-color:#DCC9A8;color:#18191C;transform:translateY(-1px)}
+html[data-bo-theme="dark"] body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .btn-outline-secondary:hover,
+html[data-bo-theme="dark"] body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .btn-outline-primary:hover{background:linear-gradient(0deg,#4A4C58 0%,#383A46 48%,#2C2E38 100%);color:#FFFFFF}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .btn-sm{height:30px;padding:0 12px;border-radius:8px;font-size:12px;font-weight:800;line-height:1}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .btn-success{background:rgba(34,197,94,.16);border:1px solid rgba(34,197,94,.4);color:#15803D;box-shadow:none}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .btn-success:hover{background:rgba(34,197,94,.26);border-color:rgba(34,197,94,.55);color:#15803D}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .btn-outline-danger{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.35);color:#B42318;box-shadow:none}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .btn-outline-danger:hover{background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.5);color:#B42318}
+html[data-bo-theme="dark"] body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .btn-success{color:#86EFAC}
+html[data-bo-theme="dark"] body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .btn-success:hover{color:#BBF7D0}
+html[data-bo-theme="dark"] body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .btn-outline-danger{color:#FCA5A5}
+html[data-bo-theme="dark"] body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .btn-outline-danger:hover{color:#FECACA}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-table-container{padding:0;border:1px solid var(--t1-line);border-radius:10px;background:var(--t1-surface);overflow:auto}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-table-container table{--bs-table-bg:transparent;--bs-table-accent-bg:transparent;--bs-table-hover-bg:transparent;--bs-table-color:var(--t1-ink);--bs-table-hover-color:var(--t1-ink);--bs-table-border-color:var(--t1-row);margin:0;color:var(--t1-ink)}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-table-container thead th{position:sticky;top:0;z-index:1;padding:11px 14px;background:var(--t1-head);color:var(--t1-head-ink);border-bottom:1px solid var(--t1-line);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-table-container tbody td{padding:12px 14px;border-bottom:1px solid var(--t1-row);font-size:13px;vertical-align:middle;color:var(--t1-ink)}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-table-container tbody td:first-child{font-weight:700}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-table-container tbody tr:last-child td{border-bottom:0}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-table-container tbody tr:hover > *{background:var(--t1-hover)}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-table-container td.text-muted{color:var(--t1-mut)!important;padding:28px 14px;text-align:center}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-status{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;border:1px solid transparent;font-size:11px;font-weight:800;letter-spacing:.02em;white-space:nowrap}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-status.is-on{background:rgba(34,197,94,.14);border-color:rgba(34,197,94,.35);color:#15803D}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-status.is-wait{background:rgba(245,158,11,.16);border-color:rgba(245,158,11,.4);color:#B45309}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-status.is-bad{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.35);color:#B42318}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-status.is-off{background:rgba(120,113,108,.14);border-color:rgba(120,113,108,.3);color:var(--t1-mut)}
+html[data-bo-theme="dark"] body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-status.is-on{color:#86EFAC}
+html[data-bo-theme="dark"] body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-status.is-wait{color:#FCD34D}
+html[data-bo-theme="dark"] body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-status.is-bad{color:#FCA5A5}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-dashboard-card{background:var(--t1-surface);border:1px solid var(--t1-line);color:var(--t1-ink);border-radius:12px;padding:20px}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-dashboard-card:hover{border-color:var(--t1-amber)}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-dashboard-card strong{font-size:15px;font-weight:800}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4) .t1-manager .t1-dashboard-card span{color:var(--t1-mut);font-size:12.5px}
+/* bo-ui-standard.js adds .bo-ui-button-secondary (cream) to every button by its label, which outranked the green "Fulfill" tint above. */
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4):not(#t1f-off-5):not(#t1f-off-6) .t1-manager .btn.btn-success.bo-ui-button{background:rgba(34,197,94,.16)!important;border:1px solid rgba(34,197,94,.4)!important;color:#15803D!important}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4):not(#t1f-off-5):not(#t1f-off-6) .t1-manager .btn.btn-success.bo-ui-button:hover{background:rgba(34,197,94,.26)!important}
+html[data-bo-theme="dark"] body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4):not(#t1f-off-5):not(#t1f-off-6) .t1-manager .btn.btn-success.bo-ui-button{color:#86EFAC!important}
+html body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4):not(#t1f-off-5):not(#t1f-off-6) .t1-manager .btn.btn-outline-danger.bo-ui-button{background:rgba(239,68,68,.1)!important;border:1px solid rgba(239,68,68,.35)!important;color:#B42318!important}
+html[data-bo-theme="dark"] body:not(#t1f-off):not(#t1f-off-2):not(#t1f-off-3):not(#t1f-off-4):not(#t1f-off-5):not(#t1f-off-6) .t1-manager .btn.btn-outline-danger.bo-ui-button{color:#FCA5A5!important}

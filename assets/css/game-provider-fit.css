@@ -1,0 +1,16 @@
+/* Game Provider. The toolbar (search | Sync Selected Games | Debug Game List | API Debug Tools | Add Game Provider) is flex-nowrap and only
+   wrapped from 768px down, so between 769 and ~1100px its five controls were wider than the card: at 1024 "Add Game Provider" ran 56px out of
+   the card and was clipped ("Add Game Provi"), and the search box was squeezed to a 180px stub. From 1199px down it may wrap; from 1100px
+   down the search takes its own full row (the phone layout the page already has below 768px) and the four buttons sit on the next. */
+@media (max-width:1199.98px){
+  html body.page-game-provider:not(#bo-gp-off):not(#bo-gp-off-2) .standardized-list-toolbar .listing-toolbar-actions{flex-wrap:wrap!important}
+}
+@media (min-width:769px) and (max-width:1100px){
+  html body.page-game-provider:not(#bo-gp-off):not(#bo-gp-off-2) .provider-list-search{flex:1 1 100%!important;max-width:none!important;width:100%!important;min-width:0!important;order:-1}
+  html body.page-game-provider:not(#bo-gp-off):not(#bo-gp-off-2) .provider-list-search input,
+  html body.page-game-provider:not(#bo-gp-off):not(#bo-gp-off-2) #providerSearchInput{width:100%!important}
+}
+/* Dark theme, API Debug Tools dialog: the result box (#walletResult, a <pre>) kept Bootstrap's #F8F9FA fill while its text takes the dark
+   theme's near-white ink - a white bar that shows nothing legible once a response is printed in it. It becomes the dialog's dark field
+   (#2A2C36 with the dark hairline), monospace output in the ink colour. */
+html[data-bo-theme="dark"] body.page-game-provider:not(#bo-gp-off):not(#bo-gp-off-2):not(#bo-gp-off-3):not(#bo-gp-off-4):not(#bo-gp-off-5):not(#bo-gp-off-6):not(#bo-gp-off-7):not(#bo-gp-off-8) #walletResult{background:#2A2C36!important;color:#F5F5F4!important;border:1px solid rgba(255,255,255,.12)!important}

@@ -1,0 +1,120 @@
+/* Casino Breakdown Report — the twelve daily columns at laptop and tablet widths.
+   ----------------------------------------------------------------------------------------------
+   Two faults here, and the second one is not a width problem.
+
+   1. The head and the rows are two separate tables (sticky-head pattern), and the family sheet runs
+      `table-layout:auto; width:100%` on both. Auto layout sizes each table's columns to its OWN content -
+      the head to the labels, the rows to the numbers - so the columns drifted apart: measured at 1440 with
+      this sheet removed, the head was 1540px wide against the rows' 1160px, and a heading sat over a
+      different column than the cells beneath it (the head table also hung past its card).
+      Both tables are `table-layout:fixed` on the same px widths and the same total width now: measured
+      drift 1px (rounding) at every width, 0 at 1917 and 1024.
+
+   2. The content needs 1635px - 329 hidden at 1560, 449 at 1440, 609 at 1280, 865 at 1024. Nothing can
+      shrink without breaking a figure in half ("21,345,678.90" is one token), so the columns that go are the
+      ones a daily breakdown is read without. Widths are max(header, widest cell) over the real rows:
+
+        Date 106 · Deposit Amount 132 · Withdraw Amount 149 · Valid Bet 120 · Member W/L 139 ·
+        Company W/L 166 · Active Bet Members 156 · New Members 115 · Deposit Count 122 ·
+        Deposit Members 138 · Withdraw Count 138 · Withdraw Members 154             (= 1635)
+
+      Cumulative, money columns last to go:
+
+        >=1897   all 12                                          -> 1635  (frame 1637 at 1917)
+        <=1896   minus Deposit Members, Withdraw Members, Withdraw Count -> 1205
+        <=1466   minus Deposit Count                             -> 1083
+        <=1344   minus New Members                               ->  968
+        <=1229   minus Active Bet Members, Company W/L            ->  646  (frames 744 / 792 / 726)
+
+      A 1917 window is the only one that can hold all twelve; that is the width of the content, not a
+      preference. `white-space:nowrap` is stated here because the shared cell rule wraps every cell at
+      spaces and these figures must not break mid-number.
+
+   Three :not(#id) steps: the family sheet states its table rules that way.
+
+   The rows come from the harness' casino-report summary (breakdown[]), added alongside this sheet so the
+   table could be measured with its real figures. */
+
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table{
+  table-layout:fixed!important;
+  min-width:0!important;
+}
+
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(1),
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(1){width:106px}
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(2),
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(2){width:115px}
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(3),
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(3){width:138px}
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(4),
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(4){width:122px}
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(5),
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(5){width:132px}
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(6),
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(6){width:154px}
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(7),
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(7){width:138px}
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(8),
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(8){width:149px}
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(9),
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(9){width:156px}
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(10),
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(10){width:120px}
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(11),
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(11){width:139px}
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(12),
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(12){width:166px}
+
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table thead th,
+html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data-report-page="breakdown"] .report-table tbody td{white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important}
+
+@media (min-width:1897px){
+  html:not(#bo-cbr-all-x):not(#bo-cbr-all-x2):not(#bo-cbr-all-x3) body.bo-report-family[data-report-page="breakdown"] .report-table{width:100%!important;min-width:1635px!important;max-width:none!important}
+}
+@media (max-width:1896.98px){
+  html:not(#bo-cbr-a):not(#bo-cbr-a-2):not(#bo-cbr-a-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(3),
+  html:not(#bo-cbr-a):not(#bo-cbr-a-2):not(#bo-cbr-a-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(3){display:none!important}
+  html:not(#bo-cbr-a):not(#bo-cbr-a-2):not(#bo-cbr-a-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(6),
+  html:not(#bo-cbr-a):not(#bo-cbr-a-2):not(#bo-cbr-a-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(6){display:none!important}
+  html:not(#bo-cbr-a):not(#bo-cbr-a-2):not(#bo-cbr-a-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(7),
+  html:not(#bo-cbr-a):not(#bo-cbr-a-2):not(#bo-cbr-a-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(7){display:none!important}
+  html:not(#bo-cbr-a-x):not(#bo-cbr-a-x2):not(#bo-cbr-a-x3) body.bo-report-family[data-report-page="breakdown"] .report-table{width:100%!important;min-width:1205px!important;max-width:none!important}
+}
+@media (max-width:1466.98px){
+  html:not(#bo-cbr-b):not(#bo-cbr-b-2):not(#bo-cbr-b-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(4),
+  html:not(#bo-cbr-b):not(#bo-cbr-b-2):not(#bo-cbr-b-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(4){display:none!important}
+  html:not(#bo-cbr-b-x):not(#bo-cbr-b-x2):not(#bo-cbr-b-x3) body.bo-report-family[data-report-page="breakdown"] .report-table{width:100%!important;min-width:1083px!important;max-width:none!important}
+}
+@media (max-width:1344.98px){
+  html:not(#bo-cbr-c):not(#bo-cbr-c-2):not(#bo-cbr-c-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(2),
+  html:not(#bo-cbr-c):not(#bo-cbr-c-2):not(#bo-cbr-c-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(2){display:none!important}
+  html:not(#bo-cbr-c-x):not(#bo-cbr-c-x2):not(#bo-cbr-c-x3) body.bo-report-family[data-report-page="breakdown"] .report-table{width:100%!important;min-width:968px!important;max-width:none!important}
+}
+@media (max-width:1229.98px){
+  html:not(#bo-cbr-d):not(#bo-cbr-d-2):not(#bo-cbr-d-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(9),
+  html:not(#bo-cbr-d):not(#bo-cbr-d-2):not(#bo-cbr-d-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(9){display:none!important}
+  html:not(#bo-cbr-d):not(#bo-cbr-d-2):not(#bo-cbr-d-3) body.bo-report-family[data-report-page="breakdown"] .report-table th:nth-child(12),
+  html:not(#bo-cbr-d):not(#bo-cbr-d-2):not(#bo-cbr-d-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(12){display:none!important}
+  html:not(#bo-cbr-d-x):not(#bo-cbr-d-x2):not(#bo-cbr-d-x3) body.bo-report-family[data-report-page="breakdown"] .report-table{width:100%!important;min-width:646px!important;max-width:none!important}
+}
+
+/* Date strip and table are ONE card below 992px as well - the same join win-lose-fit.css and casino-dw-fit.css
+   do, which this page was missing: bo-report-family.css section 19 states it for min-width:992px only ("below
+   992 the column is plain block flow with each card's own margin-bottom, and stacked cards are the right shape
+   there"), so on a tablet the date picker sat in a rounded box of its own with a gap above the table - the
+   "date is still separated" report at 946. Same join as section 19, minus its -16px margin (the block-flow gap
+   here is the strip's own margin-bottom, which goes to 0). */
+@media (max-width:991.98px){
+  html:not(#bo-cbr-j):not(#bo-cbr-j-2):not(#bo-cbr-j-3) body.bo-report-family[data-report-page="breakdown"] .report-content > .filter-card:has(+ .table-card){
+    margin-bottom:0!important;
+    border-bottom:0!important;
+    border-bottom-left-radius:0!important;
+    border-bottom-right-radius:0!important;
+    box-shadow:none!important;
+  }
+  html:not(#bo-cbr-j):not(#bo-cbr-j-2):not(#bo-cbr-j-3) body.bo-report-family[data-report-page="breakdown"] .report-content > .filter-card + .table-card{
+    border-top:0!important;
+    border-top-left-radius:0!important;
+    border-top-right-radius:0!important;
+  }
+}

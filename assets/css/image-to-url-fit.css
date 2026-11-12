@@ -1,0 +1,8 @@
+/* Image To URL. From 520 to 768px the copy rows became one column with a full-width COPY bar under each field (Uploaded Image URL, CSS
+   Background Code) - on a 731px tablet that is a 670px-wide button under a 670px-wide field. The URL / CSS field and its COPY button stay
+   side by side (as they are above 768px) until the phone layout below 520px. */
+@media (min-width:520px) and (max-width:768px){
+  html body.image-to-url-page:not(#bo-iu-off):not(#bo-iu-off-2) .copy-row{grid-template-columns:minmax(0,1fr) auto!important}
+  html body.image-to-url-page:not(#bo-iu-off):not(#bo-iu-off-2) .copy-btn{width:auto!important;height:36px!important;align-self:start!important}
+  html body.image-to-url-page:not(#bo-iu-off):not(#bo-iu-off-2) .copy-row-textarea .copy-btn{height:36px!important;min-height:0!important;align-self:start!important}
+}

@@ -1,0 +1,24 @@
+/* T1 manager pages (Management, Missions, Rewards, Redemptions, React Pages, KYC) - dark theme. t1-manager.css is light-only: the section chips,
+   dashboard cards, table frame and edit dialog are hard-coded cream/white (#fff5e5, #fff), while the text inside them follows the dark theme's
+   near-white ink, so the chips ("T1 Points Report", "T1 Missions" ...) were white on cream (unreadable), the table sat in a white frame, the
+   dashboard cards were light blocks on a dark page, and Bootstrap's .text-muted subtitle ("Merchant-scoped T1 React configuration", the Legacy
+   Naga note) was dark grey on dark. They take the dark tiers used elsewhere in the BO: #2A2C36 panels, #383A46 raised, the rgba(255,255,255,.12)
+   hairline, amber on hover and for the active chip. Light theme is untouched. */
+html[data-bo-theme="dark"] body:not(#t1d-off):not(#t1d-off-2):not(#t1d-off-3) .t1-manager .text-muted{color:#A1A1AA!important}
+html[data-bo-theme="dark"] body:not(#t1d-off):not(#t1d-off-2):not(#t1d-off-3) .t1-manager .t1-dashboard-card{background:#2A2C36;border-color:rgba(255,255,255,.12);color:#F5F5F4}
+html[data-bo-theme="dark"] body:not(#t1d-off):not(#t1d-off-2):not(#t1d-off-3) .t1-manager .t1-dashboard-card:hover{border-color:#F59E0B}
+html[data-bo-theme="dark"] body:not(#t1d-off):not(#t1d-off-2):not(#t1d-off-3) .t1-manager .t1-dashboard-card span{color:#A1A1AA}
+html[data-bo-theme="dark"] body:not(#t1d-off):not(#t1d-off-2):not(#t1d-off-3) .t1-manager .t1-edit-dialog{background:#2A2C36;color:#F5F5F4;border:1px solid rgba(255,255,255,.12)}
+html[data-bo-theme="dark"] body:not(#t1d-off):not(#t1d-off-2):not(#t1d-off-3) .t1-manager .t1-modal-header,
+html[data-bo-theme="dark"] body:not(#t1d-off):not(#t1d-off-2):not(#t1d-off-3) .t1-manager .t1-modal-actions{border-color:rgba(255,255,255,.12)}
+html[data-bo-theme="dark"] body:not(#t1d-off):not(#t1d-off-2):not(#t1d-off-3) .t1-manager .t1-modal-header .btn-close{filter:none;opacity:1;color:#F5F5F4}
+html[data-bo-theme="dark"] body:not(#t1d-off):not(#t1d-off-2):not(#t1d-off-3) .t1-manager .t1-media-preview{background:#1E1F27}
+html[data-bo-theme="dark"] body:not(#t1d-off):not(#t1d-off-2):not(#t1d-off-3) .t1-manager .t1-field small{color:#A1A1AA}
+html[data-bo-theme="dark"] body:not(#t1d-off):not(#t1d-off-2):not(#t1d-off-3) .t1-manager .alert-success{background:rgba(34,197,94,.14);border-color:rgba(34,197,94,.35);color:#86EFAC}
+html[data-bo-theme="dark"] body:not(#t1d-off):not(#t1d-off-2):not(#t1d-off-3) .t1-manager .alert-danger{background:rgba(239,68,68,.14);border-color:rgba(239,68,68,.35);color:#FCA5A5}
+html[data-bo-theme="dark"] body:not(#t1d-off):not(#t1d-off-2):not(#t1d-off-3) .t1-manager .alert-info{background:rgba(59,130,246,.14);border-color:rgba(59,130,246,.35);color:#93C5FD}
+html[data-bo-theme="dark"] body:not(#t1d-off):not(#t1d-off-2):not(#t1d-off-3) .t1-manager .t1-field input[type="file"]{background:#2A2C36!important;color:#F5F5F4!important;border-color:rgba(255,255,255,.12)!important}
+html[data-bo-theme="dark"] body:not(#t1d-off):not(#t1d-off-2):not(#t1d-off-3) .t1-manager .t1-field input[type="file"]::file-selector-button{background:#383A46;color:#F5F5F4;border:0;border-right:1px solid rgba(255,255,255,.12);margin-right:10px}
+/* The dialog's close button (.btn-close, turned into .bo-ui-icon-button by bo-ui-standard.js) has no background image and no content, so it was
+   an empty square. It shows a multiplication sign in the current text colour (both themes - this rule is not dark-scoped). */
+.t1-manager .t1-modal-header .btn-close::before{content:"×";display:block;font-size:22px;line-height:1;font-weight:400;text-align:center}

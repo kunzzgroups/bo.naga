@@ -1,0 +1,24 @@
+/* Frontend Display. The settings rows are a two-column grid (label | control) and the control column wants ~220-280px, so in a panel that is
+   only ~330-560px wide (two panels side by side from 901px up, i.e. every laptop and the 1005px window) the label got what was left:
+   96-142px, and "Collapsed Sidebar - Choose how submenu items open while the BO sidebar is collapsed." broke into 5 lines and spilled out of
+   its column. A row whose control is a select / input stacks (label above, control full width) when its panel is narrower than 560px -
+   the page's own .is-stack shape - and keeps the side-by-side layout when there is room. Switch rows (a small toggle) are not touched. */
+.fd-panel{container-type:inline-size;container-name:fdp}
+@container fdp (max-width: 560px){
+  html body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .display-setting-row:has(.fd-control :is(.rounded-select-wrap,.display-setting-select,.display-range-control,input:not([type="checkbox"]):not([type="radio"]),select)){grid-template-columns:minmax(0,1fr)!important;align-items:stretch!important}
+  html body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .display-setting-row:has(.fd-control :is(.rounded-select-wrap,.display-setting-select,.display-range-control,input:not([type="checkbox"]):not([type="radio"]),select)) .fd-control{justify-content:stretch!important}
+  /* The Telegram / Messenger rows (.fd-social-field, shown for brands that may use them) are label | 200-320px field; in a 370px panel the
+     label was 7px wide and its text ran down the panel one letter per line. */
+  html body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) #fd-sec-visibility .fd-social-field{grid-template-columns:minmax(0,1fr)!important;align-items:stretch!important}
+}
+html body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .display-setting-copy,
+html body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .display-setting-copy p{overflow-wrap:anywhere}
+/* Dark theme: the bold words inside a description ("Real Transactions", "Random Demo" under Live Transaction Data) were #3F3F46 - dark grey on the
+   dark panel - so the sentence read "uses deposits/withdrawals.      generates masked activity." with holes. */
+html[data-bo-theme="dark"] body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .display-setting-copy p b{color:#F5F5F4!important}
+/* The Header Marquee row (.display-setting-row.is-stack) has a single track written as `1fr`, i.e. minmax(auto,1fr): the track will not be
+   narrower than its content, and the editor + live preview carry a long single line, so at 830px the track grew to 991px inside a 794px
+   panel - the editor, its toolbar and the preview ran under the panel's right edge and the scrollbar (the editor text was cut at "Your Ow").
+   The track may shrink (minmax(0,1fr)) and the wrap fills the panel; the editor scrolls its own text, the preview strip clips its own. */
+html body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .display-setting-row.is-stack{grid-template-columns:minmax(0,1fr)!important}
+html body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .marquee-editor-wrap{min-width:0!important;max-width:100%!important}

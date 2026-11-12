@@ -1,0 +1,72 @@
+/* Transaction Report — the footer, and why this page keeps its horizontal scroll.
+   ----------------------------------------------------------------------------------------------
+   The table here is fourteen columns of ledger detail with a documented floor (see
+   transaction-report-polish.css §"the table fits a 1260px content area"): the owner asked for the data
+   to be readable in full rather than squeezed, so the body scrolls sideways below 1917 and every column
+   keeps the width its content needs (measured needs sum to 1461: 181px hidden at 1560, 301 at 1440, 461
+   at 1280, 717 at 1024). Nothing is clipped at any of those widths - measured, no clamped heading and no
+   clamped cell - and the horizontal scrollbar is the stated trade, not a fault.
+
+   What was wrong is the footer: `.mad-footer` states fixed columns (217 / 260 / 217 at 1024) while the
+   pager needs 308, so the "Showing 1 to 20 of …" text ran UNDER the arrow buttons - measured 101px of
+   overlap at 1024, 49 at 946, 5 at 768. The recipe is the one win-lose-fit.css already uses: entries /
+   info / pager as auto / minmax(0,1fr) / auto with a 12px gap, and the info line ellipsising instead of
+   pushing. Measured after: 0 overlap at 1560 / 1280 / 1024 / 946 / 768.
+
+   Three :not(#id) steps, as the rest of the family's sheets. */
+
+html:not(#bo-tr-f):not(#bo-tr-f-2):not(#bo-tr-f-3) body.transaction-report-page .mad-footer{
+  grid-template-columns:auto minmax(0,1fr) auto!important;
+  gap:12px!important;
+}
+html:not(#bo-tr-f):not(#bo-tr-f-2):not(#bo-tr-f-3) body.transaction-report-page .mad-footer .mad-footer-info{
+  padding:0 12px!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  /* the info line is wider than its track at 1024 (193 in 158), and a grid item overflows its track
+     unless it is allowed to shrink - that is the 5px it put over the entries control and the pager */
+  min-width:0!important;
+  max-width:100%!important;
+  justify-self:stretch!important;
+}
+
+/* BEFORE / AFTER / IN-OUT: a balance was breaking in two ("57,911" / ".77") at every width, because the
+   shared cell rule lets a cell wrap and the column was narrower than the number. 71px against 100px of
+   digits. The wrap is what also stopped operations-report.js's own column fitter from fixing it: it
+   measures the widest rendered line, so a number already broken in two reads as "57,911" and the column
+   never grows past it. nowrap here means that fitter sees the whole figure and grows the column to it.
+   Measured on a 9,840,742.71 balance: In / Out 75 -> 91, Before 71 -> 112, After 71 -> 112, and the figure
+   reads on one line. Row height stays what the page sets (evenFillRowHeights fills the panel). */
+html:not(#bo-tr-n):not(#bo-tr-n-2):not(#bo-tr-n-3):not(#bo-tr-n-4) body.transaction-report-page .report-table th:nth-child(5),
+html:not(#bo-tr-n):not(#bo-tr-n-2):not(#bo-tr-n-3):not(#bo-tr-n-4) body.transaction-report-page .report-table td:nth-child(5),
+html:not(#bo-tr-n):not(#bo-tr-n-2):not(#bo-tr-n-3):not(#bo-tr-n-4) body.transaction-report-page .report-table th:nth-child(6),
+html:not(#bo-tr-n):not(#bo-tr-n-2):not(#bo-tr-n-3):not(#bo-tr-n-4) body.transaction-report-page .report-table td:nth-child(6),
+html:not(#bo-tr-n):not(#bo-tr-n-2):not(#bo-tr-n-3):not(#bo-tr-n-4) body.transaction-report-page .report-table th:nth-child(7),
+html:not(#bo-tr-n):not(#bo-tr-n-2):not(#bo-tr-n-3):not(#bo-tr-n-4) body.transaction-report-page .report-table td:nth-child(7){
+  white-space:nowrap!important;
+  font-variant-numeric:tabular-nums;
+}
+
+/* Rebalance the colgroup: the recipe gave Amount 73 / Before 70 / After 70 and Remark 340. 70px cannot hold
+   "9,840,742.71" (about 100px), which is why those two broke in the first place, while Remark - a truncated
+   column with a hover tip by design - was the widest on the page. Measured needs: amount 100, before 112,
+   after 112. Remark gives 90 of its 340 back, so the table grows by 24px instead of 98. */
+html:not(#bo-tr-w):not(#bo-tr-w-2):not(#bo-tr-w-3):not(#bo-tr-w-4) body.transaction-report-page .tr-col-amount{width:100px!important}
+html:not(#bo-tr-w):not(#bo-tr-w-2):not(#bo-tr-w-3):not(#bo-tr-w-4) body.transaction-report-page .tr-col-before{width:112px!important}
+html:not(#bo-tr-w):not(#bo-tr-w-2):not(#bo-tr-w-3):not(#bo-tr-w-4) body.transaction-report-page .tr-col-after{width:112px!important}
+html:not(#bo-tr-w):not(#bo-tr-w-2):not(#bo-tr-w-3):not(#bo-tr-w-4) body.transaction-report-page .tr-col-remark{width:214px!important}
+html:not(#bo-tr-w):not(#bo-tr-w-2):not(#bo-tr-w-3):not(#bo-tr-w-4) body.transaction-report-page .tr-col-ref{width:130px!important}
+html:not(#bo-tr-n):not(#bo-tr-n-2):not(#bo-tr-n-3):not(#bo-tr-n-4) body.transaction-report-page .report-table td:nth-child(11),
+html:not(#bo-tr-n):not(#bo-tr-n-2):not(#bo-tr-n-3):not(#bo-tr-n-4) body.transaction-report-page .report-table th:nth-child(11){white-space:nowrap!important}
+
+/* Reason codes break mid-word the same way ("BONUS_" / "CREDIT", "WITHDRAWAL_" / "APPROVAL"): a code has no
+   spaces, so the shared wrap rule breaks it anywhere. nowrap plus room for the longest code the feed carries. */
+html:not(#bo-tr-s):not(#bo-tr-s-2):not(#bo-tr-s-3):not(#bo-tr-s-4) body.transaction-report-page .tr-col-reason{width:112px!important}
+html:not(#bo-tr-s):not(#bo-tr-s-2):not(#bo-tr-s-3):not(#bo-tr-s-4) body.transaction-report-page .report-table th:nth-child(10),
+html:not(#bo-tr-s):not(#bo-tr-s-2):not(#bo-tr-s-3):not(#bo-tr-s-4) body.transaction-report-page .report-table td:nth-child(10){white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+
+/* The row number too: "10" is two digits and the column is 40px with 24px of padding, so it broke into
+   "1" / "0". nowrap lets the page fitter measure the real width (it grows the column to 42). */
+html:not(#bo-tr-i):not(#bo-tr-i-2):not(#bo-tr-i-3):not(#bo-tr-i-4) body.transaction-report-page .report-table td:nth-child(1),
+html:not(#bo-tr-i):not(#bo-tr-i-2):not(#bo-tr-i-3):not(#bo-tr-i-4) body.transaction-report-page .report-table th:nth-child(1){white-space:nowrap!important}

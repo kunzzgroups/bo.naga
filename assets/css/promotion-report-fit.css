@@ -1,0 +1,97 @@
+/* Promotion Report — the six columns at laptop and tablet widths.
+   ----------------------------------------------------------------------------------------------
+   The geometry on this page belongs to report-table-split.js (the shared sticky-head/fill script):
+   it measures the natural width of each column, writes a colgroup, and pins the table with an inline
+   `width:<total>px !important`. That total is 1075 here, because one promotion name is 74 characters
+   ("Invite A Friend And Both Of You Receive A Bonus Credit Instantly") and the Promotion column is
+   measured on one line - so the table was 1075 in a 1000px card at 1280 (75 hidden) and in a 744px
+   card at 1024 (331 hidden).
+
+   Measured needs: Promotion 453 · Code 111 · Claims 70 · Unique Claimers 133 · Repeated Claims 133 ·
+   Payout 175.
+
+   Below 1440 the page takes the geometry back:
+
+   - "Repeated Claims" goes. It is the one column of the six that a promotion report is read without
+     (how many people claimed MORE THAN ONCE), and dropping a cell is also what makes the shared
+     script step aside: it refuses to measure a table with a hidden cell, so it no longer writes its
+     inline width over ours.
+   - Promotion is capped at 300px and wraps. 453 is the widest single name on one line, not the
+     column's need: with wrapping it takes two or three lines and the row grows a little instead of
+     the table growing a lot.
+   - The remaining columns are the measured need, in px: Code 104 · Claims 66 · Unique Claimers 110 ·
+     Payout 140. Total 720, which clears the 726px frame a 768 window has and everything above it.
+
+   Above 1440 nothing is hidden and the script keeps doing what it already did well (it scales the
+   columns up to fill the card: measured 1160 = frame at 1440, 1280 at 1560).
+
+   Three :not(#id) steps, as the rest of the family's sheets. */
+
+@media (max-width:1439.98px){
+  html:not(#bo-pr-off):not(#bo-pr-off-2):not(#bo-pr-off-3) body.promotion-report-page .report-table th:nth-child(5),
+  html:not(#bo-pr-off):not(#bo-pr-off-2):not(#bo-pr-off-3) body.promotion-report-page .report-table td:nth-child(5){
+    display:none!important;
+  }
+  html:not(#bo-pr-w):not(#bo-pr-w-2):not(#bo-pr-w-3) body.promotion-report-page .report-table{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    table-layout:fixed!important;
+  }
+  html:not(#bo-pr-w):not(#bo-pr-w-2):not(#bo-pr-w-3) body.promotion-report-page .report-table col:nth-child(1),
+  html:not(#bo-pr-w):not(#bo-pr-w-2):not(#bo-pr-w-3) body.promotion-report-page .report-table th:nth-child(1),
+  html:not(#bo-pr-w):not(#bo-pr-w-2):not(#bo-pr-w-3) body.promotion-report-page .report-table td:nth-child(1){width:276px!important}
+  html:not(#bo-pr-w):not(#bo-pr-w-2):not(#bo-pr-w-3) body.promotion-report-page .report-table col:nth-child(2),
+  html:not(#bo-pr-w):not(#bo-pr-w-2):not(#bo-pr-w-3) body.promotion-report-page .report-table th:nth-child(2),
+  html:not(#bo-pr-w):not(#bo-pr-w-2):not(#bo-pr-w-3) body.promotion-report-page .report-table td:nth-child(2){width:112px!important}
+  html:not(#bo-pr-w):not(#bo-pr-w-2):not(#bo-pr-w-3) body.promotion-report-page .report-table col:nth-child(3),
+  html:not(#bo-pr-w):not(#bo-pr-w-2):not(#bo-pr-w-3) body.promotion-report-page .report-table th:nth-child(3),
+  html:not(#bo-pr-w):not(#bo-pr-w-2):not(#bo-pr-w-3) body.promotion-report-page .report-table td:nth-child(3){width:66px!important}
+  html:not(#bo-pr-w):not(#bo-pr-w-2):not(#bo-pr-w-3) body.promotion-report-page .report-table col:nth-child(4),
+  html:not(#bo-pr-w):not(#bo-pr-w-2):not(#bo-pr-w-3) body.promotion-report-page .report-table th:nth-child(4),
+  html:not(#bo-pr-w):not(#bo-pr-w-2):not(#bo-pr-w-3) body.promotion-report-page .report-table td:nth-child(4){width:122px!important}
+  html:not(#bo-pr-w):not(#bo-pr-w-2):not(#bo-pr-w-3) body.promotion-report-page .report-table col:nth-child(6),
+  html:not(#bo-pr-w):not(#bo-pr-w-2):not(#bo-pr-w-3) body.promotion-report-page .report-table th:nth-child(6),
+  html:not(#bo-pr-w):not(#bo-pr-w-2):not(#bo-pr-w-3) body.promotion-report-page .report-table td:nth-child(6){width:148px!important}
+}
+
+/* The headers on this page were nowrap, so "Unique Claimers" clipped itself at 110px on a tablet. The
+   family's shared rule wraps every header; this page's own sheet states nowrap, so it is restated here. */
+html:not(#bo-pr-h):not(#bo-pr-h-2):not(#bo-pr-h-3) body.promotion-report-page .report-table th{
+  white-space:normal!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  line-height:1.15!important;
+}
+
+/* And the filter strip joins the table below 992, as it does on the other report pages - here the strip is
+   .ops-filter rather than .filter-card, so the family's :has(+ .table-card) rule did not match it
+   (measured gap 16px at 946 / 834 / 768). */
+@media (max-width:991.98px){
+  html:not(#bo-pr-j):not(#bo-pr-j-2):not(#bo-pr-j-3) body.promotion-report-page .report-content > .ops-filter:has(+ .table-card){
+    margin-bottom:0!important;
+    border-bottom:0!important;
+    border-bottom-left-radius:0!important;
+    border-bottom-right-radius:0!important;
+    box-shadow:none!important;
+  }
+  html:not(#bo-pr-j):not(#bo-pr-j-2):not(#bo-pr-j-3) body.promotion-report-page .report-content > .ops-filter + .table-card{
+    border-top:0!important;
+    border-top-left-radius:0!important;
+    border-top-right-radius:0!important;
+  }
+}
+
+/* Footer: entries / info / pager as auto-minmax-auto, the recipe win-lose-fit.css uses. This page's grid
+   is stated as fixed columns (204 / 260 / 204) while the pager needs 308, so the info text and the pager
+   overlapped by 44px - measured at 768 ("Showing 1 to 10 of 22" ran under the arrow buttons). */
+html:not(#bo-pr-f):not(#bo-pr-f-2):not(#bo-pr-f-3) body.promotion-report-page .mad-footer{
+  grid-template-columns:auto minmax(0,1fr) auto!important;
+  gap:12px!important;
+}
+html:not(#bo-pr-f):not(#bo-pr-f-2):not(#bo-pr-f-3) body.promotion-report-page .mad-footer .mad-footer-info{
+  padding:0 12px!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}

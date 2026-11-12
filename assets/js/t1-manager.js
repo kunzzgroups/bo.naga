@@ -71,17 +71,19 @@
   const section=config[mode];
   document.querySelectorAll('[data-t1-link]').forEach(a=>a.classList.toggle('is-active',a.dataset.t1Link===mode));
   function cell(x){return `<td>${enc(x)}</td>`;}
+  /* A status as a pill (green = live/done, amber = waiting, red = refused, grey = off) instead of bare text, like the other BO listings. */
+  function statusCell(x){const t=String(x==null?'':x),k=t.toUpperCase();const cls=/^(ACTIVE|ENABLED|FULFILLED|APPROVED)$/.test(k)?'is-on':k==='PENDING'?'is-wait':/^(REJECTED|FAILED)$/.test(k)?'is-bad':'is-off';return `<td><span class="t1-status ${cls}">${enc(t)}</span></td>`;}
   function editButton(id,virtual=false){return `<button class="btn btn-sm btn-outline-primary" type="button" data-edit="${enc(id)}">${virtual?"Configure":"Edit"}</button>`;}
   function showRows(){
     const body=byId('t1Rows'), columns=byId('t1Columns'); if(!body || !section)return;
     columns.innerHTML=section.columns.map(c=>`<th>${enc(c)}</th>`).join('');
     const visible=rows.slice(0,200);
     const html=visible.map((r,i)=>{
-      if(mode==='missions')return `<tr>${cell(r.label)}${cell(r.group_label||r.group)}${cell(r.mission_type)}${cell(r.period)}${cell(r.target)}${cell(r.reward_points)}${cell(Number(r.enabled)===1?'Active':'Inactive')}<td>${editButton(r.id)}</td></tr>`;
-      if(mode==='rewards')return `<tr>${cell(r.name)}${cell(r.category)}${cell(r.point_cost)}${cell(r.remaining==null?'Unlimited':r.remaining)}${cell(Number(r.enabled)===1?'Active':'Inactive')}<td>${editButton(r.id)}</td></tr>`;
-      if(mode==='redemptions')return `<tr>${cell('#'+r.id)}${cell(r.username)}${cell(r.name)}${cell(r.points)}${cell(r.status)}<td>${r.status==='PENDING'?`<button class="btn btn-sm btn-success" data-process="${Number(r.id)}" data-status="FULFILLED">Fulfill</button> <button class="btn btn-sm btn-outline-danger" data-process="${Number(r.id)}" data-status="REJECTED">Reject + refund</button>`:''}</td></tr>`;
-      if(mode==='pages')return `<tr>${cell(r.title)}${cell('/zh-my/'+(['about-us','faq','tnc','contact-us','event','tournament','blog','affiliate'].includes(r.slug.slice(3))?r.slug.slice(3):'t1/'+r.slug.slice(3)))}${cell(r.__virtual?'Not configured':Number(r.enabled)===1?'Enabled':'Disabled')}<td>${editButton(r.slug,r.__virtual)}</td></tr>`;
-      if(mode==='kyc')return `<tr>${cell(r.username+' (#'+r.memberId+')')}${cell(r.status)}${cell(r.createdAt)}<td><button type="button" class="btn btn-sm btn-outline-primary" data-kyc-view="${Number(r.memberId)}">View</button> ${r.status==='PENDING'?`<button type="button" class="btn btn-sm btn-success" data-kyc-review="${Number(r.memberId)}" data-status="APPROVED">Approve</button> <button type="button" class="btn btn-sm btn-outline-danger" data-kyc-review="${Number(r.memberId)}" data-status="REJECTED">Reject</button>`:''}</td></tr>`;
+      if(mode==='missions')return `<tr>${cell(r.label)}${cell(r.group_label||r.group)}${cell(r.mission_type)}${cell(r.period)}${cell(r.target)}${cell(r.reward_points)}${statusCell(Number(r.enabled)===1?'Active':'Inactive')}<td>${editButton(r.id)}</td></tr>`;
+      if(mode==='rewards')return `<tr>${cell(r.name)}${cell(r.category)}${cell(r.point_cost)}${cell(r.remaining==null?'Unlimited':r.remaining)}${statusCell(Number(r.enabled)===1?'Active':'Inactive')}<td>${editButton(r.id)}</td></tr>`;
+      if(mode==='redemptions')return `<tr>${cell('#'+r.id)}${cell(r.username)}${cell(r.name)}${cell(r.points)}${statusCell(r.status)}<td>${r.status==='PENDING'?`<button class="btn btn-sm btn-success" data-process="${Number(r.id)}" data-status="FULFILLED">Fulfill</button> <button class="btn btn-sm btn-outline-danger" data-process="${Number(r.id)}" data-status="REJECTED">Reject + refund</button>`:''}</td></tr>`;
+      if(mode==='pages')return `<tr>${cell(r.title)}${cell('/zh-my/'+(['about-us','faq','tnc','contact-us','event','tournament','blog','affiliate'].includes(r.slug.slice(3))?r.slug.slice(3):'t1/'+r.slug.slice(3)))}${statusCell(r.__virtual?'Not configured':Number(r.enabled)===1?'Enabled':'Disabled')}<td>${editButton(r.slug,r.__virtual)}</td></tr>`;
+      if(mode==='kyc')return `<tr>${cell(r.username+' (#'+r.memberId+')')}${statusCell(r.status)}${cell(r.createdAt)}<td><button type="button" class="btn btn-sm btn-outline-primary" data-kyc-view="${Number(r.memberId)}">View</button> ${r.status==='PENDING'?`<button type="button" class="btn btn-sm btn-success" data-kyc-review="${Number(r.memberId)}" data-status="APPROVED">Approve</button> <button type="button" class="btn btn-sm btn-outline-danger" data-kyc-review="${Number(r.memberId)}" data-status="REJECTED">Reject</button>`:''}</td></tr>`;
       return '';
     }).join('');
     body.innerHTML=html||`<tr><td colspan="${section.columns.length}" class="text-center text-muted">No records configured</td></tr>`;

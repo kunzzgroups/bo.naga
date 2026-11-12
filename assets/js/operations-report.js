@@ -147,7 +147,7 @@
     if(!rows.length)return;
     let grew=false;
     for(let i=0;i<cols.length;i++){
-      if(cols[i][0]==='remark')continue;
+      if(cols[i][0]==='remark'||cols[i][0]==='reasonCode')continue; /* two columns that truncate on purpose and carry a tip: growing them to the full code (WITHDRAWAL_APPROVAL is 194px) pushed the table past a 1917 window */
       let need=fitNeed[i]||0;
       for(const tr of rows){const td=tr.children[i];if(td)need=Math.max(need,colNeed(td));}
       fitNeed[i]=need;
