@@ -36,3 +36,12 @@ html:not(#bo-ar-off):not(#bo-ar-off-2) body:not(#bo-ar-off-3).agent-claim-page .
 html[data-bo-theme="dark"]:not(#bo-ar-off):not(#bo-ar-off-2) body:not(#bo-ar-off-3).agent-claim-page .table-wrap table .badge.text-bg-light{background:rgba(255,255,255,.08)!important;color:#E7E5E4!important}
 html[data-bo-theme="dark"]:not(#bo-ar-off):not(#bo-ar-off-2) body:not(#bo-ar-off-3).agent-claim-page .table-wrap table .status-pill.agent-status-pill:not(.active):not(.off){background:rgba(245,158,11,.16)!important;color:#FBBF24!important}
 html[data-bo-theme="dark"]:not(#bo-ar-off):not(#bo-ar-off-2) body:not(#bo-ar-off-3).agent-claim-page .table-wrap table .agent-proof-link{color:#FBBF24!important}
+/* KPI tiles between 1101 and 1366px: this page's own tile rules (23px figure, 18px padding) outrank the agent-family rule in
+   agent-admin-management.css, so "RM 10,369.80" overflowed its tile by 31px. Same values as the family rule. */
+@media (min-width:1101px) and (max-width:1366px){
+  html:not(#bo-ar-off):not(#bo-ar-off-2) body:not(#bo-ar-off-3).agent-claim-page .agent-admin-metrics .metric{padding:16px 14px!important;column-gap:14px!important}
+  html:not(#bo-ar-off):not(#bo-ar-off-2) body:not(#bo-ar-off-3).agent-claim-page .agent-admin-metrics .metric .bo-summary-icon{width:44px!important;height:44px!important;flex:0 0 44px!important}
+  html:not(#bo-ar-off):not(#bo-ar-off-2) body:not(#bo-ar-off-3).agent-claim-page .agent-admin-metrics .metric strong{font-size:18px!important;white-space:nowrap!important}
+  html:not(#bo-ar-off):not(#bo-ar-off-2) body:not(#bo-ar-off-3).agent-claim-page .filter-card .bo-range-field{flex:0 0 250px!important;width:250px!important;min-width:250px!important}
+  html:not(#bo-ar-off):not(#bo-ar-off-2) body:not(#bo-ar-off-3).agent-claim-page .filter-card .bo-range-field .bo-range-trigger{width:100%!important;min-width:0!important;max-width:100%!important}
+}
