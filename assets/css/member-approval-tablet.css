@@ -1,0 +1,9 @@
+/* Deposit / Withdraw Approval on a tablet (up to 1100px). The content frame is overflow:hidden and the bank cards, the
+   tabs, the filter row and the table all compete for one screen height: with seven bank cards at 985x768 the table
+   got ~190px (the last row cut under the footer). At these widths the frame scrolls vertically instead. The table
+   card's own height (flex / min-height) lives in bo-shell.css, where the shell-drift guard wants layout metrics on
+   shell selectors. Desktop (>1100px) is unchanged. */
+@media (max-width:1100px){
+  html:not(#bo-ma-off):not(#bo-ma-off-2) body:not(#bo-ma-off-3).bo-wallet-tx.deposit-approval-page .report-content,
+  html:not(#bo-ma-off):not(#bo-ma-off-2) body:not(#bo-ma-off-3).bo-wallet-tx.withdraw-approval-page .report-content{overflow-y:auto!important;overflow-x:hidden!important}
+}

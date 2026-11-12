@@ -841,3 +841,47 @@ body.report-body.topup-reward-page .report-content{
   flex:1 1 auto!important;
   min-height:0!important;
 }
+
+/* 2c. The counter chips below 1200px. reports.css turns them into compact icon chips (42px wide, the label hidden, the
+   count as a small badge on the corner), but the reference box pinned above (min-width:118, padding 5/14/5/5, the 18px
+   number) is !important and wins at every width: the chip stayed 118px wide with the icon on the left and an empty
+   right half, and the count became an 18px badge that stuck out above the header and was cut off at its edge (it
+   showed as a clipped "1" / "0"). From 1199.98px down the chip is the 48px square the icon needs, the label stays
+   hidden and the count is a small badge INSIDE the corner, so nothing is clipped. At and above 1200px the full
+   chip (icon + label + number) is unchanged. */
+@media (max-width:1199.98px){
+  .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter{
+    min-width:48px!important;
+    width:48px!important;
+    padding:5px!important;
+    justify-content:center!important;
+  }
+  .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-text{
+    position:absolute!important;
+    top:3px!important;
+    right:3px!important;
+    display:block!important;
+    width:auto!important;
+    height:auto!important;
+    overflow:visible!important;
+    padding:0!important;
+  }
+  .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-text small{display:none!important}
+  .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-text b{
+    display:grid!important;
+    place-items:center!important;
+    min-width:16px!important;
+    height:16px!important;
+    padding:0 4px!important;
+    border-radius:999px!important;
+    font-size:10px!important;
+    line-height:1!important;
+  }
+}
+
+/* 2d. Deposit / Withdraw Approval on a tablet (<=1100px): the content frame scrolls (member-approval-tablet.css) and the
+   table card keeps its own height instead of being squeezed into what the bank cards leave over. */
+@media (max-width:1100px){
+  html:not(#bo-ma-off):not(#bo-ma-off-2) body:not(#bo-ma-off-3).bo-wallet-tx.deposit-approval-page .report-content > .table-card,
+  html:not(#bo-ma-off):not(#bo-ma-off-2) body:not(#bo-ma-off-3).bo-wallet-tx.withdraw-approval-page .report-content > .table-card{flex:0 0 auto!important;min-height:480px!important}
+}
