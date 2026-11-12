@@ -419,7 +419,7 @@ async function promotionPage(runToken){
     const size=pageSizeOf('agentPromotionPageSize','agentPromotionRows'),total=filtered.length,totalPages=Math.max(1,Math.ceil(total/(Number.isFinite(size)?size:Math.max(total,1))));
     if(currentPage>totalPages)currentPage=totalPages;
     const start=Number.isFinite(size)?(currentPage-1)*size:0,pageRows=Number.isFinite(size)?filtered.slice(start,start+size):filtered;
-    $('agentPromotionRows').innerHTML=pageRows.map(x=>'<tr><td><b>'+esc(x.name||'-')+'</b><small class="d-block">'+esc(x.promotionCode||'')+'</small></td><td>'+whole(x.claimCount)+'</td><td>'+whole(x.uniqueClaimers)+'</td><td>RM '+money(x.payoutAmount)+'</td><td>'+whole(x.repeatedClaimCount)+'</td></tr>').join('')||'<tr><td colspan="5" class="table-empty">No promotion activity.</td></tr>';
+    $('agentPromotionRows').innerHTML=pageRows.map(x=>'<tr><td><b>'+esc(x.name||'-')+'</b><small class="d-block">'+esc(x.promotionCode||'')+'</small></td><td class="nowrap">'+whole(x.claimCount)+'</td><td class="nowrap">'+whole(x.uniqueClaimers)+'</td><td class="nowrap">RM '+money(x.payoutAmount)+'</td><td class="nowrap">'+whole(x.repeatedClaimCount)+'</td></tr>').join('')||'<tr><td colspan="5" class="table-empty">No promotion activity.</td></tr>';
     $('agentPromotionShowing').textContent='Showing '+(total?start+1:0)+' to '+(total?Math.min(start+pageRows.length,total):0)+' of '+total+' entries';
     $('agentPromotionPager').innerHTML=pageButtons(currentPage,totalPages,'promotion-page','Promotion table');
     evenFillTableRows('agentPromotionRows','agentPromotionPageSize',render);
