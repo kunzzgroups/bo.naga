@@ -41,3 +41,29 @@ html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-
 html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .table-footer{grid-template-columns:auto minmax(0,1fr) auto!important;gap:12px!important}
 html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .table-footer .pagination-clean{flex-wrap:nowrap!important}
 html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .table-footer .table-info{padding:0 12px!important;white-space:nowrap!important}
+
+/* The sideways scroll this page needs had no visible bar: vip-exp-log.css gives its table body the amber pill scrollbar
+   (6px, #8B6B4A, #F59E0B in dark) and this sheet had none, so on a laptop or tablet the table was cut at the right
+   with nothing showing it scrolls. Same bar, same colours as the EXP log. */
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar{width:6px;height:6px}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar-button{display:none;height:0;width:0}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar-thumb{background:#8B6B4A;border-radius:999px}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar-thumb:hover{background:#5C4A30}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar-track{background:transparent}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar-corner{background:transparent}
+html[data-bo-theme="dark"]:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar-thumb{background:#F59E0B}
+html[data-bo-theme="dark"]:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar-thumb:hover{background:#D97706}
+
+/* Default Show "-" (auto-fit) switched the table body's scrollbar OFF entirely in vip-reward-log.css
+   (`::-webkit-scrollbar{width:0;height:0;display:none}`), because the page used to be a table that always fit. It no
+   longer does, so in that mode the sideways scroll existed (overflow-x:auto) with no bar to show it, and the page looked
+   cut at the right edge. Auto-fit keeps no vertical bar (width 0) but gets the same 6px amber horizontal bar as the
+   other modes and as the EXP log. */
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-log-page.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body::-webkit-scrollbar{width:0!important;height:6px!important;display:block!important}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-log-page.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body::-webkit-scrollbar-track{background:transparent!important}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-log-page.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body::-webkit-scrollbar-corner{background:transparent!important}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-log-page.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body::-webkit-scrollbar-button{display:none!important;height:0!important;width:0!important}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-log-page.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body::-webkit-scrollbar-thumb{background:#8B6B4A!important;border-radius:999px!important}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-log-page.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body::-webkit-scrollbar-thumb:hover{background:#5C4A30!important}
+html[data-bo-theme="dark"]:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-log-page.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body::-webkit-scrollbar-thumb{background:#F59E0B!important}
+html[data-bo-theme="dark"]:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-log-page.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body::-webkit-scrollbar-thumb:hover{background:#D97706!important}
