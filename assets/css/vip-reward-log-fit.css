@@ -1,0 +1,69 @@
+/* VIP Reward Log. From 1280 down this page DROPPED columns instead of scrolling: Base and Rate at <=1280, Period and
+   Maintenance at <=768 (and Reference at 575), and its table switched to `grid-template-columns:1fr 1fr`, which left the
+   rows 391px tall at 1280 with the Reward and Status cells missing under a header that still listed them. The
+   numbers a reviewer needs (Base, Rate, Reward, Maintenance) were the ones removed. Here all ten columns stay from the
+   phone breakpoint (576) up, at the width their content needs (sum 1232px: a 1440 window shows the table whole, a
+   1280 one scrolls ~170px, a tablet ~430px), numbers never split, and the free-text cells (member, type pill, period /
+   category, reference / remark) wrap anywhere instead of ending in an ellipsis. */
+@media (min-width:576px){
+  html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table{display:table!important;grid-template-columns:none!important;table-layout:fixed!important;width:max(100%,1232px)!important;min-width:1232px!important}
+  html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table col.vip-c-date{width:118px!important}
+  html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table col.vip-c-member{width:130px!important}
+  html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table col.vip-c-type{width:178px!important}
+  html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table col.vip-c-period{width:116px!important}
+  html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table col.vip-c-base{width:100px!important}
+  html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table col.vip-c-rate{width:80px!important}
+  html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table col.vip-c-reward{width:120px!important}
+  html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table col.vip-c-maint{width:120px!important}
+  html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table col.vip-c-status{width:100px!important}
+  html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table col.vip-c-ref{width:170px!important}
+  html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table th.vip-col-period,html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table td.vip-col-period,
+  html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table th.vip-col-base,html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table td.vip-col-base,
+  html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table th.vip-col-rate,html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table td.vip-col-rate,
+  html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table th.vip-col-maint,html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table td.vip-col-maint,
+  html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table th.vip-col-reference,html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table td.vip-col-reference{display:table-cell!important}
+}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table .vip-log-member b,
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table .vip-log-member small,
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table .vip-log-stack b,
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table .vip-log-stack small,
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table .vip-source-pill{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table .vip-log-clip{display:-webkit-box!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:2!important;white-space:normal!important;overflow:hidden!important;text-overflow:clip!important;overflow-wrap:anywhere!important}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table tbody td.vip-col-base,
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table tbody td.vip-col-rate,
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-admin-table .vip-log-money{white-space:nowrap!important}
+/* Toolbar and footer at laptop / tablet widths. The status pills (Available / Paid / Skipped / All, ~290px) sat in a
+   213px grid column, so "Skipped" and "All" ran over the search box; the footer's three equal columns gave the entry
+   count 162px, so "Showing 1 to 5 of 44 entries" was cut by the pager. The pills take their own width, the search
+   gets the rest, and the footer's outer columns take what their content needs. */
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-log-toolbar{grid-template-columns:max-content minmax(0,1fr)!important}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-log-toolbar > .bo-seg{width:max-content!important;flex-shrink:0!important}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .table-footer{grid-template-columns:auto minmax(0,1fr) auto!important;gap:12px!important}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .table-footer .pagination-clean{flex-wrap:nowrap!important}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .table-footer .table-info{padding:0 12px!important;white-space:nowrap!important}
+
+/* The sideways scroll this page needs had no visible bar: vip-exp-log.css gives its table body the amber pill scrollbar
+   (6px, #8B6B4A, #F59E0B in dark) and this sheet had none, so on a laptop or tablet the table was cut at the right
+   with nothing showing it scrolls. Same bar, same colours as the EXP log. */
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar{width:6px;height:6px}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar-button{display:none;height:0;width:0}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar-thumb{background:#8B6B4A;border-radius:999px}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar-thumb:hover{background:#5C4A30}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar-track{background:transparent}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar-corner{background:transparent}
+html[data-bo-theme="dark"]:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar-thumb{background:#F59E0B}
+html[data-bo-theme="dark"]:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-reward-log-page .vip-tx-table-body::-webkit-scrollbar-thumb:hover{background:#D97706}
+
+/* Default Show "-" (auto-fit) switched the table body's scrollbar OFF entirely in vip-reward-log.css
+   (`::-webkit-scrollbar{width:0;height:0;display:none}`), because the page used to be a table that always fit. It no
+   longer does, so in that mode the sideways scroll existed (overflow-x:auto) with no bar to show it, and the page looked
+   cut at the right edge. Auto-fit keeps no vertical bar (width 0) but gets the same 6px amber horizontal bar as the
+   other modes and as the EXP log. */
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-log-page.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body::-webkit-scrollbar{width:0!important;height:6px!important;display:block!important}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-log-page.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body::-webkit-scrollbar-track{background:transparent!important}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-log-page.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body::-webkit-scrollbar-corner{background:transparent!important}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-log-page.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body::-webkit-scrollbar-button{display:none!important;height:0!important;width:0!important}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-log-page.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body::-webkit-scrollbar-thumb{background:#8B6B4A!important;border-radius:999px!important}
+html:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-log-page.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body::-webkit-scrollbar-thumb:hover{background:#5C4A30!important}
+html[data-bo-theme="dark"]:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-log-page.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body::-webkit-scrollbar-thumb{background:#F59E0B!important}
+html[data-bo-theme="dark"]:not(#bo-vrl-off):not(#bo-vrl-off-2) body:not(#bo-vrl-off-3).vip-log-page.vip-reward-log-page .vip-log-card[data-bo-autofit] .vip-tx-table-body::-webkit-scrollbar-thumb:hover{background:#D97706!important}

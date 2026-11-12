@@ -35,7 +35,7 @@
   const rowH=naturalRowHeight(scroll);
   /* Floor only — never add a row that would overflow and go invisible under overflow:hidden. */
   const n=Math.floor(avail/rowH)||12;
-  return Math.max(5,Math.min(200,n));
+  return Math.max(1,Math.min(200,n));
  }
  function autoFitPageSize(){
   if(lockedAutoSize!=null) return lockedAutoSize;
@@ -118,8 +118,10 @@
   const natural=rows.reduce((sum,tr)=>sum+Math.ceil(tr.getBoundingClientRect().height),0);
   const rowH=Math.max(44,Math.round(natural/rows.length)||52);
   const overflow=scroll.scrollHeight>scroll.clientHeight+1||natural>avail+1;
-  let target=Math.max(5,Math.min(200,Math.floor(avail/rowH)||rows.length));
-  if(overflow) target=Math.max(5,Math.min(target,rows.length-1));
+  /* Floor 1, not 5: a floor of 5 promised five rows to a box that held four once each row wrapped to ~95px (the
+     fifth was cut under the footer). The overflow check below still shrinks until nothing is cut. */
+  let target=Math.max(1,Math.min(200,Math.floor(avail/rowH)||rows.length));
+  if(overflow) target=Math.max(1,Math.min(target,rows.length-1));
   /* Verify with a real post-paint overflow check before locking, on EVERY path — a cold first
      paint (F5) can under-measure avail/rowH and settle one row too many even when target already
      equals the current row count, which the old "already matches → lock immediately" shortcut
@@ -128,8 +130,8 @@
   const verifyAndLock=()=>{
    requestAnimationFrame(()=>{
     const sc=tableBodyScroll();
-    if(sc&&sc.scrollHeight>sc.clientHeight+1&&lockedAutoSize>5){
-     lockedAutoSize=Math.max(5,lockedAutoSize-1);
+    if(sc&&sc.scrollHeight>sc.clientHeight+1&&lockedAutoSize>1){
+     lockedAutoSize=Math.max(1,lockedAutoSize-1);
      pageSize=lockedAutoSize;
      autofitReloading=true;
      Promise.resolve(load(1)).finally(()=>{autofitReloading=false;verifyAndLock();});
