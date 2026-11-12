@@ -97,3 +97,24 @@ html:not(#bo-cbr-w):not(#bo-cbr-w-2):not(#bo-cbr-w-3) body.bo-report-family[data
   html:not(#bo-cbr-d):not(#bo-cbr-d-2):not(#bo-cbr-d-3) body.bo-report-family[data-report-page="breakdown"] .report-table td:nth-child(12){display:none!important}
   html:not(#bo-cbr-d-x):not(#bo-cbr-d-x2):not(#bo-cbr-d-x3) body.bo-report-family[data-report-page="breakdown"] .report-table{width:100%!important;min-width:646px!important;max-width:none!important}
 }
+
+/* Date strip and table are ONE card below 992px as well - the same join win-lose-fit.css and casino-dw-fit.css
+   do, which this page was missing: bo-report-family.css section 19 states it for min-width:992px only ("below
+   992 the column is plain block flow with each card's own margin-bottom, and stacked cards are the right shape
+   there"), so on a tablet the date picker sat in a rounded box of its own with a gap above the table - the
+   "date is still separated" report at 946. Same join as section 19, minus its -16px margin (the block-flow gap
+   here is the strip's own margin-bottom, which goes to 0). */
+@media (max-width:991.98px){
+  html:not(#bo-cbr-j):not(#bo-cbr-j-2):not(#bo-cbr-j-3) body.bo-report-family[data-report-page="breakdown"] .report-content > .filter-card:has(+ .table-card){
+    margin-bottom:0!important;
+    border-bottom:0!important;
+    border-bottom-left-radius:0!important;
+    border-bottom-right-radius:0!important;
+    box-shadow:none!important;
+  }
+  html:not(#bo-cbr-j):not(#bo-cbr-j-2):not(#bo-cbr-j-3) body.bo-report-family[data-report-page="breakdown"] .report-content > .filter-card + .table-card{
+    border-top:0!important;
+    border-top-left-radius:0!important;
+    border-top-right-radius:0!important;
+  }
+}
