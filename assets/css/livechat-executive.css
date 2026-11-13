@@ -1914,3 +1914,28 @@ body.livechat-bo-page .livechat-room-back{display:none!important}
   body.livechat-bo-page .livechat-inbox-preview > small{display:none!important}
 }
 
+
+/* Composer template chips: wrap instead of scrolling out of sight (1100px and below).
+   ------------------------------------------------------------------------------------------
+   The chips row is `flex-wrap:nowrap; overflow-x:auto`, and the scroller paints no bar, so with
+   three templates the row was 382px of chips in a 331px box at 1076 and in a 299px box at 1024 -
+   51px and 83px of the last chip simply cut, with nothing to say the row scrolls (measured with a
+   conversation open at 1076 / 1280 / 1024 / 900). Below 1101 the chips wrap onto a second line
+   instead; Manage stays on the right of the first line and the composer grows by one 28px chip row.
+   Above 1100 the row fits (535 in 535 at 1280) and nothing changes. */
+@media (max-width:1100px){
+  body.livechat-bo-page .livechat-template-box{
+    align-items:flex-start!important;
+  }
+  body.livechat-bo-page .livechat-template-panel{
+    flex-wrap:wrap!important;
+    overflow-x:visible!important;
+    overflow-y:visible!important;
+    row-gap:6px!important;
+  }
+  /* Manage belongs to the first chip line, not centred against a two-line block. */
+  body.livechat-bo-page .livechat-template-manage{
+    align-self:flex-start!important;
+    margin-top:1px!important;
+  }
+}
