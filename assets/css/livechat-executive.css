@@ -2121,3 +2121,89 @@ html:not([data-bo-theme="dark"]):not(#bo-lc-off):not(#bo-lc-off-2) body.livechat
   border-color:var(--lc-border)!important;
   color:var(--lc-muted)!important;
 }
+
+/* Inbox list and card head: amber means "this one", not "everything".
+   ------------------------------------------------------------------------------------------
+   Measured before (dark, 1440): the row name was amber at all times (14px/700 #FBBF24), the
+   timestamp was amber too (11px/700), and the Open badge was a solid amber chip (44x18,
+   #F59E0B with dark text). Three amber signals in one 72px row, so the selected row had
+   nothing left to say - and the same amber is the composer's Send and the chip badges.
+   After: the name is ink (amber only in the active row), the Open badge is a quiet soft-green
+   status pill, the timestamp is muted and tabular, and the avatar is the same soft-amber circle
+   as the chips and the template list - 36px, radius 999, letter 13px/700.
+   The card head's refresh drops to 32px so it matches the composer's Attach/Manage ghosts, and
+   the search field takes the composer field's radius (10) instead of 8. */
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .livechat-inbox-item .avatar{
+  width:36px!important;
+  height:36px!important;
+  min-width:36px!important;
+  border-radius:999px!important;
+  background:rgba(245,158,11,.14)!important;
+  color:#FBBF24!important;
+  font-size:13px!important;
+  font-weight:700!important;
+}
+html:not([data-bo-theme="dark"]):not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .livechat-inbox-item .avatar{
+  background:#FDEBD0!important;
+  color:#B45309!important;
+}
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .livechat-inbox-name b{
+  color:var(--lc-ink)!important;
+  font-size:13.5px!important;
+  font-weight:650!important;
+}
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .livechat-inbox-item.active .livechat-inbox-name b{
+  color:#FBBF24!important;
+}
+html:not([data-bo-theme="dark"]):not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .livechat-inbox-item.active .livechat-inbox-name b{
+  color:#B45309!important;
+}
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .livechat-inbox-item .livechat-inbox-preview em{
+  color:var(--lc-muted)!important;
+  font-size:12.5px!important;
+  font-style:normal!important;
+}
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .livechat-inbox-open{
+  height:18px!important;
+  padding:0 8px!important;
+  border-radius:999px!important;
+  font-size:10.5px!important;
+  font-weight:700!important;
+  letter-spacing:.02em!important;
+  text-transform:uppercase!important;
+  background:rgba(16,185,129,.14)!important;
+  color:#34D399!important;
+  border:0!important;
+}
+html:not([data-bo-theme="dark"]):not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .livechat-inbox-open{
+  background:#DCFCE7!important;
+  color:#15803D!important;
+}
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .livechat-inbox-time{
+  color:var(--lc-muted)!important;
+  font-size:11px!important;
+  font-weight:600!important;
+  font-variant-numeric:tabular-nums!important;
+  white-space:nowrap!important;
+}
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .livechat-inbox-item.active .livechat-inbox-time{
+  color:#FBBF24!important;
+}
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .livechat-inbox-item{
+  border-radius:10px!important;
+}
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .livechat-card-head button{
+  /* The height alone left it 36 wide (a min-width from the base button), so the head's square was
+     a rectangle: measured 36x32 before, 32x32 after. */
+  width:32px!important;
+  min-width:32px!important;
+  max-width:32px!important;
+  height:32px!important;
+  min-height:32px!important;
+  padding:0!important;
+  border-radius:8px!important;
+}
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .livechat-search input{
+  border-radius:10px!important;
+  height:36px!important;
+}
