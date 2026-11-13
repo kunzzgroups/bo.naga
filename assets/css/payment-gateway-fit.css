@@ -1,0 +1,19 @@
+/* Payment Gateway toolbar, laptop/tablet widths. The tabs (288px) and the action group (search, Transactions, Refresh, New Gateway)
+   cannot always share one row. Rules: tabs never shrink; the action group takes the rest of the row (or a row of its own when it
+   does not fit beside the tabs); inside the group the controls WRAP instead of overflowing, so nothing can slide under the tabs. */
+@media (max-width:1260px){
+  html:not(#bo-pg-1):not(#bo-pg-2) body:not(#bo-pg-3).payment-gateway-page .filter-card .bo-tx-toolbar{flex-wrap:wrap!important;row-gap:10px!important;column-gap:12px!important}
+  html:not(#bo-pg-1):not(#bo-pg-2) body:not(#bo-pg-3).payment-gateway-page .filter-card .bo-tx-toolbar > .bo-tx-tabs{flex:0 0 auto!important;max-width:100%!important}
+  html:not(#bo-pg-1):not(#bo-pg-2) body:not(#bo-pg-3).payment-gateway-page .filter-card .bo-tx-toolbar > .user-toolbar-actions{flex:1 1 400px!important;flex-wrap:wrap!important;justify-content:flex-end!important;min-width:0!important;max-width:100%!important;gap:10px!important}
+  html:not(#bo-pg-1):not(#bo-pg-2) body:not(#bo-pg-3).payment-gateway-page .filter-card .bo-tx-toolbar > .user-toolbar-actions > .field{flex:1 1 200px!important;width:auto!important;min-width:160px!important;max-width:100%!important}
+  html:not(#bo-pg-1):not(#bo-pg-2) body:not(#bo-pg-3).payment-gateway-page .filter-card .bo-tx-toolbar > .user-toolbar-actions > .clean-btn{flex:0 0 auto!important;width:auto!important;white-space:nowrap!important}
+}
+/* Below 1200px the group always takes its own row under the tabs (one line: search + three buttons), instead of squeezing beside them. */
+@media (max-width:1199.98px){
+  html:not(#bo-pg-1):not(#bo-pg-2) body:not(#bo-pg-3).payment-gateway-page .filter-card .bo-tx-toolbar > .user-toolbar-actions{flex:1 1 100%!important}
+}
+/* Phone/small tablet: search takes a full line, the three buttons share the next one. */
+@media (max-width:700px){
+  html:not(#bo-pg-1):not(#bo-pg-2) body:not(#bo-pg-3).payment-gateway-page .filter-card .bo-tx-toolbar > .user-toolbar-actions > .field{flex:1 1 100%!important}
+  html:not(#bo-pg-1):not(#bo-pg-2) body:not(#bo-pg-3).payment-gateway-page .filter-card .bo-tx-toolbar > .user-toolbar-actions{justify-content:flex-start!important}
+}
