@@ -10057,3 +10057,85 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mad-row-check-box{
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-row-check-input:checked + .mad-row-check-box{
   background:#F59E0B!important;border-color:#F59E0B!important;
 }
+
+/* Toolbar row: the actions move out of the tab row and sit above the table header, the BO arrangement.
+   ------------------------------------------------------------------------------------------
+   `.mad-chrome` used to be a two-column bar - tabs on the left, sync/Export/Add Account on the right -
+   so the row that should be navigation carried the page's primary button as well. The actions now live
+   in `.mad-filter-bar`, the row directly above the table header, next to the status pills and the
+   search: the same three groups the back office puts in its `.user-toolbar`.
+   Measured before the move: chrome 48px held tabs + 3 controls; the filter bar below it held pills +
+   search only. After: chrome is the tab row alone (48px), the filter bar carries pills · search ·
+   actions, and it wraps instead of squeezing - pills take their own line below 1101, search keeps the
+   middle, actions stay on the right edge. */
+body.main-admin-detail-page .mad-chrome{
+  grid-template-columns:minmax(0,1fr);
+}
+body.main-admin-detail-page .mad-filter-bar{
+  flex-wrap:wrap;
+  gap:10px 12px;
+}
+body.main-admin-detail-page .mad-filter-bar > .mad-pills{
+  flex:0 0 auto;
+}
+body.main-admin-detail-page .mad-filters{
+  flex:1 1 220px;
+  min-width:0;
+  margin-left:0;
+}
+body.main-admin-detail-page .mad-filter-bar > .mad-chrome-actions{
+  margin-left:auto;
+  justify-self:auto;
+}
+@media (max-width:1100px){
+  body.main-admin-detail-page .mad-filter-bar > .mad-pills{
+    flex:0 0 100%;
+  }
+}
+
+/* The toolbar is a grid, not a wrapping flex row.
+   ------------------------------------------------------------------------------------------
+   `.mad-filter-bar` carries six competing rules across this sheet and the mobile pass (two of them set
+   `width:100%` on the filters and one flips `flex-wrap`), and once the actions joined the row the flex
+   line could not be reasoned about: measured at 768 the pills took 722 (100% of the line), the search
+   still started at x=757 on the same line and the actions landed at x=757/row 3, 1479px wide in a 746
+   box. Three explicit tracks remove the ambiguity: pills · search · actions on one row from 1101 up,
+   and one column (pills / search / actions) below that, actions right-aligned. */
+body.main-admin-detail-page .mad-filter-bar{
+  display:grid!important;
+  grid-template-columns:auto minmax(0,1fr) auto!important;
+  align-items:center!important;
+  column-gap:12px!important;
+  row-gap:10px!important;
+}
+body.main-admin-detail-page .mad-filter-bar > .mad-pills{
+  grid-column:1;
+  justify-self:start;
+}
+body.main-admin-detail-page .mad-filter-bar > .mad-filters{
+  grid-column:2;
+  width:auto!important;
+  min-width:0;
+  margin-left:0!important;
+}
+body.main-admin-detail-page .mad-filter-bar > .mad-chrome-actions{
+  grid-column:3;
+  justify-self:end;
+  margin-left:0!important;
+}
+@media (max-width:1100px){
+  body.main-admin-detail-page .mad-filter-bar{
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+  body.main-admin-detail-page .mad-filter-bar > .mad-pills,
+  body.main-admin-detail-page .mad-filter-bar > .mad-filters,
+  body.main-admin-detail-page .mad-filter-bar > .mad-chrome-actions{
+    grid-column:1;
+    width:100%!important;
+    max-width:100%!important;
+  }
+  body.main-admin-detail-page .mad-filter-bar > .mad-chrome-actions{
+    justify-self:end;
+    width:auto!important;
+  }
+}
