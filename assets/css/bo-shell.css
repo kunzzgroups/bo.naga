@@ -938,6 +938,18 @@ body.report-body.topup-reward-page .report-content{
   body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > .table-card{flex:1 1 auto;min-height:360px;display:flex;flex-direction:column}
   body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .table-card > .table-wrap{flex:1 1 auto;min-height:0;overflow:auto}
   body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .table-card > .mad-footer{flex:0 0 auto}
+  /* The same column for list pages that are not in the report family but keep their table card as a direct child of the content (Admin Login Log,
+     Admin Operation Log, Role, IP Whitelist ...): they stayed block flow below 992px, so a 2-row list left a 250-425px empty band under the card.
+     Below 992px only; the page sheets that already lock their own column are not :has()-matched because their card is not a direct child. */
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-shell:has(> .report-main > .report-content > .table-card){height:100dvh;min-height:0;overflow:hidden}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-main:has(> .report-content > .table-card){height:100dvh;max-height:100dvh;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-content:has(> .table-card){flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:0;overflow:hidden;overflow-y:auto}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-content:has(> .table-card) > *{margin-bottom:0!important;flex:0 0 auto}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-content:has(> .table-card) > * + *{margin-top:16px!important}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-content:has(> .table-card) > :is(.filter-card,.perf-filter-card,.ops-filter,.bo-filter-row) + .table-card{margin-top:0!important}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-content:has(> .table-card) > .table-card{flex:1 0 auto;min-height:360px;display:flex;flex-direction:column}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-content:has(> .table-card) > .table-card:not(:last-child){flex:0 0 auto;min-height:0}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-content:has(> .table-card) > .table-card > .table-wrap{flex:1 1 auto;min-height:0;overflow:auto}
 }
 
 /* 0c-3. Header and module row on tablet widths (576-991px), on every page that carries a module tab row. Measured on the Design pages at

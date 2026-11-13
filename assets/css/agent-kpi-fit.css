@@ -1,0 +1,28 @@
+/* Agent listings (Settlement, Commission, Reimbursement, Payout, Claim, Management): KPI tiles + filter strip on laptop/tablet widths.
+   With the 230px sidebar docked (992px and up) the content column is only ~760px at 1029px, so four tiles left the figure ~65px
+   ("RM 103,703.04" ran into the next tile). Up to 1260px the tiles sit 2 x 2; the figure never wraps or leaves its tile.
+   The filter row's second line (date range + search) shares the width instead of leaving the search box at 190px. */
+@media (min-width:992px) and (max-width:1260px){
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3) .agent-admin-metrics,
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3) .quick-stats.agent-admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3) .agent-admin-metrics .metric strong,
+html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3) .agent-admin-metrics .metric b{white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;min-width:0}
+@media (min-width:1367px) and (max-width:1520px){
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3) .agent-admin-metrics .metric strong,
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3) .agent-admin-metrics .metric b{font-size:20px!important}
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3) .agent-admin-metrics .metric{column-gap:16px!important}
+}
+@media (max-width:1100px){
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-payout-page,.agent-claim-page) .table-card .filter-card .bo-filter-row > .agent-status-tabs{flex:1 1 100%!important;max-width:100%!important}
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-payout-page,.agent-claim-page) .table-card .filter-card .bo-filter-row > .bo-range-field{flex:1 1 240px!important;width:auto!important;min-width:200px!important}
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-payout-page,.agent-claim-page) .table-card .filter-card .bo-filter-row > .field.wide{flex:1 1 200px!important;width:auto!important;min-width:180px!important}
+}
+
+/* Small screens: the report column was locked to the viewport height, so the 2x2 KPI tiles left the table 1-2 rows. The page now
+   scrolls instead; the table card keeps a readable height (about 8 rows) below the tiles. */
+@media (max-width:1260px){
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-commission-page,.agent-claim-page,.agent-payout-page,.agent-management-page,.agent-promotion-page) .report-content{overflow-y:auto!important;overflow-x:hidden!important;min-height:0!important}
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-commission-page,.agent-claim-page,.agent-payout-page,.agent-management-page,.agent-promotion-page) .report-content > .table-card{flex:1 0 auto!important;height:auto!important;min-height:480px!important;max-height:none!important}
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-commission-page,.agent-claim-page,.agent-payout-page,.agent-management-page,.agent-promotion-page) .report-content > .table-card .table-wrap{flex:1 1 auto!important;min-height:300px!important}
+}

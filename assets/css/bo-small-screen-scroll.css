@@ -1,0 +1,19 @@
+/* Report pages whose column is locked to the viewport height: on laptop/tablet widths (<=1260px) the KPI tiles and filter rows left the table
+   1-2 rows (150-220px). The content area scrolls instead and the table card keeps a readable height. Scoped by body.bo-ss-scroll: the SPA router never unloads a stylesheet, so an unscoped rule here would leak onto every page swapped in afterwards. */
+@media (max-width:1260px){
+  html:not(#bo-ss-1):not(#bo-ss-2) body:not(#bo-ss-3).bo-ss-scroll .report-content{overflow-y:auto!important;overflow-x:hidden!important;min-height:0!important}
+  html:not(#bo-ss-1):not(#bo-ss-2) body:not(#bo-ss-3).bo-ss-scroll .report-content > .table-card{flex:1 0 auto!important;height:auto!important;min-height:480px!important;max-height:none!important}
+  html:not(#bo-ss-1):not(#bo-ss-2) body:not(#bo-ss-3).bo-ss-scroll .report-content > .table-card .table-wrap{flex:1 1 auto!important;min-height:300px!important}
+}
+/* User Management filter row: fields share the width and Reset sits inline instead of wrapping alone. */
+@media (max-width:1260px){
+  html:not(#bo-ss-1):not(#bo-ss-2):not(#bo-ss-4):not(#bo-ss-5) body:not(#bo-ss-3):not(#bo-ss-6).user-management-page.report-body.bo-charcoal .user-search-grid{flex-wrap:wrap!important;gap:10px!important;align-items:center!important}
+  html:not(#bo-ss-1):not(#bo-ss-2):not(#bo-ss-4):not(#bo-ss-5) body:not(#bo-ss-3):not(#bo-ss-6).user-management-page.report-body.bo-charcoal .user-search-grid > .bo-range-field{flex:1 1 220px!important;width:auto!important;min-width:200px!important}
+  html:not(#bo-ss-1):not(#bo-ss-2):not(#bo-ss-4):not(#bo-ss-5) body:not(#bo-ss-3):not(#bo-ss-6).user-management-page.report-body.bo-charcoal .user-search-grid > .um-search-item{flex:2 1 280px!important;width:auto!important;min-width:260px!important}
+  html:not(#bo-ss-1):not(#bo-ss-2):not(#bo-ss-4):not(#bo-ss-5) body:not(#bo-ss-3):not(#bo-ss-6).user-management-page.report-body.bo-charcoal .user-search-grid > .bo-filter-item:not([hidden]):not(.um-search-item):not(.bo-range-field):not(.user-filter-actions){flex:1 1 180px!important;width:auto!important;min-width:170px!important}
+  html:not(#bo-ss-1):not(#bo-ss-2):not(#bo-ss-4):not(#bo-ss-5) body:not(#bo-ss-3):not(#bo-ss-6).user-management-page.report-body.bo-charcoal .user-search-grid > .user-filter-actions{flex:0 0 auto!important}
+
+  html:not(#bo-ss-1):not(#bo-ss-2):not(#bo-ss-4):not(#bo-ss-5) body:not(#bo-ss-3):not(#bo-ss-6).user-management-page.report-body.bo-charcoal .user-toolbar{gap:10px!important;align-items:center!important}
+  html:not(#bo-ss-1):not(#bo-ss-2):not(#bo-ss-4):not(#bo-ss-5) body:not(#bo-ss-3):not(#bo-ss-6).user-management-page.report-body.bo-charcoal .user-toolbar > .user-search-grid{display:contents!important}
+  html:not(#bo-ss-1):not(#bo-ss-2):not(#bo-ss-4):not(#bo-ss-5) body:not(#bo-ss-3):not(#bo-ss-6).user-management-page.report-body.bo-charcoal .user-toolbar > .user-toolbar-actions{flex:1 1 auto!important;justify-content:flex-end!important;margin-left:auto!important}
+}

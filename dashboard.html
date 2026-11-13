@@ -12,7 +12,7 @@
 <link href="assets/css/bo-ui-standard.css?v=aaca2665" rel="stylesheet">
 <link href="assets/css/bo-account-chip.css?v=c8730135" rel="stylesheet">
 <link href="assets/css/bo-charcoal-shell.css?v=83556de2" rel="stylesheet">
-<link href="assets/css/bo-shell.css?v=dabb9ac7" rel="stylesheet" />
+<link href="assets/css/bo-shell.css?v=75107c71" rel="stylesheet" />
 <link href="assets/css/bo-charcoal-legacy.css?v=8fced50e" rel="stylesheet">
 <link href="assets/css/bo-charcoal-primitives.css?v=292c8b34" rel="stylesheet">
 <link href="assets/css/bo-charcoal-cms.css?v=9e94ddbb" rel="stylesheet">
@@ -70,6 +70,16 @@ html[data-bo-theme="dark"] .dashboard-sidebar-toggle:hover{background:#40424E!im
   body:not(.sidebar-mini) .report-sidebar.is-mini-hover .dashboard-sidebar-brand>div{display:block!important;opacity:1!important;visibility:visible!important;width:auto!important}
 }
 @media(max-width:991.98px){.dashboard-sidebar-toggle{display:inline-flex!important}.dashboard-sidebar-brand .close-side{display:inline-flex!important}}
+/* Below 992px the sidebar is an off-canvas drawer and the Dashboard has no top bar, so the only hamburger (inside the sidebar) was off screen: there was no way to open the menu. This one lives in the page, outside the drawer, and is only shown on that range. */
+/* Hidden everywhere by default: the page swap keeps this element and this sheet after you leave the Dashboard, so the show rules below are keyed on the Dashboard body class and the default must not be. */
+html:not(#bo-dod-1) body .dashboard-open-drawer{display:none!important}
+html:not(#bo-dod-1) body .bo-global-quicknav a.bo-qn-menu{display:none!important}
+@media(max-width:991.98px){
+  html:not(#bo-dod-1):not(#bo-dod-2) body.dashboard-shell .dashboard-open-drawer{display:inline-flex!important;position:fixed;top:12px;left:12px;z-index:1030}
+  /* When the quick-nav strip is showing, the menu button is its first cell (built in auth.js renderQuickNav) instead of a floating chip. */
+  html:not(#bo-dod-1):not(#bo-dod-2) body.dashboard-shell .bo-global-quicknav:not([hidden]) a.bo-qn-menu{display:flex!important}
+  html:not(#bo-dod-1):not(#bo-dod-2):not(#bo-dod-3) body.dashboard-shell:has(.bo-global-quicknav:not([hidden])) .dashboard-open-drawer{display:none!important}
+}
 @media(min-width:992px){
   /* After clicking the Dashboard sidebar toggle, keep the rail visibly collapsed until
      the pointer leaves it. This prevents the normal hover-to-expand rule from making
@@ -96,6 +106,7 @@ html[data-bo-theme="dark"] .dashboard-sidebar-toggle:hover{background:#40424E!im
   </aside>
   <div class="sidebar-overlay" data-close-sidebar></div>
   <main class="report-main">
+    <button type="button" class="hamb dashboard-sidebar-toggle dashboard-open-drawer" data-open-sidebar aria-label="Open menu" title="Menu"><i class="bi bi-list"></i></button>
     <header class="report-topbar dashboard-hidden-topbar" aria-hidden="true"></header>
     <section class="report-content dashboard-workspace">
       <iframe id="dashboardWorkspaceFrame" class="dashboard-workspace-frame" title="Dashboard selected page" hidden></iframe>
@@ -108,7 +119,7 @@ html[data-bo-theme="dark"] .dashboard-sidebar-toggle:hover{background:#40424E!im
 <script src="assets/js/main-currency-runtime.js?v=2b28e860"></script>
 <script src="assets/js/currency-runtime.js?v=b63c89fb"></script>
 <script src="assets/js/reports.js?v=6ea1e857"></script>
-<script src="assets/js/auth.js?v=791132c4"></script>
+<script src="assets/js/auth.js?v=22d696db"></script>
 <script defer src="assets/js/bo-ui-standard.js?v=890f213b"></script>
 <script src="assets/js/operation-global-notification.js?v=ed9bcecb"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
@@ -138,6 +149,6 @@ html[data-bo-theme="dark"] .dashboard-sidebar-toggle:hover{background:#40424E!im
   });
 })();
 </script>
-<script src="assets/js/bo-spa-manifest.js?v=e25e34cd"></script><script src="assets/js/bo-spa.js?v=4df7a52c"></script>
+<script src="assets/js/bo-spa-manifest.js?v=e25e34cd"></script><script src="assets/js/bo-spa.js?v=96c21d1f"></script>
 </body>
 </html>
