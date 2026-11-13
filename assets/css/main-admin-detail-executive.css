@@ -10068,27 +10068,27 @@ html[data-bo-theme="dark"] body.main-admin-detail-page .mad-row-check-input:chec
    search only. After: chrome is the tab row alone (48px), the filter bar carries pills · search ·
    actions, and it wraps instead of squeezing - pills take their own line below 1101, search keeps the
    middle, actions stay on the right edge. */
-body.main-admin-detail-page .mad-chrome{
+body.main-admin-detail-page:not(.main-admin-security-page) .mad-chrome{
   grid-template-columns:minmax(0,1fr);
 }
-body.main-admin-detail-page .mad-filter-bar{
+body.main-admin-detail-page:not(.main-admin-security-page) .mad-filter-bar{
   flex-wrap:wrap;
   gap:10px 12px;
 }
-body.main-admin-detail-page .mad-filter-bar > .mad-pills{
+body.main-admin-detail-page:not(.main-admin-security-page) .mad-filter-bar > .mad-pills{
   flex:0 0 auto;
 }
-body.main-admin-detail-page .mad-filters{
+body.main-admin-detail-page:not(.main-admin-security-page) .mad-filters{
   flex:1 1 220px;
   min-width:0;
   margin-left:0;
 }
-body.main-admin-detail-page .mad-filter-bar > .mad-chrome-actions{
+body.main-admin-detail-page:not(.main-admin-security-page) .mad-filter-bar > .mad-chrome-actions{
   margin-left:auto;
   justify-self:auto;
 }
 @media (max-width:1100px){
-  body.main-admin-detail-page .mad-filter-bar > .mad-pills{
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-filter-bar > .mad-pills{
     flex:0 0 100%;
   }
 }
@@ -10101,40 +10101,40 @@ body.main-admin-detail-page .mad-filter-bar > .mad-chrome-actions{
    still started at x=757 on the same line and the actions landed at x=757/row 3, 1479px wide in a 746
    box. Three explicit tracks remove the ambiguity: pills · search · actions on one row from 1101 up,
    and one column (pills / search / actions) below that, actions right-aligned. */
-body.main-admin-detail-page .mad-filter-bar{
+body.main-admin-detail-page:not(.main-admin-security-page) .mad-filter-bar{
   display:grid!important;
   grid-template-columns:auto minmax(0,1fr) auto!important;
   align-items:center!important;
   column-gap:12px!important;
   row-gap:10px!important;
 }
-body.main-admin-detail-page .mad-filter-bar > .mad-pills{
+body.main-admin-detail-page:not(.main-admin-security-page) .mad-filter-bar > .mad-pills{
   grid-column:1;
   justify-self:start;
 }
-body.main-admin-detail-page .mad-filter-bar > .mad-filters{
+body.main-admin-detail-page:not(.main-admin-security-page) .mad-filter-bar > .mad-filters{
   grid-column:2;
   width:auto!important;
   min-width:0;
   margin-left:0!important;
 }
-body.main-admin-detail-page .mad-filter-bar > .mad-chrome-actions{
+body.main-admin-detail-page:not(.main-admin-security-page) .mad-filter-bar > .mad-chrome-actions{
   grid-column:3;
   justify-self:end;
   margin-left:0!important;
 }
 @media (max-width:1100px){
-  body.main-admin-detail-page .mad-filter-bar{
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-filter-bar{
     grid-template-columns:minmax(0,1fr)!important;
   }
-  body.main-admin-detail-page .mad-filter-bar > .mad-pills,
-  body.main-admin-detail-page .mad-filter-bar > .mad-filters,
-  body.main-admin-detail-page .mad-filter-bar > .mad-chrome-actions{
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-filter-bar > .mad-pills,
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-filter-bar > .mad-filters,
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-filter-bar > .mad-chrome-actions{
     grid-column:1;
     width:100%!important;
     max-width:100%!important;
   }
-  body.main-admin-detail-page .mad-filter-bar > .mad-chrome-actions{
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-filter-bar > .mad-chrome-actions{
     justify-self:end;
     width:auto!important;
   }
@@ -10154,12 +10154,12 @@ body.main-admin-detail-page .mad-filter-bar > .mad-chrome-actions{
    Below 1280 the columns are px at what they carry (1150 total) and the wrap scrolls; the card
    transformation is neutralised for this page. Above 1280 the existing ladder is untouched. */
 @media (max-width:1279.98px){
-  body.main-admin-detail-page .mad-table-wrap{
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table-wrap{
     overflow-x:auto!important;
     overflow-y:visible!important;
     -webkit-overflow-scrolling:touch;
   }
-  body.main-admin-detail-page .mad-table{
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table{
     table-layout:fixed!important;
     border-collapse:collapse!important;
     border-spacing:0!important;
@@ -10168,11 +10168,11 @@ body.main-admin-detail-page .mad-filter-bar > .mad-chrome-actions{
     max-width:none!important;
     display:table!important;
   }
-  body.main-admin-detail-page .mad-table thead{display:table-header-group!important}
-  body.main-admin-detail-page .mad-table tbody{display:table-row-group!important}
-  body.main-admin-detail-page .mad-table tr{display:table-row!important}
-  body.main-admin-detail-page .mad-table th,
-  body.main-admin-detail-page .mad-table td{
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table thead{display:table-header-group!important}
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table tbody{display:table-row-group!important}
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table tr{display:table-row!important}
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table th,
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table td{
     display:table-cell!important;
     width:auto;
     padding:12px 12px!important;
@@ -10182,23 +10182,250 @@ body.main-admin-detail-page .mad-filter-bar > .mad-chrome-actions{
     text-overflow:ellipsis!important;
     border-bottom:1px solid var(--bo-border)!important;
   }
-  body.main-admin-detail-page .mad-table td::before{display:none!important}
-  body.main-admin-detail-page .mad-table th:nth-child(1), body.main-admin-detail-page .mad-table td:nth-child(1){width:170px!important}
-  body.main-admin-detail-page .mad-table th:nth-child(2), body.main-admin-detail-page .mad-table td:nth-child(2){width:150px!important}
-  body.main-admin-detail-page .mad-table th:nth-child(3), body.main-admin-detail-page .mad-table td:nth-child(3){width:120px!important}
-  body.main-admin-detail-page .mad-table th:nth-child(4), body.main-admin-detail-page .mad-table td:nth-child(4){width:120px!important}
-  body.main-admin-detail-page .mad-table th:nth-child(5), body.main-admin-detail-page .mad-table td:nth-child(5){width:110px!important}
-  body.main-admin-detail-page .mad-table th:nth-child(6), body.main-admin-detail-page .mad-table td:nth-child(6){width:120px!important}
-  body.main-admin-detail-page .mad-table th:nth-child(7), body.main-admin-detail-page .mad-table td:nth-child(7){width:110px!important}
-  body.main-admin-detail-page .mad-table th:nth-child(8), body.main-admin-detail-page .mad-table td:nth-child(8){width:110px!important}
-  body.main-admin-detail-page .mad-table th:nth-child(9), body.main-admin-detail-page .mad-table td:nth-child(9){width:150px!important}
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table td::before{display:none!important}
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table th:nth-child(1), body.main-admin-detail-page:not(.main-admin-security-page) .mad-table td:nth-child(1){width:170px!important}
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table th:nth-child(2), body.main-admin-detail-page:not(.main-admin-security-page) .mad-table td:nth-child(2){width:150px!important}
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table th:nth-child(3), body.main-admin-detail-page:not(.main-admin-security-page) .mad-table td:nth-child(3){width:120px!important}
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table th:nth-child(4), body.main-admin-detail-page:not(.main-admin-security-page) .mad-table td:nth-child(4){width:120px!important}
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table th:nth-child(5), body.main-admin-detail-page:not(.main-admin-security-page) .mad-table td:nth-child(5){width:110px!important}
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table th:nth-child(6), body.main-admin-detail-page:not(.main-admin-security-page) .mad-table td:nth-child(6){width:120px!important}
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table th:nth-child(7), body.main-admin-detail-page:not(.main-admin-security-page) .mad-table td:nth-child(7){width:110px!important}
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table th:nth-child(8), body.main-admin-detail-page:not(.main-admin-security-page) .mad-table td:nth-child(8){width:110px!important}
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table th:nth-child(9), body.main-admin-detail-page:not(.main-admin-security-page) .mad-table td:nth-child(9){width:150px!important}
   /* every column is reachable by scrolling now, so none of them is hidden by the ladder */
-  body.main-admin-detail-page .mad-table th:nth-child(4),
-  body.main-admin-detail-page .mad-table th:nth-child(6),
-  body.main-admin-detail-page .mad-table th:nth-child(7),
-  body.main-admin-detail-page .mad-table th:nth-child(8),
-  body.main-admin-detail-page .mad-table td:nth-child(4),
-  body.main-admin-detail-page .mad-table td:nth-child(6),
-  body.main-admin-detail-page .mad-table td:nth-child(7),
-  body.main-admin-detail-page .mad-table td:nth-child(8){display:table-cell!important}
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table th:nth-child(4),
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table th:nth-child(6),
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table th:nth-child(7),
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table th:nth-child(8),
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table td:nth-child(4),
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table td:nth-child(6),
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table td:nth-child(7),
+  body.main-admin-detail-page:not(.main-admin-security-page) .mad-table td:nth-child(8){display:table-cell!important}
+}
+
+/* Security & Audit: tabs, KPI strip and one toolbar row, in that order (the audit page's own layout).
+   ------------------------------------------------------------------------------------------
+   This page shares the body class `main-admin-detail-page` with the Admin list but not its markup: it
+   carries a KPI strip (`.mas-chrome-kpis`) inside the tab bar, an audit-category pill row (`.mas-cats`)
+   and a filter strip (`.mas-filters`) inside its toolbar. Measured before: the tab row was 0px tall
+   from 1279 down (the KPI strip took the row and the tabs' own children collapsed to height 0), and the
+   toolbar stacked the filters and the pills as two full-width rows.
+   Now: the chrome is a column - tabs 48px on their own row, the KPI strip below it as its own row - and
+   the toolbar is one wrapping row: category pills first, then the filter strip. */
+body.main-admin-security-page .mad-chrome{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  justify-content:flex-start!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  row-gap:8px!important;
+  padding-bottom:6px!important;
+}
+body.main-admin-security-page .mad-tabs{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  align-items:stretch!important;
+  height:48px!important;
+  min-height:48px!important;
+  max-width:100%!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  scrollbar-width:none;
+}
+body.main-admin-security-page .mad-tabs::-webkit-scrollbar{display:none!important}
+body.main-admin-security-page .mad-tab{
+  height:48px!important;
+  min-height:48px!important;
+  flex:0 0 auto!important;
+  white-space:nowrap!important;
+}
+body.main-admin-security-page .mad-chrome-actions.mas-chrome-kpis{
+  align-self:stretch!important;
+  justify-self:start!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:36px!important;
+}
+body.main-admin-security-page .mas-kpis{
+  flex-wrap:wrap!important;
+  justify-content:flex-start!important;
+}
+body.main-admin-security-page .mas-toolbar{
+  flex-direction:row!important;
+  flex-wrap:wrap!important;
+  align-items:center!important;
+  column-gap:12px!important;
+  row-gap:10px!important;
+}
+body.main-admin-security-page .mas-cats{
+  flex:0 1 auto!important;
+  min-width:0!important;
+  max-width:100%!important;
+}
+body.main-admin-security-page .mas-filters{
+  flex:1 1 480px!important;
+  min-width:0!important;
+  flex-wrap:wrap!important;
+}
+@media (max-width:1100px){
+  body.main-admin-security-page .mas-cats,
+  body.main-admin-security-page .mas-filters{
+    flex:1 1 100%!important;
+    width:100%!important;
+  }
+}
+
+/* Security & Audit table: a real table down to 768, with the header mirroring the body's horizontal scroll.
+   ------------------------------------------------------------------------------------------
+   Below 991.98 the shared card transformation switched this page's cells to blocks and hid every `th`
+   (measured at 768: `.mas-table-head` 0px tall, `.mas-table-body-table thead` display:none, and the
+   "No audit events" cell 85px wide under a colspan of 6) - so the column headings vanished entirely.
+   This page's split table already mirrors the body scroller onto the head (main-admin-security.js sets
+   `tableHead.scrollLeft = tableScroll.scrollLeft`), so the right shape at narrow widths is the table
+   itself: fixed px columns, nowrap + ellipsis, body scrolls sideways, head follows. 1080px total:
+   Time & Date 170 - Administrator 170 - Action/Event 200 - Target/Resource 190 - IP & Location 240 -
+   Status 110. */
+@media (max-width:1100px){
+  body.main-admin-security-page .mas-table-head{
+    display:block!important;
+    height:auto!important;
+    min-height:41px!important;
+    overflow:hidden!important;
+  }
+  body.main-admin-security-page .mas-table-head-table,
+  body.main-admin-security-page .mas-table-body-table{
+    display:table!important;
+    table-layout:fixed!important;
+    width:1080px!important;
+    min-width:1080px!important;
+    max-width:none!important;
+  }
+  /* The split head carries the column titles; the body table must NOT paint a second copy of them
+     (at 768 the card block left its th visible as a stacked label list under the head row). */
+  body.main-admin-security-page .mas-table-head-table thead{display:table-header-group!important}
+  body.main-admin-security-page .mas-table-body-table thead{display:none!important}
+  body.main-admin-security-page .mas-table-body-table tbody{display:table-row-group!important}
+  body.main-admin-security-page .mas-table-head-table tr,
+  body.main-admin-security-page .mas-table-body-table tr{display:table-row!important}
+  body.main-admin-security-page .mas-table-head-table th,
+  body.main-admin-security-page .mas-table-body-table td{
+    display:table-cell!important;
+    padding:10px 12px!important;
+    vertical-align:middle!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  body.main-admin-security-page .mas-table-head-table th:nth-child(1),
+  body.main-admin-security-page .mas-table-body-table td:nth-child(1){width:170px!important}
+  body.main-admin-security-page .mas-table-head-table th:nth-child(2),
+  body.main-admin-security-page .mas-table-body-table td:nth-child(2){width:170px!important}
+  body.main-admin-security-page .mas-table-head-table th:nth-child(3),
+  body.main-admin-security-page .mas-table-body-table td:nth-child(3){width:200px!important}
+  body.main-admin-security-page .mas-table-head-table th:nth-child(4),
+  body.main-admin-security-page .mas-table-body-table td:nth-child(4){width:190px!important}
+  body.main-admin-security-page .mas-table-head-table th:nth-child(5),
+  body.main-admin-security-page .mas-table-body-table td:nth-child(5){width:240px!important}
+  body.main-admin-security-page .mas-table-head-table th:nth-child(6),
+  body.main-admin-security-page .mas-table-body-table td:nth-child(6){width:110px!important}
+  body.main-admin-security-page .mas-table-body-scroll{
+    overflow-x:auto!important;
+    -webkit-overflow-scrolling:touch;
+  }
+}
+
+/* Security & Audit: the KPI block sits on the title row, immediately left of the dark-mode button.
+   ------------------------------------------------------------------------------------------
+   The block moved out of the tab bar into `.report-actions` (which is the flex row holding the theme
+   button, so the markup order puts it first = leftmost). In the topbar it has to behave like the other
+   header chips: one 32px line, no wrap, no card padding - it was built as a 36px block inside the
+   toolbar, where the cards had room. Below 1280 the labels are dropped and only the icon + figure stay,
+   because the title row also carries the hamburger, the title and three action buttons. */
+body.main-admin-security-page .report-topbar .mas-chrome-kpis{
+  align-self:center!important;
+  flex:0 0 auto!important;
+  width:auto!important;
+  max-width:none!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0 4px 0 0!important;
+  padding:0!important;
+  order:-1;                    /* first in the actions row, left of the theme button */
+}
+body.main-admin-security-page .report-topbar .mas-kpis{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  gap:6px!important;
+  width:auto!important;
+}
+body.main-admin-security-page .report-topbar .mas-kpi{
+  height:32px!important;
+  min-height:32px!important;
+  padding:0 10px 0 8px!important;
+  border-radius:999px!important;
+  gap:8px!important;
+  background:var(--bo-surface)!important;
+  border:1px solid var(--bo-border)!important;
+  box-shadow:none!important;
+  white-space:nowrap;
+}
+body.main-admin-security-page .report-topbar .mas-kpi-icon{
+  width:20px!important;height:20px!important;min-width:20px!important;font-size:11px!important;border-radius:999px!important;
+}
+body.main-admin-security-page .report-topbar .mas-kpi-value{font-size:12.5px!important;line-height:1!important}
+body.main-admin-security-page .report-topbar .mas-kpi-label{font-size:11px!important;line-height:1!important}
+body.main-admin-security-page .report-topbar .mas-kpi-meta{font-size:10.5px!important;line-height:1!important}
+@media (max-width:1279.98px){
+  body.main-admin-security-page .report-topbar .mas-kpi-label,
+  body.main-admin-security-page .report-topbar .mas-kpi-meta{display:none!important}
+  body.main-admin-security-page .report-topbar .mas-kpi{padding:0 8px!important;gap:6px!important}
+}
+
+/* The mobile pass sized the KPI chips as a 150px-each strip because they lived in the toolbar, where a
+   horizontal scroller made sense. In the topbar that is 462px of chips in a row that also carries the
+   hamburger, the title, the theme button, the language switcher and the header counters - measured at
+   768 the title collapsed to 0px wide and the topbar grew to 280px tall. In the header the chips are
+   compact (icon + figure, 58px each) and they simply do not exist on phones, where the bar has no room
+   for them (the page's own numbers stay available in the table's counts). */
+@media (max-width:991.98px){
+  body.main-admin-security-page .report-topbar .mas-kpi{min-width:0!important}
+  body.main-admin-security-page .report-topbar .mas-kpis{overflow:visible!important;flex-wrap:nowrap!important}
+  body.main-admin-security-page .report-topbar .mas-chrome-kpis{max-width:none!important}
+}
+@media (max-width:767.98px){
+  body.main-admin-security-page .report-topbar .mas-chrome-kpis{display:none!important}
+}
+
+/* Below 992 the mobile pass pins both tables to 900px (`main-mobile-responsive.css`:
+   `.mas-table{min-width:900px!important;width:900px!important}`), which outranks the 1080 recipe above
+   because its sheet loads later. Follow it instead of fighting it: 900px with the six columns apportioned
+   150 / 140 / 170 / 160 / 200 / 80. */
+@media (max-width:991.98px){
+  body.main-admin-security-page .mas-table-head-table,
+  body.main-admin-security-page .mas-table-body-table{
+    width:900px!important;
+    min-width:900px!important;
+    table-layout:fixed!important;
+  }
+  body.main-admin-security-page .mas-table-head-table th:nth-child(1),
+  body.main-admin-security-page .mas-table-body-table td:nth-child(1){width:150px!important}
+  body.main-admin-security-page .mas-table-head-table th:nth-child(2),
+  body.main-admin-security-page .mas-table-body-table td:nth-child(2){width:140px!important}
+  body.main-admin-security-page .mas-table-head-table th:nth-child(3),
+  body.main-admin-security-page .mas-table-body-table td:nth-child(3){width:170px!important}
+  body.main-admin-security-page .mas-table-head-table th:nth-child(4),
+  body.main-admin-security-page .mas-table-body-table td:nth-child(4){width:160px!important}
+  body.main-admin-security-page .mas-table-head-table th:nth-child(5),
+  body.main-admin-security-page .mas-table-body-table td:nth-child(5){width:200px!important}
+  body.main-admin-security-page .mas-table-head-table th:nth-child(6),
+  body.main-admin-security-page .mas-table-body-table td:nth-child(6){width:80px!important}
+  body.main-admin-security-page .mas-table-head-table th,
+  body.main-admin-security-page .mas-table-body-table td{
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
 }
