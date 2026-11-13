@@ -10343,7 +10343,7 @@ body.main-admin-security-page .mas-filters{
    header chips: one 32px line, no wrap, no card padding - it was built as a 36px block inside the
    toolbar, where the cards had room. Below 1280 the labels are dropped and only the icon + figure stay,
    because the title row also carries the hamburger, the title and three action buttons. */
-body.main-admin-security-page .report-topbar .mas-chrome-kpis{
+html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-chrome-kpis{
   align-self:center!important;
   flex:0 0 auto!important;
   width:auto!important;
@@ -10354,14 +10354,14 @@ body.main-admin-security-page .report-topbar .mas-chrome-kpis{
   padding:0!important;
   order:-1;                    /* first in the actions row, left of the theme button */
 }
-body.main-admin-security-page .report-topbar .mas-kpis{
+html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpis{
   display:flex!important;
   flex-wrap:nowrap!important;
   align-items:center!important;
   gap:6px!important;
   width:auto!important;
 }
-body.main-admin-security-page .report-topbar .mas-kpi{
+html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi{
   height:32px!important;
   min-height:32px!important;
   padding:0 10px 0 8px!important;
@@ -10372,16 +10372,16 @@ body.main-admin-security-page .report-topbar .mas-kpi{
   box-shadow:none!important;
   white-space:nowrap;
 }
-body.main-admin-security-page .report-topbar .mas-kpi-icon{
+html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi-icon{
   width:20px!important;height:20px!important;min-width:20px!important;font-size:11px!important;border-radius:999px!important;
 }
-body.main-admin-security-page .report-topbar .mas-kpi-value{font-size:12.5px!important;line-height:1!important}
-body.main-admin-security-page .report-topbar .mas-kpi-label{font-size:11px!important;line-height:1!important}
-body.main-admin-security-page .report-topbar .mas-kpi-meta{font-size:10.5px!important;line-height:1!important}
+html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi-value{font-size:12.5px!important;line-height:1!important}
+html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi-label{font-size:11px!important;line-height:1!important}
+html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi-meta{font-size:10.5px!important;line-height:1!important}
 @media (max-width:1279.98px){
-  body.main-admin-security-page .report-topbar .mas-kpi-label,
-  body.main-admin-security-page .report-topbar .mas-kpi-meta{display:none!important}
-  body.main-admin-security-page .report-topbar .mas-kpi{padding:0 8px!important;gap:6px!important}
+  html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi-label,
+  html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi-meta{display:none!important}
+  html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi{padding:0 8px!important;gap:6px!important}
 }
 
 /* The mobile pass sized the KPI chips as a 150px-each strip because they lived in the toolbar, where a
@@ -10391,12 +10391,12 @@ body.main-admin-security-page .report-topbar .mas-kpi-meta{font-size:10.5px!impo
    compact (icon + figure, 58px each) and they simply do not exist on phones, where the bar has no room
    for them (the page's own numbers stay available in the table's counts). */
 @media (max-width:991.98px){
-  body.main-admin-security-page .report-topbar .mas-kpi{min-width:0!important}
-  body.main-admin-security-page .report-topbar .mas-kpis{overflow:visible!important;flex-wrap:nowrap!important}
-  body.main-admin-security-page .report-topbar .mas-chrome-kpis{max-width:none!important}
+  html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi{min-width:0!important}
+  html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpis{overflow:visible!important;flex-wrap:nowrap!important}
+  html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-chrome-kpis{max-width:none!important}
 }
 @media (max-width:767.98px){
-  body.main-admin-security-page .report-topbar .mas-chrome-kpis{display:none!important}
+  html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-chrome-kpis{display:none!important}
 }
 
 /* Below 992 the mobile pass pins both tables to 900px (`main-mobile-responsive.css`:
