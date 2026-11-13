@@ -1,0 +1,6 @@
+/* The page's own tab row duplicates the module row above it; the module row is the navigation. */
+html body.menu-permission-page.report-body .mp-chrome .mad-tabs{display:none!important}
+/* Roles & Permissions. With the duplicate tab row gone, the bar above the role picker is just "Add Role": it was still a full-height chrome band with a
+   divider under it and its own top padding - a tall empty strip. It is now a compact row that keeps only its bottom spacing and the button. */
+html body.menu-permission-page.report-body .mp-chrome{min-height:0!important;height:auto!important;padding:0 0 12px!important;margin:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
+html body.menu-permission-page.report-body .mp-chrome .mad-chrome-actions{margin:0!important;padding:0!important}

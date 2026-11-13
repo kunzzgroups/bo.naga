@@ -285,7 +285,6 @@
     // Roles & Permissions / Security & Audit row it already carried (it is the Main panel's own
     // Admin workspace), with the module row drawn above it. Labels and order follow the group.
     'admin-user.html':{label:'Admin Management',order:1,module:'access'},
-    'menu-permission.html':{label:'Menu Permission',order:2,module:'access'},
     'role.html':{label:'Staff Permission',order:3,module:'access'},
     'admin-login-log.html':{label:'Admin Login Log',order:4,module:'access'},
     'admin-operation-log.html':{label:'Admin Operation Log',order:5,module:'access'},
