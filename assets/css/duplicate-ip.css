@@ -561,9 +561,15 @@ html[data-bo-theme="dark"] body.duplicate-ip-page .dup-share-pill {
     overflow: visible;
   }
 
+  /* Measured at 1003 and 768: the column collapsed to 24px and the panel (124 / 245px tall) was drawn
+     below it, outside a body that is only 88px tall with overflow hidden - the page read as empty.
+     The frame keeps `flex:1 1 0px` from the shell, and a 0 flex-basis inside an auto-height parent is
+     0: content-sized instead, so the page scrolls the way this block intends. */
   body.duplicate-ip-page .report-content {
     overflow: visible;
     height: auto;
+    flex: 0 0 auto;
+    min-height: 0;
   }
 
   body.duplicate-ip-page .dup-panel {
