@@ -10399,36 +10399,7 @@ html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi
   html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-chrome-kpis{display:none!important}
 }
 
-/* Below 992 the mobile pass pins both tables to 900px (`main-mobile-responsive.css`:
-   `.mas-table{min-width:900px!important;width:900px!important}`), which outranks the 1080 recipe above
-   because its sheet loads later. Follow it instead of fighting it: 900px with the six columns apportioned
-   150 / 140 / 170 / 160 / 200 / 80. */
-@media (max-width:991.98px){
-  body.main-admin-security-page .mas-table-head-table,
-  body.main-admin-security-page .mas-table-body-table{
-    width:900px!important;
-    min-width:900px!important;
-    table-layout:fixed!important;
-  }
-  body.main-admin-security-page .mas-table-head-table th:nth-child(1),
-  body.main-admin-security-page .mas-table-body-table td:nth-child(1){width:150px!important}
-  body.main-admin-security-page .mas-table-head-table th:nth-child(2),
-  body.main-admin-security-page .mas-table-body-table td:nth-child(2){width:140px!important}
-  body.main-admin-security-page .mas-table-head-table th:nth-child(3),
-  body.main-admin-security-page .mas-table-body-table td:nth-child(3){width:170px!important}
-  body.main-admin-security-page .mas-table-head-table th:nth-child(4),
-  body.main-admin-security-page .mas-table-body-table td:nth-child(4){width:160px!important}
-  body.main-admin-security-page .mas-table-head-table th:nth-child(5),
-  body.main-admin-security-page .mas-table-body-table td:nth-child(5){width:200px!important}
-  body.main-admin-security-page .mas-table-head-table th:nth-child(6),
-  body.main-admin-security-page .mas-table-body-table td:nth-child(6){width:80px!important}
-  body.main-admin-security-page .mas-table-head-table th,
-  body.main-admin-security-page .mas-table-body-table td{
-    white-space:nowrap!important;
-    overflow:hidden!important;
-    text-overflow:ellipsis!important;
-  }
-}
+
 
 /* Security & Audit toolbar: the category pills get their own row, the filter strip gets the next one.
    ------------------------------------------------------------------------------------------
@@ -10459,4 +10430,51 @@ html[data-bo-shell="main"] body.main-admin-security-page .mas-toolbar > .mas-fil
   min-width:0!important;
   flex-wrap:wrap!important;
   row-gap:8px!important;
+}
+
+/* Security & Audit table, 768-1100: the desktop presentation, with the panel scrolling sideways.
+   Time & Date 140 - Administrator 190 - Action/Event 270 - Target/Resource 200 - IP & Location 180 -
+   Status 110 = 1090. Cells stay on one line (nowrap + ellipsis), so a row is 41-56px tall at every
+   width instead of growing to 110px when the columns are squeezed. */
+@media (max-width:1100px){
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-head{
+    display:block!important;
+    height:auto!important;
+    min-height:41px!important;
+    overflow:hidden!important;
+  }
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-head-table,
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-body-table{
+    display:table!important;
+    table-layout:fixed!important;
+    width:1090px!important;
+    min-width:1090px!important;
+    max-width:none!important;
+  }
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-head-table th:nth-child(1),
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-body-table td:nth-child(1){width:140px!important}
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-head-table th:nth-child(2),
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-body-table td:nth-child(2){width:190px!important}
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-head-table th:nth-child(3),
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-body-table td:nth-child(3){width:270px!important}
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-head-table th:nth-child(4),
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-body-table td:nth-child(4){width:200px!important}
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-head-table th:nth-child(5),
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-body-table td:nth-child(5){width:180px!important}
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-head-table th:nth-child(6),
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-body-table td:nth-child(6){width:110px!important}
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-head-table th,
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-body-table td{
+    display:table-cell!important;
+    padding:10px 12px!important;
+    vertical-align:middle!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-head-table thead{display:table-header-group!important}
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-body-table thead{display:none!important}
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-body-table tbody{display:table-row-group!important}
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-body-table tr{display:table-row!important}
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-body-scroll{overflow-x:auto!important;-webkit-overflow-scrolling:touch}
 }
