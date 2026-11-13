@@ -97,11 +97,16 @@ function fitRows(card) {
   var sample = null;
   var rows = scroll.querySelectorAll('tbody tr');
   for (var i = 0; i < rows.length; i++) {
-    if (rows[i].cells && rows[i].cells.length > 1 && rows[i].getClientRects().length) { sample = rows[i].cells[0]; break; }
+    if (rows[i].cells && rows[i].cells.length > 1 && rows[i].getClientRects().length) { sample = rows[i]; break; }
   }
-  if (!sample && rows.length) sample = rows[0].cells[0];
+  if (!sample && rows.length) sample = rows[0];
+  /* The ROW (tr), not its first cell: the row carries the 1px rule under it, so measuring the cell came out ~2px short and
+     the fit handed out one row too many (5 rows needing 323px in a 300px scroller at 936px wide). */
   var rowH = sample ? Math.max(38, Math.round(sample.getBoundingClientRect().height)) : 41;
-  return Math.max(5, Math.min(200, Math.floor(avail / rowH) || 12));
+  var n = Math.max(5, Math.min(200, Math.floor(avail / rowH) || 12));
+  /* settle() lowers this one row at a time while the fitted page still overflows. */
+  if (card.__boAcCap) n = Math.max(3, Math.min(n, card.__boAcCap)); /* below the usual 5-row floor only when 5 really overflow */
+  return n;
 }
 /* ---------------------------------------------------------------------------
    Timestamps: the DATE in the cell, the TIME on hover.
@@ -181,6 +186,8 @@ function bindTimeTips(){
   });
   listen(window, 'scroll', hideTimeTip, true);
   listen(window, 'resize', hideTimeTip);
+  /* A new window size is a new fit: forget the one-row-less cap settle() learned at the old size. */
+  listen(window, 'resize', function () { Array.prototype.forEach.call(document.querySelectorAll('.table-card'), function (c) { c.__boAcCap = 0; c.__boAcSettle = 0; }); });
   listen(document, 'keydown', function (e) { if (e.key === 'Escape') hideTimeTip(); });
 }
 
@@ -214,8 +221,11 @@ window.boAc = {
       var v = sel ? String(sel.value).trim() : '';
       if (v !== '' && v !== '-') return;                 /* only in fit mode */
       var passes = card.__boAcSettle || 0;
-      if (wrap.scrollHeight > wrap.clientHeight + 1 && passes < 3) {
+      if (wrap.scrollHeight > wrap.clientHeight + 1 && passes < 6) {
         card.__boAcSettle = passes + 1;
+        var shown = 0, trs = wrap.querySelectorAll('tbody tr');
+        for (var k = 0; k < trs.length; k++) { if (trs[k].cells && trs[k].cells.length > 1) shown++; }
+        if (shown > 3) card.__boAcCap = shown - 1;
         rerender();
       } else if (wrap.scrollHeight <= wrap.clientHeight + 1) {
         card.__boAcSettle = 0;

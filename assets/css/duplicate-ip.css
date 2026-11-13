@@ -273,11 +273,11 @@ body.duplicate-ip-page .dup-table-wrap .report-table thead th {
   letter-spacing: 0.04em;
   border-bottom: 1px solid var(--dup-line) !important;
   border-right: 0 !important;
-  padding: 10px 12px !important;
+  padding: 12px 12px 12px 16px !important;
 }
 
 body.duplicate-ip-page .dup-table-wrap .report-table tbody td {
-  padding: 10px 12px !important;
+  padding: 6px 12px !important;
   font-size: 13px;
   font-weight: 700;
   color: #18191C;
@@ -510,7 +510,14 @@ html[data-bo-theme="dark"] body.duplicate-ip-page .dup-search-control:focus-with
 
 html[data-bo-theme="dark"] body.duplicate-ip-page .dup-table-wrap .report-table thead th {
   color: #E7E5E4 !important;
+  /* The listing standard head: solid #1F2128 band (this one was transparent, so rows slid under the sticky head) and 12px 12px 12px 16px. */
+  background: #1F2128 !important;
+  background-color: #1F2128 !important;
+  padding: 12px 12px 12px 16px !important;
 }
+
+body.duplicate-ip-page .dup-table-wrap .report-table:not(.x) tbody td:first-child { padding-left: 16px !important; }
+
 
 html[data-bo-theme="dark"] body.duplicate-ip-page .dup-table-wrap .report-table tbody td,
 html[data-bo-theme="dark"] body.duplicate-ip-page .dup-table-wrap .report-table code,
@@ -527,6 +534,13 @@ html[data-bo-theme="dark"] body.duplicate-ip-page .dup-footer > .entries-control
 html[data-bo-theme="dark"] body.duplicate-ip-page .dup-footer > .table-info,
 html[data-bo-theme="dark"] body.duplicate-ip-page .dup-footer > #dupCount {
   color: #A1A1AA;
+}
+
+/* The light rule above sets the footer text #57534E with !important, so the dark colour never applied: dark grey on the dark panel. */
+html[data-bo-theme="dark"] body.duplicate-ip-page .dup-footer > .table-info,
+html[data-bo-theme="dark"] body.duplicate-ip-page .dup-footer > .mad-footer-info,
+html[data-bo-theme="dark"] body.duplicate-ip-page .dup-footer > #dupCount {
+  color: #A1A1AA !important;
 }
 
 html[data-bo-theme="dark"] body.duplicate-ip-page .dup-footer .pagination-clean .page-btn:not(.active),
@@ -652,3 +666,55 @@ html[data-bo-theme="dark"] body.duplicate-ip-page .dup-share-pill {
    "Registered payout account". The wrapper keeps its horizontal scroll, so nothing is lost.
    (The listing frame's fixed layout is overridden here, page-scoped, so no other table changes.) */
 body.duplicate-ip-page .dup-table-wrap .report-table{table-layout:auto!important}
+
+/* The 28px icon button was written above, but bo-control-height / bo-ui-standard give every .clean-btn 36px and won (30x36), which made each row
+   57px - the listing standard is 41px (28px control + 6px padding + 1px rule), the same 41px the other fitted tables use, so the fit
+   put 7 rows where 9 belong and the table still scrolled. Pin the size at the id level. */
+html body.report-body.duplicate-ip-page:not(#dup-btn-off):not(#dup-btn-off-2) .dup-table-wrap .report-table .dup-view-btn {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
+  padding: 0 !important;
+}
+
+/* The footer's page-size menu opens upward on every listing (same values as agent-commission / access-control). Here it opened downward and was
+   cut off by the panel's overflow:hidden - only a sliver under the footer showed, so "10 / 20 / 50 / 100 / All" could not be picked. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.duplicate-ip-page .dup-footer .entries-control .rounded-select-menu {
+  top: auto !important;
+  bottom: calc(100% + 6px) !important;
+  z-index: 3000 !important;
+}
+
+/* Below 992px the shell stops being locked to the viewport (height:auto), so the table's `flex:1 1 0` had nothing to grow into: the wrap was 0px
+   tall and only the footer showed ("Showing 1 to 5 of 10" under an empty panel). The page scrolls here instead and the table gets a height
+   of its own - the fit reads this height, so the page-size still shows exactly the rows that fit and the rest scrolls inside. */
+@media (max-width: 1024px) {
+  html body.report-body.duplicate-ip-page:not(#dup-sm-off):not(#dup-sm-off-2) .dup-panel:not(.is-secondary) {
+    flex: 1 0 auto !important;
+  }
+  html body.report-body.duplicate-ip-page:not(#dup-sm-off):not(#dup-sm-off-2) .dup-panel:not(.is-secondary) .dup-table-wrap {
+    flex: 0 0 auto !important;
+    height: min(60dvh, 440px) !important;
+    min-height: 300px !important;
+  }
+}
+
+/* Narrow footer: one column, three stacked rows. The shared footer grid names areas (entries / info / pager) and only gave the stack two rows, so
+   the page-size control and the pager sat on top of each other. Dark: the record count was #57534E (dark grey on the dark panel). */
+@media (max-width: 768px) {
+  html body.report-body.duplicate-ip-page:not(#dup-fm-1):not(#dup-fm-2) .dup-footer {
+    grid-template-areas: none !important;
+    grid-template-rows: none !important;
+    grid-auto-flow: row !important;
+  }
+  html body.report-body.duplicate-ip-page:not(#dup-fm-1):not(#dup-fm-2) .dup-footer > * {
+    grid-area: auto !important;
+    grid-row: auto !important;
+    grid-column: 1 !important;
+  }
+}
+html[data-bo-theme="dark"] body.report-body.duplicate-ip-page .dup-footer > .table-info,
+html[data-bo-theme="dark"] body.report-body.duplicate-ip-page .dup-footer > #dupCount {
+  color: #A1A1AA !important;
+}

@@ -376,7 +376,26 @@ const GAME_API_SUB_CATEGORY = {
     paginationEl.innerHTML = html;
   }
 
+  /* One request fills the list; until it returns the table shows a skeleton and the footer says "Loading sub categories...". The auto-fit
+     handlers redraw an empty list while it waits, and that must not paint "No sub categories found" / "Showing 0 to 0". */
+  let isLoadingList = false;
+  function showLoadingState() {
+    empty.hidden = true;
+    list.setAttribute('aria-busy', 'true');
+    if (showingTextEl) showingTextEl.textContent = '';
+    if (paginationEl) paginationEl.innerHTML = '';
+    if (list.querySelector('.is-skeleton')) return;
+    const row = '<div class="subcategory-table-row is-skeleton" aria-hidden="true">' +
+      '<span class="subcategory-drag"></span>' +
+      '<div class="subcategory-main-cell"><span class="subcategory-row-icon bo-sk"></span><div class="subcategory-copy"><span class="bo-sk bo-sk-line bo-sk-w60"></span><span class="bo-sk bo-sk-line bo-sk-w80"></span></div></div>' +
+      '<div class="subcategory-status-cell"><span class="bo-sk bo-sk-pill"></span></div>' +
+      '<div class="subcategory-action-cell"><span class="bo-sk bo-sk-btn"></span><span class="bo-sk bo-sk-btn"></span></div></div>';
+    list.innerHTML = row.repeat(6);
+  }
+
   function renderList(items, resetPage = false) {
+    if (isLoadingList && !(Array.isArray(items) && items.length)) { showLoadingState(); return; }
+    list.removeAttribute('aria-busy');
     if (Array.isArray(items)) currentItems = items;
     if (resetPage) currentPage = 0;
     list.innerHTML = '';
@@ -426,13 +445,16 @@ const GAME_API_SUB_CATEGORY = {
 
   async function loadSubCategories() {
     clearLockedAutoSize();
-    list.innerHTML = '<div class="slider-empty"><i class="bi bi-hourglass-split"></i><b>Loading sub categories...</b></div>';
-    empty.hidden = true;
+    isLoadingList = true;
+    showLoadingState();
     try {
       const params = filter?.value ? '?categoryId=' + encodeURIComponent(filter.value) : '';
       const json = await fetchJson(GAME_API_SUB_CATEGORY.list + params);
+      isLoadingList = false;
       renderList(json.data || [], true);
     } catch (err) {
+      isLoadingList = false;
+      list.removeAttribute('aria-busy');
       list.innerHTML = '';
       empty.hidden = false;
       empty.innerHTML = `<i class="bi bi-exclamation-triangle"></i><b>Unable to load sub categories</b><small>${escapeHtml(err.message || 'Please check API URL / CORS.')}</small>`;
@@ -488,11 +510,17 @@ const GAME_API_SUB_CATEGORY = {
 
   (async function init() {
     syncAutofitMode();
+    isLoadingList = true;
+    showLoadingState();
     bindEvenFillObserver();
     try {
       await loadSetup();
       await loadSubCategories();
     } catch (err) {
+      isLoadingList = false;
+      list.removeAttribute('aria-busy');
+      list.innerHTML = '';
+      if (showingTextEl) showingTextEl.textContent = 'Showing 0 to 0 of 0 entries';
       setStatus(err.message || 'Unable to load categories.', 'error');
       empty.hidden = false;
       empty.innerHTML = `<i class="bi bi-exclamation-triangle"></i><b>Unable to load setup data</b><small>${escapeHtml(err.message || 'Please create category first.')}</small>`;

@@ -165,6 +165,8 @@ window.fetch=function(url,opt){
   else if(/auth\\/admin\\/me/.test(u)) data=JSON.parse(localStorage.getItem('bo_admin_user'));
   return Promise.resolve(new Response(JSON.stringify({status:'success',message:'ok',data:data,pagination:pg}),{status:200,headers:{'Content-Type':'application/json'}}));
 };
+/* Test aid: localStorage.bo_harness_delay = N holds every fake /api/ response for N ms, to see what a page shows while it waits. */
+(function(){var _f=window.fetch;window.fetch=function(){var d=0;try{d=Number(localStorage.getItem('bo_harness_delay'))||0}catch(e){}var p=_f.apply(this,arguments);if(!d||String(arguments[0]).indexOf('/api/')<0)return p;return p.then(function(r){return new Promise(function(res){setTimeout(function(){res(r)},d)})})}})();
 })();</script>`;
 
 http.createServer((req, res) => {

@@ -789,7 +789,28 @@ const GAME_API_HUB = {
     paginationEl.innerHTML = html;
   }
 
+  /* The catalogue arrives in one request that can take several seconds. Until it does, the table shows a skeleton and the footer says
+     "Loading games..." - the auto-fit observers call renderList([]) in the meantime, and that used to paint "No games found" and
+     "Showing 0 to 0" over a page that was simply still loading. */
+  let isLoadingGames = false;
+  function showLoadingState() {
+    if (!list) return;
+    empty.hidden = true;
+    list.setAttribute('aria-busy', 'true');
+    if (showingTextEl) showingTextEl.textContent = '';
+    if (paginationEl) paginationEl.innerHTML = '';
+    if (list.querySelector('.game-table-row.is-skeleton')) return;
+    const row = '<div class="game-table-row is-skeleton" aria-hidden="true">' +
+      '<div class="game-main-cell"><div class="game-thumb-full game-sk"></div><span class="game-sk game-sk-line game-sk-w60"></span></div>' +
+      '<div class="game-detail-cell"><span class="game-sk game-sk-line game-sk-w80"></span><span class="game-sk game-sk-line game-sk-w55"></span><span class="game-sk game-sk-line game-sk-w40"></span></div>' +
+      '<div class="game-status-cell"><span class="game-sk game-sk-pill"></span></div>' +
+      '<div class="game-action-cell"><span class="game-sk game-sk-btn"></span><span class="game-sk game-sk-btn"></span></div></div>';
+    list.innerHTML = row.repeat(6);
+  }
+
   function renderList(items, resetPage = false) {
+    if (isLoadingGames && !(Array.isArray(items) && items.length)) { showLoadingState(); return; }
+    list.removeAttribute('aria-busy');
     currentItems = Array.isArray(items) ? items : [];
     if (resetPage) currentPage = 1;
     const query = (searchInput?.value || '').trim().toLowerCase();
@@ -852,8 +873,8 @@ const GAME_API_HUB = {
 
   async function loadGames() {
     clearLockedAutoSize();
-    list.innerHTML = '<div class="slider-empty"><i class="bi bi-hourglass-split"></i><b>Loading games...</b></div>';
-    empty.hidden = true;
+    isLoadingGames = true;
+    showLoadingState();
     try {
       // Send catalogue filters to Spring Boot instead of always downloading the
       // complete game catalogue. This is important for large providers and also
@@ -879,9 +900,13 @@ const GAME_API_HUB = {
         rows = rows.filter(item => String(item.providerCode || '').toUpperCase() === selectedProvider);
       }
 
+      isLoadingGames = false;
       renderList(rows, true);
     } catch (err) {
+      isLoadingGames = false;
+      list.removeAttribute('aria-busy');
       list.innerHTML = '';
+      if (showingTextEl) showingTextEl.textContent = 'Showing 0 to 0 of 0 entries';
       empty.hidden = false;
       empty.innerHTML = `<i class="bi bi-exclamation-triangle"></i><b>Unable to load games</b><small>${escapeHtml(err.message || 'Please check API URL / CORS.')}</small>`;
     }
@@ -1104,12 +1129,17 @@ const GAME_API_HUB = {
 
   (async function init() {
     syncAutofitMode();
+    isLoadingGames = true;
+    showLoadingState();
     bindEvenFillObserver();
     try {
       await loadSetup();
       resetForm();
       await loadGames();
     } catch (err) {
+      isLoadingGames = false;
+      list.removeAttribute('aria-busy');
+      list.innerHTML = '';
       setStatus(err.message || 'Unable to load setup data.', 'error');
       empty.hidden = false;
       empty.innerHTML = `<i class="bi bi-exclamation-triangle"></i><b>Unable to load setup data</b><small>${escapeHtml(err.message || 'Please create category and sub category first.')}</small>`;

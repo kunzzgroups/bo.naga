@@ -195,6 +195,7 @@
     });
     each(DOC.querySelectorAll('link[rel="stylesheet"]'), function (l) {
       CSS_SEEN[sheetKey(l.getAttribute('href'))] = 1;
+      trackSheet(l, sheetKey(l.getAttribute('href')));
       /* Deliberately NOT marked as ours. A page links the sheets it needs, and some of those are
          what the SHELL renders with - the module tab row lives on bo-module-tabs.css, the pinned
          quicknav on bo-global-quicknav.css, the whole charcoal theme on bo-charcoal-shell.css -
@@ -325,6 +326,17 @@
      back to member-deposit.html. The cost of keeping them is a handful of extra sheets in a long
      session, which is a far smaller price than an unstyled shell. */
   var SHEETS = [];
+
+  /* Managed page sheets (see convergeSheets). Declared here, before seed() runs at load. */
+  var SHEET_NODES = {};   // sheetKey -> <link> element this router may disable
+  var SHEET_CONVERGE_OFF = false;
+  try { SHEET_CONVERGE_OFF = localStorage.getItem('bo_spa_sheets') === '0'; } catch (e) {}
+  var SHELL_SHEETS = {
+    'bo-shell.css': 1, 'bo-module-tabs.css': 1, 'bo-global-quicknav.css': 1, 'bo-charcoal-shell.css': 1,
+    'bo-charcoal-legacy.css': 1, 'bo-charcoal-primitives.css': 1, 'bo-ui-standard.css': 1, 'bo-field-standard.css': 1,
+    'bo-control-height.css': 1, 'bo-input-fill.css': 1, 'bo-scrollbar.css': 1, 'bo-account-chip.css': 1,
+    'bo-targeted-fixes.css': 1, 'reports.css': 1
+  };
 
   /* Which scripts the CURRENT document loaded. A swap compares the target's script list
      against this to tell a page's own script (may run again) from a shared one (must not). */
@@ -492,6 +504,7 @@
       el.setAttribute('data-bo-spa-sheet', key);
       DOC.head.appendChild(el);
       SHEETS.push({ el: el, key: key });
+      trackSheet(el, key);
       pending.push(waitForLink(el).then(function (outcome) {
         /* CSS_SEEN is set before the load so a double navigation cannot append the same sheet
            twice. A definitive failure clears it again: without that, one dead request in a
@@ -549,8 +562,35 @@
      belong to a page whose markup and globals are gone: measured, win-lose-report.js's resize
      handler fired on game.html and threw "wlPageSize is not defined". The dashboard workspace -
      the case that motivated it - is handled explicitly below instead. */
-  function convergeSheets() {
-    return;
+  function convergeSheets(want) {
+    /* Page-owned stylesheets are DISABLED (never removed) while the page that declares them is not the one on screen.
+       A page sheet that stays active leaks onto every page swapped in afterwards: measured, table-pagination-horizontal.css
+       (`.report-main .table-card{overflow:visible!important}`) stayed on after leaving a page that links it, and Agent Commission - which does
+       not link it - came out with a different overflow and table height than a direct load, until a reload. Disabling keeps the cached
+       sheet, so coming back is instant, and it never takes anything out of the document, which is what stripped the shell before.
+       Not managed: cross-origin sheets (Bootstrap, fonts), links a shared script injected at runtime (they were never ours), and the
+       shell family below, which pages link only when they happen to need it while the shell always does.
+       Switch off with localStorage.bo_spa_sheets = '0'. */
+    if (!want || !want.css || SHEET_CONVERGE_OFF) return;
+    var key, node, on;
+    for (key in SHEET_NODES) {
+      if (!Object.prototype.hasOwnProperty.call(SHEET_NODES, key)) continue;
+      node = SHEET_NODES[key];
+      if (!node || !node.parentNode) continue;
+      on = !!want.css[key] || isShellSheet(key);
+      if (node.disabled === !on) continue;
+      node.disabled = !on;
+      try { if (node.sheet) node.sheet.disabled = !on; } catch (e) {}
+    }
+  }
+
+  function isShellSheet(key) { return !!SHELL_SHEETS[String(key).split('?')[0]]; }
+  /* Same-origin <link rel=stylesheet> the router may manage; anything else is left exactly as it is. */
+  function trackSheet(link, key) {
+    if (!link || !key) return;
+    if (link.hasAttribute('data-bo-quicknav-css') || link.hasAttribute('data-bo-keep')) return;
+    try { if (new URL(link.href, location.href).origin !== location.origin) return; } catch (e) { return; }
+    SHEET_NODES[key] = link;
   }
 
   /* ---- body: scripts ------------------------------------------------------------- */
@@ -1091,7 +1131,7 @@
       /* Same task as the swap, so the removal is never painted: the document's stylesheets
          become the target's, and a page therefore looks the same whether it was swapped into
          or opened directly. */
-      convergeSheets();
+      convergeSheets(head.want);
       convergeExtras(doc);
       convergeTail(doc);
       /* Per-document marks that live on the body, which is never swapped, so they would
@@ -1521,6 +1561,12 @@
       },
       epoch: function () { return window.__boDclEpoch || 0; },
       navlog: function () { return NAVLOG; },
+      /* Which managed page sheets are active right now (false = disabled because the current page does not declare it). */
+      sheets: function () {
+        var out = {};
+        Object.keys(SHEET_NODES).forEach(function (k) { out[k] = !SHEET_NODES[k].disabled; });
+        return out;
+      },
       scriptTimes: function () { return scriptTimes; },
       errors: function () { return ERRORS; }
     }

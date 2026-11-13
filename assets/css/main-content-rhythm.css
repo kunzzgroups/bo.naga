@@ -105,3 +105,9 @@ html:not(#bo-charcoal-off) body[data-bo-shell="main"] .report-sidebar .report-na
 html:not(#bo-charcoal-off) body[data-bo-shell="main"] .report-sidebar .report-nav .report-sub span{
   border-radius:0!important;
 }
+
+/* Same for the Main panel's tables (audit: ~25 Main pages scrolled their head away). Their head is transparent over the wrapper's own surface
+   (#FFF8EB light / #383A46 dark), so a sticky head needs that surface painted on it - otherwise rows show through. */
+html[data-bo-shell="main"]:not(#bo-sticky-off) body :is(.mad-table-wrap,.provider-table-wrap,.ledger-scroll,.mas-table-body-scroll,.wl-breakdown-scroll,.report-table-scroll,.detail-table,.ref-table-wrap,.root-table-wrap,.tr-table-wrap,.table-wrap) table thead th{position:sticky!important;top:0!important;z-index:3!important}
+html[data-bo-shell="main"]:not([data-bo-theme="dark"]):not(#bo-sticky-off) body :is(.mad-table-wrap,.provider-table-wrap,.mas-table-body-scroll,.wl-breakdown-scroll,.report-table-scroll,.detail-table,.root-table-wrap,.table-wrap) table thead th{background-color:#FFF8EB!important}
+html[data-bo-shell="main"][data-bo-theme="dark"]:not(#bo-sticky-off) body :is(.mad-table-wrap,.provider-table-wrap,.mas-table-body-scroll,.wl-breakdown-scroll,.report-table-scroll,.detail-table,.root-table-wrap,.table-wrap) table thead th{background-color:#383A46!important}
