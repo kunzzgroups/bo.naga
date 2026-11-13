@@ -157,6 +157,10 @@ window.fetch=function(url,opt){
     var mls=[];for(var mi=1;mi<=30;mi++)mls.push({id:100+mi,memberId:100+mi,username:['0123456789','testboo','abc123'][mi%3]+mi,fullName:'Member '+mi,mobile:'01'+String(10000000+mi*37),referrerCode:'AG'+(mi%4),status:mi%5?'ACTIVE':'LOCKED',locked:mi%7===0,agentName:'Agent '+(mi%4),bankName:['Maybank','CIMB','RHB'][mi%3],createdAt:'2026-0'+(1+mi%9)+'-1'+(mi%9)});
     data=mls;
   }
+  else if(/main\\/admin-audit/.test(u)){
+    var aud=[];for(var ai=0;ai<6;ai++){aud.push({id:900+ai,action:['UPDATE_ADMIN','UPDATE_FRONTEND_DISPLAY','ADMIN_LOGIN','UPDATE_SECURITY_SETTING'][ai%4],entityType:['ADMIN_USER','FRONTEND_DISPLAY','ADMIN_USER','SECURITY_SETTING'][ai%4],entityId:[30,14,14,7][ai%4],actor:['t14','t6','admin_jk','boss'][ai%4],detail:'',ipAddress:'60.53.182.'+(26+ai),createdAt:new Date(Date.now()-ai*3600e3).toISOString(),success:true});}
+    data={content:aud,totalElements:aud.length,totalPages:1};
+  }
   else if(/admin\\/referral\\/list/.test(u)){
     var rfl=[];for(var ri=1;ri<=40;ri++)rfl.push({id:200+ri,memberId:200+ri,username:['0123456789','testboo','abc123','refuser'][ri%4]+ri,mobile:'01'+String(20000000+ri*41),referrerCode:'AG'+(ri%5),level1Count:ri%9,l1Count:ri%9,totalDownline:ri%23,createdAt:new Date(Date.now()-(ri%3)*86400000).toISOString().slice(0,10),registerDate:new Date(Date.now()-(ri%3)*86400000).toISOString().slice(0,10),status:ri%5?'ACTIVE':'LOCKED'});
     data=rfl;

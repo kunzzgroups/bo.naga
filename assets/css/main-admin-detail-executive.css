@@ -10478,3 +10478,45 @@ html[data-bo-shell="main"] body.main-admin-security-page .mas-toolbar > .mas-fil
   html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-body-table tr{display:table-row!important}
   html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-table-body-scroll{overflow-x:auto!important;-webkit-overflow-scrolling:touch}
 }
+
+/* Security & Audit pagination: the same page set at every width, never wrapped onto two lines.
+   ------------------------------------------------------------------------------------------
+   The pager is the shared `.smart-page` group ("Previous" + page numbers + "Next"). At 834 and 768
+   the two text buttons (86px and 64px) no longer fit the footer's pager column (253 / 231px), so the
+   group wrapped: measured pager height 44 and footer 69, with the last row of the table pushed under
+   the footer. The back office solves this by showing the nav buttons as arrows; doing the same here
+   keeps the page set untouched (same buttons, same pages, same handlers) and the row is one 36px line
+   at every width - with a scroll valve in case a page count ever makes the numbers longer. */
+html[data-bo-shell="main"] body.main-admin-security-page .mad-pager{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:4px!important;
+  max-width:100%!important;
+  overflow-x:auto!important;
+  scrollbar-width:none;
+}
+html[data-bo-shell="main"] body.main-admin-security-page .mad-pager::-webkit-scrollbar{display:none!important}
+html[data-bo-shell="main"] body.main-admin-security-page .mad-pager .smart-page.nav-text{
+  position:relative!important;
+  width:36px!important;
+  min-width:36px!important;
+  padding:0!important;
+  font-size:0!important;
+  line-height:0!important;
+}
+html[data-bo-shell="main"] body.main-admin-security-page .mad-pager .smart-page.nav-text:not(:last-child)::before{
+  content:"\2039";                 /* ‹ */
+  font-size:16px!important;
+  line-height:1!important;
+  display:block;
+  text-align:center;
+}
+html[data-bo-shell="main"] body.main-admin-security-page .mad-pager .smart-page.nav-text:last-child::before{
+  content:"\203A";                 /* › */
+  font-size:16px!important;
+  line-height:1!important;
+  display:block;
+  text-align:center;
+}
