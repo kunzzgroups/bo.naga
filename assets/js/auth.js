@@ -1355,7 +1355,8 @@
          manifest) wins over the menu row's icon - the two are different sources and drifted apart
          (owner: "pin过去dashboard的icon就不对了"). Falls back to the menu, then a circle. */
       const pageIcons=window.__BO_SPA_PAGE_ICONS||{};
-      nav.innerHTML=chosen.map(m=>{const ic=pageIcons[pageFile(m.url)]||m.icon||'bi-circle';return '<a href="'+esc(m.url)+'" draggable="true" data-dashboard-panel-url="'+esc(m.url)+'" data-dashboard-menu-key="'+esc(m.menuKey)+'" title="'+esc(m.title)+'" aria-label="'+esc(m.title)+'"><i class="bi '+esc(ic)+'"></i><span>'+esc(m.title)+'</span><span class="bo-dashboard-unpin" data-dashboard-unpin="'+esc(m.menuKey)+'" title="Unpin from Dashboard" aria-label="Unpin '+esc(m.title)+'"><i class="bi bi-pin-angle-fill"></i></span></a>';}).join('');
+      /* Below 992px the sidebar is an off-canvas drawer and this page has no top bar: the strip carries its own first cell to open it (hidden at desktop by dashboard.html). */
+      nav.innerHTML='<a href="#" class="bo-qn-menu" role="button" data-open-sidebar aria-label="Open menu" title="Menu"><i class="bi bi-list"></i></a>'+chosen.map(m=>{const ic=pageIcons[pageFile(m.url)]||m.icon||'bi-circle';return '<a href="'+esc(m.url)+'" draggable="true" data-dashboard-panel-url="'+esc(m.url)+'" data-dashboard-menu-key="'+esc(m.menuKey)+'" title="'+esc(m.title)+'" aria-label="'+esc(m.title)+'"><i class="bi '+esc(ic)+'"></i><span>'+esc(m.title)+'</span><span class="bo-dashboard-unpin" data-dashboard-unpin="'+esc(m.menuKey)+'" title="Unpin from Dashboard" aria-label="Unpin '+esc(m.title)+'"><i class="bi bi-pin-angle-fill"></i></span></a>';}).join('');
       nav.hidden=chosen.length===0;
       (function(){
         const links=[...nav.querySelectorAll('a[data-dashboard-menu-key]')];
