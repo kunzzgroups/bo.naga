@@ -10139,3 +10139,66 @@ body.main-admin-detail-page .mad-filter-bar > .mad-chrome-actions{
     width:auto!important;
   }
 }
+
+/* The table stays a table down to 768, and scrolls inside its own box when the columns need more room.
+   ------------------------------------------------------------------------------------------
+   Two problems, one cause - the column widths were a percentage ladder while the cells were told to
+   wrap:
+   1) at 1120 (the width the owner reported) the visible columns were 126 / 101 / 92 / 75 with the
+      Actions column taking 444 of the 838px table, so "HamSaplour" ran into the Role pill and
+      "Customer Support" ran into the credit figure - cells overflowed their own columns (measured
+      td scrollWidth - clientWidth: Role +15, Status +3);
+   2) below 991.98 the sheet converted the table into cards (thead hidden, tr display:flex), and the
+      owner wants the table, with a horizontal scroller, at 768.
+
+   Below 1280 the columns are px at what they carry (1150 total) and the wrap scrolls; the card
+   transformation is neutralised for this page. Above 1280 the existing ladder is untouched. */
+@media (max-width:1279.98px){
+  body.main-admin-detail-page .mad-table-wrap{
+    overflow-x:auto!important;
+    overflow-y:visible!important;
+    -webkit-overflow-scrolling:touch;
+  }
+  body.main-admin-detail-page .mad-table{
+    table-layout:fixed!important;
+    border-collapse:collapse!important;
+    border-spacing:0!important;
+    width:1150px!important;
+    min-width:1150px!important;
+    max-width:none!important;
+    display:table!important;
+  }
+  body.main-admin-detail-page .mad-table thead{display:table-header-group!important}
+  body.main-admin-detail-page .mad-table tbody{display:table-row-group!important}
+  body.main-admin-detail-page .mad-table tr{display:table-row!important}
+  body.main-admin-detail-page .mad-table th,
+  body.main-admin-detail-page .mad-table td{
+    display:table-cell!important;
+    width:auto;
+    padding:12px 12px!important;
+    vertical-align:middle!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    border-bottom:1px solid var(--bo-border)!important;
+  }
+  body.main-admin-detail-page .mad-table td::before{display:none!important}
+  body.main-admin-detail-page .mad-table th:nth-child(1), body.main-admin-detail-page .mad-table td:nth-child(1){width:170px!important}
+  body.main-admin-detail-page .mad-table th:nth-child(2), body.main-admin-detail-page .mad-table td:nth-child(2){width:150px!important}
+  body.main-admin-detail-page .mad-table th:nth-child(3), body.main-admin-detail-page .mad-table td:nth-child(3){width:120px!important}
+  body.main-admin-detail-page .mad-table th:nth-child(4), body.main-admin-detail-page .mad-table td:nth-child(4){width:120px!important}
+  body.main-admin-detail-page .mad-table th:nth-child(5), body.main-admin-detail-page .mad-table td:nth-child(5){width:110px!important}
+  body.main-admin-detail-page .mad-table th:nth-child(6), body.main-admin-detail-page .mad-table td:nth-child(6){width:120px!important}
+  body.main-admin-detail-page .mad-table th:nth-child(7), body.main-admin-detail-page .mad-table td:nth-child(7){width:110px!important}
+  body.main-admin-detail-page .mad-table th:nth-child(8), body.main-admin-detail-page .mad-table td:nth-child(8){width:110px!important}
+  body.main-admin-detail-page .mad-table th:nth-child(9), body.main-admin-detail-page .mad-table td:nth-child(9){width:150px!important}
+  /* every column is reachable by scrolling now, so none of them is hidden by the ladder */
+  body.main-admin-detail-page .mad-table th:nth-child(4),
+  body.main-admin-detail-page .mad-table th:nth-child(6),
+  body.main-admin-detail-page .mad-table th:nth-child(7),
+  body.main-admin-detail-page .mad-table th:nth-child(8),
+  body.main-admin-detail-page .mad-table td:nth-child(4),
+  body.main-admin-detail-page .mad-table td:nth-child(6),
+  body.main-admin-detail-page .mad-table td:nth-child(7),
+  body.main-admin-detail-page .mad-table td:nth-child(8){display:table-cell!important}
+}
