@@ -2080,3 +2080,44 @@ html:not([data-bo-theme="dark"]):not(#bo-lc-off):not(#bo-lc-off-2):not(#bo-lc-of
   border-color:var(--lc-border)!important;
   color:var(--lc-ink)!important;
 }
+
+/* Template page: the same badge as the composer chip, and one filled control in the form row.
+   ------------------------------------------------------------------------------------------
+   The Live Chat composer marks a template with a 16px soft-amber circle; this page marked the same
+   template with a 22px solid amber square (radius 6) in the list, so the two screens read as two
+   different products (measured: 22x22, radius 6, background #F59E0B, white 11px/800 digit). Here the
+   row badge becomes the same soft circle, one step larger because the row is a row.
+   `New` was a filled gray button next to the amber Save: two fills in a two-button row. It becomes a
+   ghost, so Save is the only filled control - the same rule the composer's Send/Attach follow. */
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-template-page .template-hotkey{
+  width:18px!important;
+  height:18px!important;
+  min-width:18px!important;
+  border-radius:999px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:11px!important;
+  font-weight:700!important;
+  background:rgba(245,158,11,.14)!important;
+  color:#FBBF24!important;
+  border:0!important;
+}
+html:not([data-bo-theme="dark"]):not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-template-page .template-hotkey{
+  background:#FDEBD0!important;
+  color:#B45309!important;
+}
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-template-page .template-actions .clean-btn{
+  background:transparent!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  color:var(--lc-muted)!important;
+  box-shadow:none!important;
+}
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-template-page .template-actions .clean-btn:hover{
+  background:var(--lc-canvas)!important;
+  color:var(--lc-ink)!important;
+}
+html:not([data-bo-theme="dark"]):not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-template-page .template-actions .clean-btn{
+  border-color:var(--lc-border)!important;
+  color:var(--lc-muted)!important;
+}
