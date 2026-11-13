@@ -1091,3 +1091,19 @@ body.report-body.topup-reward-page .report-content{
     min-height:0!important;
   }
 }
+
+/* 0c-4. The drawer's own toggle, while the drawer is open (below 992px).
+   ------------------------------------------------------------------------------------------
+   In drawer mode the rail slides over the page, so the topbar hamburger is behind it - but the button
+   stays in the DOM and stays clickable, and on Dashboard the rail header draws a second one of its own
+   (`[data-open-sidebar]` at 12,12) right beside the close X at 184,17: measured at 963 with the drawer
+   open, two openers were painted on Dashboard and one on every other page (covered, not removed).
+   The close X is the only control that belongs in that state, so the opener is hidden - visibility, not
+   display, so the X does not shift - and it comes back with the drawer closed. Desktop (>=992) keeps its
+   hamburger: it is the rail toggle there, and this block does not reach it. */
+@media (max-width:991.98px){
+  body.sidebar-open [data-open-sidebar]{
+    visibility:hidden!important;
+    pointer-events:none!important;
+  }
+}
