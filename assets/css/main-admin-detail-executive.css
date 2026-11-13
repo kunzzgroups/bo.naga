@@ -10429,3 +10429,34 @@ html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi
     text-overflow:ellipsis!important;
   }
 }
+
+/* Security & Audit toolbar: the category pills get their own row, the filter strip gets the next one.
+   ------------------------------------------------------------------------------------------
+   The two blocks are siblings in the DOM in the order filters-then-categories, so sharing a wrapping
+   row put "Search + date" on line 1 and the category pills beside them, with "All Event Types / All
+   Status / Reset" pushed to line 2 - the pills read as if they belonged to the search. The back
+   office's own listing toolbar is the other way round: one row of status pills, then the filter row.
+   Explicit order, and each block owns a full row (the filter strip still wraps inside its row). */
+html[data-bo-shell="main"] body.main-admin-security-page .mas-toolbar{
+  display:flex!important;
+  flex-direction:row!important;
+  flex-wrap:wrap!important;
+  align-items:center!important;
+  row-gap:10px!important;
+  column-gap:12px!important;
+}
+html[data-bo-shell="main"] body.main-admin-security-page .mas-toolbar > .mas-cats{
+  order:1!important;
+  flex:1 1 100%!important;
+  width:100%!important;
+  max-width:100%!important;
+  justify-content:flex-start!important;
+}
+html[data-bo-shell="main"] body.main-admin-security-page .mas-toolbar > .mas-filters{
+  order:2!important;
+  flex:1 1 100%!important;
+  width:100%!important;
+  min-width:0!important;
+  flex-wrap:wrap!important;
+  row-gap:8px!important;
+}
