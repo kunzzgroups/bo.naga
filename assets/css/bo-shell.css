@@ -1,1096 +1,1096 @@
-/* Canonical topbar typography for pages that adopted the shared renderer
-   (assets/js/bo-topbar.js). Scoped to [data-bo-topbar] so it can never reach a
-   page that has not opted in - the other ~146 pages keep their current sheets.
-
-   WHAT IT LOCKS (and only this): the three type sizes the owner asked to unify.
-   Nothing here touches height, padding, background or colour - those stay owned by
-   the per-theme sheets, so real variants (e.g. `.admin-page-topbar{min-height:62px}`)
-   keep working.
-
-   Chosen values - these are the majority in this repo and what the adopted pages
-   already compute, so adopting the sheet is a no-op for them:
-     h1                22px / 900     (was: 26px/900 in reports*.css, 20px/800,
-                                       18px/800 in main-admin-detail, 28px/800 in
-                                       bo-charcoal-cms, 17px in the *-md.css suite)
-     .user-title-icon  36x36 box, 20px glyph
-                                      (was: 40x40/18px, 38x38/19px, 36x36/18px)
-     theme button      36x36 box, 18px glyph
-                                      (was: 40x40/17px, 44x44)
-
-   Values are written with !important because every one of those sheets also
-   declares them with !important; the specificity here adds the [data-bo-topbar]
-   attribute so this wins on adopted pages only.
-
-   The reference geometry the component renders into (measured, unchanged by this
-   sheet, kept here so phase 3 has the spec in one place):
-     .report-topbar      display:flex  gap:12px  padding:0 20px  min-height:64px
-                         border-bottom:1px solid  background:#FFF8EB
-     .user-title-wrap    display:flex  gap:12px  align-items:center
-     .report-actions     display:flex  gap:12px  align-items:center  margin-left:auto
-*/
-
-/* 0. Same horizontal padding everywhere. A few page families inset the header 18px
-   instead of 20px, which moves the whole right-hand cluster 2px sideways on a page
-   switch. Desktop only - the narrow layout has its own padding and is deliberately
-   left alone. */
-/* The id-guard is the same idiom the theme sheets use (`:not(#bo-charcoal-off)`). A
-   plain class chain tied with a later sheet here and lost, so this rule needs to sit
-   above them rather than beside them. */
-@media (min-width:1024px){
-  html:not(#bo-charcoal-off) body.report-body .report-shell .report-main .report-topbar[data-bo-topbar]{
-    padding-left:20px!important;
-    padding-right:20px!important;
-  }
-}
-
-/* 0b. Reserve the scrollbar gutter so a page that happens to scroll does not shift the
-   whole header sideways. vip-level-edit measured clientWidth 1568 against 1574
-   elsewhere purely because its content is taller than the viewport, and that 6px moved
-   the cluster with it. Reserving the gutter makes the usable width the same on every
-   adopted page whether or not it scrolls. */
-html:has(.report-topbar[data-bo-topbar]){
-  scrollbar-gutter:stable;
-}
-
-/* 0c. Same content frame width everywhere. The page body was inset 18px on most BO
-   pages, 22px on the referral / member-deposit family and 16px on promotion / game, so
-   the whole frame measured 1272px / 1264px / 1276px and looked narrower on some pages
-   when paging. 18px is the majority. Desktop only, like the header inset above.
-   The id-guard again out-ranks the referral family's own inset. */
-@media (min-width:1024px){
-  /* Two id-guards, not one. `.report-content`'s inset is the one shell metric a page sheet
-     also states: bo-charcoal-cms.css sets `padding: 10px 16px` for `.promotion-bonus-page`
-     and `12px 16px 16px` for `.page-bonus-category-title` (promotion.html carries both body
-     classes), and those selectors tie this rule exactly - 1 id / 4 classes / 2 elements. A
-     tie is broken by order, and the order is not always the file order: the SPA router ADDS
-     a swapped-in page's sheets and never re-inserts them, so a page entered from a swap can
-     have bo-charcoal-cms.css AFTER bo-shell.css. Measured: with that sheet moved
-     to the end of <head>, the frame came back 16px inset (card left 276 vs 278, width 1239
-     vs 1235) - the owner's "整个设计会跑掉" screenshot measures the same 16px. The second
-     id-guard makes the inset order-independent; it is the idiom this file already uses for
-     the referral family's two-id guard below. */
-  html:not(#bo-charcoal-off):not(#bo-charcoal-legacy) body.report-body .report-shell .report-main .report-content{
-    padding-left:18px!important;
-    padding-right:18px!important;
-  }
-  /* The referral family sets its own inset through a two-id guard, so a plain class
-     chain ties with it; mirroring that selector and loading later wins the tie. */
-  html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).referral-page.report-body.bo-charcoal .report-content,
-  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).referral-page.report-body.bo-charcoal .report-content{
-    padding-left:18px!important;
-    padding-right:18px!important;
-  }
-}
-
-/* 0c-1. The module row (auth.js MODULE_TABS) is the first child of .report-content, and it
-   is drawn as a 1:1 copy of Admin Management's .mad-chrome row - so it takes the same 8px
-   inset under the header that Admin Management's workspace carries. Left to the pages it
-   inherited whatever .report-content padding they happened to declare: 18px on the Member
-   and Transaction listing pages, 12px on referral, i.e. the same row at two heights on one
-   page switch. This replaces the per-page rule that retired bo-group-tabs.css used to carry
-   for the Member pages, and covers the Transaction module row with it. Desktop only, like
-   the two insets above. */
-@media (min-width:576px){
-  html:not(#bo-charcoal-off) body.report-body .report-shell .report-main .report-content:has(> .bo-module-tabs){
-    padding-top:8px!important;
-  }
-  /* Referral's two-id guard again, mirrored for the same reason as 0c. */
-  html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).referral-page.report-body.bo-charcoal .report-content:has(> .bo-module-tabs),
-  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).referral-page.report-body.bo-charcoal .report-content:has(> .bo-module-tabs){
-    padding-top:8px!important;
-  }
-}
-
-/* 0c-2. The module row's BOTTOM spacing, on the pages whose content column has no gap of
-   its own. 0c-1 nailed the row to the same 8px under the header everywhere, but its
-   distance to the first content block still came from the page: the Member, Transaction,
-   Promotion, VIP and Agent content columns are `display:flex; flex-direction:column`
-   with a 16px gap, so there the row sat 16px above the first block, while the Design
-   pages declare no gap at all - Banner Management's column is even `display:block` - so
-   the row was welded to the card below it.
-
-   16px is what the majority already computes and what User Management shows, so every page
-   that computed 0 gets exactly that: the six Design pages, Livechat Template when the Setting
-   module joined (Setting measured again: Timezone 16, Duplicate IP 12, Compliance Policy 12,
-   Livechat Template 0), and five of the seven Game Management pages - Provider, Provider
-   Sessions, Game Category, Game Sub Category and Game all compute 0, while Provider
-   Transactions and Provider Bet Report carry 16 of their own. The rule is scoped by page class
-   on purpose - a container-level `gap` would also re-space every OTHER sibling on those pages,
-   which is a different change nobody asked for. A page that already resolves to a gap of its
-   own keeps it: Page Customize 14px (the same rhythm as Deposit Approval), Image To URL 16px,
-   and Duplicate IP / Compliance Policy 12px.
-
-   Desktop only, like the insets above; bo-module-tabs.css already carries 12px of its own
-   Promotion Bonus (`promotion-workspace-page promotion-bonus-page`) joined the list after the
-   owner reported its row welded to the card below - "图一tab的间距设计与图二不相符" against
-   Promotion Debug, which already sat at 16px. It had never been measured: it appears in none of
-   the lists above, and its column is `display:flex; flex-direction:column` with `row-gap:0px`. The
-   other ten module pages DESIGN.md never recorded were measured at the same time and all already
-   compute 16px of their own (the six Report-family pages, promotion-report, transaction-report,
-   win-lose-report, agent-performance-report), so this is the only class the whitelist was missing.
-   Measured with the row painted: gap = row bottom -> first block top.
-
-   Desktop only, like the insets above; bo-module-tabs.css already carries 12px of its own
-   for the narrow layout.
-   992-1023px included: the rule used to start at 1024 while the narrow layout (bo-module-tabs.css, 12px) ends at 991, so a window
-   in between (1005 in the owner's screenshot) had the row welded to the card (gap 0) again.
-   */
-
-@media (min-width:992px){
-  html:not(#bo-charcoal-off) body.report-body:is(.banner-management-page,.site-customize-page,.advertisement-popup-page,.frontend-display-page,.social-page,.layout-section-page,.livechat-template-page,.page-game-provider,.provider-session-page,.page-game-category,.page-game-sub-category,.page-game,.promotion-bonus-page) .report-shell .report-main .report-content:has(> .bo-module-tabs) > .bo-module-tabs{
-    margin-bottom:16px!important;
-  }
-}
-
-/* 0d. Sidebar rows. The BO rail drifts the same way the header did: the wallet family
-   (member-wallet / wallet-ledger / member-deposit) ships its own rail metrics, so the
-   same category sat 5px higher there than on User Management and the row text rendered
-   at weight 800 instead of 900. Measured across 11 BO pages, 8 already resolve to the
-   values pinned below, so this is the majority rather than a new opinion.
-     .report-nav          padding 12px 10px 10px, gap 3px   (== the row drift source)
-     top-level row        weight 900, line-height 21px
-     sub item             weight 600, line-height 15.6px, padding 9px 38px 9px 10px
-   The id-guard matches the idiom the theme sheets use so this wins on BO pages only. */
-html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav{
-  padding:12px 10px 10px!important;
-  gap:3px!important;
-}
-html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav > a,
-html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn{
-  font-size:14px!important;
-  font-weight:900!important;
-  line-height:21px!important;
-}
-/* Some themes put a -0.01em tracking on the OPEN group's button
-   (bo-charcoal-shell.css: `.report-sidebar .nav-group.open > .nav-group-btn`), which the
-   label span inherits as -0.14px at 14px. The wallet family never had it, so the very
-   same row read cramped on one page and loose on another. Normalise the whole rail to
-   no tracking - label spans included, since that is where it was actually inherited. */
-html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav > a,
-html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav > a span,
-html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn,
-html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn span,
-html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .report-sub,
-html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .report-sub span,
-html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .bo-sidebar-logout span{
-  letter-spacing:normal!important;
-}
-
-html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .report-sub{
-  font-size:13px!important;
-  font-weight:600!important;
-  line-height:15.6px!important;
-  padding:9px 38px 9px 10px!important;
-}
-/* casino-overview-report resolved the sub label to 17.55px line-height against 15.6px
-   everywhere else; pin the span too so the sub rows keep the same rhythm. */
-html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .report-sub span{
-  line-height:15.6px!important;
-}
-
-/* One rail width for the whole BO: 230px - the owner's value, carried in the tree by 1e87f664
-   (Security & Audit panel) and re-applied from their working tree after the sync. The tree
-   briefly read 260px because reports.css and reports-dashboard-original.css each declare it
-   twice in a :root block that came in with a stale-snapshot WIP commit (0da8f81d, "must not be
-   merged as-is"); a first pass of this fix then read 250px off a live deployment that predates
-   1e87f664. Measured: 260x804 before, 230 after, on dashboard.html and member-wallet.html. The
-   lock keeps the value here (the shell owns the rail's metrics) - `width` and custom properties
-   sit outside the drift guard's metric list. */
-html:not(#bo-charcoal-off) body.report-body{
-  --sidebar-w:230px;
-}
-
-/* 0e-pre. Rail rows: one padding for every row, and the pin's space reserved only where a pin
-   can actually appear.
-   bo-global-quicknav.css reserved `.report-nav a[data-menu-key]{padding-right:38px}` for the
-   `.bo-sidebar-pin` button (26px wide at right:9px). Only <a> rows get a pin - auth.js emits
-   data-menu-key on plain links and on the nav-group-direct anchors, never on the group
-   <button>s - so one rail read 38px on a row and 12px on the next. Measured on index.html
-   before this block: a.nav-group-btn = `10px 38px 10px 12px`, button.nav-group-btn =
-   `11px 12px`, both 209x44. The value to unify on is not the module sheets' one: the rail's
-   own row rule is reports.css:49 `.report-nav a{...padding:9px 10px...}` - what every page
-   shows where no sheet overrode it, and the value the user pointed at in DevTools (red-circled
-   `padding: 9px 10px` under "padding 与其他页面不一样"). The sub rows already sit on that
-   rhythm (`.report-sub`: 9px 38px 9px 10px). Stated once here as the shell's own metric:
-   every row 9px 10px, and a row that can carry a pin keeps its 38px. */
-html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav > a,
-html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn{
-  padding:9px 10px!important;
-}
-html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav a[data-menu-key]{
-  padding-right:38px!important;
-}
-/* The collapsed rail (sidebar-mini) centres its icons with `padding:12px 0`. The module
-   sheets that pin row padding at 10px 12px!important outrank reports.css's own
-   `body.sidebar-mini .nav-group-btn{padding:12px 0}` (and its justify-content), so the mini
-   rows lost their centring on exactly those pages. Same guard, so both states hold.
-   `a[data-menu-key]` is in the list for the second half of the same problem: the 38px
-   `padding-right` that reserves room for the pin (rule just above) has no pin to reserve in the
-   collapsed state - bo-global-quicknav.css hides it there
-   (`body.sidebar-mini .report-sidebar .report-nav > a[data-menu-key] > .bo-sidebar-pin{display:none}`)
-   - so `justify-content:center` was centring the icon inside the 0..13px that were left, and every
-   rail icon sat off-centre. Measured on bonus-category-item.html collapsed: row 10..61 (cx 36),
-   icon 6..28 (cx 17), i.e. 19px left of its own row; the owner reported it off the active cell,
-   whose box is the whole row and so made the offset visible (选中框格和Icon 没对齐). The expanded
-   rail keeps the 38px: the pin is a real control there. */
-html:not(#bo-charcoal-off) body.sidebar-mini .report-shell .report-sidebar .report-nav > a,
-html:not(#bo-charcoal-off) body.sidebar-mini .report-shell .report-sidebar .report-nav a[data-menu-key],
-html:not(#bo-charcoal-off) body.sidebar-mini .report-shell .report-sidebar .report-nav .nav-group-btn{
-  padding:12px 0!important;
-  justify-content:center!important;
-}
-
-/* 0e. Logout block. The wallet family pads the sidebar footer 10px 10px 12px, which
-   makes it 3px taller and lifts the Logout button 2px versus every other BO page.
-   8 of 11 sampled pages use the flat 10px. */
-html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .bo-sidebar-account-footer{
-  padding:10px!important;
-  /* The wallet family lays the footer out as a block, which rounds the Logout row to
-     68.5px against 68.0px everywhere else - a 1px lift of the button. flex is the
-     majority and the exact 68px. */
-  display:flex!important;
-  flex-direction:column!important;
-  height:68px!important;
-  box-sizing:border-box!important;
-}
-/* The Logout row is content-sized, and its icon/text rounding lands on 47.0px on some
-   pages and 47.5px on others - the half pixel that kept the button 1px apart. Both boxes
-   are pinned so the rounding cannot move it: 68px footer (majority) + 47px row. */
-html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .bo-sidebar-logout{
-  height:47px!important;
-  box-sizing:border-box!important;
-}
-
-/* 0f-pre-a. brand-overview: the full frame chain the report and agent families carry. Measured
-   pinned into the dashboard workspace (1440x900): .report-main computed block and the bottom
-   content ended 395px above the frame bottom, so the card and its footer floated mid-frame.
-   Both ends of the chain are needed: a flex column on .report-main with a definite height, a
-   flex:1 content, then the page own card classes - they are brand-exec-*, not .table-card. */
-html:not(#bo-charcoal-off) body.report-body.brand-exec-page .report-shell .report-main{
-  display:flex!important;flex-direction:column!important;height:100dvh!important;min-height:0!important;
-}
-html:not(#bo-charcoal-off) body.report-body.brand-exec-page .report-shell .report-content{
-  display:flex!important;flex-direction:column!important;flex:1 1 auto!important;min-height:0!important;
-}
-html:not(#bo-charcoal-off) body.report-body.brand-exec-page .report-shell .report-content > .brand-exec-card{
-  flex:1 1 auto!important;min-height:0!important;display:flex!important;flex-direction:column!important;
-}
-html:not(#bo-charcoal-off) body.report-body.brand-exec-page .report-shell .report-content .brand-exec-table-wrap{
-  flex:1 1 auto!important;min-height:0!important;
-}
-html:not(#bo-charcoal-off) body.report-body.brand-exec-page .report-shell .report-content .brand-exec-footer{
-  margin-top:auto!important;
-}
-
-/* 0f-pre. The Online Users frame. The page's card stopped at its content height (measured
-   626px of an 844px frame at 1568x940), so the pagination row hung mid-page and everything
-   under it was empty frame - the owner's "下面一大片空白". Same three-step recipe the report
-   family uses, stated here because the drift guard rightly refuses layout metrics on shell
-   selectors in a theme sheet: the content column is a flex column, the card takes the slack,
-   the table area takes the slack inside the card, and the footer lands on the frame bottom. */
-html:not(#bo-charcoal-off) body.report-body.online-users-page .report-shell .report-content{
-  display:flex!important;
-  flex-direction:column!important;
-  min-height:0!important;
-}
-html:not(#bo-charcoal-off) body.report-body.online-users-page .report-shell .report-content > .table-card{
-  flex:1 1 auto!important;
-  min-height:0!important;
-  display:flex!important;
-  flex-direction:column!important;
-}
-html:not(#bo-charcoal-off) body.report-body.online-users-page .report-shell .report-content > .table-card .table-wrap{
-  flex:1 1 auto!important;
-  min-height:0!important;
-}
-
-/* 0f. The app-style content frame (Live Chat). That page is a fixed-height app: the
-   inbox and the room are sized from the frame, so the frame has to be exactly the space
-   left under the topbar - the workspace scrolls, the frame does not.
-
-   The height used to be a guess: `height: calc(100vh - 60px)` while every page pins the
-   topbar to `--bo-header-h` (64px, bo-charcoal-shell.css). It was therefore 4px taller
-   than the box it sits in - `.report-main` clipped the excess silently and the card came
-   out 10px off the bottom of the viewport, against an 18px inset on the other three
-   sides. Nothing ties the number 60 to the header, so the two were free to drift apart
-   again the moment a theme changed the header height.
-
-   The frame is instead the remainder of a column: the topbar takes its own height and
-   the frame takes what is left, so it can not disagree with the header. Same idea the
-   Live Chat template page already uses for its frame.
-
-   The frame's four insets are then all 18px, which is the value the sides already
-   resolve to from 1024px up (0c above) and the top elsewhere. They are declared as one
-   `padding` rather than only a bottom because `reports.css` insets the frame to
-   16px / 14px below 1200px in a media query of its own - pinning just the bottom would
-   have left the frame lopsided the other way in that band. Below 1024px the page sheets
-   keep their own, smaller, insets and only the height is fixed here.
-
-   Both halves live here rather than one here and one in reports.css: below 992px the
-   workspace unstacks and the page scrolls again. */
-@media (min-width:992px){
-  body.report-body.livechat-bo-page .report-main{
-    display:flex!important;
-    flex-direction:column!important;
-    height:100vh!important;
-    overflow:hidden!important;
-  }
-  body.report-body.livechat-bo-page .report-main .report-topbar[data-bo-topbar]{
-    flex:0 0 auto!important;
-  }
-  body.report-body.livechat-bo-page .report-main .report-content{
-    display:flex!important;
-    flex-direction:column!important;
-    flex:1 1 auto!important;
-    height:auto!important;
-    min-height:0!important;
-    overflow:hidden!important;
-  }
-}
-@media (min-width:1024px){
-  body.report-body.livechat-bo-page .report-main .report-content{
-    padding:18px!important;
-  }
-}
-/* Below 992 the live chat used to let the page scroll, because the inbox and the thread were stacked and the
-   pair had to be taller than the screen. It is master-detail now (one pane at a time, livechat-executive.css),
-   so the frame keeps the same column it has above 992: the workspace fills the viewport and the thread scrolls
-   inside itself with the composer pinned to the bottom - measured at 768, the content column was 706px in a
-   1024px viewport, i.e. a third of the screen wasted under the composer. */
-@media (max-width:991.98px){
-  body.report-body.livechat-bo-page .report-main{
-    display:flex!important;
-    flex-direction:column!important;
-    height:100dvh!important;
-    overflow:hidden!important;
-  }
-  body.report-body.livechat-bo-page .report-main .report-topbar[data-bo-topbar]{
-    flex:0 0 auto!important;
-  }
-  body.report-body.livechat-bo-page .report-main .report-content{
-    display:flex!important;
-    flex-direction:column!important;
-    flex:1 1 auto!important;
-    height:auto!important;
-    min-height:0!important;
-    overflow:hidden!important;
-  }
-}
-
-/* 1. Page title */
-.report-topbar[data-bo-topbar] .user-title-wrap h1{
-  font-size:22px!important;
-  font-weight:900!important;
-  line-height:1.2!important;
-}
-
-/* 1b. Let a long title shrink and ellipsize instead of colliding with the account /
-   counter chips. Without this the title box cannot shrink (the inner div defaults to
-   min-width:auto), so "Member Wallet Listing" at 22px overlapped the action chips by
-   103px on a narrow window while the shorter "User Management" sat exactly on the edge.
-
-   Narrow widths only: the clip box lands on the last glyph's antialiased column, so
-   enabling it at every width shaved 1 pixel column off "User Management" on desktop
-   (6 pixels of 208000). Truncation is only needed where the title can actually run out
-   of room, which is what this breakpoint gates (1366, not 1023: an iPad held sideways is 1024 and a 13" laptop is 1280-1366, and "Reimbursement / Ad Claim -
-   Pending Approval" wrapped onto a second line at both, pushing the header taller); the 22px size itself is unchanged at
-   every width. */
-@media (max-width:1366px){
-  .report-topbar[data-bo-topbar] .user-title-wrap{min-width:0}
-  .report-topbar[data-bo-topbar] .user-title-wrap > div{min-width:0}
-  .report-topbar[data-bo-topbar] .user-title-wrap h1{
-    white-space:nowrap!important;
-    overflow:hidden!important;
-    text-overflow:ellipsis!important;
-  }
-}
-
-/* 2. Title icon: the round slot and the glyph inside it. The id-guard is needed because
-   a couple of page families set an 18px glyph through their own guarded chain. */
-html:not(#bo-charcoal-off) body.report-body .report-shell .report-main .report-topbar[data-bo-topbar] .user-title-icon{
-  width:36px!important;
-  height:36px!important;
-  flex:0 0 36px!important;
-  font-size:20px!important;
-}
-html:not(#bo-charcoal-off) body.report-body .report-shell .report-main .report-topbar[data-bo-topbar] .user-title-icon i{
-  font-size:20px!important;
-}
-
-/* Selector prefix used by the block below. The sheets that fight these values reach
-   id-guarded chains such as
-     html body.referral-page.report-body.bo-charcoal .report-actions > [data-bo-profile]
-       .bo-account-link::before                                        -> (0,6,2)
-   or the executive page scopes, so the prefix walks shell > main > header to reach
-   (0,7,2) before the property-specific part. */
-
-/* 2b. The right-hand cluster must not move when the page changes.
-   Only the title differs between pages, so the counters and the account chip have to
-   measure the same on every one of them. Today they do not, because each theme sheet
-   dresses the same markup differently and the block is right-aligned, so every pixel of
-   difference slides the whole cluster sideways (measured: the theme button sat at x=943
-   on User Management and x=928 on Member Wallet - a 15px jump on every page switch).
-   Two causes, both pinned here:
-     .bo-header-counter-text  padding-right 0 vs 2px   -> 2px per counter
-     .bo-account-link         min-width 0 vs 132px,
-                              height 40 vs 44px          -> up to 13px
-   Geometry only: colours and the sun/moon artwork stay with the theme sheets. */
-/* The selector walks the whole host chain on purpose: the sheets that fight this use
-   `body.bo-account-chip .report-actions > [data-bo-profile] .bo-account-link` (0,4,1)
-   with !important, so a shorter selector loses no matter what it declares. Five
-   class-level parts plus the attribute out-rank it. */
-/* The counter also has a compact variant in the executive sheets (icon 30px, gap 8,
-   padding 5px 9px, min-width 126) which made those pages 394px wide against 411px
-   elsewhere. Pin the reference box so all of them measure the same. */
-.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counters{
-  gap:10px!important;
-}
-.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter{
-  gap:10px!important;
-  padding:5px 14px 5px 5px!important;
-  min-width:118px!important;
-  height:48px!important;
-  border-radius:10px!important;
-}
-.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-icon{
-  width:38px!important;
-  height:38px!important;
-  font-size:18px!important;
-}
-.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-text{
-  padding-right:0!important;
-  gap:1px!important;
-  justify-content:center!important;
-}
-
-/* Line heights decide where the label and the number sit. Left to the themes they came
-   out as 19.8px / 18px / 18.9px for the number and the stack ended up 32.3px / 30.5px /
-   34.4px tall, so the chip's vertical centring put "MEMBERS 0" at a different height on
-   each page (roughly 1px, which is what the eye catches when paging). 1.1 and 1.05 are
-   the majority values - User Management, Referral, Brand, Promotion, Game, Casino,
-   Livechat and VIP Level all already resolve to them. */
-.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-text small{
-  line-height:1.05!important;
-  margin-top:0!important;
-  margin-bottom:0!important;
-}
-.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-text b{
-  line-height:1.1!important;
-  /* The executive sheets add margin-top:3px to the number, which pushed the stack down
-     by 3px on those pages. */
-  margin-top:0!important;
-  margin-bottom:0!important;
-}
-.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-text small{
-  font-size:11px!important;
-  font-weight:800!important;
-  letter-spacing:.66px!important;
-  /* The executive sheets left the label in title case ("Members"), the rest use the
-     locked uppercase treatment; besides looking different it is 4.5px narrower per
-     counter, which moved the cluster on those pages. */
-  text-transform:uppercase!important;
-}
-.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-text b{
-  font-size:18px!important;
-  font-weight:800!important;
-}
-.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-account-link{
-  min-width:132px!important;
-  height:44px!important;
-  border-radius:14px!important;
-  padding:0!important;
-  /* The wallet theme adds margin-left:4px here and the charcoal theme does not, so the
-     whole cluster sat 4px further left on those pages. */
-  margin:0!important;
-}
-
-/* 2c. One divider slot, always reserved. The sheets already do this for the provider
-   family - "Divider slot always reserved - only tint changes by theme (prevents cluster
-   shift)" - so the rule is established, it just was not applied everywhere. Referral
-   moved the same divider inside the account link (host ::before set to content:none),
-   which adds a second flex gap inside the link and silently shifted the whole cluster.
-   Put it back on the host with the same 1px/28px box the other sheets use; only the tint
-   stays theme-owned. */
-.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions > [data-bo-profile]::before{
-  content:""!important;
-  display:block!important;
-  width:1px!important;
-  height:28px!important;
-  flex:0 0 1px!important;
-  margin:0!important;
-  align-self:center!important;
-  background:rgba(24,25,28,.12)!important;
-}
-html[data-bo-theme="dark"] .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions > [data-bo-profile]::before{
-  background:rgba(255,255,255,.12)!important;
-}
-.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions > [data-bo-profile] .bo-account-link::before{
-  content:none!important;
-}
-
-/* auth.js renders a hidden gear after the avatar. Bootstrap's `.bi` sets
-   display:inline-block, which out-ranks the UA sheet's [hidden]{display:none}, so on the
-   themes that never re-hide it the gear still eats a flex gap + margin (14px) and makes
-   the account chip wider than on the themes that do. Re-hide it so every adopted page
-   measures the same. */
-.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-account-setting-icon[hidden]{
-  display:none!important;
-}
-
-/* 2e. The rail's account card. The account block leaves the header and takes the "Backoffice"
-   title's place at the top of the rail, left of the rail toggle - where the Main panel keeps it
-   (main-sidebar-account.css: `[avatar] name / role`, avatar 34px radius 10 #D97706 carrying a 16px
-   white glyph, name 14px/800, role 11px/600 tracked). Owner: "bo右上角的名字和icon要跟main的一样",
-   then, pointing at the rail's own toggle, "位置不是在sidebar 的收起的按键的左边 与main的页面一样？".
-   The scope is every BO body (`body.report-body`), not `bo-charcoal`: the wallet theme's pages
-   (member-deposit, member-wallet, wallet-ledger, payment-method, bank-deposit-usage, bulk-adjustment
-   ...) carry `bo-wallet-tx` instead of `bo-charcoal` and are BO pages too - scoped to `bo-charcoal`
-   the audit showed the card arriving with reports.css's base avatar (30px circle) and the brand
-   row's own 15px/800 text. The extra `.report-sidebar` in every selector is what out-specifies the
-   chip's own unscoped numbers in bo-charcoal-shell.css (`body.report-body.bo-charcoal
-   .report-avatar` and the two text classes, 0,3,1 with !important), which were written for the
-   header's chip and still match the moved node.
-   The card takes the brand row's free space, which is what keeps the rail toggle in its right-hand
-   slot; collapsed it travels above Logout as the avatar alone, because reports.css hides every
-   `.report-brand > div:not(.logo)` at 72px. Colours stay this shell's own: the Main rail's name
-   colour (#6B360C) is tuned for that rail, not this one. */
-body.report-body .report-sidebar .bo-rail-account{
-  display:flex!important;
-  align-items:center!important;
-  min-width:0!important;
-  max-width:100%!important;
-  flex:1 1 auto!important;
-}
-body.report-body .report-sidebar .bo-rail-account .bo-account-link,
-body.report-body .report-sidebar .bo-rail-account .bo-account-link:hover,
-body.report-body .report-sidebar .bo-rail-account .bo-account-link:focus,
-body.report-body .report-sidebar .bo-rail-account .bo-account-link:focus-visible,
-body.report-body .report-sidebar .bo-rail-account .bo-account-link:active{
-  /* `display:flex` is load-bearing, not decoration: `order` below only applies to flex/grid items,
-     and outside the header's host the chip's own stylesheet does not set it - without this the link
-     is a block box, the two orders are ignored, and the block renders in DOM order (avatar on the
-     RIGHT, measured x=104 against the meta at x=14). */
-  display:flex!important;
-  flex-direction:row!important;
-  min-width:0!important;
-  height:auto!important;
-  padding:0!important;
-  border:0!important;
-  border-radius:0!important;
-  background:transparent!important;
-  box-shadow:none!important;
-  gap:10px!important;
-  align-items:center!important;
-  /* The rail's own link rules are `a` rules: without this the whole block inherits the rail's
-     decoration and colour instead of the chip's (owner's screenshot: "JK Master Admin" underlined). */
-  text-decoration:none!important;
-  color:inherit!important;
-}
-body.report-body .report-sidebar .bo-rail-account .bo-account-meta{
-  /* Stated here rather than inherited from the header's chip: that rule is scoped to the topbar
-     host, so in the rail the stack fell back to a row and the name and role sat side by side
-     (owner's screenshot). Everything the block needs is declared in this sheet. */
-  display:flex!important;
-  flex-direction:column!important;
-  justify-content:center!important;
-  gap:2px!important;
-  line-height:1.15!important;
-  order:2!important;
-  align-items:flex-start!important;
-  text-align:left!important;
-  /* The label can be longer than the slot ("Master Admin", "Brand Owner"): the stack has to be able
-     to shrink and ellipsize rather than spill under the avatar - measured cramped on a real
-     account whose role label is longer than the one the stub carries. */
-  min-width:0!important;
-  overflow:hidden!important;
-}
-body.report-body .report-sidebar .bo-rail-account .bo-account-link .report-avatar{
-  order:1!important;
-  width:34px!important;height:34px!important;min-width:34px!important;flex:0 0 34px!important;
-  border-radius:10px!important;
-  background:#D97706!important;
-  color:#FFFFFF!important;
-}
-body.report-body .report-sidebar .bo-rail-account .bo-account-link .report-avatar i,
-body.report-body .report-sidebar .bo-rail-account .bo-account-link .report-avatar::before{
-  font-size:16px!important;
-  color:#FFFFFF!important;
-  /* One glyph box on every page. Without these the glyph took whatever the page sheet gave the avatar:
-     reports.css `.report-avatar{font-weight:900}` (a faux-bold person on pages without bo-charcoal, e.g.
-     Deposit Approval) and the inherited 18.4px line box (the glyph sat ~1px lower than on a bo-charcoal page,
-     where bo-charcoal-shell.css zeroes the avatar's font and line-height). */
-  font-weight:400!important;
-  line-height:16px!important;
-}
-body.report-body .report-sidebar .bo-rail-account .bo-account-link .report-avatar{
-  font-size:0!important;
-  font-weight:400!important;
-  line-height:0!important;
-}
-/* Hover: the same darker amber bo-charcoal pages already state (bo-charcoal-shell.css), so a page without that
-   class no longer lacks the response. */
-body.report-body .report-sidebar .bo-rail-account .bo-account-link:hover .report-avatar{
-  background:#B45309!important;
-}
-/* The account avatar has ONE home in a BO page: the rail. auth.js still paints the chip into the header host first
-   (a 40px avatar at the top right) and bo-account-chip.js moves the link into the rail a frame or more later - and
-   auth.js re-paints that host on every /me refresh, so the avatar flashed at the top right and jumped across to the
-   rail on every load, swap and refresh (the "icon jumps" report). The header copy is never meant to be seen in this
-   shell, so it is not drawn: the script still finds and moves it (display:none does not hide it from
-   querySelector / appendChild), and the pending-operation counters beside it are untouched. Once moved it is
-   inside .bo-rail-account, which neither selector matches. `body.report-body` is in the selector because
-   bo-charcoal-shell.css states `display:inline-flex!important` on `body.report-body.bo-charcoal .report-actions
-   .bo-account-link` (one class lighter than this without it), and most BO pages carry bo-charcoal; bo-charcoal-legacy.css
-   states it again per page (`html body.referral-page.report-body.bo-charcoal .report-actions > [data-bo-profile]
-   .bo-account-link`, six classes), so this carries an ID step (`:not(#...)`, an id nothing has) and wins over any
-   class-only display rule a page sheet adds. */
-html[data-bo-shell="bo"]:not(#bo-account-header-copy-off) body.report-body .report-actions .bo-account-link,
-html[data-bo-shell="bo"]:not(#bo-account-header-copy-off) body.report-body [data-bo-profile] .bo-account-link{
-  display:none!important;
-}
-body.report-body .report-sidebar .bo-rail-account .bo-account-name{
-  max-width:100%!important;
-  overflow:hidden!important;
-  text-overflow:ellipsis!important;
-  font-size:14px!important;
-  font-weight:800!important;
-  letter-spacing:0!important;
-  color:#18191C!important;
-}
-body.report-body .report-sidebar .bo-rail-account .bo-account-role{
-  max-width:100%!important;
-  overflow:hidden!important;
-  text-overflow:ellipsis!important;
-  font-family:inherit!important;
-  font-size:11px!important;
-  font-weight:600!important;
-  letter-spacing:.02em!important;
-  color:#78716C!important;
-}
-html[data-bo-theme="dark"] body.report-body .report-sidebar .bo-rail-account .bo-account-name{
-  color:#F5F5F4!important;
-}
-html[data-bo-theme="dark"] body.report-body .report-sidebar .bo-rail-account .bo-account-role{
-  color:#D4D4D8!important;
-}
-
-/* Collapsed rail: the brand row is the toggle's alone, so the card sits above Logout as the avatar
-   only - the same two homes the Main panel's card has. */
-body.report-body.sidebar-mini .report-sidebar .bo-rail-account{
-  justify-content:center!important;
-  flex:0 0 auto!important;
-  padding:10px 0!important;
-}
-body.report-body.sidebar-mini .report-sidebar .bo-rail-account .bo-account-meta{
-  display:none!important;
-}
-body.report-body.sidebar-mini .report-sidebar .bo-rail-account .bo-account-link{
-  justify-content:center!important;
-}
-
-/* 2d. Counter icon slot: every counter carries a 1px outline in its own hue, and the
-   fill is the same hue a step lighter. Only the wallet theme shipped the outline, so on
-   the other pages the three icon squares looked flat - that is the "边框" difference.
-   Tints are pinned per counter type for light and dark so the three read identically on
-   every adopted page; box-sizing keeps the 38px slot unchanged when the border lands. */
-.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-icon{
-  box-sizing:border-box!important;
-  border-radius:8px!important;
-  border-width:1px!important;
-  border-style:solid!important;
-}
-.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-icon.members{
-  background:rgba(24,25,28,.08)!important;
-  border-color:rgba(24,25,28,.12)!important;
-}
-.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-icon.deposit{
-  background:rgba(217,119,6,.18)!important;
-  border-color:rgba(217,119,6,.28)!important;
-}
-.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-icon.withdraw{
-  background:rgba(180,83,9,.14)!important;
-  border-color:rgba(180,83,9,.28)!important;
-}
-html[data-bo-theme="dark"] .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-icon.members{
-  background:rgba(245,245,244,.10)!important;
-  border-color:rgba(245,245,244,.18)!important;
-}
-html[data-bo-theme="dark"] .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-icon.deposit{
-  background:rgba(245,158,11,.20)!important;
-  border-color:rgba(245,158,11,.34)!important;
-}
-html[data-bo-theme="dark"] .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-icon.withdraw{
-  background:rgba(217,119,6,.18)!important;
-  border-color:rgba(217,119,6,.32)!important;
-}
-
-/* 3. Theme toggle slot + glyph (bo-theme.js keeps the sun/moon state) */
-.report-topbar[data-bo-topbar] .bo-theme-btn{
-  width:36px!important;
-  height:36px!important;
-  min-width:36px!important;
-  max-width:36px!important;
-  flex:0 0 36px!important;
-}
-.report-topbar[data-bo-topbar] .bo-theme-btn i[data-theme-icon]{
-  font-size:18px!important;
-  line-height:1!important;
-}
-/* 3b. The same glyph slot on every page. bo-wallet-transaction-amber.css (every bo-wallet-tx page: Provider Transactions, Member Wallet, Wallet Ledger,
-   ...) positions the icon with inset:0 only and, unlike bo-charcoal-shell.css, sets neither width/height:100% nor transform:none, so after the
-   sun/moon swap animation (bo-theme.js animates a transform on it) the glyph could stay offset inside the 36px overflow:hidden slot - the half-cut
-   moon on Provider Transactions next to the intact one on Provider Bet Report. One rule for both, above either sheet. */
-html body .report-topbar[data-bo-topbar] .bo-theme-btn i[data-theme-icon]{
-  position:absolute!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  display:grid!important;
-  place-items:center!important;
-  margin:0!important;
-  padding:0!important;
-  transform:none!important;
-}
-
-/* Deliberately no mobile step: one size at every width is what makes the header
-   consistent, and 1b above removes the reason the sheets used to shrink it (an
-   unshrinkable title). If a smaller phone size is preferred, add one breakpoint here -
-   it is a one-line change. */
-
-/* Rail typography: the bundled Inter, not the system face at 900.
-   Inter VF is shipped by reports.css (@font-face, weight 100-900); naming it first here gives the rail a
-   real 900 with open counters instead of the window's own heavy face, whose D/P/R close up at 14px
-   (owner: "还是有点被吃掉的感觉"). Same declaration as reports.css and agent-portal.css - the three
-   sheets are loaded by different sets of pages, so one copy each is what makes every page agree.
-   font-family is not a drift-guard metric property, so this adds no shell drift. */
-html body.report-body .report-shell .report-sidebar .report-nav > a,
-html body.report-body .report-shell .report-sidebar .report-nav > a span,
-html body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn,
-html body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn span,
-html body.report-body .report-shell .report-sidebar .report-nav .report-sub,
-html body.report-body .report-shell .report-sidebar .report-nav .report-sub span,
-html body.report-body .report-shell .report-sidebar .bo-sidebar-logout,
-html body.report-body .report-shell .report-sidebar .bo-sidebar-logout span{
-  font-family:Inter, ui-sans-serif, "Segoe UI", system-ui, sans-serif!important;
-}
-
-/* Rail typography: the label spans need the row line-height */
-html body.report-body .report-shell .report-sidebar .report-nav > a span,
-html body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn span,
-html body.report-body .report-shell .report-sidebar .report-nav .report-sub span{
-  /* the same line-height the portal had to take: 14px of Inter needs more than the inherited
-     14 x 1.2 = 16.8px box, or the capitals are clipped at the top (bo-shell.css gives the row
-     21px but the label spans never received it). */
-  line-height:21px!important;
-}
-
-  /* The label span must not carry a rounded, clipping box. bo-charcoal-shell.css gives the rail's
-     label spans border-radius:10px (copied from the active-row pill, which belongs on the ROW), and
-     reports.css gives them overflow:hidden - so a 21px-tall text box was being rounded by 10px, and its
-     four corners were cutting the glyphs. Measured on the agent rail before this: the span itself
-     reported border-radius 10px + overflow hidden while the anchor reported overflow visible, which is
-     why the row looked fine and the letters did not (owner: "好像是border radius的问题"). */
-html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav > a span,
-html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn span,
-html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .report-sub span{
-  border-radius:0!important;
-}
-
-/* ============================================================================
-   Focus mode: while the Payment Gateway editor is open the content frame hands
-   its padding to the editor's own card, so the bottom action bar can sit flush
-   with the frame's edges the way the reference form's bar does
-   (agent-detail.html?new=1: FOOTER.mac-footer-actions spans the full 1246px and
-   touches the viewport's bottom). Measured before: the bar was inset to 1210px
-   with an 18px strip to its left and right and a 16px gap under it. Expressed
-   here rather than in the page sheet because a `.report-content` padding is a
-   shell metric, and bo-shell.css is the one place this project allows to state
-   those.
-   ========================================================================= */
-/* The inset this has to beat is stated by three rules, all with `!important`: the base frame
-   (`padding:18px 18px 22px`), a two-id guard that pins the sides to 18px, and the module's own
-   `padding-bottom:16px`. Read from the browser's matched styles on `?edit=1`, not guessed. So the
-   selector mirrors the guarded one and adds this page's state class - the same move bo-shell.css
-   already documents above ("mirroring that selector and loading later wins the tie") - and states
-   the padding with `!important` because every rule it replaces does. */
-html:not(#bo-charcoal-off):not(#bo-charcoal-legacy) body.report-body.bo-wallet-tx.pg-editing .report-shell .report-main .report-content{
-  padding-top:8px!important;padding-right:0!important;padding-bottom:0!important;padding-left:0!important}
-html:not(#bo-charcoal-off):not(#bo-charcoal-legacy) body.report-body.bo-wallet-tx.pg-editing .report-shell .report-main .report-content .pg-editor-card{
-  margin:0 18px 16px}
-
-/* Top-up Reward is a scrolling edit page: the shell already clips .report-main / .report-content, so the page
-   needs the frame turned into a column - scroll area above, the 73px action bar below it. This is a shell
-   metric on a shell selector, which is why it lives here rather than in the page's own sheet.
-
-   The padding needs the same guard as the gateway's focus mode: the frame's inset is declared by rules that
-   carry `!important`, so a plain `padding:0` loses - measured on this page, the frame computed
-   `12px 18px 22px` and the action bar therefore sat 18px in from each side (owner: "操作区没有定死跟sidebar对齐").
-   The selector mirrors the guarded shape and adds this page's body class; the inset itself is handed to the
-   scroll area, which carries the page's own 16/24 padding. */
-html:not(#bo-charcoal-off):not(#bo-charcoal-legacy) body.report-body.topup-reward-page .report-shell .report-main .report-content{
-  padding-top:0!important;padding-right:0!important;padding-bottom:0!important;padding-left:0!important}
-body.report-body.topup-reward-page .report-content{
-  display:flex;
-  flex-direction:column;
-  min-height:0;
-}
-
-/* Top-up Reward keeps the whole shell inside the viewport, so its action bar is on screen from the first paint
-   rather than at the end of the document (owner: "我的操作区要fixed死呀 我不想划到底部才看见"). The shapes are
-   frontend-display.html's own, with this page's class - that page had to declare the same four rules inline for
-   the same reason. The frame becomes the column; the scroll area inside it is the only thing that scrolls. */
-html:has(body.topup-reward-page),
-body.report-body.topup-reward-page{
-  height:100%!important;
-  overflow:hidden!important;
-}
-body.report-body.topup-reward-page .report-shell{
-  height:100dvh!important;
-  max-height:100dvh!important;
-  overflow:hidden!important;
-}
-body.report-body.topup-reward-page .report-main{
-  display:flex!important;
-  flex-direction:column!important;
-  height:100dvh!important;
-  max-height:100dvh!important;
-  overflow:hidden!important;
-}
-body.report-body.topup-reward-page .report-content{
-  flex:1 1 auto!important;
-  min-height:0!important;
-}
-
-/* 2c. The counter chips below 1200px. reports.css turns them into compact icon chips (42px wide, the label hidden, the
-   count as a small badge on the corner), but the reference box pinned above (min-width:118, padding 5/14/5/5, the 18px
-   number) is !important and wins at every width: the chip stayed 118px wide with the icon on the left and an empty
-   right half, and the count became an 18px badge that stuck out above the header and was cut off at its edge (it
-   showed as a clipped "1" / "0"). From 1199.98px down the chip is the 48px square the icon needs, the label stays
-   hidden and the count is a small badge INSIDE the corner, so nothing is clipped. At and above 1200px the full
-   chip (icon + label + number) is unchanged. */
-@media (max-width:1199.98px){
-  .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter{
-    min-width:48px!important;
-    width:48px!important;
-    padding:5px!important;
-    justify-content:center!important;
-  }
-  .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-text{
-    position:absolute!important;
-    top:3px!important;
-    right:3px!important;
-    display:block!important;
-    width:auto!important;
-    height:auto!important;
-    overflow:visible!important;
-    padding:0!important;
-  }
-  .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-text small{display:none!important}
-  .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-text b{
-    display:grid!important;
-    place-items:center!important;
-    min-width:16px!important;
-    height:16px!important;
-    padding:0 4px!important;
-    border-radius:999px!important;
-    font-size:10px!important;
-    line-height:1!important;
-  }
-}
-
-/* 2d. Deposit / Withdraw Approval on a tablet (<=1100px): the content frame scrolls (member-approval-tablet.css) and the
-   table card keeps its own height instead of being squeezed into what the bank cards leave over. */
-@media (max-width:1100px){
-  html:not(#bo-ma-off):not(#bo-ma-off-2) body:not(#bo-ma-off-3).bo-wallet-tx.deposit-approval-page .report-content > .table-card,
-  html:not(#bo-ma-off):not(#bo-ma-off-2) body:not(#bo-ma-off-3).bo-wallet-tx.withdraw-approval-page .report-content > .table-card{flex:0 0 auto!important;min-height:480px!important}
-}
-
-/* 2e. Casino Deposit/Withdraw and Win/Lose reports below 992px: the date strip is the top half of ONE card with the table
-   (colours/borders in casino-dw-fit.css / win-lose-fit.css); its padding is a layout metric, so it lives here. */
-@media (max-width:991.98px){
-  html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] .report-content > .filter-card:has(+ .table-card),
-  html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .report-content > .filter-card:has(+ .table-card),
-  html:not(#bo-cp-off):not(#bo-cp-off-2) body:not(#bo-cp-off-3).bo-report-family[data-report-page="provider"] .report-content > .filter-card:has(+ .table-card),
-  html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page .report-content > .perf-filter-card:has(+ .table-card),
-  html:not(#bo-mt-off):not(#bo-mt-off-2) body:not(#bo-mt-off-3):not(#bo-mt-off-4):not(#bo-mt-off-5).member-top-deposit-report-page .report-content > .filter-card:has(+ .table-card),
-  html:not(#bo-pb-off):not(#bo-pb-off-2) body:not(#bo-pb-off-3):not(#bo-pb-off-4).provider-bet-report-page .report-content > .filter-card:has(+ .table-card){padding:12px 16px!important}
-}
-
-/* --------------------------------------------------------------------------
-   2f. One table height on every report page below 992px.
-   From 992px the family is a viewport-locked column (bo-report-family.css section 14): the strip
-   and the filter keep their height, the table card is flex:1 and takes the rest, rows scroll
-   inside it, so 3 rows, 20 rows and "No records" are the same size and the footer never moves.
-   Below 992px the family fell back to plain block flow, so the card was as tall as its rows: it
-   shrank to ~150px on an empty result and grew when data arrived (Agent / Transaction pages had
-   already opted into the locked column themselves, which is why they held a height and the
-   others did not). The same locked column now applies at every width; the card is never under
-   360px, and a short window scrolls the content column instead of squeezing the card.
-   -------------------------------------------------------------------------- */
-@media (max-width:991.98px){
-  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-shell{height:100dvh;min-height:0;overflow:hidden}
-  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-main{height:100dvh;max-height:100dvh;display:flex;flex-direction:column;overflow:hidden;min-width:0}
-  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:0;overflow:hidden;overflow-y:auto}
-  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > *{margin-bottom:0!important;flex:0 0 auto}
-  /* 16px between blocks as a margin, not a flex gap: a gap cannot be cancelled, and the filter strip + table card are ONE card that the page sheets join. */
-  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > * + *{margin-top:16px!important}
-  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > :is(.filter-card,.perf-filter-card,.ops-filter,.bo-filter-row) + .table-card{margin-top:0!important}
-  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > .table-card{flex:1 1 auto;min-height:360px;display:flex;flex-direction:column}
-  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .table-card > .table-wrap{flex:1 1 auto;min-height:0;overflow:auto}
-  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .table-card > .mad-footer{flex:0 0 auto}
-  /* The same column for list pages that are not in the report family but keep their table card as a direct child of the content (Admin Login Log,
-     Admin Operation Log, Role, IP Whitelist ...): they stayed block flow below 992px, so a 2-row list left a 250-425px empty band under the card.
-     Below 992px only; the page sheets that already lock their own column are not :has()-matched because their card is not a direct child. */
-  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-shell:has(> .report-main > .report-content > .table-card){height:100dvh;min-height:0;overflow:hidden}
-  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-main:has(> .report-content > .table-card){height:100dvh;max-height:100dvh;display:flex;flex-direction:column;overflow:hidden;min-width:0}
-  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-content:has(> .table-card){flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:0;overflow:hidden;overflow-y:auto}
-  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-content:has(> .table-card) > *{margin-bottom:0!important;flex:0 0 auto}
-  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-content:has(> .table-card) > * + *{margin-top:16px!important}
-  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-content:has(> .table-card) > :is(.filter-card,.perf-filter-card,.ops-filter,.bo-filter-row) + .table-card{margin-top:0!important}
-  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-content:has(> .table-card) > .table-card{flex:1 0 auto;min-height:360px;display:flex;flex-direction:column}
-  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-content:has(> .table-card) > .table-card:not(:last-child){flex:0 0 auto;min-height:0}
-  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-content:has(> .table-card) > .table-card > .table-wrap{flex:1 1 auto;min-height:0;overflow:auto}
-}
-
-/* 0c-3. Header and module row on tablet widths (576-991px), on every page that carries a module tab row. Measured on the Design pages at
-   731px, they disagreed with each other: the header gutter was 12px on Banner Management / Image To URL and 20px on the rest, the hamburger
-   42px wide on three pages and 36px on the others, the gap from the header to the tab row 0 (Frontend Display) / 12 / 14 / 16px (0c-1 above now
-   makes it 8px from 576px up, the value desktop already had), and the gap below the row 12px except 26px (Page Customize) and 28px
-   (Image To URL), whose content columns add their own 14/16px flex gap on top of the row's margin. One value each: 20px gutter, 36px hamburger,
-   8px above the row, 12px below it. */
-@media (min-width:576px) and (max-width:991.98px){
-  html:not(#bo-charcoal-off) body.report-body .report-shell .report-main:has(> .report-content > .bo-module-tabs) > .report-topbar{
-    padding-left:20px!important;padding-right:20px!important;
-  }
-  html:not(#bo-charcoal-off) body.report-body .report-shell .report-main:has(> .report-content > .bo-module-tabs) > .report-topbar .hamb{
-    width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;
-  }
-  html:not(#bo-charcoal-off) body.report-body:is(.page-customize-page,.image-to-url-page) .report-content > .bo-module-tabs{
-    margin-bottom:0!important;
-  }
-  html:not(#bo-charcoal-off) body.report-body:is(.page-customize-page,.image-to-url-page) .report-content:has(> .bo-module-tabs){
-    row-gap:12px!important;gap:12px!important;
-  }
-  /* Game Management: Provider Transactions (a bo-wallet-tx page, a 16px flex column) put 12px of row margin on top of that gap = 28px under the
-     row; Provider Bet Report (report family) got 16 from its own spacing rule. Both are 12px, like Provider / Sessions / Category / Game. */
-  html:not(#bo-charcoal-off) body.report-body.bo-wallet-tx:not(.deposit-approval-page):not(.withdraw-approval-page) .report-content > .bo-module-tabs{
-    margin-bottom:-4px!important;
-  }
-  html body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > .bo-module-tabs + *{
-    margin-top:12px!important;
-  }
-}
-
-/* 2g. The report footer (Show N entries | count | pager) on a phone (<=575px). It is a three-track grid / one-line flex sized for a laptop: on a 390px
-   screen the count was drawn over the pager (up to 286px of overlap on Promotion and Transaction reports) or the pager ran past the card (Member Top
-   Deposit, Agent Settlement, Agent Commission, Agent Performance). Show N and the count share the first line, the pager takes its own line below,
-   centred, and may wrap. Every .mad-footer, whatever page it is on. */
-@media (max-width:575.98px){
-  html:not(#bo-pf-off-1):not(#bo-pf-off-2):not(#bo-pf-off-3):not(#bo-pf-off-4):not(#bo-pf-off-5):not(#bo-pf-off-6):not(#bo-pf-off-7) body.report-body .mad-footer{
-    display:flex!important;flex-wrap:wrap!important;align-items:center!important;justify-content:space-between!important;gap:8px 12px!important;
-    grid-template-columns:none!important;
-  }
-  html:not(#bo-pf-off-1):not(#bo-pf-off-2):not(#bo-pf-off-3):not(#bo-pf-off-4):not(#bo-pf-off-5):not(#bo-pf-off-6):not(#bo-pf-off-7) body.report-body .mad-footer > .mad-footer-info,
-  html:not(#bo-pf-off-1):not(#bo-pf-off-2):not(#bo-pf-off-3):not(#bo-pf-off-4):not(#bo-pf-off-5):not(#bo-pf-off-6):not(#bo-pf-off-7) body.report-body .mad-footer > .table-info{flex:1 1 auto!important;min-width:0!important;padding:0!important;text-align:right!important;white-space:normal!important}
-  html:not(#bo-pf-off-1):not(#bo-pf-off-2):not(#bo-pf-off-3):not(#bo-pf-off-4):not(#bo-pf-off-5):not(#bo-pf-off-6):not(#bo-pf-off-7) body.report-body .mad-footer > .mad-pager,
-  html:not(#bo-pf-off-1):not(#bo-pf-off-2):not(#bo-pf-off-3):not(#bo-pf-off-4):not(#bo-pf-off-5):not(#bo-pf-off-6):not(#bo-pf-off-7) body.report-body .mad-footer > .pagination-clean,
-  html:not(#bo-pf-off-1):not(#bo-pf-off-2):not(#bo-pf-off-3):not(#bo-pf-off-4):not(#bo-pf-off-5):not(#bo-pf-off-6):not(#bo-pf-off-7) body.report-body .mad-footer > nav{flex:1 1 100%!important;justify-content:center!important;flex-wrap:wrap!important;max-width:100%!important}
-}
-
-/* 2h. Small-screen fit rules that used to sit in the page sheets.
-   ------------------------------------------------------------------------------------------
-   AGENTS.md puts every layout metric of the shell in this file; these ten rules were written next to
-   the pages they fix (agent-kpi-fit.css, bo-small-screen-scroll.css, promotion-log-fit.css,
-   rebate-management-fit.css, referral-fit.css) and the drift guard refused them there: 32 declarations
-   on .report-content / .table-card / .table-wrap / .rebate-chrome across those five sheets.
-   Moved verbatim - same selectors (page-scoped by their body class), same media queries, same
-   !important - so the rendered result is unchanged; measured before and after on eleven pages at 1024
-   and 768 (.report-content overflow/scrollHeight, .table-card height, .table-wrap height). */
-
-/* 2h. Small-screen fit rules that used to live in the page sheets.
-   ------------------------------------------------------------------------------------------
-   These 14 rules sat next to the pages they fix (agent-kpi-fit.css, bo-small-screen-scroll.css,
-   promotion-log-fit.css, rebate-management-fit.css, referral-fit.css) and the drift guard refused them
-   there: 32 declarations on .report-content / .table-card / .table-wrap / .rebate-chrome in sheets that
-   do not own the shell. Moved verbatim - same selectors (page-scoped by their own body class), same
-   media queries, same !important - so the rendering is unchanged; measured before and after on eleven
-   pages at 1024 and 768 (.report-content overflow/scrollHeight, .table-card height, .table-wrap height). */
-@media (max-width:1260px){
-  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-commission-page,.agent-claim-page,.agent-payout-page,.agent-management-page,.agent-promotion-page) .report-content{
-    overflow-y:auto!important;
-    overflow-x:hidden!important;
-    min-height:0!important;
-  }
-  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-commission-page,.agent-claim-page,.agent-payout-page,.agent-management-page,.agent-promotion-page) .report-content > .table-card{
-    flex:1 0 auto!important;
-    height:auto!important;
-    min-height:480px!important;
-    max-height:none!important;
-  }
-  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-commission-page,.agent-claim-page,.agent-payout-page,.agent-management-page,.agent-promotion-page) .report-content > .table-card .table-wrap{
-    flex:1 1 auto!important;
-    min-height:300px!important;
-  }
-  html:not(#bo-ss-1):not(#bo-ss-2) body:not(#bo-ss-3).bo-ss-scroll .report-content{
-    overflow-y:auto!important;
-    overflow-x:hidden!important;
-    min-height:0!important;
-  }
-  html:not(#bo-ss-1):not(#bo-ss-2) body:not(#bo-ss-3).bo-ss-scroll .report-content > .table-card{
-    flex:1 0 auto!important;
-    height:auto!important;
-    min-height:480px!important;
-    max-height:none!important;
-  }
-  html:not(#bo-ss-1):not(#bo-ss-2) body:not(#bo-ss-3).bo-ss-scroll .report-content > .table-card .table-wrap{
-    flex:1 1 auto!important;
-    min-height:300px!important;
-  }
-  html:not(#bo-pl-1):not(#bo-pl-2):not(#bo-pl-4):not(#bo-pl-5) body:not(#bo-pl-3):not(#bo-pl-6):not(#bo-pl-7).promotion-log-page .report-content{
-    overflow-y:auto!important;
-    overflow-x:hidden!important;
-    min-height:0!important;
-  }
-  html:not(#bo-pl-1):not(#bo-pl-2):not(#bo-pl-4):not(#bo-pl-5) body:not(#bo-pl-3):not(#bo-pl-6):not(#bo-pl-7).promotion-log-page .report-content > .table-wrap,
-  html:not(#bo-pl-1):not(#bo-pl-2):not(#bo-pl-4):not(#bo-pl-5) body:not(#bo-pl-3):not(#bo-pl-6):not(#bo-pl-7).promotion-log-page .table-card .table-wrap{
-    flex:0 0 auto!important;
-    min-height:420px!important;
-  }
-  html:not(#bo-pl-1):not(#bo-pl-2):not(#bo-pl-4):not(#bo-pl-5) body:not(#bo-pl-3):not(#bo-pl-6):not(#bo-pl-7).promotion-log-page .report-content > .table-card{
-    flex:1 0 auto!important;
-    height:auto!important;
-  }
-  html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .report-content{
-    overflow-y:auto!important;
-    overflow-x:hidden!important;
-    min-height:0!important;
-  }
-  html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .report-content > .rebate-chrome{
-    flex:1 0 auto!important;
-    height:auto!important;
-    max-height:none!important;
-    min-height:520px!important;
-  }
-  html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .report-content > .standard-list-card:not(.rebate-worker-card):has(.standard-table-wrap,.table-wrap){
-    flex:1 0 auto!important;
-    height:auto!important;
-    max-height:none!important;
-    min-height:520px!important;
-  }
-  html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .report-content > .standard-list-card:not(.rebate-worker-card) .standard-table-wrap{
-    min-height:300px!important;
-    max-height:min(560px,72vh)!important;
-    flex:1 1 auto!important;
-    overflow:auto!important;
-  }
-}
-@media (max-width:1290px){
-  html:not(#bo-rf-1):not(#bo-rf-2) body:not(#bo-rf-3).referral-page .report-content{
-    overflow-y:auto!important;
-    overflow-x:hidden!important;
-    min-height:0!important;
-  }
-}
+/* Canonical topbar typography for pages that adopted the shared renderer
+   (assets/js/bo-topbar.js). Scoped to [data-bo-topbar] so it can never reach a
+   page that has not opted in - the other ~146 pages keep their current sheets.
+
+   WHAT IT LOCKS (and only this): the three type sizes the owner asked to unify.
+   Nothing here touches height, padding, background or colour - those stay owned by
+   the per-theme sheets, so real variants (e.g. `.admin-page-topbar{min-height:62px}`)
+   keep working.
+
+   Chosen values - these are the majority in this repo and what the adopted pages
+   already compute, so adopting the sheet is a no-op for them:
+     h1                22px / 900     (was: 26px/900 in reports*.css, 20px/800,
+                                       18px/800 in main-admin-detail, 28px/800 in
+                                       bo-charcoal-cms, 17px in the *-md.css suite)
+     .user-title-icon  36x36 box, 20px glyph
+                                      (was: 40x40/18px, 38x38/19px, 36x36/18px)
+     theme button      36x36 box, 18px glyph
+                                      (was: 40x40/17px, 44x44)
+
+   Values are written with !important because every one of those sheets also
+   declares them with !important; the specificity here adds the [data-bo-topbar]
+   attribute so this wins on adopted pages only.
+
+   The reference geometry the component renders into (measured, unchanged by this
+   sheet, kept here so phase 3 has the spec in one place):
+     .report-topbar      display:flex  gap:12px  padding:0 20px  min-height:64px
+                         border-bottom:1px solid  background:#FFF8EB
+     .user-title-wrap    display:flex  gap:12px  align-items:center
+     .report-actions     display:flex  gap:12px  align-items:center  margin-left:auto
+*/
+
+/* 0. Same horizontal padding everywhere. A few page families inset the header 18px
+   instead of 20px, which moves the whole right-hand cluster 2px sideways on a page
+   switch. Desktop only - the narrow layout has its own padding and is deliberately
+   left alone. */
+/* The id-guard is the same idiom the theme sheets use (`:not(#bo-charcoal-off)`). A
+   plain class chain tied with a later sheet here and lost, so this rule needs to sit
+   above them rather than beside them. */
+@media (min-width:1024px){
+  html:not(#bo-charcoal-off) body.report-body .report-shell .report-main .report-topbar[data-bo-topbar]{
+    padding-left:20px!important;
+    padding-right:20px!important;
+  }
+}
+
+/* 0b. Reserve the scrollbar gutter so a page that happens to scroll does not shift the
+   whole header sideways. vip-level-edit measured clientWidth 1568 against 1574
+   elsewhere purely because its content is taller than the viewport, and that 6px moved
+   the cluster with it. Reserving the gutter makes the usable width the same on every
+   adopted page whether or not it scrolls. */
+html:has(.report-topbar[data-bo-topbar]){
+  scrollbar-gutter:stable;
+}
+
+/* 0c. Same content frame width everywhere. The page body was inset 18px on most BO
+   pages, 22px on the referral / member-deposit family and 16px on promotion / game, so
+   the whole frame measured 1272px / 1264px / 1276px and looked narrower on some pages
+   when paging. 18px is the majority. Desktop only, like the header inset above.
+   The id-guard again out-ranks the referral family's own inset. */
+@media (min-width:1024px){
+  /* Two id-guards, not one. `.report-content`'s inset is the one shell metric a page sheet
+     also states: bo-charcoal-cms.css sets `padding: 10px 16px` for `.promotion-bonus-page`
+     and `12px 16px 16px` for `.page-bonus-category-title` (promotion.html carries both body
+     classes), and those selectors tie this rule exactly - 1 id / 4 classes / 2 elements. A
+     tie is broken by order, and the order is not always the file order: the SPA router ADDS
+     a swapped-in page's sheets and never re-inserts them, so a page entered from a swap can
+     have bo-charcoal-cms.css AFTER bo-shell.css. Measured: with that sheet moved
+     to the end of <head>, the frame came back 16px inset (card left 276 vs 278, width 1239
+     vs 1235) - the owner's "整个设计会跑掉" screenshot measures the same 16px. The second
+     id-guard makes the inset order-independent; it is the idiom this file already uses for
+     the referral family's two-id guard below. */
+  html:not(#bo-charcoal-off):not(#bo-charcoal-legacy) body.report-body .report-shell .report-main .report-content{
+    padding-left:18px!important;
+    padding-right:18px!important;
+  }
+  /* The referral family sets its own inset through a two-id guard, so a plain class
+     chain ties with it; mirroring that selector and loading later wins the tie. */
+  html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).referral-page.report-body.bo-charcoal .report-content,
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).referral-page.report-body.bo-charcoal .report-content{
+    padding-left:18px!important;
+    padding-right:18px!important;
+  }
+}
+
+/* 0c-1. The module row (auth.js MODULE_TABS) is the first child of .report-content, and it
+   is drawn as a 1:1 copy of Admin Management's .mad-chrome row - so it takes the same 8px
+   inset under the header that Admin Management's workspace carries. Left to the pages it
+   inherited whatever .report-content padding they happened to declare: 18px on the Member
+   and Transaction listing pages, 12px on referral, i.e. the same row at two heights on one
+   page switch. This replaces the per-page rule that retired bo-group-tabs.css used to carry
+   for the Member pages, and covers the Transaction module row with it. Desktop only, like
+   the two insets above. */
+@media (min-width:576px){
+  html:not(#bo-charcoal-off) body.report-body .report-shell .report-main .report-content:has(> .bo-module-tabs){
+    padding-top:8px!important;
+  }
+  /* Referral's two-id guard again, mirrored for the same reason as 0c. */
+  html:not([data-bo-theme="dark"]) body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).referral-page.report-body.bo-charcoal .report-content:has(> .bo-module-tabs),
+  html[data-bo-theme="dark"] body:not(#bo-charcoal-off):not(#bo-charcoal-legacy).referral-page.report-body.bo-charcoal .report-content:has(> .bo-module-tabs){
+    padding-top:8px!important;
+  }
+}
+
+/* 0c-2. The module row's BOTTOM spacing, on the pages whose content column has no gap of
+   its own. 0c-1 nailed the row to the same 8px under the header everywhere, but its
+   distance to the first content block still came from the page: the Member, Transaction,
+   Promotion, VIP and Agent content columns are `display:flex; flex-direction:column`
+   with a 16px gap, so there the row sat 16px above the first block, while the Design
+   pages declare no gap at all - Banner Management's column is even `display:block` - so
+   the row was welded to the card below it.
+
+   16px is what the majority already computes and what User Management shows, so every page
+   that computed 0 gets exactly that: the six Design pages, Livechat Template when the Setting
+   module joined (Setting measured again: Timezone 16, Duplicate IP 12, Compliance Policy 12,
+   Livechat Template 0), and five of the seven Game Management pages - Provider, Provider
+   Sessions, Game Category, Game Sub Category and Game all compute 0, while Provider
+   Transactions and Provider Bet Report carry 16 of their own. The rule is scoped by page class
+   on purpose - a container-level `gap` would also re-space every OTHER sibling on those pages,
+   which is a different change nobody asked for. A page that already resolves to a gap of its
+   own keeps it: Page Customize 14px (the same rhythm as Deposit Approval), Image To URL 16px,
+   and Duplicate IP / Compliance Policy 12px.
+
+   Desktop only, like the insets above; bo-module-tabs.css already carries 12px of its own
+   Promotion Bonus (`promotion-workspace-page promotion-bonus-page`) joined the list after the
+   owner reported its row welded to the card below - "图一tab的间距设计与图二不相符" against
+   Promotion Debug, which already sat at 16px. It had never been measured: it appears in none of
+   the lists above, and its column is `display:flex; flex-direction:column` with `row-gap:0px`. The
+   other ten module pages DESIGN.md never recorded were measured at the same time and all already
+   compute 16px of their own (the six Report-family pages, promotion-report, transaction-report,
+   win-lose-report, agent-performance-report), so this is the only class the whitelist was missing.
+   Measured with the row painted: gap = row bottom -> first block top.
+
+   Desktop only, like the insets above; bo-module-tabs.css already carries 12px of its own
+   for the narrow layout.
+   992-1023px included: the rule used to start at 1024 while the narrow layout (bo-module-tabs.css, 12px) ends at 991, so a window
+   in between (1005 in the owner's screenshot) had the row welded to the card (gap 0) again.
+   */
+
+@media (min-width:992px){
+  html:not(#bo-charcoal-off) body.report-body:is(.banner-management-page,.site-customize-page,.advertisement-popup-page,.frontend-display-page,.social-page,.layout-section-page,.livechat-template-page,.page-game-provider,.provider-session-page,.page-game-category,.page-game-sub-category,.page-game,.promotion-bonus-page) .report-shell .report-main .report-content:has(> .bo-module-tabs) > .bo-module-tabs{
+    margin-bottom:16px!important;
+  }
+}
+
+/* 0d. Sidebar rows. The BO rail drifts the same way the header did: the wallet family
+   (member-wallet / wallet-ledger / member-deposit) ships its own rail metrics, so the
+   same category sat 5px higher there than on User Management and the row text rendered
+   at weight 800 instead of 900. Measured across 11 BO pages, 8 already resolve to the
+   values pinned below, so this is the majority rather than a new opinion.
+     .report-nav          padding 12px 10px 10px, gap 3px   (== the row drift source)
+     top-level row        weight 900, line-height 21px
+     sub item             weight 600, line-height 15.6px, padding 9px 38px 9px 10px
+   The id-guard matches the idiom the theme sheets use so this wins on BO pages only. */
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav{
+  padding:12px 10px 10px!important;
+  gap:3px!important;
+}
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav > a,
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn{
+  font-size:14px!important;
+  font-weight:900!important;
+  line-height:21px!important;
+}
+/* Some themes put a -0.01em tracking on the OPEN group's button
+   (bo-charcoal-shell.css: `.report-sidebar .nav-group.open > .nav-group-btn`), which the
+   label span inherits as -0.14px at 14px. The wallet family never had it, so the very
+   same row read cramped on one page and loose on another. Normalise the whole rail to
+   no tracking - label spans included, since that is where it was actually inherited. */
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav > a,
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav > a span,
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn,
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn span,
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .report-sub,
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .report-sub span,
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .bo-sidebar-logout span{
+  letter-spacing:normal!important;
+}
+
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .report-sub{
+  font-size:13px!important;
+  font-weight:600!important;
+  line-height:15.6px!important;
+  padding:9px 38px 9px 10px!important;
+}
+/* casino-overview-report resolved the sub label to 17.55px line-height against 15.6px
+   everywhere else; pin the span too so the sub rows keep the same rhythm. */
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .report-sub span{
+  line-height:15.6px!important;
+}
+
+/* One rail width for the whole BO: 230px - the owner's value, carried in the tree by 1e87f664
+   (Security & Audit panel) and re-applied from their working tree after the sync. The tree
+   briefly read 260px because reports.css and reports-dashboard-original.css each declare it
+   twice in a :root block that came in with a stale-snapshot WIP commit (0da8f81d, "must not be
+   merged as-is"); a first pass of this fix then read 250px off a live deployment that predates
+   1e87f664. Measured: 260x804 before, 230 after, on dashboard.html and member-wallet.html. The
+   lock keeps the value here (the shell owns the rail's metrics) - `width` and custom properties
+   sit outside the drift guard's metric list. */
+html:not(#bo-charcoal-off) body.report-body{
+  --sidebar-w:230px;
+}
+
+/* 0e-pre. Rail rows: one padding for every row, and the pin's space reserved only where a pin
+   can actually appear.
+   bo-global-quicknav.css reserved `.report-nav a[data-menu-key]{padding-right:38px}` for the
+   `.bo-sidebar-pin` button (26px wide at right:9px). Only <a> rows get a pin - auth.js emits
+   data-menu-key on plain links and on the nav-group-direct anchors, never on the group
+   <button>s - so one rail read 38px on a row and 12px on the next. Measured on index.html
+   before this block: a.nav-group-btn = `10px 38px 10px 12px`, button.nav-group-btn =
+   `11px 12px`, both 209x44. The value to unify on is not the module sheets' one: the rail's
+   own row rule is reports.css:49 `.report-nav a{...padding:9px 10px...}` - what every page
+   shows where no sheet overrode it, and the value the user pointed at in DevTools (red-circled
+   `padding: 9px 10px` under "padding 与其他页面不一样"). The sub rows already sit on that
+   rhythm (`.report-sub`: 9px 38px 9px 10px). Stated once here as the shell's own metric:
+   every row 9px 10px, and a row that can carry a pin keeps its 38px. */
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav > a,
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn{
+  padding:9px 10px!important;
+}
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav a[data-menu-key]{
+  padding-right:38px!important;
+}
+/* The collapsed rail (sidebar-mini) centres its icons with `padding:12px 0`. The module
+   sheets that pin row padding at 10px 12px!important outrank reports.css's own
+   `body.sidebar-mini .nav-group-btn{padding:12px 0}` (and its justify-content), so the mini
+   rows lost their centring on exactly those pages. Same guard, so both states hold.
+   `a[data-menu-key]` is in the list for the second half of the same problem: the 38px
+   `padding-right` that reserves room for the pin (rule just above) has no pin to reserve in the
+   collapsed state - bo-global-quicknav.css hides it there
+   (`body.sidebar-mini .report-sidebar .report-nav > a[data-menu-key] > .bo-sidebar-pin{display:none}`)
+   - so `justify-content:center` was centring the icon inside the 0..13px that were left, and every
+   rail icon sat off-centre. Measured on bonus-category-item.html collapsed: row 10..61 (cx 36),
+   icon 6..28 (cx 17), i.e. 19px left of its own row; the owner reported it off the active cell,
+   whose box is the whole row and so made the offset visible (选中框格和Icon 没对齐). The expanded
+   rail keeps the 38px: the pin is a real control there. */
+html:not(#bo-charcoal-off) body.sidebar-mini .report-shell .report-sidebar .report-nav > a,
+html:not(#bo-charcoal-off) body.sidebar-mini .report-shell .report-sidebar .report-nav a[data-menu-key],
+html:not(#bo-charcoal-off) body.sidebar-mini .report-shell .report-sidebar .report-nav .nav-group-btn{
+  padding:12px 0!important;
+  justify-content:center!important;
+}
+
+/* 0e. Logout block. The wallet family pads the sidebar footer 10px 10px 12px, which
+   makes it 3px taller and lifts the Logout button 2px versus every other BO page.
+   8 of 11 sampled pages use the flat 10px. */
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .bo-sidebar-account-footer{
+  padding:10px!important;
+  /* The wallet family lays the footer out as a block, which rounds the Logout row to
+     68.5px against 68.0px everywhere else - a 1px lift of the button. flex is the
+     majority and the exact 68px. */
+  display:flex!important;
+  flex-direction:column!important;
+  height:68px!important;
+  box-sizing:border-box!important;
+}
+/* The Logout row is content-sized, and its icon/text rounding lands on 47.0px on some
+   pages and 47.5px on others - the half pixel that kept the button 1px apart. Both boxes
+   are pinned so the rounding cannot move it: 68px footer (majority) + 47px row. */
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .bo-sidebar-logout{
+  height:47px!important;
+  box-sizing:border-box!important;
+}
+
+/* 0f-pre-a. brand-overview: the full frame chain the report and agent families carry. Measured
+   pinned into the dashboard workspace (1440x900): .report-main computed block and the bottom
+   content ended 395px above the frame bottom, so the card and its footer floated mid-frame.
+   Both ends of the chain are needed: a flex column on .report-main with a definite height, a
+   flex:1 content, then the page own card classes - they are brand-exec-*, not .table-card. */
+html:not(#bo-charcoal-off) body.report-body.brand-exec-page .report-shell .report-main{
+  display:flex!important;flex-direction:column!important;height:100dvh!important;min-height:0!important;
+}
+html:not(#bo-charcoal-off) body.report-body.brand-exec-page .report-shell .report-content{
+  display:flex!important;flex-direction:column!important;flex:1 1 auto!important;min-height:0!important;
+}
+html:not(#bo-charcoal-off) body.report-body.brand-exec-page .report-shell .report-content > .brand-exec-card{
+  flex:1 1 auto!important;min-height:0!important;display:flex!important;flex-direction:column!important;
+}
+html:not(#bo-charcoal-off) body.report-body.brand-exec-page .report-shell .report-content .brand-exec-table-wrap{
+  flex:1 1 auto!important;min-height:0!important;
+}
+html:not(#bo-charcoal-off) body.report-body.brand-exec-page .report-shell .report-content .brand-exec-footer{
+  margin-top:auto!important;
+}
+
+/* 0f-pre. The Online Users frame. The page's card stopped at its content height (measured
+   626px of an 844px frame at 1568x940), so the pagination row hung mid-page and everything
+   under it was empty frame - the owner's "下面一大片空白". Same three-step recipe the report
+   family uses, stated here because the drift guard rightly refuses layout metrics on shell
+   selectors in a theme sheet: the content column is a flex column, the card takes the slack,
+   the table area takes the slack inside the card, and the footer lands on the frame bottom. */
+html:not(#bo-charcoal-off) body.report-body.online-users-page .report-shell .report-content{
+  display:flex!important;
+  flex-direction:column!important;
+  min-height:0!important;
+}
+html:not(#bo-charcoal-off) body.report-body.online-users-page .report-shell .report-content > .table-card{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+html:not(#bo-charcoal-off) body.report-body.online-users-page .report-shell .report-content > .table-card .table-wrap{
+  flex:1 1 auto!important;
+  min-height:0!important;
+}
+
+/* 0f. The app-style content frame (Live Chat). That page is a fixed-height app: the
+   inbox and the room are sized from the frame, so the frame has to be exactly the space
+   left under the topbar - the workspace scrolls, the frame does not.
+
+   The height used to be a guess: `height: calc(100vh - 60px)` while every page pins the
+   topbar to `--bo-header-h` (64px, bo-charcoal-shell.css). It was therefore 4px taller
+   than the box it sits in - `.report-main` clipped the excess silently and the card came
+   out 10px off the bottom of the viewport, against an 18px inset on the other three
+   sides. Nothing ties the number 60 to the header, so the two were free to drift apart
+   again the moment a theme changed the header height.
+
+   The frame is instead the remainder of a column: the topbar takes its own height and
+   the frame takes what is left, so it can not disagree with the header. Same idea the
+   Live Chat template page already uses for its frame.
+
+   The frame's four insets are then all 18px, which is the value the sides already
+   resolve to from 1024px up (0c above) and the top elsewhere. They are declared as one
+   `padding` rather than only a bottom because `reports.css` insets the frame to
+   16px / 14px below 1200px in a media query of its own - pinning just the bottom would
+   have left the frame lopsided the other way in that band. Below 1024px the page sheets
+   keep their own, smaller, insets and only the height is fixed here.
+
+   Both halves live here rather than one here and one in reports.css: below 992px the
+   workspace unstacks and the page scrolls again. */
+@media (min-width:992px){
+  body.report-body.livechat-bo-page .report-main{
+    display:flex!important;
+    flex-direction:column!important;
+    height:100vh!important;
+    overflow:hidden!important;
+  }
+  body.report-body.livechat-bo-page .report-main .report-topbar[data-bo-topbar]{
+    flex:0 0 auto!important;
+  }
+  body.report-body.livechat-bo-page .report-main .report-content{
+    display:flex!important;
+    flex-direction:column!important;
+    flex:1 1 auto!important;
+    height:auto!important;
+    min-height:0!important;
+    overflow:hidden!important;
+  }
+}
+@media (min-width:1024px){
+  body.report-body.livechat-bo-page .report-main .report-content{
+    padding:18px!important;
+  }
+}
+/* Below 992 the live chat used to let the page scroll, because the inbox and the thread were stacked and the
+   pair had to be taller than the screen. It is master-detail now (one pane at a time, livechat-executive.css),
+   so the frame keeps the same column it has above 992: the workspace fills the viewport and the thread scrolls
+   inside itself with the composer pinned to the bottom - measured at 768, the content column was 706px in a
+   1024px viewport, i.e. a third of the screen wasted under the composer. */
+@media (max-width:991.98px){
+  body.report-body.livechat-bo-page .report-main{
+    display:flex!important;
+    flex-direction:column!important;
+    height:100dvh!important;
+    overflow:hidden!important;
+  }
+  body.report-body.livechat-bo-page .report-main .report-topbar[data-bo-topbar]{
+    flex:0 0 auto!important;
+  }
+  body.report-body.livechat-bo-page .report-main .report-content{
+    display:flex!important;
+    flex-direction:column!important;
+    flex:1 1 auto!important;
+    height:auto!important;
+    min-height:0!important;
+    overflow:hidden!important;
+  }
+}
+
+/* 1. Page title */
+.report-topbar[data-bo-topbar] .user-title-wrap h1{
+  font-size:22px!important;
+  font-weight:900!important;
+  line-height:1.2!important;
+}
+
+/* 1b. Let a long title shrink and ellipsize instead of colliding with the account /
+   counter chips. Without this the title box cannot shrink (the inner div defaults to
+   min-width:auto), so "Member Wallet Listing" at 22px overlapped the action chips by
+   103px on a narrow window while the shorter "User Management" sat exactly on the edge.
+
+   Narrow widths only: the clip box lands on the last glyph's antialiased column, so
+   enabling it at every width shaved 1 pixel column off "User Management" on desktop
+   (6 pixels of 208000). Truncation is only needed where the title can actually run out
+   of room, which is what this breakpoint gates (1366, not 1023: an iPad held sideways is 1024 and a 13" laptop is 1280-1366, and "Reimbursement / Ad Claim -
+   Pending Approval" wrapped onto a second line at both, pushing the header taller); the 22px size itself is unchanged at
+   every width. */
+@media (max-width:1366px){
+  .report-topbar[data-bo-topbar] .user-title-wrap{min-width:0}
+  .report-topbar[data-bo-topbar] .user-title-wrap > div{min-width:0}
+  .report-topbar[data-bo-topbar] .user-title-wrap h1{
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+}
+
+/* 2. Title icon: the round slot and the glyph inside it. The id-guard is needed because
+   a couple of page families set an 18px glyph through their own guarded chain. */
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-main .report-topbar[data-bo-topbar] .user-title-icon{
+  width:36px!important;
+  height:36px!important;
+  flex:0 0 36px!important;
+  font-size:20px!important;
+}
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-main .report-topbar[data-bo-topbar] .user-title-icon i{
+  font-size:20px!important;
+}
+
+/* Selector prefix used by the block below. The sheets that fight these values reach
+   id-guarded chains such as
+     html body.referral-page.report-body.bo-charcoal .report-actions > [data-bo-profile]
+       .bo-account-link::before                                        -> (0,6,2)
+   or the executive page scopes, so the prefix walks shell > main > header to reach
+   (0,7,2) before the property-specific part. */
+
+/* 2b. The right-hand cluster must not move when the page changes.
+   Only the title differs between pages, so the counters and the account chip have to
+   measure the same on every one of them. Today they do not, because each theme sheet
+   dresses the same markup differently and the block is right-aligned, so every pixel of
+   difference slides the whole cluster sideways (measured: the theme button sat at x=943
+   on User Management and x=928 on Member Wallet - a 15px jump on every page switch).
+   Two causes, both pinned here:
+     .bo-header-counter-text  padding-right 0 vs 2px   -> 2px per counter
+     .bo-account-link         min-width 0 vs 132px,
+                              height 40 vs 44px          -> up to 13px
+   Geometry only: colours and the sun/moon artwork stay with the theme sheets. */
+/* The selector walks the whole host chain on purpose: the sheets that fight this use
+   `body.bo-account-chip .report-actions > [data-bo-profile] .bo-account-link` (0,4,1)
+   with !important, so a shorter selector loses no matter what it declares. Five
+   class-level parts plus the attribute out-rank it. */
+/* The counter also has a compact variant in the executive sheets (icon 30px, gap 8,
+   padding 5px 9px, min-width 126) which made those pages 394px wide against 411px
+   elsewhere. Pin the reference box so all of them measure the same. */
+.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counters{
+  gap:10px!important;
+}
+.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter{
+  gap:10px!important;
+  padding:5px 14px 5px 5px!important;
+  min-width:118px!important;
+  height:48px!important;
+  border-radius:10px!important;
+}
+.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-icon{
+  width:38px!important;
+  height:38px!important;
+  font-size:18px!important;
+}
+.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-text{
+  padding-right:0!important;
+  gap:1px!important;
+  justify-content:center!important;
+}
+
+/* Line heights decide where the label and the number sit. Left to the themes they came
+   out as 19.8px / 18px / 18.9px for the number and the stack ended up 32.3px / 30.5px /
+   34.4px tall, so the chip's vertical centring put "MEMBERS 0" at a different height on
+   each page (roughly 1px, which is what the eye catches when paging). 1.1 and 1.05 are
+   the majority values - User Management, Referral, Brand, Promotion, Game, Casino,
+   Livechat and VIP Level all already resolve to them. */
+.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-text small{
+  line-height:1.05!important;
+  margin-top:0!important;
+  margin-bottom:0!important;
+}
+.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-text b{
+  line-height:1.1!important;
+  /* The executive sheets add margin-top:3px to the number, which pushed the stack down
+     by 3px on those pages. */
+  margin-top:0!important;
+  margin-bottom:0!important;
+}
+.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-text small{
+  font-size:11px!important;
+  font-weight:800!important;
+  letter-spacing:.66px!important;
+  /* The executive sheets left the label in title case ("Members"), the rest use the
+     locked uppercase treatment; besides looking different it is 4.5px narrower per
+     counter, which moved the cluster on those pages. */
+  text-transform:uppercase!important;
+}
+.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-text b{
+  font-size:18px!important;
+  font-weight:800!important;
+}
+.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-account-link{
+  min-width:132px!important;
+  height:44px!important;
+  border-radius:14px!important;
+  padding:0!important;
+  /* The wallet theme adds margin-left:4px here and the charcoal theme does not, so the
+     whole cluster sat 4px further left on those pages. */
+  margin:0!important;
+}
+
+/* 2c. One divider slot, always reserved. The sheets already do this for the provider
+   family - "Divider slot always reserved - only tint changes by theme (prevents cluster
+   shift)" - so the rule is established, it just was not applied everywhere. Referral
+   moved the same divider inside the account link (host ::before set to content:none),
+   which adds a second flex gap inside the link and silently shifted the whole cluster.
+   Put it back on the host with the same 1px/28px box the other sheets use; only the tint
+   stays theme-owned. */
+.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions > [data-bo-profile]::before{
+  content:""!important;
+  display:block!important;
+  width:1px!important;
+  height:28px!important;
+  flex:0 0 1px!important;
+  margin:0!important;
+  align-self:center!important;
+  background:rgba(24,25,28,.12)!important;
+}
+html[data-bo-theme="dark"] .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions > [data-bo-profile]::before{
+  background:rgba(255,255,255,.12)!important;
+}
+.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions > [data-bo-profile] .bo-account-link::before{
+  content:none!important;
+}
+
+/* auth.js renders a hidden gear after the avatar. Bootstrap's `.bi` sets
+   display:inline-block, which out-ranks the UA sheet's [hidden]{display:none}, so on the
+   themes that never re-hide it the gear still eats a flex gap + margin (14px) and makes
+   the account chip wider than on the themes that do. Re-hide it so every adopted page
+   measures the same. */
+.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-account-setting-icon[hidden]{
+  display:none!important;
+}
+
+/* 2e. The rail's account card. The account block leaves the header and takes the "Backoffice"
+   title's place at the top of the rail, left of the rail toggle - where the Main panel keeps it
+   (main-sidebar-account.css: `[avatar] name / role`, avatar 34px radius 10 #D97706 carrying a 16px
+   white glyph, name 14px/800, role 11px/600 tracked). Owner: "bo右上角的名字和icon要跟main的一样",
+   then, pointing at the rail's own toggle, "位置不是在sidebar 的收起的按键的左边 与main的页面一样？".
+   The scope is every BO body (`body.report-body`), not `bo-charcoal`: the wallet theme's pages
+   (member-deposit, member-wallet, wallet-ledger, payment-method, bank-deposit-usage, bulk-adjustment
+   ...) carry `bo-wallet-tx` instead of `bo-charcoal` and are BO pages too - scoped to `bo-charcoal`
+   the audit showed the card arriving with reports.css's base avatar (30px circle) and the brand
+   row's own 15px/800 text. The extra `.report-sidebar` in every selector is what out-specifies the
+   chip's own unscoped numbers in bo-charcoal-shell.css (`body.report-body.bo-charcoal
+   .report-avatar` and the two text classes, 0,3,1 with !important), which were written for the
+   header's chip and still match the moved node.
+   The card takes the brand row's free space, which is what keeps the rail toggle in its right-hand
+   slot; collapsed it travels above Logout as the avatar alone, because reports.css hides every
+   `.report-brand > div:not(.logo)` at 72px. Colours stay this shell's own: the Main rail's name
+   colour (#6B360C) is tuned for that rail, not this one. */
+body.report-body .report-sidebar .bo-rail-account{
+  display:flex!important;
+  align-items:center!important;
+  min-width:0!important;
+  max-width:100%!important;
+  flex:1 1 auto!important;
+}
+body.report-body .report-sidebar .bo-rail-account .bo-account-link,
+body.report-body .report-sidebar .bo-rail-account .bo-account-link:hover,
+body.report-body .report-sidebar .bo-rail-account .bo-account-link:focus,
+body.report-body .report-sidebar .bo-rail-account .bo-account-link:focus-visible,
+body.report-body .report-sidebar .bo-rail-account .bo-account-link:active{
+  /* `display:flex` is load-bearing, not decoration: `order` below only applies to flex/grid items,
+     and outside the header's host the chip's own stylesheet does not set it - without this the link
+     is a block box, the two orders are ignored, and the block renders in DOM order (avatar on the
+     RIGHT, measured x=104 against the meta at x=14). */
+  display:flex!important;
+  flex-direction:row!important;
+  min-width:0!important;
+  height:auto!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  gap:10px!important;
+  align-items:center!important;
+  /* The rail's own link rules are `a` rules: without this the whole block inherits the rail's
+     decoration and colour instead of the chip's (owner's screenshot: "JK Master Admin" underlined). */
+  text-decoration:none!important;
+  color:inherit!important;
+}
+body.report-body .report-sidebar .bo-rail-account .bo-account-meta{
+  /* Stated here rather than inherited from the header's chip: that rule is scoped to the topbar
+     host, so in the rail the stack fell back to a row and the name and role sat side by side
+     (owner's screenshot). Everything the block needs is declared in this sheet. */
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  gap:2px!important;
+  line-height:1.15!important;
+  order:2!important;
+  align-items:flex-start!important;
+  text-align:left!important;
+  /* The label can be longer than the slot ("Master Admin", "Brand Owner"): the stack has to be able
+     to shrink and ellipsize rather than spill under the avatar - measured cramped on a real
+     account whose role label is longer than the one the stub carries. */
+  min-width:0!important;
+  overflow:hidden!important;
+}
+body.report-body .report-sidebar .bo-rail-account .bo-account-link .report-avatar{
+  order:1!important;
+  width:34px!important;height:34px!important;min-width:34px!important;flex:0 0 34px!important;
+  border-radius:10px!important;
+  background:#D97706!important;
+  color:#FFFFFF!important;
+}
+body.report-body .report-sidebar .bo-rail-account .bo-account-link .report-avatar i,
+body.report-body .report-sidebar .bo-rail-account .bo-account-link .report-avatar::before{
+  font-size:16px!important;
+  color:#FFFFFF!important;
+  /* One glyph box on every page. Without these the glyph took whatever the page sheet gave the avatar:
+     reports.css `.report-avatar{font-weight:900}` (a faux-bold person on pages without bo-charcoal, e.g.
+     Deposit Approval) and the inherited 18.4px line box (the glyph sat ~1px lower than on a bo-charcoal page,
+     where bo-charcoal-shell.css zeroes the avatar's font and line-height). */
+  font-weight:400!important;
+  line-height:16px!important;
+}
+body.report-body .report-sidebar .bo-rail-account .bo-account-link .report-avatar{
+  font-size:0!important;
+  font-weight:400!important;
+  line-height:0!important;
+}
+/* Hover: the same darker amber bo-charcoal pages already state (bo-charcoal-shell.css), so a page without that
+   class no longer lacks the response. */
+body.report-body .report-sidebar .bo-rail-account .bo-account-link:hover .report-avatar{
+  background:#B45309!important;
+}
+/* The account avatar has ONE home in a BO page: the rail. auth.js still paints the chip into the header host first
+   (a 40px avatar at the top right) and bo-account-chip.js moves the link into the rail a frame or more later - and
+   auth.js re-paints that host on every /me refresh, so the avatar flashed at the top right and jumped across to the
+   rail on every load, swap and refresh (the "icon jumps" report). The header copy is never meant to be seen in this
+   shell, so it is not drawn: the script still finds and moves it (display:none does not hide it from
+   querySelector / appendChild), and the pending-operation counters beside it are untouched. Once moved it is
+   inside .bo-rail-account, which neither selector matches. `body.report-body` is in the selector because
+   bo-charcoal-shell.css states `display:inline-flex!important` on `body.report-body.bo-charcoal .report-actions
+   .bo-account-link` (one class lighter than this without it), and most BO pages carry bo-charcoal; bo-charcoal-legacy.css
+   states it again per page (`html body.referral-page.report-body.bo-charcoal .report-actions > [data-bo-profile]
+   .bo-account-link`, six classes), so this carries an ID step (`:not(#...)`, an id nothing has) and wins over any
+   class-only display rule a page sheet adds. */
+html[data-bo-shell="bo"]:not(#bo-account-header-copy-off) body.report-body .report-actions .bo-account-link,
+html[data-bo-shell="bo"]:not(#bo-account-header-copy-off) body.report-body [data-bo-profile] .bo-account-link{
+  display:none!important;
+}
+body.report-body .report-sidebar .bo-rail-account .bo-account-name{
+  max-width:100%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  font-size:14px!important;
+  font-weight:800!important;
+  letter-spacing:0!important;
+  color:#18191C!important;
+}
+body.report-body .report-sidebar .bo-rail-account .bo-account-role{
+  max-width:100%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  font-family:inherit!important;
+  font-size:11px!important;
+  font-weight:600!important;
+  letter-spacing:.02em!important;
+  color:#78716C!important;
+}
+html[data-bo-theme="dark"] body.report-body .report-sidebar .bo-rail-account .bo-account-name{
+  color:#F5F5F4!important;
+}
+html[data-bo-theme="dark"] body.report-body .report-sidebar .bo-rail-account .bo-account-role{
+  color:#D4D4D8!important;
+}
+
+/* Collapsed rail: the brand row is the toggle's alone, so the card sits above Logout as the avatar
+   only - the same two homes the Main panel's card has. */
+body.report-body.sidebar-mini .report-sidebar .bo-rail-account{
+  justify-content:center!important;
+  flex:0 0 auto!important;
+  padding:10px 0!important;
+}
+body.report-body.sidebar-mini .report-sidebar .bo-rail-account .bo-account-meta{
+  display:none!important;
+}
+body.report-body.sidebar-mini .report-sidebar .bo-rail-account .bo-account-link{
+  justify-content:center!important;
+}
+
+/* 2d. Counter icon slot: every counter carries a 1px outline in its own hue, and the
+   fill is the same hue a step lighter. Only the wallet theme shipped the outline, so on
+   the other pages the three icon squares looked flat - that is the "边框" difference.
+   Tints are pinned per counter type for light and dark so the three read identically on
+   every adopted page; box-sizing keeps the 38px slot unchanged when the border lands. */
+.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-icon{
+  box-sizing:border-box!important;
+  border-radius:8px!important;
+  border-width:1px!important;
+  border-style:solid!important;
+}
+.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-icon.members{
+  background:rgba(24,25,28,.08)!important;
+  border-color:rgba(24,25,28,.12)!important;
+}
+.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-icon.deposit{
+  background:rgba(217,119,6,.18)!important;
+  border-color:rgba(217,119,6,.28)!important;
+}
+.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-icon.withdraw{
+  background:rgba(180,83,9,.14)!important;
+  border-color:rgba(180,83,9,.28)!important;
+}
+html[data-bo-theme="dark"] .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-icon.members{
+  background:rgba(245,245,244,.10)!important;
+  border-color:rgba(245,245,244,.18)!important;
+}
+html[data-bo-theme="dark"] .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-icon.deposit{
+  background:rgba(245,158,11,.20)!important;
+  border-color:rgba(245,158,11,.34)!important;
+}
+html[data-bo-theme="dark"] .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-icon.withdraw{
+  background:rgba(217,119,6,.18)!important;
+  border-color:rgba(217,119,6,.32)!important;
+}
+
+/* 3. Theme toggle slot + glyph (bo-theme.js keeps the sun/moon state) */
+.report-topbar[data-bo-topbar] .bo-theme-btn{
+  width:36px!important;
+  height:36px!important;
+  min-width:36px!important;
+  max-width:36px!important;
+  flex:0 0 36px!important;
+}
+.report-topbar[data-bo-topbar] .bo-theme-btn i[data-theme-icon]{
+  font-size:18px!important;
+  line-height:1!important;
+}
+/* 3b. The same glyph slot on every page. bo-wallet-transaction-amber.css (every bo-wallet-tx page: Provider Transactions, Member Wallet, Wallet Ledger,
+   ...) positions the icon with inset:0 only and, unlike bo-charcoal-shell.css, sets neither width/height:100% nor transform:none, so after the
+   sun/moon swap animation (bo-theme.js animates a transform on it) the glyph could stay offset inside the 36px overflow:hidden slot - the half-cut
+   moon on Provider Transactions next to the intact one on Provider Bet Report. One rule for both, above either sheet. */
+html body .report-topbar[data-bo-topbar] .bo-theme-btn i[data-theme-icon]{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  display:grid!important;
+  place-items:center!important;
+  margin:0!important;
+  padding:0!important;
+  transform:none!important;
+}
+
+/* Deliberately no mobile step: one size at every width is what makes the header
+   consistent, and 1b above removes the reason the sheets used to shrink it (an
+   unshrinkable title). If a smaller phone size is preferred, add one breakpoint here -
+   it is a one-line change. */
+
+/* Rail typography: the bundled Inter, not the system face at 900.
+   Inter VF is shipped by reports.css (@font-face, weight 100-900); naming it first here gives the rail a
+   real 900 with open counters instead of the window's own heavy face, whose D/P/R close up at 14px
+   (owner: "还是有点被吃掉的感觉"). Same declaration as reports.css and agent-portal.css - the three
+   sheets are loaded by different sets of pages, so one copy each is what makes every page agree.
+   font-family is not a drift-guard metric property, so this adds no shell drift. */
+html body.report-body .report-shell .report-sidebar .report-nav > a,
+html body.report-body .report-shell .report-sidebar .report-nav > a span,
+html body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn,
+html body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn span,
+html body.report-body .report-shell .report-sidebar .report-nav .report-sub,
+html body.report-body .report-shell .report-sidebar .report-nav .report-sub span,
+html body.report-body .report-shell .report-sidebar .bo-sidebar-logout,
+html body.report-body .report-shell .report-sidebar .bo-sidebar-logout span{
+  font-family:Inter, ui-sans-serif, "Segoe UI", system-ui, sans-serif!important;
+}
+
+/* Rail typography: the label spans need the row line-height */
+html body.report-body .report-shell .report-sidebar .report-nav > a span,
+html body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn span,
+html body.report-body .report-shell .report-sidebar .report-nav .report-sub span{
+  /* the same line-height the portal had to take: 14px of Inter needs more than the inherited
+     14 x 1.2 = 16.8px box, or the capitals are clipped at the top (bo-shell.css gives the row
+     21px but the label spans never received it). */
+  line-height:21px!important;
+}
+
+  /* The label span must not carry a rounded, clipping box. bo-charcoal-shell.css gives the rail's
+     label spans border-radius:10px (copied from the active-row pill, which belongs on the ROW), and
+     reports.css gives them overflow:hidden - so a 21px-tall text box was being rounded by 10px, and its
+     four corners were cutting the glyphs. Measured on the agent rail before this: the span itself
+     reported border-radius 10px + overflow hidden while the anchor reported overflow visible, which is
+     why the row looked fine and the letters did not (owner: "好像是border radius的问题"). */
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav > a span,
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .nav-group-btn span,
+html:not(#bo-charcoal-off) body.report-body .report-shell .report-sidebar .report-nav .report-sub span{
+  border-radius:0!important;
+}
+
+/* ============================================================================
+   Focus mode: while the Payment Gateway editor is open the content frame hands
+   its padding to the editor's own card, so the bottom action bar can sit flush
+   with the frame's edges the way the reference form's bar does
+   (agent-detail.html?new=1: FOOTER.mac-footer-actions spans the full 1246px and
+   touches the viewport's bottom). Measured before: the bar was inset to 1210px
+   with an 18px strip to its left and right and a 16px gap under it. Expressed
+   here rather than in the page sheet because a `.report-content` padding is a
+   shell metric, and bo-shell.css is the one place this project allows to state
+   those.
+   ========================================================================= */
+/* The inset this has to beat is stated by three rules, all with `!important`: the base frame
+   (`padding:18px 18px 22px`), a two-id guard that pins the sides to 18px, and the module's own
+   `padding-bottom:16px`. Read from the browser's matched styles on `?edit=1`, not guessed. So the
+   selector mirrors the guarded one and adds this page's state class - the same move bo-shell.css
+   already documents above ("mirroring that selector and loading later wins the tie") - and states
+   the padding with `!important` because every rule it replaces does. */
+html:not(#bo-charcoal-off):not(#bo-charcoal-legacy) body.report-body.bo-wallet-tx.pg-editing .report-shell .report-main .report-content{
+  padding-top:8px!important;padding-right:0!important;padding-bottom:0!important;padding-left:0!important}
+html:not(#bo-charcoal-off):not(#bo-charcoal-legacy) body.report-body.bo-wallet-tx.pg-editing .report-shell .report-main .report-content .pg-editor-card{
+  margin:0 18px 16px}
+
+/* Top-up Reward is a scrolling edit page: the shell already clips .report-main / .report-content, so the page
+   needs the frame turned into a column - scroll area above, the 73px action bar below it. This is a shell
+   metric on a shell selector, which is why it lives here rather than in the page's own sheet.
+
+   The padding needs the same guard as the gateway's focus mode: the frame's inset is declared by rules that
+   carry `!important`, so a plain `padding:0` loses - measured on this page, the frame computed
+   `12px 18px 22px` and the action bar therefore sat 18px in from each side (owner: "操作区没有定死跟sidebar对齐").
+   The selector mirrors the guarded shape and adds this page's body class; the inset itself is handed to the
+   scroll area, which carries the page's own 16/24 padding. */
+html:not(#bo-charcoal-off):not(#bo-charcoal-legacy) body.report-body.topup-reward-page .report-shell .report-main .report-content{
+  padding-top:0!important;padding-right:0!important;padding-bottom:0!important;padding-left:0!important}
+body.report-body.topup-reward-page .report-content{
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
+
+/* Top-up Reward keeps the whole shell inside the viewport, so its action bar is on screen from the first paint
+   rather than at the end of the document (owner: "我的操作区要fixed死呀 我不想划到底部才看见"). The shapes are
+   frontend-display.html's own, with this page's class - that page had to declare the same four rules inline for
+   the same reason. The frame becomes the column; the scroll area inside it is the only thing that scrolls. */
+html:has(body.topup-reward-page),
+body.report-body.topup-reward-page{
+  height:100%!important;
+  overflow:hidden!important;
+}
+body.report-body.topup-reward-page .report-shell{
+  height:100dvh!important;
+  max-height:100dvh!important;
+  overflow:hidden!important;
+}
+body.report-body.topup-reward-page .report-main{
+  display:flex!important;
+  flex-direction:column!important;
+  height:100dvh!important;
+  max-height:100dvh!important;
+  overflow:hidden!important;
+}
+body.report-body.topup-reward-page .report-content{
+  flex:1 1 auto!important;
+  min-height:0!important;
+}
+
+/* 2c. The counter chips below 1200px. reports.css turns them into compact icon chips (42px wide, the label hidden, the
+   count as a small badge on the corner), but the reference box pinned above (min-width:118, padding 5/14/5/5, the 18px
+   number) is !important and wins at every width: the chip stayed 118px wide with the icon on the left and an empty
+   right half, and the count became an 18px badge that stuck out above the header and was cut off at its edge (it
+   showed as a clipped "1" / "0"). From 1199.98px down the chip is the 48px square the icon needs, the label stays
+   hidden and the count is a small badge INSIDE the corner, so nothing is clipped. At and above 1200px the full
+   chip (icon + label + number) is unchanged. */
+@media (max-width:1199.98px){
+  .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter{
+    min-width:48px!important;
+    width:48px!important;
+    padding:5px!important;
+    justify-content:center!important;
+  }
+  .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-text{
+    position:absolute!important;
+    top:3px!important;
+    right:3px!important;
+    display:block!important;
+    width:auto!important;
+    height:auto!important;
+    overflow:visible!important;
+    padding:0!important;
+  }
+  .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-text small{display:none!important}
+  .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-text b{
+    display:grid!important;
+    place-items:center!important;
+    min-width:16px!important;
+    height:16px!important;
+    padding:0 4px!important;
+    border-radius:999px!important;
+    font-size:10px!important;
+    line-height:1!important;
+  }
+}
+
+/* 2d. Deposit / Withdraw Approval on a tablet (<=1100px): the content frame scrolls (member-approval-tablet.css) and the
+   table card keeps its own height instead of being squeezed into what the bank cards leave over. */
+@media (max-width:1100px){
+  html:not(#bo-ma-off):not(#bo-ma-off-2) body:not(#bo-ma-off-3).bo-wallet-tx.deposit-approval-page .report-content > .table-card,
+  html:not(#bo-ma-off):not(#bo-ma-off-2) body:not(#bo-ma-off-3).bo-wallet-tx.withdraw-approval-page .report-content > .table-card{flex:0 0 auto!important;min-height:480px!important}
+}
+
+/* 2e. Casino Deposit/Withdraw and Win/Lose reports below 992px: the date strip is the top half of ONE card with the table
+   (colours/borders in casino-dw-fit.css / win-lose-fit.css); its padding is a layout metric, so it lives here. */
+@media (max-width:991.98px){
+  html:not(#bo-cd-off):not(#bo-cd-off-2) body:not(#bo-cd-off-3).bo-report-family[data-report-page="depositWithdraw"] .report-content > .filter-card:has(+ .table-card),
+  html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .report-content > .filter-card:has(+ .table-card),
+  html:not(#bo-cp-off):not(#bo-cp-off-2) body:not(#bo-cp-off-3).bo-report-family[data-report-page="provider"] .report-content > .filter-card:has(+ .table-card),
+  html:not(#bo-ap-off):not(#bo-ap-off-2) body:not(#bo-ap-off-3).agent-performance-report-page .report-content > .perf-filter-card:has(+ .table-card),
+  html:not(#bo-mt-off):not(#bo-mt-off-2) body:not(#bo-mt-off-3):not(#bo-mt-off-4):not(#bo-mt-off-5).member-top-deposit-report-page .report-content > .filter-card:has(+ .table-card),
+  html:not(#bo-pb-off):not(#bo-pb-off-2) body:not(#bo-pb-off-3):not(#bo-pb-off-4).provider-bet-report-page .report-content > .filter-card:has(+ .table-card){padding:12px 16px!important}
+}
+
+/* --------------------------------------------------------------------------
+   2f. One table height on every report page below 992px.
+   From 992px the family is a viewport-locked column (bo-report-family.css section 14): the strip
+   and the filter keep their height, the table card is flex:1 and takes the rest, rows scroll
+   inside it, so 3 rows, 20 rows and "No records" are the same size and the footer never moves.
+   Below 992px the family fell back to plain block flow, so the card was as tall as its rows: it
+   shrank to ~150px on an empty result and grew when data arrived (Agent / Transaction pages had
+   already opted into the locked column themselves, which is why they held a height and the
+   others did not). The same locked column now applies at every width; the card is never under
+   360px, and a short window scrolls the content column instead of squeezing the card.
+   -------------------------------------------------------------------------- */
+@media (max-width:991.98px){
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-shell{height:100dvh;min-height:0;overflow:hidden}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-main{height:100dvh;max-height:100dvh;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:0;overflow:hidden;overflow-y:auto}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > *{margin-bottom:0!important;flex:0 0 auto}
+  /* 16px between blocks as a margin, not a flex gap: a gap cannot be cancelled, and the filter strip + table card are ONE card that the page sheets join. */
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > * + *{margin-top:16px!important}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > :is(.filter-card,.perf-filter-card,.ops-filter,.bo-filter-row) + .table-card{margin-top:0!important}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > .table-card{flex:1 1 auto;min-height:360px;display:flex;flex-direction:column}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .table-card > .table-wrap{flex:1 1 auto;min-height:0;overflow:auto}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .table-card > .mad-footer{flex:0 0 auto}
+  /* The same column for list pages that are not in the report family but keep their table card as a direct child of the content (Admin Login Log,
+     Admin Operation Log, Role, IP Whitelist ...): they stayed block flow below 992px, so a 2-row list left a 250-425px empty band under the card.
+     Below 992px only; the page sheets that already lock their own column are not :has()-matched because their card is not a direct child. */
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-shell:has(> .report-main > .report-content > .table-card){height:100dvh;min-height:0;overflow:hidden}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-main:has(> .report-content > .table-card){height:100dvh;max-height:100dvh;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-content:has(> .table-card){flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:0;overflow:hidden;overflow-y:auto}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-content:has(> .table-card) > *{margin-bottom:0!important;flex:0 0 auto}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-content:has(> .table-card) > * + *{margin-top:16px!important}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-content:has(> .table-card) > :is(.filter-card,.perf-filter-card,.ops-filter,.bo-filter-row) + .table-card{margin-top:0!important}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-content:has(> .table-card) > .table-card{flex:1 0 auto;min-height:360px;display:flex;flex-direction:column}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-content:has(> .table-card) > .table-card:not(:last-child){flex:0 0 auto;min-height:0}
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).report-body:not(.bo-report-family) .report-content:has(> .table-card) > .table-card > .table-wrap{flex:1 1 auto;min-height:0;overflow:auto}
+}
+
+/* 0c-3. Header and module row on tablet widths (576-991px), on every page that carries a module tab row. Measured on the Design pages at
+   731px, they disagreed with each other: the header gutter was 12px on Banner Management / Image To URL and 20px on the rest, the hamburger
+   42px wide on three pages and 36px on the others, the gap from the header to the tab row 0 (Frontend Display) / 12 / 14 / 16px (0c-1 above now
+   makes it 8px from 576px up, the value desktop already had), and the gap below the row 12px except 26px (Page Customize) and 28px
+   (Image To URL), whose content columns add their own 14/16px flex gap on top of the row's margin. One value each: 20px gutter, 36px hamburger,
+   8px above the row, 12px below it. */
+@media (min-width:576px) and (max-width:991.98px){
+  html:not(#bo-charcoal-off) body.report-body .report-shell .report-main:has(> .report-content > .bo-module-tabs) > .report-topbar{
+    padding-left:20px!important;padding-right:20px!important;
+  }
+  html:not(#bo-charcoal-off) body.report-body .report-shell .report-main:has(> .report-content > .bo-module-tabs) > .report-topbar .hamb{
+    width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;
+  }
+  html:not(#bo-charcoal-off) body.report-body:is(.page-customize-page,.image-to-url-page) .report-content > .bo-module-tabs{
+    margin-bottom:0!important;
+  }
+  html:not(#bo-charcoal-off) body.report-body:is(.page-customize-page,.image-to-url-page) .report-content:has(> .bo-module-tabs){
+    row-gap:12px!important;gap:12px!important;
+  }
+  /* Game Management: Provider Transactions (a bo-wallet-tx page, a 16px flex column) put 12px of row margin on top of that gap = 28px under the
+     row; Provider Bet Report (report family) got 16 from its own spacing rule. Both are 12px, like Provider / Sessions / Category / Game. */
+  html:not(#bo-charcoal-off) body.report-body.bo-wallet-tx:not(.deposit-approval-page):not(.withdraw-approval-page) .report-content > .bo-module-tabs{
+    margin-bottom:-4px!important;
+  }
+  html body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > .bo-module-tabs + *{
+    margin-top:12px!important;
+  }
+}
+
+/* 2g. The report footer (Show N entries | count | pager) on a phone (<=575px). It is a three-track grid / one-line flex sized for a laptop: on a 390px
+   screen the count was drawn over the pager (up to 286px of overlap on Promotion and Transaction reports) or the pager ran past the card (Member Top
+   Deposit, Agent Settlement, Agent Commission, Agent Performance). Show N and the count share the first line, the pager takes its own line below,
+   centred, and may wrap. Every .mad-footer, whatever page it is on. */
+@media (max-width:575.98px){
+  html:not(#bo-pf-off-1):not(#bo-pf-off-2):not(#bo-pf-off-3):not(#bo-pf-off-4):not(#bo-pf-off-5):not(#bo-pf-off-6):not(#bo-pf-off-7) body.report-body .mad-footer{
+    display:flex!important;flex-wrap:wrap!important;align-items:center!important;justify-content:space-between!important;gap:8px 12px!important;
+    grid-template-columns:none!important;
+  }
+  html:not(#bo-pf-off-1):not(#bo-pf-off-2):not(#bo-pf-off-3):not(#bo-pf-off-4):not(#bo-pf-off-5):not(#bo-pf-off-6):not(#bo-pf-off-7) body.report-body .mad-footer > .mad-footer-info,
+  html:not(#bo-pf-off-1):not(#bo-pf-off-2):not(#bo-pf-off-3):not(#bo-pf-off-4):not(#bo-pf-off-5):not(#bo-pf-off-6):not(#bo-pf-off-7) body.report-body .mad-footer > .table-info{flex:1 1 auto!important;min-width:0!important;padding:0!important;text-align:right!important;white-space:normal!important}
+  html:not(#bo-pf-off-1):not(#bo-pf-off-2):not(#bo-pf-off-3):not(#bo-pf-off-4):not(#bo-pf-off-5):not(#bo-pf-off-6):not(#bo-pf-off-7) body.report-body .mad-footer > .mad-pager,
+  html:not(#bo-pf-off-1):not(#bo-pf-off-2):not(#bo-pf-off-3):not(#bo-pf-off-4):not(#bo-pf-off-5):not(#bo-pf-off-6):not(#bo-pf-off-7) body.report-body .mad-footer > .pagination-clean,
+  html:not(#bo-pf-off-1):not(#bo-pf-off-2):not(#bo-pf-off-3):not(#bo-pf-off-4):not(#bo-pf-off-5):not(#bo-pf-off-6):not(#bo-pf-off-7) body.report-body .mad-footer > nav{flex:1 1 100%!important;justify-content:center!important;flex-wrap:wrap!important;max-width:100%!important}
+}
+
+/* 2h. Small-screen fit rules that used to sit in the page sheets.
+   ------------------------------------------------------------------------------------------
+   AGENTS.md puts every layout metric of the shell in this file; these ten rules were written next to
+   the pages they fix (agent-kpi-fit.css, bo-small-screen-scroll.css, promotion-log-fit.css,
+   rebate-management-fit.css, referral-fit.css) and the drift guard refused them there: 32 declarations
+   on .report-content / .table-card / .table-wrap / .rebate-chrome across those five sheets.
+   Moved verbatim - same selectors (page-scoped by their body class), same media queries, same
+   !important - so the rendered result is unchanged; measured before and after on eleven pages at 1024
+   and 768 (.report-content overflow/scrollHeight, .table-card height, .table-wrap height). */
+
+/* 2h. Small-screen fit rules that used to live in the page sheets.
+   ------------------------------------------------------------------------------------------
+   These 14 rules sat next to the pages they fix (agent-kpi-fit.css, bo-small-screen-scroll.css,
+   promotion-log-fit.css, rebate-management-fit.css, referral-fit.css) and the drift guard refused them
+   there: 32 declarations on .report-content / .table-card / .table-wrap / .rebate-chrome in sheets that
+   do not own the shell. Moved verbatim - same selectors (page-scoped by their own body class), same
+   media queries, same !important - so the rendering is unchanged; measured before and after on eleven
+   pages at 1024 and 768 (.report-content overflow/scrollHeight, .table-card height, .table-wrap height). */
+@media (max-width:1260px){
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-commission-page,.agent-claim-page,.agent-payout-page,.agent-management-page,.agent-promotion-page) .report-content{
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    min-height:0!important;
+  }
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-commission-page,.agent-claim-page,.agent-payout-page,.agent-management-page,.agent-promotion-page) .report-content > .table-card{
+    flex:1 0 auto!important;
+    height:auto!important;
+    min-height:480px!important;
+    max-height:none!important;
+  }
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-commission-page,.agent-claim-page,.agent-payout-page,.agent-management-page,.agent-promotion-page) .report-content > .table-card .table-wrap{
+    flex:1 1 auto!important;
+    min-height:300px!important;
+  }
+  html:not(#bo-ss-1):not(#bo-ss-2) body:not(#bo-ss-3).bo-ss-scroll .report-content{
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    min-height:0!important;
+  }
+  html:not(#bo-ss-1):not(#bo-ss-2) body:not(#bo-ss-3).bo-ss-scroll .report-content > .table-card{
+    flex:1 0 auto!important;
+    height:auto!important;
+    min-height:480px!important;
+    max-height:none!important;
+  }
+  html:not(#bo-ss-1):not(#bo-ss-2) body:not(#bo-ss-3).bo-ss-scroll .report-content > .table-card .table-wrap{
+    flex:1 1 auto!important;
+    min-height:300px!important;
+  }
+  html:not(#bo-pl-1):not(#bo-pl-2):not(#bo-pl-4):not(#bo-pl-5) body:not(#bo-pl-3):not(#bo-pl-6):not(#bo-pl-7).promotion-log-page .report-content{
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    min-height:0!important;
+  }
+  html:not(#bo-pl-1):not(#bo-pl-2):not(#bo-pl-4):not(#bo-pl-5) body:not(#bo-pl-3):not(#bo-pl-6):not(#bo-pl-7).promotion-log-page .report-content > .table-wrap,
+  html:not(#bo-pl-1):not(#bo-pl-2):not(#bo-pl-4):not(#bo-pl-5) body:not(#bo-pl-3):not(#bo-pl-6):not(#bo-pl-7).promotion-log-page .table-card .table-wrap{
+    flex:0 0 auto!important;
+    min-height:420px!important;
+  }
+  html:not(#bo-pl-1):not(#bo-pl-2):not(#bo-pl-4):not(#bo-pl-5) body:not(#bo-pl-3):not(#bo-pl-6):not(#bo-pl-7).promotion-log-page .report-content > .table-card{
+    flex:1 0 auto!important;
+    height:auto!important;
+  }
+  html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .report-content{
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    min-height:0!important;
+  }
+  html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .report-content > .rebate-chrome{
+    flex:1 0 auto!important;
+    height:auto!important;
+    max-height:none!important;
+    min-height:520px!important;
+  }
+  html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .report-content > .standard-list-card:not(.rebate-worker-card):has(.standard-table-wrap,.table-wrap){
+    flex:1 0 auto!important;
+    height:auto!important;
+    max-height:none!important;
+    min-height:520px!important;
+  }
+  html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .report-content > .standard-list-card:not(.rebate-worker-card) .standard-table-wrap{
+    min-height:300px!important;
+    max-height:min(560px,72vh)!important;
+    flex:1 1 auto!important;
+    overflow:auto!important;
+  }
+}
+@media (max-width:1290px){
+  html:not(#bo-rf-1):not(#bo-rf-2) body:not(#bo-rf-3).referral-page .report-content{
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    min-height:0!important;
+  }
+}
 
 /* 0c-4. The drawer's own toggle, while the drawer is open (below 992px).
    ------------------------------------------------------------------------------------------
@@ -1107,26 +1107,33 @@ body.report-body.topup-reward-page .report-content{
     pointer-events:none!important;
   }
 }
-
-/* 0c-5. The collapsed rail always shows its icons (992px and up).
+/* 0c-5. The collapsed rail always shows its icons, whatever shape the row has (992px and up).
    ------------------------------------------------------------------------------------------
-   Every rail row keeps its glyph inside the row's <span> - `[data-rail-label]` rows, group
-   buttons and the direct links alike - and several rules hide that <span> as a way to hide the
-   *label*: the click-mode hover block in bo-global-quicknav.css sets
-   `opacity:0; visibility:hidden; width:0; overflow:hidden` on `.nav-group-btn span`, and auth.js
-   carries a comment about that same rule leaving "only the always-visible pin buttons". Hiding
-   the span hides the icon with it, which is the reported "collapse the rail and the icons are
-   gone, click anywhere / reload and they are back". This restores the glyph on every rail row
-   while the rail is mini; the label text stays controlled by those sheets. */
+   Every rail row keeps its glyph inside the row's <span> - group buttons, direct links and
+   `[data-rail-label]` rows alike - and more than one rule hides that <span> as a way to hide the
+   *label*: the click-mode hover block in bo-global-quicknav.css sets opacity:0 / visibility:hidden /
+   width:0 / overflow:hidden on `.nav-group-btn span`, which takes the icon with it (auth.js carries a
+   comment about that same rule leaving "only the always-visible pin buttons"). The reported symptom is
+   exactly that: collapse the rail, the icons are gone, and the next click or reload brings them back.
+
+   The row shapes differ across pages (the glyph is a child of the <span> in menuLinkHtml, but a
+   re-render or a page that builds its own rail can put it beside the label), so the rule does not
+   assume one: the span keeps its box, the label stays at 0px, and any glyph that is not the
+   chevron or the hamburger is forced back at the rail's icon size. */
 @media (min-width:992px){
-  body.sidebar-mini .report-sidebar .report-nav .nav-group-btn > span > i,
-  body.sidebar-mini .report-sidebar .report-nav > a > span > i,
-  body.sidebar-mini .report-sidebar .report-nav .nav-group-btn.active > span > i{
+  body.sidebar-mini .report-sidebar .report-nav :is(a,button) > span{
+    opacity:1!important;
+    visibility:visible!important;
+    overflow:visible!important;
+    width:auto!important;
+    font-size:0!important;
+  }
+  body.sidebar-mini .report-sidebar .report-nav :is(a,button) i.bi:not(.bi-chevron-down):not(.bi-list){
     opacity:1!important;
     visibility:visible!important;
     width:auto!important;
+    height:auto!important;
     overflow:visible!important;
     font-size:17px!important;
-    color:inherit!important;
   }
 }
