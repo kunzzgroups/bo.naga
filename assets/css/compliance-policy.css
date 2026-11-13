@@ -1079,3 +1079,42 @@ html[data-bo-theme="dark"] body.compliance-policy-page .policy-modal-foot .clean
    "Registered payout account". The wrapper keeps its horizontal scroll, so nothing is lost.
    (The listing frame's fixed layout is overridden here, page-scoped, so no other table changes.) */
 body.compliance-policy-page .policy-table-wrap .report-table{table-layout:auto!important}
+
+/* Below 992px the shell is no longer locked to the viewport, so the table wrap's `flex:1 1 0` had nothing to grow into (0px tall: toolbar and
+   footer only, tabs squeezed to a strip). The page scrolls here and the table gets a height of its own. Same treatment as Duplicate IP. */
+@media (max-width: 1024px) {
+  html body.report-body.compliance-policy-page:not(#pol-sm-off):not(#pol-sm-off-2) .policy-panel {
+    flex: 1 0 auto !important;
+  }
+  html body.report-body.compliance-policy-page:not(#pol-sm-off):not(#pol-sm-off-2) .policy-panel .policy-table-wrap {
+    flex: 0 0 auto !important;
+    height: min(60dvh, 440px) !important;
+    min-height: 260px !important;
+  }
+}
+
+/* Narrow footer: one column, three stacked rows. The shared footer grid names areas (entries / info / pager) and only gave the stack two rows, so
+   the page-size control and the pager sat on top of each other. Dark: the record count was #57534E (dark grey on the dark panel). */
+@media (max-width: 768px) {
+  html body.report-body.compliance-policy-page:not(#pol-fm-1):not(#pol-fm-2) .policy-footer {
+    grid-template-areas: none !important;
+    grid-template-rows: none !important;
+    grid-auto-flow: row !important;
+  }
+  html body.report-body.compliance-policy-page:not(#pol-fm-1):not(#pol-fm-2) .policy-footer > * {
+    grid-area: auto !important;
+    grid-row: auto !important;
+    grid-column: 1 !important;
+  }
+}
+html[data-bo-theme="dark"] body.report-body.compliance-policy-page .policy-footer > .table-info,
+html[data-bo-theme="dark"] body.report-body.compliance-policy-page .policy-footer > #policyRecordCount {
+  color: #A1A1AA !important;
+}
+
+/* The footer page-size menu opens upward on every listing; here it opened down into the panel's overflow:hidden and only a sliver showed. */
+html:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.compliance-policy-page .policy-footer .entries-control .rounded-select-menu {
+  top: auto !important;
+  bottom: calc(100% + 6px) !important;
+  z-index: 3000 !important;
+}

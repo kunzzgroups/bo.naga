@@ -37,9 +37,11 @@
       const head = tableWrap.querySelector('thead');
       const headH = head ? Math.ceil(head.getBoundingClientRect().height) : 44;
       const avail = Math.max(0, Math.floor(tableWrap.clientHeight) - headH);
-      const sample = tableWrap.querySelector('tbody tr td');
+      /* Measure a real data row. The "Loading..." / "No duplicate login IP found." placeholder is a one-cell row and much shorter, which
+         made the first fit hand out ~10 rows to a table that holds 6, so the table scrolled with "-" selected. */
+      const sample = tableWrap.querySelector('tbody tr:not(:has(td[colspan]))');
       const rowH = sample ? Math.max(38, Math.round(sample.getBoundingClientRect().height)) : 41;
-      return Math.max(5, Math.min(200, Math.floor(avail / rowH) || 12));
+      return Math.max(5, Math.min(autoCap, 200, Math.floor(avail / rowH) || 12));
     }
     const n = Number(v);
     return Number.isFinite(n) && n > 0 ? n : 12;
@@ -84,6 +86,8 @@
     paginationEl.innerHTML = html;
   }
 
+  let refitDone = false;
+  let autoCap = 200; // lowered one row at a time while the fitted page still overflows the table
   function render(resetPage) {
     if (resetPage) currentPage = 1;
     const filtered = filteredRows();
@@ -115,13 +119,28 @@
       : '<tr><td colspan="4">No duplicate login IP found.</td></tr>';
 
     renderPager(total, pageSize);
+    /* First paint of an auto-sized page used a placeholder row for the height; now real rows exist, fit once more. */
+    if (isAutoPageSize() && pageItems.length) {
+      if (!refitDone) {
+        refitDone = true;
+        if (resolvePageSize() !== pageSize) { render(false); return; }
+      }
+      /* Still taller than the table (row heights shift with content) - one row less until it fits, never below 5. */
+      if (tableWrap && tableWrap.scrollHeight > tableWrap.clientHeight + 1 && pageItems.length > 5) {
+        autoCap = pageItems.length - 1;
+        render(false);
+      }
+    }
   }
 
   async function load() {
+    refitDone = false;
+    autoCap = 200;
     document.getElementById('dupBody').innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
     try {
       rows = await api(API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.DUPLICATE_IP_LIST);
       render(true);
+      setTimeout(() => { if (typeof window.__dupIpResize === 'function') window.__dupIpResize(); }, 400); // layout settles after first paint
     } catch (e) {
       document.getElementById('dupBody').innerHTML =
         '<tr><td colspan="4">' + esc(e.message) + '</td></tr>';
@@ -218,12 +237,29 @@
   });
   pageSizeEl?.addEventListener('change', () => render(true));
 
+  /* Re-fit whenever the table's own box changes (window resize, sidebar fold, fonts/pager settling after first paint), not only on window
+     resize: the first fit can run before the footer and header have their final height, which left "Showing 1 to 10 of 10" in a table
+     that holds 8 and made it scroll. One window-level slot so a SPA re-entry replaces the previous observer instead of stacking. */
   let resizeTimer = 0;
-  window.addEventListener('resize', () => {
+  const refit = () => {
     if (!isAutoPageSize()) return;
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => render(false), 120);
-  });
+    resizeTimer = setTimeout(() => { refitDone = false; autoCap = 200; render(false); }, 120);
+  };
+  if (window.__dupIpResize) window.removeEventListener('resize', window.__dupIpResize);
+  window.__dupIpResize = refit;
+  window.addEventListener('resize', refit);
+  if (window.__dupIpRO) { try { window.__dupIpRO.disconnect(); } catch (e) {} }
+  if (tableWrap && typeof ResizeObserver === 'function') {
+    let lastH = tableWrap.clientHeight;
+    window.__dupIpRO = new ResizeObserver(() => {
+      const h = tableWrap.clientHeight;
+      if (Math.abs(h - lastH) < 2) return;
+      lastH = h;
+      refit();
+    });
+    window.__dupIpRO.observe(tableWrap);
+  }
 
   load();
 })();

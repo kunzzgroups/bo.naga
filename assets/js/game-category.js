@@ -143,7 +143,26 @@ const GAME_API_CATEGORY = {
     return value;
   }
 
+  /* The list arrives from one request; until it does the table shows a skeleton and the footer says "Loading categories...". Anything that
+     redraws an empty list in the meantime (page-size / auto-fit handlers) must not paint "No categories found" and "Showing 0 to 0". */
+  let isLoadingList = false;
+  function showLoadingState() {
+    empty.hidden = true;
+    list.setAttribute('aria-busy', 'true');
+    if (showingTextEl) showingTextEl.textContent = '';
+    if (pager) pager.innerHTML = '';
+    if (list.querySelector('.is-skeleton')) return;
+    const row = '<div class="category-table-row is-skeleton" aria-hidden="true">' +
+      '<div class="category-drag"></div>' +
+      '<div class="category-main-cell"><div class="category-thumb-full bo-sk"></div><div class="category-copy"><span class="bo-sk bo-sk-line bo-sk-w60"></span><span class="bo-sk bo-sk-line bo-sk-w80"></span></div></div>' +
+      '<div class="category-status-cell"><span class="bo-sk bo-sk-pill"></span></div>' +
+      '<div class="category-action-cell"><span class="bo-sk bo-sk-btn"></span><span class="bo-sk bo-sk-btn"></span></div></div>';
+    list.innerHTML = row.repeat(6);
+  }
+
   function renderList(items, resetPage) {
+    if (isLoadingList && !(Array.isArray(items) && items.length)) { showLoadingState(); return; }
+    list.removeAttribute('aria-busy');
     if (Array.isArray(items)) currentItems = items;
     if (resetPage) currentPage = 0;
 
@@ -200,13 +219,17 @@ const GAME_API_CATEGORY = {
   function applyCategoryFilters() { renderList(currentItems, true); }
 
   async function loadCategories() {
-    list.innerHTML = '<div class="slider-empty"><i class="bi bi-hourglass-split"></i><b>Loading categories...</b></div>';
-    empty.hidden = true;
+    isLoadingList = true;
+    showLoadingState();
     try {
       const json = await fetchJson(GAME_API_CATEGORY.list);
+      isLoadingList = false;
       renderList(json.data || [], true);
     } catch (err) {
+      isLoadingList = false;
+      list.removeAttribute('aria-busy');
       list.innerHTML = '';
+      if (showingTextEl) showingTextEl.textContent = 'Showing 0 to 0 of 0 entries';
       empty.hidden = false;
       empty.innerHTML = `<i class="bi bi-exclamation-triangle"></i><b>Unable to load categories</b><small>${escapeHtml(err.message || 'Please check API URL / CORS.')}</small>`;
     }

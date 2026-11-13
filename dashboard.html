@@ -12,7 +12,7 @@
 <link href="assets/css/bo-ui-standard.css?v=aaca2665" rel="stylesheet">
 <link href="assets/css/bo-account-chip.css?v=c8730135" rel="stylesheet">
 <link href="assets/css/bo-charcoal-shell.css?v=83556de2" rel="stylesheet">
-<link href="assets/css/bo-shell.css?v=75107c71" rel="stylesheet" />
+<link href="assets/css/bo-shell.css?v=e172f2ad" rel="stylesheet" />
 <link href="assets/css/bo-charcoal-legacy.css?v=8fced50e" rel="stylesheet">
 <link href="assets/css/bo-charcoal-primitives.css?v=292c8b34" rel="stylesheet">
 <link href="assets/css/bo-charcoal-cms.css?v=9e94ddbb" rel="stylesheet">
@@ -89,10 +89,15 @@ html:not(#bo-dod-1) body .bo-global-quicknav a.bo-qn-menu{display:none!important
   body.sidebar-mini.dashboard-mini-hold .report-sidebar.is-mini-hover{width:var(--rail-w)!important;max-width:var(--rail-w)!important;min-width:var(--rail-w)!important;box-shadow:none!important;overflow-x:hidden!important}
   body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .report-brand{justify-content:center!important;padding:0!important}
   body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .report-brand>div:not(.logo),
-  body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .report-nav>a:not(.report-sub) span,
-  body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .nav-group-btn span,
   body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .nav-group-btn .bi-chevron-down,
   body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .report-nav small{opacity:0!important;visibility:hidden!important;width:0!important;overflow:hidden!important}
+  /* The rows keep their glyph: hiding the <span> hid the icon with the label, so the whole rail went
+     blank while the pointer stayed on it (reported as "collapse the rail, icons gone, click elsewhere and
+     they come back"). The span keeps its box and its label is zeroed instead; the glyph inside it is
+     restored at the rail's icon size by bo-shell.css 0c-5, which also covers a row whose glyph sits
+     beside the label rather than inside the span. */
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .report-nav>a:not(.report-sub) span,
+  body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .nav-group-btn span{opacity:1!important;visibility:visible!important;width:auto!important;overflow:visible!important;font-size:0!important}
   body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .report-nav>a:not(.report-sub),
   body.sidebar-mini.dashboard-mini-hold .report-sidebar:hover .nav-group-btn{justify-content:center!important;padding-left:0!important;padding-right:0!important}
 }
@@ -115,11 +120,12 @@ html:not(#bo-dod-1) body .bo-global-quicknav a.bo-qn-menu{display:none!important
   </main>
 </div>
 <script src="assets/js/config.js?v=e7312672"></script>
+<script src="assets/js/bo-loading-guard.js?v=63316c04"></script>
 <script src="assets/js/brand-context.js?v=27360386"></script>
 <script src="assets/js/main-currency-runtime.js?v=2b28e860"></script>
 <script src="assets/js/currency-runtime.js?v=b63c89fb"></script>
-<script src="assets/js/reports.js?v=6ea1e857"></script>
-<script src="assets/js/auth.js?v=22d696db"></script>
+<script src="assets/js/reports.js?v=c425560c"></script>
+<script src="assets/js/auth.js?v=74c4cc77"></script>
 <script defer src="assets/js/bo-ui-standard.js?v=890f213b"></script>
 <script src="assets/js/operation-global-notification.js?v=ed9bcecb"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
@@ -149,6 +155,6 @@ html:not(#bo-dod-1) body .bo-global-quicknav a.bo-qn-menu{display:none!important
   });
 })();
 </script>
-<script src="assets/js/bo-spa-manifest.js?v=e25e34cd"></script><script src="assets/js/bo-spa.js?v=96c21d1f"></script>
+<script src="assets/js/bo-spa-manifest.js?v=f8a1f414"></script><script src="assets/js/bo-spa.js?v=40464d3e"></script>
 </body>
 </html>

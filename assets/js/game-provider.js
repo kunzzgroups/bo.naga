@@ -502,7 +502,18 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
     });
   }
   async function ensureTenantContext(){if(tenantContextLoaded)return;tenantContextLoaded=true;try{const j=window.BO_BRAND?await BO_BRAND.context():null;tenantMode=!!(j&&j.data&&!j.data.master);}catch(_){tenantMode=false;}if(tenantMode){if(title) title.textContent='Add New Provider';if(resetBtn) resetBtn.textContent='Clear Form';}}
+  /* Until the first response the list is a handful of skeleton cards instead of a blank panel. render() replaces them. */
+  function showLoadingState(){
+    if(!list || !isListPage || rows.length) return;
+    if(empty) empty.hidden = true;
+    let html = '';
+    for(let i = 0; i < 3; i++){
+      html += '<div class="manage-card provider-card" aria-hidden="true"><header class="provider-card-head"><div class="manage-thumb game-thumb bo-sk"></div><div class="provider-card-identity"><span class="bo-sk bo-sk-line bo-sk-w40"></span><span class="bo-sk bo-sk-line bo-sk-w60"></span></div><div class="slider-card-actions"><span class="bo-sk bo-sk-btn"></span><span class="bo-sk bo-sk-btn"></span></div></header><span class="bo-sk bo-sk-line bo-sk-w80"></span></div>';
+    }
+    list.innerHTML = html;
+  }
   async function load(){
+    showLoadingState();
     await ensureTenantContext();
     setStatus('Loading...', '');
     try{
@@ -530,7 +541,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       } else {
         setStatus('Latest provider and category data loaded.', 'success');
       }
-    }catch(err){ setStatus(err.message || 'Failed to load.', 'error'); }
+    }catch(err){ setStatus(err.message || 'Failed to load.', 'error'); if(isListPage) render(); }
   }
 
   async function save(e){

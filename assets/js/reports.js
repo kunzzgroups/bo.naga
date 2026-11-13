@@ -447,6 +447,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }else if(readMiniPref()){
       document.body.classList.add('sidebar-mini');
     }
+    /* A drawer opened below 992 stays open (sidebar.show + body.sidebar-open) when the window grows back:
+       the rail is then painted over the content frame with its X, and the table's first columns - TYPE and
+       PERIOD on Promotion Bonus, the Skipped/All pills on any listing - sit underneath it. Desktop has no
+       drawer, so drop the open state as soon as the desktop layout is back. */
+    if(isDesktop()){
+      var rail=document.getElementById('reportSidebar');
+      var veil=document.getElementById('reportOverlay')||document.querySelector('.sidebar-overlay.show,.sidebar-backdrop.show');
+      if(rail) rail.classList.remove('show');
+      if(veil) veil.classList.remove('show');
+      document.body.classList.remove('sidebar-open');
+    }
   });
 })();
 

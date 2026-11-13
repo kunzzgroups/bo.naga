@@ -300,6 +300,11 @@ html[data-bo-theme="dark"] body.timezone-setting-page .tz-status.is-success {
   .tz-panel-foot .btn-primary-clean {
     width: 100%;
   }
+
+  /* The status line is `flex: 1 1 160px` for the row layout; in this column layout that 160px became height - a 160px empty gap above Save. */
+  .tz-panel-foot .tz-status {
+    flex: 0 0 auto;
+  }
 }
 
 @media (max-width: 390px) {

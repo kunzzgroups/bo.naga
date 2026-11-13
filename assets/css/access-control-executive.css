@@ -1363,3 +1363,16 @@ html:not(#bo-charcoal-off) body.bo-access-control.admin-operation-log-page .stan
     max-width:none!important;
   }
 }
+
+/* Dark: the row's Edit is an <a>, not a <button>, so it never got the dark icon-button recipe that the Delete button beside it (and every other
+   listing's row action) has - it stayed the light theme's cream square. Same colours as `.bo-ui-icon-button` in dark. */
+html[data-bo-theme="dark"]:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card tbody a.icon-action{
+  background:#2A2C36 !important;
+  border-color:rgba(255,255,255,.12) !important;
+  color:#D4D4D8 !important;
+}
+html[data-bo-theme="dark"]:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card tbody a.icon-action:hover,
+html[data-bo-theme="dark"]:not(#bo-filter-standard-off):not(#bo-charcoal-off) body.bo-access-control .table-card tbody a.icon-action:focus-visible{
+  background:#383A46 !important;
+  color:#F5F5F4 !important;
+}

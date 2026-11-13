@@ -22,3 +22,14 @@ html[data-bo-theme="dark"] body.frontend-display-page.report-body.bo-charcoal:no
    The track may shrink (minmax(0,1fr)) and the wrap fills the panel; the editor scrolls its own text, the preview strip clips its own. */
 html body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .display-setting-row.is-stack{grid-template-columns:minmax(0,1fr)!important}
 html body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .marquee-editor-wrap{min-width:0!important;max-width:100%!important}
+/* Dividers. In dark the three select rows of the Visibility panel (Editing Brand / Mobile Header Logo / Collapsed Sidebar) kept the light theme's
+   cream #EADCC8 underline while every other row, and the right-hand panel, uses the faint white one - so the left column showed bright lines
+   and the right column dim ones. One colour for every row rule in dark. */
+html[data-bo-theme="dark"] body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .display-setting-row:not(:last-child):not(.fd-switch-tile):not(.fd-marquee-row),
+html[data-bo-theme="dark"] body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) #fd-sec-visibility .fd-social-field,
+html[data-bo-theme="dark"] body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .fd-panel-head,
+html[data-bo-theme="dark"] body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) .fd-panel{border-bottom-color:rgba(255,255,255,.12)!important}
+/* The select rows left of the divider (106px) and the first row right of it (108px, its copy carries a 2px margin) ended on different
+   pixels, so the horizontal rule broke at the vertical one. Same height on both sides. */
+html body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) #fd-sec-visibility .display-setting-row:has(.rounded-select-wrap,.display-setting-select),
+html body.frontend-display-page.report-body.bo-charcoal:not(#bo-fd-off):not(#bo-fd-off-2) #fd-sec-install .display-setting-row.is-stack:first-of-type{box-sizing:border-box;min-height:108px}

@@ -455,6 +455,10 @@ html:not(#bo-charcoal-off) body.report-body .report-shell .report-main .report-t
 .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-icon{
   width:38px!important;
   height:38px!important;
+  /* flex-basis too: the wallet-transaction sheet's compact variant (<1200px) pins `flex:0 0 36px`, and a flex-basis beats `width`, so on those
+     pages the tile was 36px inside the same 48px chip - a visible ring around it that no other page has. */
+  flex:0 0 38px!important;
+  min-width:38px!important;
   font-size:18px!important;
 }
 .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-text{
@@ -896,6 +900,10 @@ body.report-body.topup-reward-page .report-content{
     font-size:10px!important;
     line-height:1!important;
   }
+  /* The wallet-transaction sheet gives the count an amber filled circle with a 2px ring at this width (18x16); every other page shows the plain
+     16x16 number. One badge: the plain one, in each theme's ink. */
+  .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-text b{background:transparent!important;border:0!important;box-shadow:none!important;color:#18191C!important}
+  html[data-bo-theme="dark"] .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions [data-bo-profile] .bo-header-counter-text b{color:#F5F5F4!important}
 }
 
 /* 2d. Deposit / Withdraw Approval on a tablet (<=1100px): the content frame scrolls (member-approval-tablet.css) and the
@@ -996,3 +1004,284 @@ body.report-body.topup-reward-page .report-content{
   html:not(#bo-pf-off-1):not(#bo-pf-off-2):not(#bo-pf-off-3):not(#bo-pf-off-4):not(#bo-pf-off-5):not(#bo-pf-off-6):not(#bo-pf-off-7) body.report-body .mad-footer > .pagination-clean,
   html:not(#bo-pf-off-1):not(#bo-pf-off-2):not(#bo-pf-off-3):not(#bo-pf-off-4):not(#bo-pf-off-5):not(#bo-pf-off-6):not(#bo-pf-off-7) body.report-body .mad-footer > nav{flex:1 1 100%!important;justify-content:center!important;flex-wrap:wrap!important;max-width:100%!important}
 }
+
+/* 2h. Small-screen fit rules that used to sit in the page sheets.
+   ------------------------------------------------------------------------------------------
+   AGENTS.md puts every layout metric of the shell in this file; these ten rules were written next to
+   the pages they fix (agent-kpi-fit.css, bo-small-screen-scroll.css, promotion-log-fit.css,
+   rebate-management-fit.css, referral-fit.css) and the drift guard refused them there: 32 declarations
+   on .report-content / .table-card / .table-wrap / .rebate-chrome across those five sheets.
+   Moved verbatim - same selectors (page-scoped by their body class), same media queries, same
+   !important - so the rendered result is unchanged; measured before and after on eleven pages at 1024
+   and 768 (.report-content overflow/scrollHeight, .table-card height, .table-wrap height). */
+
+/* 2h. Small-screen fit rules that used to live in the page sheets.
+   ------------------------------------------------------------------------------------------
+   These 14 rules sat next to the pages they fix (agent-kpi-fit.css, bo-small-screen-scroll.css,
+   promotion-log-fit.css, rebate-management-fit.css, referral-fit.css) and the drift guard refused them
+   there: 32 declarations on .report-content / .table-card / .table-wrap / .rebate-chrome in sheets that
+   do not own the shell. Moved verbatim - same selectors (page-scoped by their own body class), same
+   media queries, same !important - so the rendering is unchanged; measured before and after on eleven
+   pages at 1024 and 768 (.report-content overflow/scrollHeight, .table-card height, .table-wrap height). */
+@media (max-width:1260px){
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-commission-page,.agent-claim-page,.agent-payout-page,.agent-management-page,.agent-promotion-page) .report-content{
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    min-height:0!important;
+  }
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-commission-page,.agent-claim-page,.agent-payout-page,.agent-management-page,.agent-promotion-page) .report-content > .table-card{
+    flex:1 0 auto!important;
+    height:auto!important;
+    min-height:480px!important;
+    max-height:none!important;
+  }
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-commission-page,.agent-claim-page,.agent-payout-page,.agent-management-page,.agent-promotion-page) .report-content > .table-card .table-wrap{
+    flex:1 1 auto!important;
+    min-height:300px!important;
+  }
+  html:not(#bo-ss-1):not(#bo-ss-2) body:not(#bo-ss-3).bo-ss-scroll .report-content{
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    min-height:0!important;
+  }
+  html:not(#bo-ss-1):not(#bo-ss-2) body:not(#bo-ss-3).bo-ss-scroll .report-content > .table-card{
+    /* flex-basis 480px, not auto: the card is 480px (or whatever the column has left) however many rows the page-size shows, and the table
+       scrolls inside it. With `auto` the basis was the content, so picking 20 entries stretched the card and the whole page scrolled. */
+    flex:1 0 480px!important;
+    height:auto!important;
+    min-height:480px!important;
+    max-height:none!important;
+  }
+  html:not(#bo-ss-1):not(#bo-ss-2) body:not(#bo-ss-3).bo-ss-scroll .report-content > .table-card .table-wrap{
+    flex:1 1 auto!important;
+    min-height:300px!important;
+  }
+  html:not(#bo-pl-1):not(#bo-pl-2):not(#bo-pl-4):not(#bo-pl-5) body:not(#bo-pl-3):not(#bo-pl-6):not(#bo-pl-7).promotion-log-page .report-content{
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    min-height:0!important;
+  }
+  html:not(#bo-pl-1):not(#bo-pl-2):not(#bo-pl-4):not(#bo-pl-5) body:not(#bo-pl-3):not(#bo-pl-6):not(#bo-pl-7).promotion-log-page .report-content > .table-wrap,
+  html:not(#bo-pl-1):not(#bo-pl-2):not(#bo-pl-4):not(#bo-pl-5) body:not(#bo-pl-3):not(#bo-pl-6):not(#bo-pl-7).promotion-log-page .table-card .table-wrap{
+    flex:0 0 auto!important;
+    min-height:420px!important;
+  }
+  html:not(#bo-pl-1):not(#bo-pl-2):not(#bo-pl-4):not(#bo-pl-5) body:not(#bo-pl-3):not(#bo-pl-6):not(#bo-pl-7).promotion-log-page .report-content > .table-card{
+    flex:1 0 auto!important;
+    height:auto!important;
+  }
+  html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .report-content{
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    min-height:0!important;
+  }
+  html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .report-content > .rebate-chrome{
+    flex:1 0 auto!important;
+    height:auto!important;
+    max-height:none!important;
+    min-height:520px!important;
+  }
+  html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .report-content > .standard-list-card:not(.rebate-worker-card):has(.standard-table-wrap,.table-wrap){
+    flex:1 0 auto!important;
+    height:auto!important;
+    max-height:none!important;
+    min-height:520px!important;
+  }
+  html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .report-content > .standard-list-card:not(.rebate-worker-card) .standard-table-wrap{
+    min-height:300px!important;
+    max-height:min(560px,72vh)!important;
+    flex:1 1 auto!important;
+    overflow:auto!important;
+  }
+}
+@media (max-width:1290px){
+  html:not(#bo-rf-1):not(#bo-rf-2) body:not(#bo-rf-3).referral-page .report-content{
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    min-height:0!important;
+  }
+}
+
+/* 0c-4. The drawer's own toggle, while the drawer is open (below 992px).
+   ------------------------------------------------------------------------------------------
+   In drawer mode the rail slides over the page, so the topbar hamburger is behind it - but the button
+   stays in the DOM and stays clickable, and on Dashboard the rail header draws a second one of its own
+   (`[data-open-sidebar]` at 12,12) right beside the close X at 184,17: measured at 963 with the drawer
+   open, two openers were painted on Dashboard and one on every other page (covered, not removed).
+   The close X is the only control that belongs in that state, so the opener is hidden - visibility, not
+   display, so the X does not shift - and it comes back with the drawer closed. Desktop (>=992) keeps its
+   hamburger: it is the rail toggle there, and this block does not reach it. */
+@media (max-width:991.98px){
+  body.sidebar-open [data-open-sidebar]{
+    visibility:hidden!important;
+    pointer-events:none!important;
+  }
+}
+/* 0c-5. The collapsed rail always shows its icons, whatever shape the row has (992px and up).
+   ------------------------------------------------------------------------------------------
+   Every rail row keeps its glyph inside the row's <span> - group buttons, direct links and
+   `[data-rail-label]` rows alike - and more than one rule hides that <span> as a way to hide the
+   *label*: the click-mode hover block in bo-global-quicknav.css sets opacity:0 / visibility:hidden /
+   width:0 / overflow:hidden on `.nav-group-btn span`, which takes the icon with it (auth.js carries a
+   comment about that same rule leaving "only the always-visible pin buttons"). The reported symptom is
+   exactly that: collapse the rail, the icons are gone, and the next click or reload brings them back.
+
+   The row shapes differ across pages (the glyph is a child of the <span> in menuLinkHtml, but a
+   re-render or a page that builds its own rail can put it beside the label), so the rule does not
+   assume one: the span keeps its box, the label stays at 0px, and any glyph that is not the
+   chevron or the hamburger is forced back at the rail's icon size. */
+@media (min-width:992px){
+  body.sidebar-mini .report-sidebar .report-nav :is(a,button) > span{
+    opacity:1!important;
+    visibility:visible!important;
+    overflow:visible!important;
+    width:auto!important;
+    font-size:0!important;
+  }
+  body.sidebar-mini .report-sidebar .report-nav :is(a,button) i.bi:not(.bi-chevron-down):not(.bi-list){
+    opacity:1!important;
+    visibility:visible!important;
+    width:auto!important;
+    height:auto!important;
+    overflow:visible!important;
+    font-size:17px!important;
+  }
+}
+
+/* Status pills share one size on every BO page: the access-control family's size (10.5px / 800, 5px 10px padding, 999px radius), so
+   the badge in an Admin list and the badge in a Member / Online Users list are the same shape. Colours stay owned by the theme sheets. */
+html:not(#bo-sp-off) body.report-body .status-pill{
+  font-size:10.5px!important;
+  font-weight:800!important;
+  padding:5px 10px!important;
+  border-radius:999px!important;
+  white-space:nowrap!important;
+  min-height:25px!important;
+  box-sizing:border-box!important;
+}
+
+/* Game Category and Game: their list card sits in .manage-page-grid, a fixed-height grid, and the card's own parts had fixed heights, so
+   the rows were clipped and the footer dropped out of its row. Below 1260px the grid, card, panel and table take their content height and
+   the content column scrolls. Desktop (1261px and up) is untouched. */
+@media (max-width:1260px){
+  html:not(#bo-gc-off) body.bo-ss-scroll.page-game-category .manage-page-grid,
+  html:not(#bo-gc-off) body.bo-ss-scroll.page-game .manage-page-grid{
+    height:auto!important;max-height:none!important;overflow:visible!important;flex:1 0 auto!important;grid-template-rows:auto!important;
+  }
+  html:not(#bo-gc-off) body.bo-ss-scroll.page-game-category .manage-page-grid > .manage-list-card,
+  html:not(#bo-gc-off) body.bo-ss-scroll.page-game .manage-page-grid > .manage-list-card,
+  html:not(#bo-gc-off) body.bo-ss-scroll.page-game-category .manage-page-grid > .manage-list-card.category-modern-page,
+  html:not(#bo-gc-off) body.bo-ss-scroll.page-game .manage-page-grid > .manage-list-card{
+    flex:1 0 auto!important;overflow:visible!important;height:auto!important;max-height:none!important;min-height:480px!important;
+  }
+  html:not(#bo-gc-off) body.bo-ss-scroll.page-game-category .manage-list-card > .category-panel,
+  html:not(#bo-gc-off) body.bo-ss-scroll.page-game-category .manage-list-card .category-table-wrap,
+  html:not(#bo-gc-off) body.bo-ss-scroll.page-game-category .manage-list-card .category-table{
+    flex:0 0 auto!important;height:auto!important;max-height:none!important;overflow:visible!important;
+  }
+}
+
+@media (max-width:1260px){
+  html:not(#bo-gc-off) body.bo-ss-scroll.page-game-sub-category .manage-page-grid{
+    height:auto!important;max-height:none!important;overflow:visible!important;flex:1 0 auto!important;grid-template-rows:auto!important;
+  }
+  html:not(#bo-gc-off) body.bo-ss-scroll.page-game-sub-category .manage-page-grid > .manage-list-card{
+    flex:1 0 auto!important;overflow:visible!important;height:auto!important;max-height:none!important;min-height:480px!important;
+  }
+  html:not(#bo-gc-off) body.bo-ss-scroll.page-game-sub-category .manage-list-card > .category-panel,
+  html:not(#bo-gc-off) body.bo-ss-scroll.page-game-sub-category .manage-list-card .category-table-wrap,
+  html:not(#bo-gc-off) body.bo-ss-scroll.page-game-sub-category .manage-list-card .category-table{
+    flex:0 0 auto!important;height:auto!important;max-height:none!important;overflow:visible!important;
+  }
+}
+
+@media (max-width:1260px){
+  html:not(#bo-gc-off) body.bo-ss-scroll.page-game .manage-list-card > .game-panel,
+  html:not(#bo-gc-off) body.bo-ss-scroll.page-game .manage-list-card .game-table-wrap,
+  html:not(#bo-gc-off) body.bo-ss-scroll.page-game .manage-list-card .game-table{
+    flex:0 0 auto!important;height:auto!important;max-height:none!important;overflow:visible!important;
+  }
+}
+
+/* Game pages: the footer's three parts (Show N / count / pager) always take ONE row. A grid that placed the count on a second row
+   (reported on Game and Game Sub Category at 1024px, the count under the pager) can no longer do so: every part is pinned to row 1. */
+@media (min-width:576px) and (max-width:1260px){
+  html:not(#bo-gc-off) body.bo-ss-scroll:is(.page-game,.page-game-category,.page-game-sub-category) .manage-list-card .table-footer{
+    grid-template-areas:none!important;grid-template-rows:auto!important;grid-auto-flow:column!important;align-items:center!important;
+  }
+  html:not(#bo-gc-off) body.bo-ss-scroll:is(.page-game,.page-game-category,.page-game-sub-category) .manage-list-card .table-footer > .entries-control{grid-area:auto!important;grid-column:1!important;grid-row:1!important}
+  html:not(#bo-gc-off) body.bo-ss-scroll:is(.page-game,.page-game-category,.page-game-sub-category) .manage-list-card .table-footer > .table-info{grid-area:auto!important;grid-column:2!important;grid-row:1!important;white-space:nowrap!important;align-self:center!important}
+  html:not(#bo-gc-off) body.bo-ss-scroll:is(.page-game,.page-game-category,.page-game-sub-category) .manage-list-card .table-footer > .pagination-clean{grid-area:auto!important;grid-column:3!important;grid-row:1!important}
+}
+
+/* A filter strip above a KPI grid is ONE panel (bo-report-family.css section 21) - but that join is written for 992px and up only, and its dark-theme
+   surface rule is not, so below 992px the KPI grid kept a panel background and border while the strip stayed a separate rounded card with a gap
+   (Casino Overview at 943 / 877 / 768px: strip and tiles read as two pieces). Same join here for the drawer widths: the strip loses its bottom
+   border, radii and shadow, the grid sits flush under it (the content column spaces blocks with margins here, not a flex gap) and takes the card's
+   surface, border and bottom radii. */
+@media (max-width:991.98px){
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > .filter-card:has(+ .quick-stats){
+    margin-bottom:0!important;padding:12px 16px!important;border-bottom:0!important;border-bottom-left-radius:0!important;border-bottom-right-radius:0!important;box-shadow:none!important;
+  }
+  body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > .filter-card + .quick-stats{
+    margin-top:0!important;background:#FFF8EB!important;border:1px solid #EADCC8!important;border-top:0!important;
+    border-top-left-radius:0!important;border-top-right-radius:0!important;border-bottom-left-radius:16px!important;border-bottom-right-radius:16px!important;
+    padding:16px!important;box-sizing:border-box!important;
+  }
+  html[data-bo-theme="dark"] body:not(#bo-report-family-off):not(#bo-charcoal-off).bo-report-family .report-content > .filter-card + .quick-stats{background:#383A46!important;border-color:rgba(255,255,255,.14)!important}
+}
+
+/* Loading skeleton, shared by the list pages that draw placeholder rows while their request is in flight (Game Sub Category, Game Category ...).
+   Neutral grey with alpha, so it reads on the dark and the cream theme alike; no layout of its own - the page's own row classes provide the grid. */
+.bo-sk{display:block;background:linear-gradient(90deg,rgba(128,128,128,.14) 0%,rgba(128,128,128,.28) 50%,rgba(128,128,128,.14) 100%);background-size:200% 100%;animation:boSkShimmer 1.3s ease-in-out infinite;border-radius:8px;border:0!important;box-shadow:none!important}
+.bo-sk-line{height:12px;margin:7px 0}
+.bo-sk-w80{width:80%}.bo-sk-w60{width:60%;max-width:220px}.bo-sk-w40{width:40%}
+.bo-sk-pill{width:84px;height:26px;border-radius:999px}
+.bo-sk-btn{display:inline-block;width:36px;height:36px;border-radius:10px;margin-left:8px}
+.is-skeleton{pointer-events:none}
+@keyframes boSkShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){.bo-sk{animation:none}}
+
+/* Loading guard (assets/js/bo-loading-guard.js): while a page's first API requests are in flight, the static "Showing 0 to 0" footer is blank and an empty-state block is hidden, so a slow API never looks like "no data". */
+.bo-ld-text { font-size: 0 !important; }
+.bo-ld-hide { visibility: hidden !important; }
+
+/* Table head stays put while the table scrolls - every listing, not only the ones that wrote it themselves. Audit of 104 pages (1300x760, dark):
+   account-lock, bank-deposit-usage, brand-detail, brand-management, brand-overview, bulk-(bonus-)adjustment, contact-sync, currency-management,
+   daily-rebate-report/-setting (and more further down the list) had a head that scrolled away with the rows. Only wrappers that are themselves
+   the scroll container are listed, so a head can never stick to the viewport under the top bar. Sheets that already set sticky + a solid
+   colour keep theirs; the four pages whose head was transparent get the standard band so rows do not show through it. */
+html:not(#bo-sticky-off) body :is(.table-wrap,.table-responsive,.standard-table-wrap,.brand-table-wrap,.brand-detail-table-wrap,.brand-exec-table-wrap,.selected-table-wrap,.policy-table-wrap,.dup-table-wrap) > table > thead > tr > th,
+html:not(#bo-sticky-off) body :is(.table-wrap,.table-responsive,.standard-table-wrap,.brand-table-wrap,.brand-detail-table-wrap,.brand-exec-table-wrap,.selected-table-wrap,.policy-table-wrap,.dup-table-wrap) > table > thead > th{position:sticky!important;top:0!important;z-index:3!important}
+html:not([data-bo-theme="dark"]):not(#bo-sticky-off) body :is(.brand-table-wrap,.brand-detail-table-wrap,.brand-exec-table-wrap) > table > thead > tr > th,
+html:not([data-bo-theme="dark"]):not(#bo-sticky-off) body[data-access-page="account-lock"] .table-wrap > table > thead > tr > th{background-color:#FFE8CC!important}
+html[data-bo-theme="dark"]:not(#bo-sticky-off) body :is(.brand-table-wrap,.brand-detail-table-wrap,.brand-exec-table-wrap) > table > thead > tr > th,
+html[data-bo-theme="dark"]:not(#bo-sticky-off) body[data-access-page="account-lock"] .table-wrap > table > thead > tr > th{background-color:#1F2128!important}
+
+/* menu-management and wbet-bet-limit (BO shell, already sticky) had the same transparent head. */
+html:not([data-bo-theme="dark"]):not(#bo-sticky-off) body.menu-mgmt-page .table-wrap > table > thead > tr > th,
+html:not([data-bo-theme="dark"]):not(#bo-sticky-off) body.report-body .table-wrap.mt-3 > table.report-table > thead > tr > th{background-color:#FFE8CC!important}
+html[data-bo-theme="dark"]:not(#bo-sticky-off) body.menu-mgmt-page .table-wrap > table > thead > tr > th,
+html[data-bo-theme="dark"]:not(#bo-sticky-off) body.report-body .table-wrap.mt-3 > table.report-table > thead > tr > th{background-color:#1F2128!important}
+/* referral, topup-reward, root-control: their own wrapper classes (the last one also has a transparent head). */
+html:not(#bo-sticky-off) body :is(.ref-table-wrap,.tr-table-wrap,.root-table-wrap) table thead th{position:sticky!important;top:0!important;z-index:3!important}
+html:not([data-bo-theme="dark"]):not(#bo-sticky-off) body .root-table-wrap table thead th{background-color:#FFE8CC!important}
+html[data-bo-theme="dark"]:not(#bo-sticky-off) body .root-table-wrap table thead th{background-color:#1F2128!important}
+
+/* Compliance Policy below 992px: the page scrolls (shell height:auto), so the content column must size to its content - its own `flex:1 1 0`
+   left it 28px tall and the panel was clipped away. */
+@media (max-width: 1024px){
+  html:not(#bo-cp-1):not(#bo-cp-2) body:not(#bo-cp-3).compliance-policy-page .report-content{flex:1 0 auto!important}
+}
+
+/* Admin Management & the other bo-ss-scroll listings, 576-1260px: the footer is a three-slot grid (Show | Showing | pager) but the middle slot
+   was auto-placed onto a SECOND row, so "Showing 1 to 5 of 34 entries" dropped under the page-size control and the pager, below the card's
+   last line. Same row for all three. */
+@media (min-width:576px) and (max-width:1260px){
+  html:not(#bo-ft-1):not(#bo-ft-2) body:not(#bo-ft-3).bo-ss-scroll .report-content > .table-card > .table-footer > *{grid-row:1!important}
+  html:not(#bo-ft-1):not(#bo-ft-2) body:not(#bo-ft-3).bo-ss-scroll .report-content > .table-card > .table-footer > .table-info{white-space:nowrap!important}
+}
+
+/* The topbar's action cluster (theme toggle | counters) is 12px apart everywhere; Deposit/Withdraw Approval's own sheet made it 8px, which moved
+   the toggle 4px against the chips as you paged between listings. */
+.report-shell .report-main .report-topbar[data-bo-topbar] .report-actions{gap:12px!important}
