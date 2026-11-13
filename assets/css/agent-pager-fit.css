@@ -1,0 +1,14 @@
+/* Agent Settlement and Agent Commission on a phone. The footer is a three-track grid (Show N | count | pager) and the pager is ~287px with nowrap: at 390px
+   the third track was 0 wide and the pager ran 50px past the card. On phones the count and the Show control share the first line and the pager takes its own
+   centred line; the footer wraps instead of squeezing. */
+@media (max-width:575.98px){
+  html body.report-body.agent-settlement-page .table-footer,
+  html body.report-body.agent-commission-page .table-footer{
+    display:flex!important;flex-wrap:wrap!important;align-items:center!important;justify-content:space-between!important;
+    grid-template-columns:none!important;gap:8px 12px!important;
+  }
+  html body.report-body.agent-settlement-page .table-footer > .table-info,
+  html body.report-body.agent-commission-page .table-footer > .table-info{flex:1 1 auto!important;min-width:0!important;text-align:right!important;white-space:normal!important}
+  html body.report-body.agent-settlement-page .table-footer > .pagination-clean,
+  html body.report-body.agent-commission-page .table-footer > .pagination-clean{flex:1 1 100%!important;justify-content:center!important;flex-wrap:wrap!important;max-width:100%!important}
+}
