@@ -12,6 +12,8 @@ html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:h
 html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .quick-stats .metric strong{white-space:nowrap!important}
 /* Footer: the entry count takes the room between Show and the pager; under 1100px the |< and >| buttons are dropped. */
 html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .mad-footer{grid-template-columns:auto minmax(0,1fr) auto!important;gap:12px!important}
+/* the split script measures .table-wrap.clientWidth; a scrollbar that appears afterwards leaves its width out of the inline width, so the table came out 6px wide; scrollbar-gutter reserves it up front */
+html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .table-wrap{scrollbar-gutter:stable}
 html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .mad-footer-info{padding:0 12px!important;white-space:nowrap!important}
 html:not(#bo-wl-off):not(#bo-wl-off-2) body:not(#bo-wl-off-3).bo-report-family:has(#wlBody) .mad-pager{flex-wrap:nowrap!important}
 @media (max-width:1100px){

@@ -1265,3 +1265,101 @@ html:not(#bo-charcoal-off) body.bo-access-control.admin-operation-log-page .stan
 }
 html:not(#bo-charcoal-off) body.bo-access-control.admin-operation-log-page .standard-data-table th:nth-child(7),
 html:not(#bo-charcoal-off) body.bo-access-control.admin-operation-log-page .standard-data-table td:nth-child(7){width:104px!important}
+
+
+/* Admin Management on a laptop or tablet: nine fixed-layout columns share 750 / 786 / 732px and four of
+   them were narrower than their own content - the ROLE chip needed 96 in 79, the STATUS pill 92 in 79, the
+   "Created By" header 79 in 66, ACTION needs 84 for its two icon buttons, and a date cell ("2026-11-10" plus
+   the time under it) needs 118: at 90 the date itself broke in two (measured at 1024, 822 and 768).
+
+   Below 1101 the columns are px at what they carry and Created By goes - it is a system label ("system" /
+   "admin"), the least informative of the nine. 30+100+108+96+92+118+118+84 = 746, inside the 750 a 1024 window
+   has. Under 820 CREATED goes too - LAST LOGIN is what answers "is this account still in use" - which brings
+   the row to 628, inside the 732 a 768 window has. Nothing changes at 1151 and above. */
+@media (max-width:1150px){
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(1),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(1){width:30px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(2),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(2){width:100px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(3),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(3){width:108px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(4),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(4){width:96px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(5),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(5){width:92px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(6),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(6){width:118px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(7),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(7){width:118px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(9),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(9){width:84px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(8),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(8){display:none!important}
+}
+
+@media (max-width:820px){
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(1),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(1){width:30px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(2),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(2){width:100px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(3),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(3){width:108px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(4),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(4){width:96px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(5),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(5){width:92px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(6),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(6){width:118px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(9),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(9){width:84px!important}
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table th:nth-child(7),
+  html:not(#bo-charcoal-off) body.bo-access-control.admin-management-page .admin-main-table td:nth-child(7){display:none!important}
+}
+
+/* Admin Management toolbar below a 1440-class window. The bar is flex / space-between with three parts sized
+   for a wide frame - pills 330, search 260, actions 211 - and once the sidebar is open (bar 683 at 1101, 700
+   at 768) the row either wraps into a lonely button line with half a bar of empty space, or the search is
+   squeezed to 188 and its placeholder is unreadable. Neither is the design.
+
+   So the pills share the first line with the buttons and the search takes the full width on the second:
+   measured at 768 - line 1: pills 330 + actions 211 + 10 gap = 551 inside 700; line 2: search 700, because
+   its 260px width was a pin, not a content width. Nothing is clipped and nothing is stranded. Above 1366 the
+   single line and the 260px search are unchanged.
+
+   The fourth :not() is there only to outrank bo-input-fill.css, which pins this field at min-width 260; the
+   label itself is left alone - this sheet hides `.field > label` at 2 ids on purpose (the Role filter it was
+   written for is gone) and bo-input-fill.css re-shows `.bo-search-control` at 4. Do not outrank that pair. */
+@media (max-width:1366px){
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-admin-toolbar-off) body.bo-access-control .table-card > .user-toolbar{
+    flex-wrap:wrap!important;
+    gap:10px!important;
+  }
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-admin-toolbar-off) body.bo-access-control .table-card > .user-toolbar > .mad-pills.ac-status-pills{
+    order:1!important;
+    flex:0 1 auto!important;
+    min-width:0!important;
+  }
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-admin-toolbar-off) body.bo-access-control .table-card > .user-toolbar > .user-toolbar-actions{
+    order:2!important;
+    flex:0 0 auto!important;
+    margin-left:auto!important;
+  }
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-admin-toolbar-off) body.bo-access-control .table-card > .user-toolbar > .user-search-grid.admin-search-grid{
+    order:3!important;
+    flex:1 1 100%!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-admin-toolbar-off) body.bo-access-control .table-card > .user-toolbar > .user-search-grid.admin-search-grid > .field:has(> .bo-search-control){
+    flex:1 1 auto!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+  html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legacy):not(#bo-admin-toolbar-off) body.bo-access-control .table-card > .user-toolbar > .user-search-grid.admin-search-grid .bo-search-control{
+    width:100%!important;
+    max-width:none!important;
+  }
+}

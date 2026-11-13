@@ -100,6 +100,13 @@ body.topup-reward-page .tr-table td input:not([type=file]){
   border-radius:8px!important;
 }
 body.topup-reward-page .tr-table td input:not([type=file])::placeholder{color:#A8A29E}
+/* The Image column states width:300px inline on its <th>. At a 768 window the six columns then sum to
+   708 in a 668 wrap - 40px over - and Description was squeezed to 0px (its header printed over the
+   neighbouring column). !important beats an inline width, and the 60px this frees goes to Description. */
+@media (max-width:1100px){
+  body.topup-reward-page .tr-table thead th:nth-child(5){width:240px!important}
+  body.topup-reward-page .tr-table tbody td:nth-child(5){width:240px!important}
+}
 body.topup-reward-page .tr-table td.tr-image-cell{display:flex;gap:8px;align-items:center;min-width:0}
 body.topup-reward-page .tr-table td.tr-image-cell > input:not([type=file]){flex:1 1 auto;min-width:0}
 body.topup-reward-page .tr-table .clean-btn{
