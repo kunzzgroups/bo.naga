@@ -973,12 +973,16 @@
      own on the next click. pageBodyClass is captured at parse time - before any runtime
      state exists - so only page-owned tokens are ever removed. */
   var pageBodyClass = String(DOC.body ? DOC.body.className : '');
+  var RUNTIME_BODY_CLASSES = { 'sidebar-mini': 1, 'sidebar-open': 1, 'modal-open': 1 };
 
   function syncBodyClass(doc) {
     var want = doc.body ? String(doc.body.className || '') : '';
     if (!want || want === pageBodyClass) return;
     var i, drop = pageBodyClass.split(/\s+/), add = want.split(/\s+/);
-    for (i = 0; i < drop.length; i++) if (drop[i]) DOC.body.classList.remove(drop[i]);
+    /* pageBodyClass is read when this script runs, which is AFTER reports.js has already put `sidebar-mini` on the body from the saved
+       rail preference - so the runtime state was captured as "page-owned" and the first swap stripped it (the 72px rail then showed cut
+       labels / lost its icons until a reload). These tokens are shell state, never page-owned: never drop them here. */
+    for (i = 0; i < drop.length; i++) if (drop[i] && !RUNTIME_BODY_CLASSES[drop[i]]) DOC.body.classList.remove(drop[i]);
     for (i = 0; i < add.length; i++) if (add[i]) DOC.body.classList.add(add[i]);
     pageBodyClass = want;
   }

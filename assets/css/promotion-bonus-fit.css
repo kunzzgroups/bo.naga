@@ -1,0 +1,13 @@
+/* Promotion Bonus on laptop/tablet widths (<=1100px). The toolbar left its two "Add ..." buttons floating at the right end of a second row,
+   and the category rows spent 95px each (96x74 thumbnail) so only 4-5 fit. Now: search grows beside the two selects on row one,
+   the two Add buttons share row two at equal width, and rows are compact (72x54 thumbnail). Scoped to the page body class because the
+   SPA router never unloads a stylesheet. */
+@media (max-width:1100px){
+  html:not(#bo-pb-1):not(#bo-pb-2):not(#bo-pb-4):not(#bo-pb-5) body:not(#bo-pb-3):not(#bo-pb-6):not(#bo-pb-7):not(#bo-pb-8):not(#bo-pb-9).promotion-bonus-page .promotion-filter-card{flex-wrap:wrap!important;gap:10px!important}
+  html:not(#bo-pb-1):not(#bo-pb-2):not(#bo-pb-4):not(#bo-pb-5) body:not(#bo-pb-3):not(#bo-pb-6):not(#bo-pb-7):not(#bo-pb-8):not(#bo-pb-9).promotion-bonus-page .promotion-filter-card > .bo-filter-input-item{flex:1 1 220px!important;width:auto!important;min-width:200px!important;max-width:none!important}
+  html:not(#bo-pb-1):not(#bo-pb-2):not(#bo-pb-4):not(#bo-pb-5) body:not(#bo-pb-3):not(#bo-pb-6):not(#bo-pb-7):not(#bo-pb-8):not(#bo-pb-9).promotion-bonus-page .promotion-filter-card > .bo-filter-select-item{flex:0 1 160px!important;width:auto!important;min-width:140px!important}
+  html:not(#bo-pb-1):not(#bo-pb-2):not(#bo-pb-4):not(#bo-pb-5) body:not(#bo-pb-3):not(#bo-pb-6):not(#bo-pb-7):not(#bo-pb-8):not(#bo-pb-9).promotion-bonus-page .promotion-filter-card > .promotion-toolbar-actions{flex:1 1 100%!important;width:100%!important;display:flex!important;gap:10px!important;margin:0!important}
+  html:not(#bo-pb-1):not(#bo-pb-2):not(#bo-pb-4):not(#bo-pb-5) body:not(#bo-pb-3):not(#bo-pb-6):not(#bo-pb-7):not(#bo-pb-8):not(#bo-pb-9).promotion-bonus-page .promotion-toolbar-actions > .bo-filter-other-button{flex:1 1 0!important;width:auto!important;min-width:0!important;justify-content:center!important}
+  html:not(#bo-pb-1):not(#bo-pb-2):not(#bo-pb-4):not(#bo-pb-5) body:not(#bo-pb-3):not(#bo-pb-6):not(#bo-pb-7):not(#bo-pb-8):not(#bo-pb-9).promotion-bonus-page .category-thumb-full{width:72px!important;height:54px!important;min-height:54px!important;max-height:54px!important;flex:0 0 72px!important}
+  html:not(#bo-pb-1):not(#bo-pb-2):not(#bo-pb-4):not(#bo-pb-5) body:not(#bo-pb-3):not(#bo-pb-6):not(#bo-pb-7):not(#bo-pb-8):not(#bo-pb-9).promotion-bonus-page .category-table-row{min-height:0!important}
+}

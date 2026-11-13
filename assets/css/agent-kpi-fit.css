@@ -22,7 +22,7 @@ html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3) .agent-admin-metrics .metric
 /* Small screens: the report column was locked to the viewport height, so the 2x2 KPI tiles left the table 1-2 rows. The page now
    scrolls instead; the table card keeps a readable height (about 8 rows) below the tiles. */
 @media (max-width:1260px){
-  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-commission-page,.agent-claim-page,.agent-payout-page,.agent-management-page) .report-content{overflow-y:auto!important;overflow-x:hidden!important;min-height:0!important}
-  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-commission-page,.agent-claim-page,.agent-payout-page,.agent-management-page) .report-content > .table-card{flex:0 0 auto!important;height:auto!important;min-height:480px!important;max-height:none!important}
-  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-commission-page,.agent-claim-page,.agent-payout-page,.agent-management-page) .report-content > .table-card .table-wrap{flex:1 1 auto!important;min-height:300px!important}
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-commission-page,.agent-claim-page,.agent-payout-page,.agent-management-page,.agent-promotion-page) .report-content{overflow-y:auto!important;overflow-x:hidden!important;min-height:0!important}
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-commission-page,.agent-claim-page,.agent-payout-page,.agent-management-page,.agent-promotion-page) .report-content > .table-card{flex:1 0 auto!important;height:auto!important;min-height:480px!important;max-height:none!important}
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-commission-page,.agent-claim-page,.agent-payout-page,.agent-management-page,.agent-promotion-page) .report-content > .table-card .table-wrap{flex:1 1 auto!important;min-height:300px!important}
 }
