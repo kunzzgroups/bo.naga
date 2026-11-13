@@ -996,3 +996,98 @@ body.report-body.topup-reward-page .report-content{
   html:not(#bo-pf-off-1):not(#bo-pf-off-2):not(#bo-pf-off-3):not(#bo-pf-off-4):not(#bo-pf-off-5):not(#bo-pf-off-6):not(#bo-pf-off-7) body.report-body .mad-footer > .pagination-clean,
   html:not(#bo-pf-off-1):not(#bo-pf-off-2):not(#bo-pf-off-3):not(#bo-pf-off-4):not(#bo-pf-off-5):not(#bo-pf-off-6):not(#bo-pf-off-7) body.report-body .mad-footer > nav{flex:1 1 100%!important;justify-content:center!important;flex-wrap:wrap!important;max-width:100%!important}
 }
+
+/* 2h. Small-screen fit rules that used to sit in the page sheets.
+   ------------------------------------------------------------------------------------------
+   AGENTS.md puts every layout metric of the shell in this file; these ten rules were written next to
+   the pages they fix (agent-kpi-fit.css, bo-small-screen-scroll.css, promotion-log-fit.css,
+   rebate-management-fit.css, referral-fit.css) and the drift guard refused them there: 32 declarations
+   on .report-content / .table-card / .table-wrap / .rebate-chrome across those five sheets.
+   Moved verbatim - same selectors (page-scoped by their body class), same media queries, same
+   !important - so the rendered result is unchanged; measured before and after on eleven pages at 1024
+   and 768 (.report-content overflow/scrollHeight, .table-card height, .table-wrap height). */
+
+/* 2h. Small-screen fit rules that used to live in the page sheets.
+   ------------------------------------------------------------------------------------------
+   These 14 rules sat next to the pages they fix (agent-kpi-fit.css, bo-small-screen-scroll.css,
+   promotion-log-fit.css, rebate-management-fit.css, referral-fit.css) and the drift guard refused them
+   there: 32 declarations on .report-content / .table-card / .table-wrap / .rebate-chrome in sheets that
+   do not own the shell. Moved verbatim - same selectors (page-scoped by their own body class), same
+   media queries, same !important - so the rendering is unchanged; measured before and after on eleven
+   pages at 1024 and 768 (.report-content overflow/scrollHeight, .table-card height, .table-wrap height). */
+@media (max-width:1260px){
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-commission-page,.agent-claim-page,.agent-payout-page,.agent-management-page,.agent-promotion-page) .report-content{
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    min-height:0!important;
+  }
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-commission-page,.agent-claim-page,.agent-payout-page,.agent-management-page,.agent-promotion-page) .report-content > .table-card{
+    flex:1 0 auto!important;
+    height:auto!important;
+    min-height:480px!important;
+    max-height:none!important;
+  }
+  html:not(#bo-ak-1):not(#bo-ak-2) body:not(#bo-ak-3):is(.agent-settlement-page,.agent-commission-page,.agent-claim-page,.agent-payout-page,.agent-management-page,.agent-promotion-page) .report-content > .table-card .table-wrap{
+    flex:1 1 auto!important;
+    min-height:300px!important;
+  }
+  html:not(#bo-ss-1):not(#bo-ss-2) body:not(#bo-ss-3).bo-ss-scroll .report-content{
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    min-height:0!important;
+  }
+  html:not(#bo-ss-1):not(#bo-ss-2) body:not(#bo-ss-3).bo-ss-scroll .report-content > .table-card{
+    flex:1 0 auto!important;
+    height:auto!important;
+    min-height:480px!important;
+    max-height:none!important;
+  }
+  html:not(#bo-ss-1):not(#bo-ss-2) body:not(#bo-ss-3).bo-ss-scroll .report-content > .table-card .table-wrap{
+    flex:1 1 auto!important;
+    min-height:300px!important;
+  }
+  html:not(#bo-pl-1):not(#bo-pl-2):not(#bo-pl-4):not(#bo-pl-5) body:not(#bo-pl-3):not(#bo-pl-6):not(#bo-pl-7).promotion-log-page .report-content{
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    min-height:0!important;
+  }
+  html:not(#bo-pl-1):not(#bo-pl-2):not(#bo-pl-4):not(#bo-pl-5) body:not(#bo-pl-3):not(#bo-pl-6):not(#bo-pl-7).promotion-log-page .report-content > .table-wrap,
+  html:not(#bo-pl-1):not(#bo-pl-2):not(#bo-pl-4):not(#bo-pl-5) body:not(#bo-pl-3):not(#bo-pl-6):not(#bo-pl-7).promotion-log-page .table-card .table-wrap{
+    flex:0 0 auto!important;
+    min-height:420px!important;
+  }
+  html:not(#bo-pl-1):not(#bo-pl-2):not(#bo-pl-4):not(#bo-pl-5) body:not(#bo-pl-3):not(#bo-pl-6):not(#bo-pl-7).promotion-log-page .report-content > .table-card{
+    flex:1 0 auto!important;
+    height:auto!important;
+  }
+  html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .report-content{
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    min-height:0!important;
+  }
+  html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .report-content > .rebate-chrome{
+    flex:1 0 auto!important;
+    height:auto!important;
+    max-height:none!important;
+    min-height:520px!important;
+  }
+  html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .report-content > .standard-list-card:not(.rebate-worker-card):has(.standard-table-wrap,.table-wrap){
+    flex:1 0 auto!important;
+    height:auto!important;
+    max-height:none!important;
+    min-height:520px!important;
+  }
+  html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .report-content > .standard-list-card:not(.rebate-worker-card) .standard-table-wrap{
+    min-height:300px!important;
+    max-height:min(560px,72vh)!important;
+    flex:1 1 auto!important;
+    overflow:auto!important;
+  }
+}
+@media (max-width:1290px){
+  html:not(#bo-rf-1):not(#bo-rf-2) body:not(#bo-rf-3).referral-page .report-content{
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    min-height:0!important;
+  }
+}

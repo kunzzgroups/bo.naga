@@ -5,12 +5,6 @@
   html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .rebate-chrome-bar{flex-wrap:wrap!important;row-gap:10px!important;column-gap:12px!important;height:auto!important;min-height:0!important}
   html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .rebate-chrome-bar > .rebate-tabs{flex:0 0 auto!important;max-width:100%!important;overflow-x:auto!important}
   html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .rebate-chrome-bar > .rebate-action-group{flex:1 1 auto!important;flex-wrap:wrap!important;justify-content:flex-end!important;gap:10px!important;min-width:0!important}
-  /* The KPI tiles and the schedule card leave the table 2-3 rows: the page scrolls and the table card keeps a readable height. */
-  html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .report-content{overflow-y:auto!important;overflow-x:hidden!important;min-height:0!important}
-  html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .report-content > .rebate-chrome{flex:1 0 auto!important;height:auto!important;max-height:none!important;min-height:520px!important}
-  /* Only cards that hold a table (the schedule card must stay content-height). Other rebate list pages (Approval, Log, Daily Rebate ...): same rule - the KPI tiles left the table card ~160px, so the page scrolls and the list card keeps a readable height. */
-  html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .report-content > .standard-list-card:not(.rebate-worker-card):has(.standard-table-wrap,.table-wrap){flex:1 0 auto!important;height:auto!important;max-height:none!important;min-height:520px!important}
-  html:not(#bo-rb-1):not(#bo-rb-2):not(#bo-rb-4):not(#bo-rb-5) body:not(#bo-rb-3):not(#bo-rb-6):not(#bo-rb-7).rebate-page .report-content > .standard-list-card:not(.rebate-worker-card) .standard-table-wrap{min-height:300px!important;max-height:min(560px,72vh)!important;flex:1 1 auto!important;overflow:auto!important}
 }
 /* Footer on laptop/tablet widths: the page buttons wrapped into two rows, which made the footer 134px tall and pushed "Showing ..." to a line of its own. One row: Show / info / pager. */
 @media (min-width:576px) and (max-width:1260px){
