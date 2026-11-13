@@ -1939,3 +1939,144 @@ body.livechat-bo-page .livechat-room-back{display:none!important}
     margin-top:1px!important;
   }
 }
+
+/* Composer polish: one hierarchy instead of five boxes of the same size.
+   ------------------------------------------------------------------------------------------
+   Measured before: the three template chips, the Manage link and Send were all 36px tall in the
+   same #383A46 with the same 1px border - Manage looked like a fourth chip - Send carried the
+   secondary look instead of the page's amber primary, and the textarea was a square-cornered
+   #2A2C36 rectangle with 2px of padding, reading as a hole in the card.
+   After: chips are 28px pills with the hotkey in a small amber badge, Manage is a borderless ghost
+   at the same 28px, the writing surface is an inset field with a 1px border and 10/12 padding at
+   46px, and Send is the amber primary at 32px. Same content, one line of emphasis per row. */
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .template-chip{
+  height:28px!important;
+  min-height:28px!important;
+  padding:0 10px 0 5px!important;
+  gap:6px!important;
+  border-radius:999px!important;
+  font-size:12.5px!important;
+  font-weight:600!important;
+  background:transparent!important;
+  border:1px solid rgba(255,255,255,.10)!important;
+}
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .template-chip:hover{
+  border-color:rgba(245,158,11,.45)!important;
+  background:rgba(245,158,11,.08)!important;
+}
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .template-hotkey{
+  width:16px!important;
+  height:16px!important;
+  min-width:16px!important;
+  border-radius:999px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:10.5px!important;
+  font-weight:700!important;
+  background:rgba(245,158,11,.14)!important;
+  color:#FBBF24!important;
+  border:0!important;
+}
+html:not([data-bo-theme="dark"]):not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .template-chip{
+  border-color:var(--lc-border)!important;
+}
+html:not([data-bo-theme="dark"]):not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .template-chip:hover{
+  border-color:#E0A85C!important;
+  background:#FFF6E6!important;
+}
+html:not([data-bo-theme="dark"]):not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .template-hotkey{
+  background:#FDEBD0!important;
+  color:#B45309!important;
+}
+/* Manage is navigation, not a template: no box, same 28px line as the chips. */
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .livechat-template-manage{
+  height:28px!important;
+  min-height:28px!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  padding:0 8px!important;
+  font-size:12px!important;
+  font-weight:600!important;
+  color:var(--lc-muted)!important;
+}
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .livechat-template-manage:hover{
+  background:var(--lc-canvas)!important;
+  color:var(--lc-ink)!important;
+}
+/* The writing surface: a field, not a hole. */
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page #livechatInput{
+  min-height:46px!important;
+  padding:10px 12px!important;
+  border:1px solid rgba(255,255,255,.10)!important;
+  border-radius:10px!important;
+  background:#22242D!important;
+  font-size:13.5px!important;
+  line-height:1.45!important;
+}
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page #livechatInput::placeholder{
+  color:#8A8A94!important;
+}
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page #livechatInput:focus{
+  border-color:rgba(245,158,11,.55)!important;
+  box-shadow:0 0 0 3px rgba(245,158,11,.12)!important;
+  outline:0!important;
+}
+html:not([data-bo-theme="dark"]):not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page #livechatInput{
+  background:#FFFFFF!important;
+  border-color:var(--lc-border)!important;
+  min-height:46px!important;
+  padding:10px 12px!important;
+  border-radius:10px!important;
+  font-size:13.5px!important;
+  line-height:1.45!important;
+}
+html:not([data-bo-theme="dark"]):not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page #livechatInput::placeholder{
+  color:#8A8A94!important;
+}
+html:not([data-bo-theme="dark"]):not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page #livechatInput:focus{
+  border-color:#E0A85C!important;
+  box-shadow:0 0 0 3px rgba(217,119,6,.10)!important;
+}
+/* Attach stays a quiet ghost; Send is the one amber control in the row. */
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page #livechatAttachBtn{
+  height:32px!important;
+  min-height:32px!important;
+  font-size:12px!important;
+  font-weight:600!important;
+  padding:0 8px!important;
+}
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .livechat-compose .btn-primary-clean{
+  height:32px!important;
+  min-height:32px!important;
+  border-radius:8px!important;
+  padding:0 16px!important;
+  font-size:12.5px!important;
+  font-weight:700!important;
+  color:#2A2C36!important;
+  border:0!important;
+  background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 100%)!important;
+  box-shadow:0 1px 0 rgba(255,255,255,.18) inset!important;
+}
+html:not(#bo-lc-off):not(#bo-lc-off-2) body.livechat-bo-page .livechat-compose .btn-primary-clean:hover{
+  background:linear-gradient(180deg,#FCC94B 0%,#F59E0B 100%)!important;
+}
+
+/* The writing surface, final say (4 never-matching ids): `bo-input-fill.css` styles
+   `#livechatInput` for the light theme at 4 ids, which outranks the 2-id rules above and put the
+   square 47px field back in light mode (measured: radius 0, font-size 14, bg #FFF8EB). */
+html:not(#bo-lc-off):not(#bo-lc-off-2):not(#bo-lc-off-3):not(#bo-lc-off-4) body.livechat-bo-page #livechatInput{
+  min-height:46px!important;
+  padding:10px 12px!important;
+  border:1px solid rgba(255,255,255,.10)!important;
+  border-radius:10px!important;
+  background:#22242D!important;
+  font-size:13.5px!important;
+  line-height:1.45!important;
+}
+html:not([data-bo-theme="dark"]):not(#bo-lc-off):not(#bo-lc-off-2):not(#bo-lc-off-3):not(#bo-lc-off-4) body.livechat-bo-page #livechatInput{
+  background:#FFFFFF!important;
+  border-color:var(--lc-border)!important;
+  color:var(--lc-ink)!important;
+}
