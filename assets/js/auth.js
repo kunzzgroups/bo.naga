@@ -890,6 +890,19 @@
       const brand=sidebar && sidebar.querySelector('.report-brand');
       // Brand row not parsed yet: the caller retries on DOMContentLoaded.
       if(!brand) return false;
+      /* Report: the button exists after a reload but not after a runtime path. The brand row is rebuilt by
+         renderSidebar (menu refresh, pin toggle, page swap) and anything that rewrites it drops the toggle; the
+         retry chain above only covers the parse-time case. Watched here, before the create-if-missing block, so
+         pages that ship the button in their own markup (dashboard.html) are watched too. The mount is
+         idempotent, so the callback cannot stack a second button. */
+      if(!brand.__boToggleWatch){
+        brand.__boToggleWatch=1;
+        try{
+          new MutationObserver(function(){
+            if(!brand.querySelector('.dashboard-sidebar-toggle')) window.BO_AUTH.mountSidebarToggle();
+          }).observe(brand,{childList:true,subtree:true});
+        }catch(e){}
+      }
       // One sidebar toggle for the whole BO, mounted in the rail: the dashboard's own
       // 42px button, same classes and values (see bo-global-quicknav.css), so every page
       // opens and closes the rail from the same place. dashboard.html ships it in its
@@ -1905,7 +1918,7 @@
       document.querySelectorAll('[data-bo-profile]').forEach(el => { el.innerHTML = this.profileHtml(); });
       this.renderProfile();
       this.loadHeaderCounters();
-      if(window.BO_BRAND&&typeof window.BO_BRAND.mount==='function') setTimeout(function(){ window.BO_BRAND.mount(); },0);
+      if(window.BO_BRAND&&typeof window.BO_BRAND.mount==='function') setTimeout(function(){ window.BO_BRAND.mount(); window.BO_AUTH.mountSidebarToggle(); },0);
     }
   };
 
@@ -1919,6 +1932,10 @@
   if(window.BO_AUTH.mountSidebarToggle() === false){
     document.addEventListener('DOMContentLoaded', function(){ window.BO_AUTH.mountSidebarToggle(); });
   }
+
+  /* A page swap brings its own brand row. The toggle is mounted into that row, so re-assert it after every
+     swap as well - livechat.html reached from the rail showed the rail with no hamburger until a reload. */
+  document.addEventListener('bo:spa:content-mounted', function(){ try{ window.BO_AUTH.mountSidebarToggle(); }catch(e){} });
 
   /* The Main panel's rail card is asked for from HERE, because the Main portal's page set is DB
      data, not a filename family. One of its menu rows points at a BO file

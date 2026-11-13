@@ -1107,3 +1107,26 @@ body.report-body.topup-reward-page .report-content{
     pointer-events:none!important;
   }
 }
+
+/* 0c-5. The collapsed rail always shows its icons (992px and up).
+   ------------------------------------------------------------------------------------------
+   Every rail row keeps its glyph inside the row's <span> - `[data-rail-label]` rows, group
+   buttons and the direct links alike - and several rules hide that <span> as a way to hide the
+   *label*: the click-mode hover block in bo-global-quicknav.css sets
+   `opacity:0; visibility:hidden; width:0; overflow:hidden` on `.nav-group-btn span`, and auth.js
+   carries a comment about that same rule leaving "only the always-visible pin buttons". Hiding
+   the span hides the icon with it, which is the reported "collapse the rail and the icons are
+   gone, click anywhere / reload and they are back". This restores the glyph on every rail row
+   while the rail is mini; the label text stays controlled by those sheets. */
+@media (min-width:992px){
+  body.sidebar-mini .report-sidebar .report-nav .nav-group-btn > span > i,
+  body.sidebar-mini .report-sidebar .report-nav > a > span > i,
+  body.sidebar-mini .report-sidebar .report-nav .nav-group-btn.active > span > i{
+    opacity:1!important;
+    visibility:visible!important;
+    width:auto!important;
+    overflow:visible!important;
+    font-size:17px!important;
+    color:inherit!important;
+  }
+}
