@@ -10520,3 +10520,37 @@ html[data-bo-shell="main"] body.main-admin-security-page .mad-pager .smart-page.
   display:block;
   text-align:center;
 }
+
+/* Security & Audit toolbar, owner's pick: filters on top and spread edge to edge, categories below (A + C).
+   ------------------------------------------------------------------------------------------
+   Row 1 is the filter strip and it fills the row: the search field takes whatever the date control, the
+   two selects and Reset leave, and Reset sits on the far right (before this change the strip ended at
+   1250 in a 1512 tooltip row - 260px of dead space on its right). Row 2 is the category pills
+   (Account Activity / Permission Changes / Credit Control / Security Events / All Logs).
+   Below 1100 the strip wraps as before - the four controls plus Reset need 828px and a 1024 window only
+   has 728 - with Reset still pushed to the right end of its line. */
+html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-toolbar > .mas-filters{
+  order:1!important;
+  flex:1 1 100%!important;
+  width:100%!important;
+  min-width:0!important;
+}
+html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-toolbar > .mas-cats{
+  order:2!important;
+  flex:1 1 100%!important;
+  width:100%!important;
+  max-width:100%!important;
+}
+html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-filters > .mad-reset-btn{
+  margin-left:auto!important;
+}
+@media (min-width:1100px){
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-filters{
+    flex-wrap:nowrap!important;
+  }
+  html[data-bo-shell="main"]:not(#bo-mas-off):not(#bo-mas-off-2) body.main-admin-security-page .mas-search{
+    flex:1 1 auto!important;
+    max-width:none!important;
+    min-width:200px!important;
+  }
+}
