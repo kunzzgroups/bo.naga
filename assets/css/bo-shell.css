@@ -968,3 +968,19 @@ body.report-body.topup-reward-page .report-content{
     margin-top:12px!important;
   }
 }
+
+/* 2g. The report footer (Show N entries | count | pager) on a phone (<=575px). It is a three-track grid / one-line flex sized for a laptop: on a 390px
+   screen the count was drawn over the pager (up to 286px of overlap on Promotion and Transaction reports) or the pager ran past the card (Member Top
+   Deposit, Agent Settlement, Agent Commission, Agent Performance). Show N and the count share the first line, the pager takes its own line below,
+   centred, and may wrap. Every .mad-footer, whatever page it is on. */
+@media (max-width:575.98px){
+  html:not(#bo-pf-off-1):not(#bo-pf-off-2):not(#bo-pf-off-3):not(#bo-pf-off-4):not(#bo-pf-off-5):not(#bo-pf-off-6):not(#bo-pf-off-7) body.report-body .mad-footer{
+    display:flex!important;flex-wrap:wrap!important;align-items:center!important;justify-content:space-between!important;gap:8px 12px!important;
+    grid-template-columns:none!important;
+  }
+  html:not(#bo-pf-off-1):not(#bo-pf-off-2):not(#bo-pf-off-3):not(#bo-pf-off-4):not(#bo-pf-off-5):not(#bo-pf-off-6):not(#bo-pf-off-7) body.report-body .mad-footer > .mad-footer-info,
+  html:not(#bo-pf-off-1):not(#bo-pf-off-2):not(#bo-pf-off-3):not(#bo-pf-off-4):not(#bo-pf-off-5):not(#bo-pf-off-6):not(#bo-pf-off-7) body.report-body .mad-footer > .table-info{flex:1 1 auto!important;min-width:0!important;padding:0!important;text-align:right!important;white-space:normal!important}
+  html:not(#bo-pf-off-1):not(#bo-pf-off-2):not(#bo-pf-off-3):not(#bo-pf-off-4):not(#bo-pf-off-5):not(#bo-pf-off-6):not(#bo-pf-off-7) body.report-body .mad-footer > .mad-pager,
+  html:not(#bo-pf-off-1):not(#bo-pf-off-2):not(#bo-pf-off-3):not(#bo-pf-off-4):not(#bo-pf-off-5):not(#bo-pf-off-6):not(#bo-pf-off-7) body.report-body .mad-footer > .pagination-clean,
+  html:not(#bo-pf-off-1):not(#bo-pf-off-2):not(#bo-pf-off-3):not(#bo-pf-off-4):not(#bo-pf-off-5):not(#bo-pf-off-6):not(#bo-pf-off-7) body.report-body .mad-footer > nav{flex:1 1 100%!important;justify-content:center!important;flex-wrap:wrap!important;max-width:100%!important}
+}
