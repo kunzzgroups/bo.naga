@@ -111,3 +111,25 @@ html:not(#bo-charcoal-off) body[data-bo-shell="main"] .report-sidebar .report-na
 html[data-bo-shell="main"]:not(#bo-sticky-off) body :is(.mad-table-wrap,.provider-table-wrap,.ledger-scroll,.mas-table-body-scroll,.wl-breakdown-scroll,.report-table-scroll,.detail-table,.ref-table-wrap,.root-table-wrap,.tr-table-wrap,.table-wrap) table thead th{position:sticky!important;top:0!important;z-index:3!important}
 html[data-bo-shell="main"]:not([data-bo-theme="dark"]):not(#bo-sticky-off) body :is(.mad-table-wrap,.provider-table-wrap,.mas-table-body-scroll,.wl-breakdown-scroll,.report-table-scroll,.detail-table,.root-table-wrap,.table-wrap) table thead th{background-color:#FFF8EB!important}
 html[data-bo-shell="main"][data-bo-theme="dark"]:not(#bo-sticky-off) body :is(.mad-table-wrap,.provider-table-wrap,.mas-table-body-scroll,.wl-breakdown-scroll,.report-table-scroll,.detail-table,.root-table-wrap,.table-wrap) table thead th{background-color:#383A46!important}
+
+/* Main panel: the shared date control may not be wider than its own column.
+   ------------------------------------------------------------------------------------------
+   reports.css pins `.ref-range-trigger` / `.ref-range-wrap` / `.ref-date-field` to exactly 390px
+   with !important for every viewport at 768 and up - one global rule for 169 pages. On the Main
+   dashboard the field sits in `.np-controls`, which is 292px wide at 1440, so the trigger drew
+   390px inside a 292px slot: 98px of it over the header's metric block (measured at 1280 and 1440;
+   at 1024 the column happens to be 195 and the same 390 was clipped to the card). min() keeps the
+   390px design wherever the column is that wide and lets the control take the column where it is
+   not. Scoped to the 44 Main pages (this sheet is loaded by exactly those) so the back office,
+   where the 390px strip is the design, keeps it. */
+/* From 768 up only: below that reports.css already resets the control to 100%, and a 390px cap there
+   would leave a gap in the phone filter rows of the other 43 Main pages. */
+@media (min-width:768px){
+  html[data-bo-shell="main"] .ref-date-field,
+  html[data-bo-shell="main"] .ref-range-wrap,
+  html[data-bo-shell="main"] .ref-range-trigger{
+    width:min(390px,100%)!important;
+    min-width:0!important;
+    max-width:390px!important;
+  }
+}
