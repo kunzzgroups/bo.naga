@@ -657,7 +657,16 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    if(isCompactAutoWidthWrap(parts.wrap)){
+    if(parts.wrap.closest('[data-bo-fluid-selects]')){
+      /* Opt-in (a toolbar marked data-bo-fluid-selects): the select's width is the stylesheet's, so a toolbar can shrink its selects
+         to stay on one row at tablet widths. Without this the content width below is pinned inline with !important and CSS cannot touch it. */
+      ['width','min-width','max-width','flex'].forEach(function(p){ parts.wrap.style.removeProperty(p); });
+      parts.button.style.setProperty('width','100%','important');
+      parts.button.style.setProperty('min-width','0','important');
+      parts.menu.style.setProperty('width','max-content','important');
+      parts.menu.style.setProperty('min-width','100%','important');
+      parts.menu.style.setProperty('max-width','none','important');
+    }else if(isCompactAutoWidthWrap(parts.wrap)){
       /* The only branch that reads a text-metric width — measure here, not for every form field. */
       let contentWidth=contentWidthNow();
       if(inFilterRow || inEntriesControl){

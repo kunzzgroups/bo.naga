@@ -894,3 +894,10 @@ body.main-merchant-report-page[data-report-view="settlement"] .settlement-ledger
   body.main-merchant-report-page[data-report-view="settlement"] .settlement-ledger-tools{flex-wrap:wrap;width:100%}
   body.main-merchant-report-page[data-report-view="settlement"] .settlement-ledger-head > .mad-chrome-actions{margin-left:0;width:100%;justify-content:flex-start;flex-wrap:wrap}
 }
+
+/* Settlement ledger toolbar at tablet widths (576-1279): the shared Admin rule gave `.mad-chrome-actions` width:100% below 1280, so Add Settlement / Export
+   dropped to a second row under "date | Refresh" although all four fit on one line. Keep them on the toolbar row, right-aligned. */
+@media (min-width:576px) and (max-width:1279.98px){
+  html body.main-admin-detail-page[data-report-view="settlement"] .settlement-ledger-head{flex-wrap:nowrap!important;align-items:center}
+  html body.main-admin-detail-page[data-report-view="settlement"] .settlement-ledger-head > .mad-chrome-actions{width:auto!important;margin-left:auto!important;flex:0 0 auto!important;flex-wrap:nowrap!important}
+}

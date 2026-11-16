@@ -53,6 +53,8 @@ const TYPES = {
   '.mp3': 'audio/mpeg', '.ico': 'image/x-icon', '.woff2': 'font/woff2', '.woff': 'font/woff', '.ttf': 'font/ttf',
 };
 
+let MAIN_PAGES_JSON = '[]';
+try { MAIN_PAGES_JSON = JSON.stringify(require('fs').readdirSync(path.resolve(__dirname, '..')).filter((f) => /^(main[-_].*|menu-permission|referral-v2.*)\.html$/i.test(f))); } catch (e) {}
 const STUB = `<script>(function(){
 try{
   localStorage.setItem('bo_admin_token','dev-harness-token');
@@ -62,6 +64,10 @@ try{
   if(/^main[-_]/i.test(pf)||pf==='menu-permission.html'||new URLSearchParams(location.search).get('portal')==='main'){
     localStorage.setItem('bo_admin_user',JSON.stringify({id:2,username:'main',displayName:'Main Admin',role:'MAIN',roleType:'MAIN',mainAdmin:true,roleName:'Main Account',menus:[{"id":951,"menuKey":"main_dashboard","title":"Dashboard","url":"main-dashboard.html","icon":"bi-speedometer2","parentKey":"","sortOrder":1,"status":1,"showInSidebar":1},{"id":952,"menuKey":"main_admin_detail","title":"Admin Management","url":"main-admin-detail.html","icon":"bi-people","parentKey":"","sortOrder":2,"status":1,"showInSidebar":1},{"id":953,"menuKey":"main_merchant_detail","title":"Merchants","url":"main-merchant-detail.html","icon":"bi-shop","parentKey":"","sortOrder":3,"status":1,"showInSidebar":1},{"id":954,"menuKey":"main_provider_detail","title":"Providers","url":"main-provider-detail.html","icon":"bi-hdd-network","parentKey":"","sortOrder":4,"status":1,"showInSidebar":1},{"id":955,"menuKey":"main_accounting_report","title":"Accounting","url":"main-accounting-report.html","icon":"bi-calculator","parentKey":"","sortOrder":5,"status":1,"showInSidebar":1},{"id":956,"menuKey":"main_report","title":"Reports","url":"main-report.html","icon":"bi-bar-chart","parentKey":"","sortOrder":6,"status":1,"showInSidebar":1},{"id":957,"menuKey":"main_accounting_settlement","title":"Settlement","url":"main-accounting-settlement.html","icon":"bi-cash-coin","parentKey":"","sortOrder":7,"status":1,"showInSidebar":1},{"id":958,"menuKey":"main_win_lose_report","title":"Win/Lose","url":"main-win-lose-report.html","icon":"bi-graph-up","parentKey":"","sortOrder":8,"status":1,"showInSidebar":1},{"id":960,"menuKey":"main_menu_permission","title":"Roles & Permissions","url":"menu-permission.html","icon":"bi-key","parentKey":"","sortOrder":10,"status":1,"showInSidebar":1},{"id":959,"menuKey":"main_admin_security","title":"Security & Audit","url":"main-admin-security.html","icon":"bi-shield-check","parentKey":"","sortOrder":9,"status":1,"showInSidebar":1}]}));
   }
+  /* Every Main page gets a hidden menu row, so it opens without the access guard sending the fake account to the dashboard. */
+  try{var mu=JSON.parse(localStorage.getItem('bo_admin_user')||'{}');if(mu.roleType==='MAIN'){var have={};(mu.menus||[]).forEach(function(m){have[m.url]=1});
+    __MAIN_PAGES__.forEach(function(f,i){if(have[f])return;mu.menus.push({id:2000+i,menuKey:f.replace('.html','').split('-').join('_'),title:f,url:f,icon:'bi-circle',parentKey:'',sortOrder:900+i,status:1,showInSidebar:0})});
+    localStorage.setItem('bo_admin_user',JSON.stringify(mu));}}catch(e){}
   localStorage.setItem('bo_api_base',location.origin+'/api');
   var t=new URLSearchParams(location.search).get('theme'); if(t==='dark'||t==='light') localStorage.setItem('bo_theme',t);
 }catch(e){}
@@ -191,7 +197,7 @@ http.createServer((req, res) => {
     if (err) { res.writeHead(404); return res.end('not found'); }
     const ext = path.extname(file).toLowerCase();
     res.writeHead(200, { 'Content-Type': TYPES[ext] || 'application/octet-stream', 'Cache-Control': 'no-store' });
-    if (ext === '.html') return res.end(buf.toString('utf8').replace(/<head>/i, '<head>' + (LIVE ? LIVE_STUB : STUB)));
+    if (ext === '.html') return res.end(buf.toString('utf8').replace(/<head>/i, '<head>' + (LIVE ? LIVE_STUB : STUB.replace('__MAIN_PAGES__', MAIN_PAGES_JSON))));
     res.end(buf);
   });
 }).listen(PORT, '127.0.0.1', () => console.log((LIVE ? 'LIVE (real API via ' + UPSTREAM.host + ')' : 'dev harness (fake data)') + ': http://127.0.0.1:' + PORT + (LIVE ? '/login.html' : '/index.html')));

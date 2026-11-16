@@ -976,6 +976,7 @@
   function sizeFilterSelect(select){
     if(!select || !select.options || !select.options.length) return;
     const wrap = select.closest('.rounded-select-wrap');
+    if(wrap && wrap.closest('[data-bo-fluid-selects]')) return; /* width belongs to the stylesheet (the toolbar stays on one row) */
     const btn = wrap && wrap.querySelector('.rounded-select-btn');
     const ref = btn || select;
     const labels = Array.from(select.options).map(o => String(o.textContent || o.label || '').trim()).filter(Boolean);

@@ -1854,3 +1854,15 @@ html:not([data-bo-theme="dark"]) body.menu-mgmt-page .user-toolbar.menu-mgmt-too
 html[data-bo-theme="dark"] body.menu-mgmt-page .user-toolbar.menu-mgmt-toolbar .menu-count-inline.users-found-badge{
   border:0!important;
 }
+
+/* Light theme: the sidebar rules above were written for a dark rail (white ink), so on the cream light sidebar the top-level links - Dashboard,
+   Livechat and any direct link - had white text and icons, almost invisible, next to the group buttons that already use the warm ink (#6b360c).
+   Same ink for the links; hover keeps the amber tint, the active row gets the amber icon. Dark theme is untouched. */
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .report-sidebar .report-nav > a:not(.report-sub),
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .report-sidebar .report-nav > a:not(.report-sub):hover,
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .report-sidebar .report-nav > a:not(.report-sub):focus,
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .report-sidebar .report-nav > a:not(.report-sub).active{color:#6b360c!important}
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .report-sidebar .report-nav > a:not(.report-sub) i,
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page.sidebar-mini .report-sidebar:not(:hover):not(.is-mini-hover) .report-nav > a:not(.report-sub) span i{color:#6b360c!important}
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page .report-sidebar .report-nav > a:not(.report-sub).active i,
+html:not([data-bo-theme="dark"]) body.menu-mgmt-page.sidebar-mini .report-sidebar:not(:hover):not(.is-mini-hover) .report-nav > a:not(.report-sub).active span i{color:#D97706!important}

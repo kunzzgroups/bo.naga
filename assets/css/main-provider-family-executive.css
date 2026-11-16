@@ -2279,3 +2279,22 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
     scrollbar-color:#F59E0B transparent;
   }
 }
+
+/* Provider family below 1280: the three tables (Providers 7 cols, Settlement 8, Activity Logs 7) were forced to the Admin list's 1150px,
+   so at 1024 the last columns (Status / Outstanding / Actions, Details) sat past the edge. Columns now size to their content (nowrap, long
+   text capped), the table is at least the box wide and scrolls only by what the content really needs. Also: the empty actions row of the
+   chrome grid (Activity Logs has no actions) no longer reserves a 36px blank band under the tabs. */
+@media (max-width:1279.98px){
+  html body.main-admin-detail-page.main-provider-family-page .mad-table-wrap .mad-table{
+    table-layout:auto!important;
+    width:max-content!important;
+    min-width:100%!important;
+  }
+  html body.main-admin-detail-page.main-provider-family-page .mad-table-wrap .mad-table th,
+  html body.main-admin-detail-page.main-provider-family-page .mad-table-wrap .mad-table td{
+    width:auto!important;
+    max-width:300px;
+  }
+  html body.main-admin-detail-page.main-provider-family-page .mad-chrome > .mad-chrome-actions:empty{display:none!important}
+  html body.main-admin-detail-page.main-provider-family-page .mad-chrome:has(> .mad-chrome-actions:empty){grid-template-rows:auto!important}
+}

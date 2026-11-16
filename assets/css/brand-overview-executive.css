@@ -823,3 +823,14 @@ html[data-bo-theme="dark"] body.brand-management-page .modal-footer{
   border-color:var(--bo-border);
 }
 html[data-bo-theme="dark"] body.brand-management-page .btn-close{filter:invert(1) grayscale(1)}
+
+/* Light theme: same fix as Menu Management - the rail/sidebar links were written for a dark sidebar (white ink) and vanished on the cream one
+   (Dashboard / Livechat icons at rgba(255,255,255,.82) on #FFE8CC). Warm ink like the group buttons; active row gets the amber icon. */
+html:not([data-bo-theme="dark"]) body:is(.brand-exec-page,.brand-management-page) .report-sidebar .report-nav > a:not(.report-sub),
+html:not([data-bo-theme="dark"]) body:is(.brand-exec-page,.brand-management-page) .report-sidebar .report-nav > a:not(.report-sub):hover,
+html:not([data-bo-theme="dark"]) body:is(.brand-exec-page,.brand-management-page) .report-sidebar .report-nav > a:not(.report-sub):focus,
+html:not([data-bo-theme="dark"]) body:is(.brand-exec-page,.brand-management-page) .report-sidebar .report-nav > a:not(.report-sub).active{color:#6b360c!important}
+html:not([data-bo-theme="dark"]) body:is(.brand-exec-page,.brand-management-page) .report-sidebar .report-nav > a:not(.report-sub) i,
+html:not([data-bo-theme="dark"]) body:is(.brand-exec-page,.brand-management-page).sidebar-mini .report-sidebar:not(:hover):not(.is-mini-hover) .report-nav > a:not(.report-sub) span i{color:#6b360c!important}
+html:not([data-bo-theme="dark"]) body:is(.brand-exec-page,.brand-management-page) .report-sidebar .report-nav > a:not(.report-sub).active i,
+html:not([data-bo-theme="dark"]) body:is(.brand-exec-page,.brand-management-page).sidebar-mini .report-sidebar:not(:hover):not(.is-mini-hover) .report-nav > a:not(.report-sub).active span i{color:#D97706!important}

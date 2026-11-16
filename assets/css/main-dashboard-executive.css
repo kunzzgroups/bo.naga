@@ -1590,3 +1590,16 @@ body.main-dashboard-page .ref-cal-head button.ref-head-pick{
     margin-right:auto!important;
   }
 }
+
+/* Dark: the header title chip and title kept their light-theme colours on this page (cream icon tile, dark-amber "Dashboard" on the charcoal bar).
+   The page has no `.bo-charcoal` body class, so the shell's dark title rules never matched. Same values the shell uses: amber-tint tile, light ink. */
+html[data-bo-theme="dark"] body.main-dashboard-page .report-topbar .user-title-icon{
+  background:rgba(245,158,11,.16)!important;
+  color:#F59E0B!important;
+  border:1px solid rgba(245,158,11,.28)!important;
+}
+html[data-bo-theme="dark"] body.main-dashboard-page .report-topbar .user-title-icon i{color:inherit!important}
+html[data-bo-theme="dark"] body.main-dashboard-page .report-topbar .user-title-wrap h1,
+html[data-bo-theme="dark"] body.main-dashboard-page .report-topbar .user-title-wrap .page-title{
+  color:#F5F5F4!important;
+}

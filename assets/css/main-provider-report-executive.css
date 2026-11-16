@@ -726,7 +726,7 @@ body.main-report-exec-page .mre-history-type.payment{color:#c2410c}
 body.main-report-exec-page .mre-history-type.adjustment{color:#5e4bb7}
 body.main-report-exec-page .mre-history-table td{vertical-align:middle}
 body.main-report-exec-page .mre-actions .btn-mini-settle{margin-left:4px}
-@media(max-width:1000px){body.main-report-exec-page .mre-history-kpis{grid-template-columns:1fr}}
+@media(max-width:1000px){body.main-report-exec-page .mre-history-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:640px){body.main-report-exec-page .mre-history-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:420px){body.main-report-exec-page .mre-history-kpis{grid-template-columns:1fr}}
 
 
 /* v1.0.4 - always-visible Provider Management pagination */
@@ -910,3 +910,61 @@ html[data-bo-theme="dark"] body.main-report-exec-page.main-admin-detail-page .di
    longer covers the strip's lower half, and the panel itself can never be scrolled, so a row cannot end up clipped under the head. */
 html body.main-report-exec-page.main-admin-detail-page:not(#mre-dk-1):not(#mre-dk-2) .mre-panel{overflow:clip}
 html body.main-report-exec-page.main-admin-detail-page:not(#mre-dk-1):not(#mre-dk-2) .settlement-ledger-head{position:relative;z-index:5}
+
+/* Report family toolbar below the wide layout (Provider / Merchant Report, Transactions, Balance, Settlement ledgers).
+   The filter strip was one nowrap row: the search was squeezed to ~50px and Export fell off the right edge from 1359px down to phones.
+   Same shape as the Admin/Merchants lists: the pills keep their own row, the filters wrap into the rows under it, the search takes whatever
+   is left, and on phones every control gets the full width (selects and buttons share a row two by two). */
+@media (max-width:1599.98px){
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-1):not(#mre-tb-2) .mre-filter-bar .mad-filters{flex-wrap:wrap!important;row-gap:8px!important;min-width:0!important}
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-1):not(#mre-tb-2) .mre-filter-bar .mad-filters > .mad-search{flex:1 1 220px!important;min-width:180px!important}
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-1):not(#mre-tb-2) .mre-filter-bar .mad-filters > .mre-period-group{flex:0 1 236px!important}
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-1):not(#mre-tb-2) .mre-filter-bar .mad-filters > .rounded-select-wrap{flex:1 1 150px!important;max-width:220px!important}
+}
+@media (max-width:639.98px){
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-1):not(#mre-tb-2) .mre-filter-bar .mad-filters > .mre-period-group,
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-1):not(#mre-tb-2) .mre-filter-bar .mad-filters > .mad-search{flex:1 1 100%!important;max-width:100%!important}
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-1):not(#mre-tb-2) .mre-filter-bar .mad-filters > .rounded-select-wrap{flex:1 1 calc(50% - 4px)!important;max-width:none!important}
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-1):not(#mre-tb-2) .mre-filter-bar .mad-filters > .mad-btn{flex:1 1 calc(50% - 4px)!important;justify-content:center}
+}
+
+/* A long option label ("No data in selected report range") ran out of its custom select and past the form card's edge on tablet widths: the label
+   shortens with an ellipsis inside the control instead. */
+body.main-report-exec-page .settlement-form-grid .rounded-select-btn{min-width:0;overflow:hidden}
+body.main-report-exec-page .settlement-form-grid .rounded-select-btn > span:first-child,
+body.main-report-exec-page .settlement-form-grid .rounded-select-btn .rounded-select-label{min-width:0;flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Report-family toolbar at tablet widths (640-1279): status pills / filters / Reset+Export used to stack as pills, two filter rows (date | search | select,
+   then select | Reset | Export) and the currency row - four bands before the table. Now: row 1 = pills with Reset + Export at the right end,
+   row 2 = date | search | selects, then the currency row. `.mad-filters` dissolves into the bar (display:contents) so its children can be placed
+   next to the pills; a zero-height ::before forces the line break after Export. */
+@media (min-width:640px) and (max-width:1279.98px){
+  html body.main-report-exec-page.main-admin-detail-page.report-body:not(#mre-tb-3):not(#mre-tb-4) .mad-panel > .mre-filter-bar{display:flex!important;grid-template-columns:none!important;flex-wrap:wrap!important;align-items:center;column-gap:8px;row-gap:8px}
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar > .mad-filters{display:contents!important}
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar > .mad-pills{order:1;flex:0 0 auto;margin-right:auto}
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar .mad-filters > .mad-reset-btn{order:2;flex:0 0 auto!important}
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar .mad-filters > .mad-export-btn{order:3;flex:0 0 auto!important}
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar::after{content:"";order:4;flex:0 0 100%;height:0;margin:-8px 0 0}
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar .mad-filters > .mre-period-group{order:5;flex:0 1 200px!important;min-width:0}
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar .mad-filters > .mad-search{order:6;flex:1 1 120px!important;min-width:120px!important}
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar .mad-filters > .rounded-select-wrap{order:7;flex:0 1 140px!important;min-width:110px;max-width:none!important} /* (the selects carry an inline 160px !important from the page script, so they stay 160) */
+}
+
+/* Transaction History toolbar at tablet widths: the status pills are 654px wide, so a labelled Reset (78px) no longer fits beside them and
+   dropped to a row of its own - three bands (pills / Reset / period+search+select). Reset becomes the 36px icon button at the right end of the
+   pills row (the label stays as its title), so the toolbar is two rows. */
+@media (min-width:640px) and (max-width:1279.98px){
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-history-filter .mad-filters > .mad-reset-btn{
+    width:36px!important;min-width:36px!important;padding:0!important;font-size:0!important;gap:0!important;justify-content:center!important;
+  }
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-history-filter .mad-filters > .mad-reset-btn i{font-size:14px!important;margin:0!important}
+}
+
+/* Report-family header row at tablet widths: the tabs and the page actions (Export) were stacked - a tabs row, then an Export row of its own -
+   which with the toolbar below made four bands. Tabs left, actions right on the same row. (Chromes with no actions keep one row.) */
+@media (min-width:640px) and (max-width:1279.98px){
+  html body.main-report-exec-page.main-admin-detail-page.report-body:not(#mre-ch-1):not(#mre-ch-2) .mad-chrome.mre-chrome:has(> .mad-chrome-actions > *){
+    grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:auto!important;align-items:center;column-gap:12px;
+  }
+  html body.main-report-exec-page.main-admin-detail-page.report-body:not(#mre-ch-1):not(#mre-ch-2) .mad-chrome.mre-chrome > .mad-chrome-actions{width:auto!important;justify-self:end;margin:0!important}
+}

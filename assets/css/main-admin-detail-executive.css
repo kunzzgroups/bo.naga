@@ -1804,6 +1804,10 @@ html[data-bo-theme="dark"] body.main-admin-detail-page #madSearchInput{
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-select{
   background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%238A95A8' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round' d='M3 4.75L6 7.75L9 4.75'/%3E%3C/svg%3E")!important;
+  /* the shorthand above (background:var(--bo-bg)!important) reset repeat/position/size, so the chevron tiled across the whole select */
+  background-repeat:no-repeat!important;
+  background-position:right 12px center!important;
+  background-size:12px 12px!important;
 }
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-tabs{background:transparent}
 html[data-bo-theme="dark"] body.main-admin-detail-page .mad-tab:hover:not(.is-disabled){
@@ -10562,4 +10566,11 @@ html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi
 @media (min-width:640px){
   html body.main-admin-detail-page.report-body:not(#mad-ord-1):not(#mad-ord-2) .mad-chrome-actions .mad-btn-ghost{order:1 !important}
   html body.main-admin-detail-page.report-body:not(#mad-ord-1):not(#mad-ord-2) .mad-chrome-actions .mad-btn-primary{order:2 !important}
+}
+
+/* 992-1279px: the list card is `flex:1 0 auto` (never shrinks below its rows) but the workspace was `overflow:hidden` until 991.98, so on a tablet in
+   landscape (1024) a long list ran past the bottom of the window with no way to reach the remaining rows, the footer (Show N / pager) or the table's
+   own horizontal scrollbar. Same as the phone/portrait range already does: the workspace scrolls vertically. */
+@media (min-width:992px) and (max-width:1279.98px){
+  html body.main-admin-detail-page.report-body .mad-workspace{overflow-y:auto!important;overflow-x:hidden!important}
 }
