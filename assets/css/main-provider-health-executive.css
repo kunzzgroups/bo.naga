@@ -471,7 +471,9 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
     border-collapse:collapse!important;
     border-spacing:0!important;
     width:100%!important;
-    min-width:840px!important;
+    /* 840 was a floor, not a maximum: at 768 the wrap is 744 and 96px of the last column sat off screen.
+       min() keeps the floor where it fits and lets the table take the frame where it does not. */
+    min-width:min(840px,100%)!important;
     max-width:none!important;
   }
   body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table thead{

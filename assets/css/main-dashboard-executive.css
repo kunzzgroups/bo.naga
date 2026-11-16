@@ -1569,3 +1569,24 @@ html[data-bo-theme="dark"] body.main-dashboard-page .ref-cal-year-grid button.ac
 body.main-dashboard-page .ref-cal-head button.ref-head-pick{
   border:1px solid transparent!important;
 }
+
+/* Ultrawide: the trend chart stops turning into a ribbon.
+   ------------------------------------------------------------------------------------------
+   The card is full-bleed by design (owner's choice, kept), but the plot's height is a fixed 544px
+   while its width follows the frame: 1112 at 1440, 1592 at 1920, 2232 at 2560, 3112 at 3440, 3512 at
+   3840 - i.e. from a 2:1 chart to a 6.5:1 strip whose 30 day points are spaced ~117px apart. Above
+   1919 the plot and its x-axis stop at 1800px and centre inside the full-width card, so the card,
+   header and footer stay edge to edge and only the drawing area is bounded. 1919 and below is
+   untouched (the frame is already under the cap there). */
+@media (min-width:1920px){
+  .main-exec .np-chart-wrap{
+    align-items:center;
+  }
+  .main-exec .np-chart-plot,
+  .main-exec .np-x-axis{
+    width:100%!important;
+    max-width:1800px;
+    margin-left:auto!important;
+    margin-right:auto!important;
+  }
+}

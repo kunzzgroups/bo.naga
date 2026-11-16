@@ -40,3 +40,38 @@
 .provider-footer>.provider-page-size{justify-self:end!important;width:118px!important;min-width:118px!important;max-width:118px!important;height:38px!important;padding:0 30px 0 12px!important;box-sizing:border-box!important;display:block!important;position:relative!important;z-index:1!important}
 .provider-pagination .provider-page-btn{width:36px!important;min-width:36px!important;max-width:36px!important;height:36px!important;flex:0 0 36px!important}
 @media(max-width:720px){.provider-footer{grid-template-columns:1fr auto!important;grid-template-areas:'info size' 'pager pager'!important}.provider-footer>span:first-child{grid-area:info!important;white-space:normal!important}.provider-footer>.provider-pagination{grid-area:pager!important}.provider-footer>.provider-page-size{grid-area:size!important;width:112px!important;min-width:112px!important;max-width:112px!important}}
+
+/* Accounting Report on a laptop or tablet: seven columns were 1040px of auto layout - wider than
+   every frame it is shown in (wrap 1172 at 1440, 1012 at 1280, 764 at 1024, 804 at 834, 738 at 768),
+   so from 1300 down the table scrolled sideways with its right columns off screen.
+   Below 1301 the layout is fixed and the columns are px at what they carry; below 1101 the two
+   secondary columns go: Intra-Range Turnover and Linked Brands are context, while Vendor / Share /
+   Payable / Balance Due / Status are what the page is read to answer ("what do we owe this vendor
+   and is it settled"). 150+90+190+140+130+150+100 = 950 fits 1012, and 610 fits 738 without them. */
+@media (max-width:1300px){
+  html[data-bo-shell="main"] body.provider-exec .provider-table-wrap > table{
+    table-layout:fixed!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  html[data-bo-shell="main"] body.provider-exec .provider-table-wrap > table th:nth-child(1),
+  html[data-bo-shell="main"] body.provider-exec .provider-table-wrap > table td:nth-child(1){width:150px!important}
+  html[data-bo-shell="main"] body.provider-exec .provider-table-wrap > table th:nth-child(2),
+  html[data-bo-shell="main"] body.provider-exec .provider-table-wrap > table td:nth-child(2){width:90px!important}
+  html[data-bo-shell="main"] body.provider-exec .provider-table-wrap > table th:nth-child(3),
+  html[data-bo-shell="main"] body.provider-exec .provider-table-wrap > table td:nth-child(3){width:190px!important}
+  html[data-bo-shell="main"] body.provider-exec .provider-table-wrap > table th:nth-child(4),
+  html[data-bo-shell="main"] body.provider-exec .provider-table-wrap > table td:nth-child(4){width:140px!important}
+  html[data-bo-shell="main"] body.provider-exec .provider-table-wrap > table th:nth-child(5),
+  html[data-bo-shell="main"] body.provider-exec .provider-table-wrap > table td:nth-child(5){width:130px!important}
+  html[data-bo-shell="main"] body.provider-exec .provider-table-wrap > table th:nth-child(6),
+  html[data-bo-shell="main"] body.provider-exec .provider-table-wrap > table td:nth-child(6){width:150px!important}
+  html[data-bo-shell="main"] body.provider-exec .provider-table-wrap > table th:nth-child(7),
+  html[data-bo-shell="main"] body.provider-exec .provider-table-wrap > table td:nth-child(7){width:100px!important}
+}
+@media (max-width:1100px){
+  html[data-bo-shell="main"] body.provider-exec .provider-table-wrap > table th:nth-child(3),
+  html[data-bo-shell="main"] body.provider-exec .provider-table-wrap > table td:nth-child(3),
+  html[data-bo-shell="main"] body.provider-exec .provider-table-wrap > table th:nth-child(6),
+  html[data-bo-shell="main"] body.provider-exec .provider-table-wrap > table td:nth-child(6){display:none!important}
+}

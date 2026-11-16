@@ -83,24 +83,21 @@ body.main-provider-merchant-page .report-content{overflow-y:auto}
    for the money columns; measured, 960 is the width at which the row still reads on one line
    and the block stops scrolling sideways at 1280. */
 body.main-provider-merchant-page .pml-table{min-width:960px}
-body.main-provider-merchant-page .pml-table .pml-col-bets{width:110px}
-body.main-provider-merchant-page .pml-table .pml-col-action{width:64px}
-/* The anchor wears the family's eye geometry (`.mad-actions > .mad-icon-btn`); only the
-   underline is this page's to remove. */
-body.main-provider-merchant-page .pml-merchant-open{text-decoration:none!important}
 
-html[data-bo-theme="dark"] body.main-provider-merchant-page .pml-head{
-  border-color:rgba(255,255,255,.14);
-  background:var(--bo-surface,#2A2C36);
-  box-shadow:var(--bo-shadow,none);
-}html[data-bo-theme="dark"] body.main-provider-merchant-page .pml-currency{color:#D4D4D8}
-
-@media (max-width:600px){
-  body.main-provider-merchant-page .pml-head{padding:14px}
-  body.main-provider-merchant-page .pml-meta{margin-left:0;width:100%}
-  /* Five tiles at 390px stack four lines deep in one column; two keep the value readable. */
-  body.main-provider-merchant-page .pml-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-  /* `main-admin-detail-executive.css` pins every `.mad-btn` to `width:auto!important`, so a
-     plain `width:100%` is a no-op. */
-  body.main-provider-merchant-page .pml-back{width:100%!important;justify-content:center}
+/* The 960px floor is a floor on the whole table, not on any column: it measured 960 in frames of 747
+   (1024), 812 (834) and 746 (768), so 213 / 148 / 214px of the right-hand columns sat off screen.
+   The numeric columns hold short values ("+0.00", "12,345.67") and the Merchant column holds the name,
+   so the table fits without dropping a column: 154 + 84 + 84 + 92 + 92 + 92 + 62 + 66 = 726, inside the
+   746 a 768 window has. Widths go on the <col> elements - this page ships a colgroup, and a col width
+   wins over any th/td width (measured: sizing the cells left Merchant at 27px and truncated). */
+@media (max-width:1300px){
+  html[data-bo-shell="main"]:not(#bo-pml-off):not(#bo-pml-off-2) body.main-provider-merchant-page .pml-table{table-layout:fixed!important;width:100%!important;min-width:0!important}
+  html[data-bo-shell="main"]:not(#bo-pml-off):not(#bo-pml-off-2) body.main-provider-merchant-page .pml-table col:nth-child(1){width:154px!important}
+  html[data-bo-shell="main"]:not(#bo-pml-off):not(#bo-pml-off-2) body.main-provider-merchant-page .pml-table col:nth-child(2){width:84px!important}
+  html[data-bo-shell="main"]:not(#bo-pml-off):not(#bo-pml-off-2) body.main-provider-merchant-page .pml-table col:nth-child(3){width:84px!important}
+  html[data-bo-shell="main"]:not(#bo-pml-off):not(#bo-pml-off-2) body.main-provider-merchant-page .pml-table col:nth-child(4){width:92px!important}
+  html[data-bo-shell="main"]:not(#bo-pml-off):not(#bo-pml-off-2) body.main-provider-merchant-page .pml-table col:nth-child(5){width:92px!important}
+  html[data-bo-shell="main"]:not(#bo-pml-off):not(#bo-pml-off-2) body.main-provider-merchant-page .pml-table col:nth-child(6){width:92px!important}
+  html[data-bo-shell="main"]:not(#bo-pml-off):not(#bo-pml-off-2) body.main-provider-merchant-page .pml-table col:nth-child(7){width:62px!important}
+  html[data-bo-shell="main"]:not(#bo-pml-off):not(#bo-pml-off-2) body.main-provider-merchant-page .pml-table col:nth-child(8){width:66px!important}
 }
