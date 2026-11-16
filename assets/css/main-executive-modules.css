@@ -75,3 +75,6 @@ html[data-bo-theme="dark"] body.report-body .main-mod-back:hover{
 /* Dark: measured on main-accounting-due - the footer line read rgb(87,83,78) on a rgb(56,58,70) card
    (contrast ~1.6, effectively invisible). Same family, same surface. */
 html[data-bo-theme="dark"] .main-mod-footer{color:#A1A1AA}
+
+/* Tab buttons ("Vendor Settlement (Payouts)" / "Brand Settlement (Collections)") ran past the right edge on phones: they wrap onto a second line instead. */
+@media(max-width:640px){.main-mod-tabs,.main-mod-balance-tabs{flex-wrap:wrap}.main-mod-tab{height:auto;min-height:40px;padding-top:6px;padding-bottom:6px}}

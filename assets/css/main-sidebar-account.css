@@ -278,3 +278,9 @@ html[data-bo-theme="dark"] .main-side-account-role{color:#F59E0B}
   html[data-bo-theme="dark"][data-bo-shell="main"]:not(#bo-dr-1):not(#bo-dr-2) body .report-sidebar .report-nav > .nav-group > .nav-group-list a.report-sub:hover{background:rgba(255,255,255,.06) !important;color:#F5F5F4 !important}
   html[data-bo-theme="dark"][data-bo-shell="main"]:not(#bo-dr-1):not(#bo-dr-2) body .report-sidebar .report-nav > .nav-group > .nav-group-list a.report-sub.active{background:rgba(245,158,11,.14) !important;color:#FBBF24 !important}
 }
+
+/* Collapsed rail: a group row (Access Control) kept its chevron, which took 5px next to the icon and pushed the icon left of the column every other
+   row sits on (icon centre 32px vs 36px). The rail shows icons only, so the chevron goes. */
+@media (min-width:992px){
+  body.sidebar-mini .report-sidebar .report-nav .nav-group-btn > .bi-chevron-down{display:none!important}
+}

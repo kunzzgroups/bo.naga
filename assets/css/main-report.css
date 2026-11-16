@@ -17,7 +17,12 @@
 /* Dropping the twelve columns' padding by 2px was not enough: the numbers themselves need 750 in a 702
    wrap, so at a tablet width one column goes. Brand Charge (75px) is the fee the brand pays the provider,
    a figure that lives on the brand page; the remaining eleven measure 676 and fit both 744 and 702. */
-@media (max-width:1100px){
-  body.main-report-page .report-table th:nth-child(6),
-  body.main-report-page .report-table td:nth-child(6){display:none!important}
+
 }
+
+/* Main Report tables: twelve columns of money with no cell padding at all (0px) and `min-width:100%`, so at laptop and tablet widths the headings ran
+   into each other ("Provider BrandsTurnoverHouse Win...") and nothing scrolled. The table keeps a real minimum width instead, the cells get a normal
+   padding, and the frame scrolls sideways (every column stays reachable, none is hidden). */
+html body.main-report-page:not(#mr-1):not(#mr-2) .report-table-scroll > table.report-table{min-width:1180px !important}
+html body.main-report-page:not(#mr-1):not(#mr-2) .report-table th,
+html body.main-report-page:not(#mr-1):not(#mr-2) .report-table td{padding:12px 14px !important;white-space:nowrap}

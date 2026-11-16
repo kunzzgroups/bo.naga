@@ -149,3 +149,16 @@ html[data-bo-shell="main"] .report-topbar .user-title-wrap > .mad-sync i{font-si
 }
 /* Until the sync label has been moved up into the title row it must not show in the page content (it starts out as the first child of .report-content). */
 html[data-bo-shell="main"] .report-content > .mad-sync{display:none !important}
+
+/* Custom selects (.rounded-select-btn = <span>label</span><i>chevron</i>): a long option label ("No Brand Owner role configured", "No data in selected
+   report range") ran out of the control and over the next column on tablet / phone widths. The label shortens with an ellipsis inside the control. */
+html[data-bo-shell="main"] .report-content .rounded-select-btn{min-width:0;overflow:hidden}
+html[data-bo-shell="main"] .report-content .rounded-select-btn > span:first-child{min-width:0;flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Custom select, dark: the control, its menu and options kept reports.css's cream (a cream field and menu on the dark form, e.g. Create Role "Role Usage").
+   Default only - pages whose own sheet already styles it (Admin / Merchant lists) are more specific and keep their look. */
+html[data-bo-theme="dark"][data-bo-shell="main"] .rounded-select-btn{background:#2A2C36;border-color:rgba(255,255,255,.12);color:#F5F5F4}
+html[data-bo-theme="dark"][data-bo-shell="main"] .rounded-select-menu{background:#383A46;border-color:rgba(255,255,255,.14);box-shadow:0 14px 32px rgba(0,0,0,.5)}
+html[data-bo-theme="dark"][data-bo-shell="main"] .rounded-select-option{background:transparent;color:#F5F5F4}
+html[data-bo-theme="dark"][data-bo-shell="main"] .rounded-select-option:hover,
+html[data-bo-theme="dark"][data-bo-shell="main"] .rounded-select-option.active{background:rgba(245,158,11,.14);color:#FBBF24}

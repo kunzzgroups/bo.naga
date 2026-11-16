@@ -277,7 +277,9 @@
       if(!wrap){ if((mountSyncLabel._n=(mountSyncLabel._n||0)+1)<=30) setTimeout(mountSyncLabel,100); return; }
       mountSyncLabel._n=0;
       var src=document.querySelector('.report-content .mad-sync');
-      Array.prototype.forEach.call(wrap.querySelectorAll('.mad-sync'),function(x){ if(x!==src && x.parentNode) x.parentNode.removeChild(x); });
+      /* Drop the previous page's label only when this page brought its own: with nothing in the content, the label already in the wrap IS this page's
+         (the function runs more than once per swap - the event, the script's own tail, the retries - and the later runs used to delete it). */
+      if(src) Array.prototype.forEach.call(wrap.querySelectorAll('.mad-sync'),function(x){ if(x!==src && x.parentNode) x.parentNode.removeChild(x); });
       if(src && src.parentNode!==wrap) wrap.appendChild(src);
     }catch(e){}
   }

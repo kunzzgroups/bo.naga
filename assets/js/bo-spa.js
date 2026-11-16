@@ -348,6 +348,25 @@
     try { requestAnimationFrame(function () { requestAnimationFrame(go); }); } catch (e) {}
     setTimeout(go, 220);
   }
+  /* The header used to be swapped only after the page's scripts had loaded - well after the sheets were converged and the veil lifted - so for
+     that gap the OLD header was painted under the NEW page's cascade (chips and counters of the previous page restyled, then replaced): the
+     flicker in the top bar when hopping between tabs. Do the same replacement in the swap's own task instead. Same steps as the late path. */
+  var HEADER_SWAPPED = false;
+  function swapHeaderEarly(doc) {
+    HEADER_SWAPPED = false;
+    try {
+      var live = document.querySelector('.report-main > .report-topbar');
+      var want = doc.querySelector('.report-main > .report-topbar');
+      if (!live || !want) return;
+      var fresh = want.cloneNode(true);
+      fresh.removeAttribute('data-bo-topbar-ready');
+      live.parentNode.replaceChild(fresh, live);
+      if (window.BO_TOPBAR && BO_TOPBAR.mount) BO_TOPBAR.mount(fresh);
+      if (window.BO_AUTH && BO_AUTH.injectProfile) { try { BO_AUTH.injectProfile(); } catch (e) {} }
+      if (window.BO_THEME && BO_THEME.initThemeToggle) { try { BO_THEME.initThemeToggle(); } catch (e) {} }
+      HEADER_SWAPPED = true;
+    } catch (e) {}
+  }
   var SHEET_CONVERGE_OFF = false;
   try { SHEET_CONVERGE_OFF = localStorage.getItem('bo_spa_sheets') === '0'; } catch (e) {}
   var SHELL_SHEETS = {
@@ -597,9 +616,20 @@
       node = SHEET_NODES[key];
       if (!node || !node.parentNode) continue;
       on = !!want.css[key] || isShellSheet(key);
-      if (node.disabled === !on) continue;
-      node.disabled = !on;
-      try { if (node.sheet) node.sheet.disabled = !on; } catch (e) {}
+      /* Toggle the parsed sheet (CSSOM), not the <link disabled> attribute: re-enabling a <link> re-runs its load, so for ~20-60ms the
+         sheet is gone (link.sheet === null) and everything outside the veiled frame - top bar, tab row, sidebar - paints without it:
+         the light-theme flash between Roles & Permissions and Security & Audit, whose dark rules live in a sheet only one of them links.
+         sheet.disabled applies synchronously, in the same task as the swap. The attribute is only used for a sheet that has not loaded yet. */
+      var sh = null;
+      try { sh = node.sheet; } catch (e) {}
+      if (sh) {
+        if (node.disabled) node.disabled = false;
+        if (!!sh.disabled === !on) continue;
+        sh.disabled = !on;
+      } else {
+        if (node.disabled === !on) continue;
+        node.disabled = !on;
+      }
     }
   }
 
@@ -1154,6 +1184,7 @@
       convergeSheets(head.want);
       convergeExtras(doc);
       convergeTail(doc);
+      swapHeaderEarly(doc);
       unveilSoon();
       /* Per-document marks that live on the body, which is never swapped, so they would
          otherwise suppress that work for every later page. */
@@ -1259,9 +1290,11 @@
          height 0, no h1, data-bo-topbar-ready absent - and reported from the live site as a blank
          band under the top bar. Converge it like the frame: take the target page's own header,
          then let bo-topbar.js mount it, which is what a fresh load does. */
+      /* Already done in the swap's own task (swapHeaderEarly), so the header never sat on screen under the wrong cascade.
+         Only repair when that did not happen (no header was mounted, bo-topbar.js not ready yet). */
       var liveHeader = DOC.querySelector('.report-main > .report-topbar');
       var wantHeader = doc.querySelector('.report-main > .report-topbar');
-      if (liveHeader && wantHeader) {
+      if (liveHeader && wantHeader && !HEADER_SWAPPED) {
         var freshHeader = wantHeader.cloneNode(true);
         freshHeader.removeAttribute('data-bo-topbar-ready');
         liveHeader.parentNode.replaceChild(freshHeader, liveHeader);
@@ -1585,7 +1618,7 @@
       /* Which managed page sheets are active right now (false = disabled because the current page does not declare it). */
       sheets: function () {
         var out = {};
-        Object.keys(SHEET_NODES).forEach(function (k) { out[k] = !SHEET_NODES[k].disabled; });
+        Object.keys(SHEET_NODES).forEach(function (k) { out[k] = !(SHEET_NODES[k].sheet ? SHEET_NODES[k].sheet.disabled : SHEET_NODES[k].disabled); });
         return out;
       },
       scriptTimes: function () { return scriptTimes; },

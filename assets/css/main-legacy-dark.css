@@ -1,0 +1,134 @@
+/* Dark theme for three Main pages that were written in light only: Accounting Settlement (main-accounting-settlement.css), Provider Settlement /
+   Accounting Report (main-accounting-executive.css, body.provider-exec) and Main Report (main-report.css, body.main-report-page).
+
+   None of those sheets has a single dark rule, so in dark they showed dark ink on the dark canvas (page titles, KPI labels, table text), cream islands
+   (table heads, fields, buttons, menu, pager, modal) and pale status chips. Colours only - every metric stays in the sheets above.
+   Palette = the standard Main list pages in dark: surface #383A46, field #2A2C36, line rgba(255,255,255,.14), ink #F5F5F4, muted #D4D4D8. */
+
+/* ---- ink: titles, numbers, cell text ------------------------------------------------------------------------------------------------------- */
+html[data-bo-theme="dark"] body.report-body .settlement-head h1,
+html[data-bo-theme="dark"] body.report-body .settlement-panel h2,
+html[data-bo-theme="dark"] body.report-body .settlement-summary-card strong,
+html[data-bo-theme="dark"] body.report-body .settlement-table th,
+html[data-bo-theme="dark"] body.report-body .settlement-table td,
+html[data-bo-theme="dark"] body.report-body .settlement-modal-head h2,
+html[data-bo-theme="dark"] body.report-body .settlement-detail-grid b,
+html[data-bo-theme="dark"] body.report-body .provider-exec-head h2,
+html[data-bo-theme="dark"] body.report-body .provider-settlement-table td,
+html[data-bo-theme="dark"] body.report-body .report-summary-card strong,
+html[data-bo-theme="dark"] body.report-body .report-section-head h5,
+html[data-bo-theme="dark"] body.report-body .report-section-head h6,
+html[data-bo-theme="dark"] body.report-body .settlement-ledger-head h6,
+html[data-bo-theme="dark"] body.report-body .settlement-form-grid .field label,
+html[data-bo-theme="dark"] body.report-body .value-neutral{color:#F5F5F4 !important}
+html[data-bo-theme="dark"] body.report-body .settlement-head p,
+html[data-bo-theme="dark"] body.report-body .settlement-summary-card small,
+html[data-bo-theme="dark"] body.report-body .settlement-summary-card span:not(.summary-icon),
+html[data-bo-theme="dark"] body.report-body .currency-label,
+html[data-bo-theme="dark"] body.report-body .settlement-form-grid label>span,
+html[data-bo-theme="dark"] body.report-body .settlement-message,
+html[data-bo-theme="dark"] body.report-body .settlement-pagination,
+html[data-bo-theme="dark"] body.report-body .settlement-modal-head p,
+html[data-bo-theme="dark"] body.report-body .settlement-detail-grid small,
+html[data-bo-theme="dark"] body.report-body .settlement-detail-actions label,
+html[data-bo-theme="dark"] body.report-body .empty-cell,
+html[data-bo-theme="dark"] body.report-body .provider-exec-head p,
+html[data-bo-theme="dark"] body.report-body .provider-settlement-table th,
+html[data-bo-theme="dark"] body.report-body .provider-linked,
+html[data-bo-theme="dark"] body.report-body .provider-empty,
+html[data-bo-theme="dark"] body.report-body .provider-footer,
+html[data-bo-theme="dark"] body.report-body .provider-page-btn,
+html[data-bo-theme="dark"] body.report-body .provider-page-size,
+html[data-bo-theme="dark"] body.report-body .report-summary-card small,
+html[data-bo-theme="dark"] body.report-body .report-summary-card span,
+html[data-bo-theme="dark"] body.report-body .report-section-head small,
+html[data-bo-theme="dark"] body.report-body .settlement-ledger-head small,
+html[data-bo-theme="dark"] body.report-body .settlement-payment-context span,
+html[data-bo-theme="dark"] body.report-body .report-note{color:#D4D4D8 !important}
+html[data-bo-theme="dark"] body.report-body .settlement-table th{color:#E7E5E4 !important}
+html[data-bo-theme="dark"] body.report-body .settlement-summary-card.collect strong,
+html[data-bo-theme="dark"] body.report-body .collect strong,
+html[data-bo-theme="dark"] body.report-body .balance-positive,
+html[data-bo-theme="dark"] body.report-body .value-positive,
+html[data-bo-theme="dark"] body.report-body .settlement-message.success{color:#6CE9A6 !important}
+html[data-bo-theme="dark"] body.report-body .pay strong,
+html[data-bo-theme="dark"] body.report-body .balance-due,
+html[data-bo-theme="dark"] body.report-body .provider-settlement-table .balance-due,
+html[data-bo-theme="dark"] body.report-body .value-negative,
+html[data-bo-theme="dark"] body.report-body .settlement-message.error,
+html[data-bo-theme="dark"] body.report-body .settlement-form-grid label b{color:#FCA5A5 !important}
+html[data-bo-theme="dark"] body.report-body .carried strong,
+html[data-bo-theme="dark"] body.report-body .settlement-text-btn,
+html[data-bo-theme="dark"] body.report-body .settlement-view-btn,
+html[data-bo-theme="dark"] body.report-body .report-note i{color:#FBBF24 !important}
+
+/* ---- surfaces and lines -------------------------------------------------------------------------------------------------------------------- */
+html[data-bo-theme="dark"] body.report-body .settlement-summary-combined,
+html[data-bo-theme="dark"] body.report-body .settlement-summary-card,
+html[data-bo-theme="dark"] body.report-body .settlement-panel,
+html[data-bo-theme="dark"] body.report-body .ledger-filter-row,
+html[data-bo-theme="dark"] body.report-body .provider-settlement-card,
+html[data-bo-theme="dark"] body.report-body .report-summary-card,
+html[data-bo-theme="dark"] body.report-body .settlement-form-card,
+html[data-bo-theme="dark"] body.report-body .report-note,
+html[data-bo-theme="dark"] body.report-body .settlement-payment-context,
+html[data-bo-theme="dark"] body.report-body .settlement-modal-card{background:#383A46 !important;border-color:rgba(255,255,255,.14) !important}
+html[data-bo-theme="dark"] body.report-body .settlement-summary-combined .settlement-summary-card{background:transparent !important;border-color:transparent !important}
+html[data-bo-theme="dark"] body.report-body .settlement-summary-combined .settlement-summary-card+.settlement-summary-card{border-left-color:rgba(255,255,255,.14) !important}
+html[data-bo-theme="dark"] body.report-body .settlement-table th,
+html[data-bo-theme="dark"] body.report-body .provider-settlement-table th{background:#383A46 !important;border-bottom-color:rgba(255,255,255,.14) !important}
+html[data-bo-theme="dark"] body.report-body .settlement-table td,
+html[data-bo-theme="dark"] body.report-body .provider-settlement-table td{border-bottom-color:rgba(255,255,255,.08) !important}
+html[data-bo-theme="dark"] body.report-body .settlement-pagination,
+html[data-bo-theme="dark"] body.report-body .provider-footer,
+html[data-bo-theme="dark"] body.report-body .settlement-modal-head,
+html[data-bo-theme="dark"] body.report-body .settlement-detail-grid>div{border-color:rgba(255,255,255,.14) !important}
+html[data-bo-theme="dark"] body.report-body .settlement-modal-card{box-shadow:0 30px 80px rgba(0,0,0,.55) !important}
+html[data-bo-theme="dark"] body.report-body .collect .summary-icon{background:rgba(18,183,106,.18) !important;color:#6CE9A6 !important}
+html[data-bo-theme="dark"] body.report-body .pay .summary-icon{background:rgba(239,68,68,.18) !important;color:#FCA5A5 !important}
+html[data-bo-theme="dark"] body.report-body .carried .summary-icon{background:rgba(245,158,11,.16) !important;color:#FBBF24 !important}
+
+/* ---- controls ------------------------------------------------------------------------------------------------------------------------------ */
+html[data-bo-theme="dark"] body.report-body .settlement-form-grid input,
+html[data-bo-theme="dark"] body.report-body .settlement-form-grid select,
+html[data-bo-theme="dark"] body.report-body .ledger-filter-row input,
+html[data-bo-theme="dark"] body.report-body .ledger-filter-row select,
+html[data-bo-theme="dark"] body.report-body .settlement-detail-actions input{background:#2A2C36 !important;border-color:rgba(255,255,255,.12) !important;color:#F5F5F4 !important}
+html[data-bo-theme="dark"] body.report-body .settlement-light-btn,
+html[data-bo-theme="dark"] body.report-body .settlement-modal-head button,
+html[data-bo-theme="dark"] body.report-body .settlement-pager button,
+html[data-bo-theme="dark"] body.report-body .settlement-page-size,
+html[data-bo-theme="dark"] body.report-body .provider-menu-btn,
+html[data-bo-theme="dark"] body.report-body .provider-page-btn,
+html[data-bo-theme="dark"] body.report-body .provider-page-size,
+html[data-bo-theme="dark"] body.report-body .report-tab,
+html[data-bo-theme="dark"] body.report-body .btn-mini-action,
+html[data-bo-theme="dark"] body.report-body .btn-outline-clean{background:linear-gradient(#4A4C58 0%,#383A46 48%,#2C2E38 100%) !important;border-color:rgba(255,255,255,.12) !important;color:#F5F5F4 !important}
+html[data-bo-theme="dark"] body.report-body .settlement-pager button.active,
+html[data-bo-theme="dark"] body.report-body .provider-page-btn.active{background:rgba(245,158,11,.16) !important;border-color:rgba(245,158,11,.45) !important;color:#FBBF24 !important}
+html[data-bo-theme="dark"] body.report-body .report-tab.active{background:#D97706 !important;border-color:#D97706 !important;color:#fff !important}
+html[data-bo-theme="dark"] body.report-body .settlement-warning-btn,
+html[data-bo-theme="dark"] body.report-body .btn-mini-settle,
+html[data-bo-theme="dark"] body.report-body .danger-soft{background:rgba(245,158,11,.14) !important;border-color:rgba(245,158,11,.4) !important;color:#FBBF24 !important}
+html[data-bo-theme="dark"] body.report-body .provider-menu-pop{background:#383A46 !important;border-color:rgba(255,255,255,.14) !important;box-shadow:0 14px 32px rgba(0,0,0,.5) !important}
+html[data-bo-theme="dark"] body.report-body .provider-menu-pop button{background:transparent !important;color:#F5F5F4 !important}
+html[data-bo-theme="dark"] body.report-body .provider-menu-pop button:hover{background:rgba(245,158,11,.14) !important;color:#FBBF24 !important}
+
+/* ---- status chips -------------------------------------------------------------------------------------------------------------------------- */
+html[data-bo-theme="dark"] body.report-body .settlement-status,
+html[data-bo-theme="dark"] body.report-body .settlement-status.success,
+html[data-bo-theme="dark"] body.report-body .provider-status.settled,
+html[data-bo-theme="dark"] body.report-body .direction-chip.collect{background:rgba(18,183,106,.18) !important;color:#6CE9A6 !important}
+html[data-bo-theme="dark"] body.report-body .settlement-status.partial,
+html[data-bo-theme="dark"] body.report-body .settlement-status.warning,
+html[data-bo-theme="dark"] body.report-body .settlement-status.open,
+html[data-bo-theme="dark"] body.report-body .settlement-status.info,
+html[data-bo-theme="dark"] body.report-body .provider-status{background:rgba(245,158,11,.18) !important;color:#FBBF24 !important}
+html[data-bo-theme="dark"] body.report-body .provider-status.settled{background:rgba(18,183,106,.18) !important;color:#6CE9A6 !important}
+html[data-bo-theme="dark"] body.report-body .settlement-status.primary,
+html[data-bo-theme="dark"] body.report-body .settlement-status.carried{background:rgba(255,255,255,.08) !important;color:#D4D4D8 !important}
+html[data-bo-theme="dark"] body.report-body .direction-chip.pay{background:rgba(239,68,68,.18) !important;color:#FCA5A5 !important}
+
+/* ---- Main Report tables (no dedicated table class: the head and cells of its two tables) ------------------------------------------------------ */
+html[data-bo-theme="dark"] body.main-report-page .report-table th{background:#383A46 !important;color:#E7E5E4 !important;border-bottom-color:rgba(255,255,255,.14) !important}
+html[data-bo-theme="dark"] body.main-report-page .report-table td{color:#F5F5F4 !important;border-bottom-color:rgba(255,255,255,.08) !important}

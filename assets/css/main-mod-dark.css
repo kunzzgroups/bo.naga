@@ -1,0 +1,50 @@
+/* Dark theme for the Main "module" pages (Accounting Due, Settlement Report, Balance Overview / Adjustment, Transaction History, Provider/Merchant
+   lists, Win/Lose chrome) - everything `.main-mod-*` from main-executive-modules.css.
+
+   That sheet is written in light only: the title, the KPI labels and numbers, the table head (cream), the status chips, the tabs, the form fields
+   and the footer kept their light colours in dark - dark ink on a dark canvas (title unreadable) and cream islands (table head, selects, buttons).
+   Only the cards, KPI tiles and pager had dark rules (bo-charcoal-legacy.css). Colours only: every metric stays in main-executive-modules.css.
+   Palette = the standard Main list pages in dark: surface #383A46, field #2A2C36, line rgba(255,255,255,.14), ink #F5F5F4, muted #D4D4D8. */
+html[data-bo-theme="dark"] body.report-body .main-mod-head h2,
+html[data-bo-theme="dark"] body.report-body .main-mod-kpi b,
+html[data-bo-theme="dark"] body.report-body .main-mod-table td,
+html[data-bo-theme="dark"] body.report-body .main-mod-table-title,
+html[data-bo-theme="dark"] body.report-body .main-mod-adjust-head b{color:#F5F5F4 !important}
+html[data-bo-theme="dark"] body.report-body .main-mod-head p,
+html[data-bo-theme="dark"] body.report-body .main-mod-kpi small,
+html[data-bo-theme="dark"] body.report-body .main-mod-kpi span,
+html[data-bo-theme="dark"] body.report-body .main-mod-subtitle,
+html[data-bo-theme="dark"] body.report-body .main-mod-table-title small,
+html[data-bo-theme="dark"] body.report-body .main-mod-adjust-head small,
+html[data-bo-theme="dark"] body.report-body .main-mod-footer,
+html[data-bo-theme="dark"] body.report-body .main-mod-form label,
+html[data-bo-theme="dark"] body.report-body .main-mod-back,
+html[data-bo-theme="dark"] body.report-body .main-mod-link{color:#D4D4D8 !important}
+html[data-bo-theme="dark"] body.report-body .main-mod-kpi.alert b{color:#FCA5A5 !important}
+html[data-bo-theme="dark"] body.report-body .main-mod-kpi.alert{background:rgba(239,68,68,.12) !important;border-color:rgba(239,68,68,.35) !important}
+html[data-bo-theme="dark"] body.report-body .main-mod-kpi .ico,
+html[data-bo-theme="dark"] body.report-body .main-mod-avatar{background:rgba(245,158,11,.16) !important;color:#FBBF24 !important}
+html[data-bo-theme="dark"] body.report-body .main-mod-kpi.alert .ico{background:rgba(239,68,68,.18) !important;color:#FCA5A5 !important}
+html[data-bo-theme="dark"] body.report-body .main-mod-kpi.green .ico{background:rgba(18,183,106,.18) !important;color:#6CE9A6 !important}
+/* table */
+html[data-bo-theme="dark"] body.report-body .main-mod-table th{background:#383A46 !important;color:#E7E5E4 !important;border-bottom-color:rgba(255,255,255,.14) !important}
+html[data-bo-theme="dark"] body.report-body .main-mod-table td{border-bottom-color:rgba(255,255,255,.08) !important}
+html[data-bo-theme="dark"] body.report-body .main-mod-table-title,
+html[data-bo-theme="dark"] body.report-body .main-mod-footer,
+html[data-bo-theme="dark"] body.report-body .main-mod-adjust-head{border-color:rgba(255,255,255,.14) !important}
+html[data-bo-theme="dark"] body.report-body .main-mod-positive{color:#6CE9A6 !important}
+html[data-bo-theme="dark"] body.report-body .main-mod-negative{color:#FCA5A5 !important}
+/* status chips */
+html[data-bo-theme="dark"] body.report-body .main-mod-status{background:rgba(18,183,106,.18) !important;color:#6CE9A6 !important}
+html[data-bo-theme="dark"] body.report-body .main-mod-status.pending{background:rgba(245,158,11,.18) !important;color:#FBBF24 !important}
+html[data-bo-theme="dark"] body.report-body .main-mod-status.bad{background:rgba(239,68,68,.18) !important;color:#FCA5A5 !important}
+/* buttons, tabs, selects, fields, note */
+html[data-bo-theme="dark"] body.report-body .main-mod-export,
+html[data-bo-theme="dark"] body.report-body .main-mod-tab,
+html[data-bo-theme="dark"] body.report-body .main-mod-select,
+html[data-bo-theme="dark"] body.report-body .main-mod-page-size{background:linear-gradient(#4A4C58 0%,#383A46 48%,#2C2E38 100%) !important;border-color:rgba(255,255,255,.12) !important;color:#F5F5F4 !important}
+html[data-bo-theme="dark"] body.report-body .main-mod-tab.active{background:rgba(245,158,11,.16) !important;border-color:rgba(245,158,11,.45) !important;color:#FBBF24 !important}
+html[data-bo-theme="dark"] body.report-body .main-mod-note{background:rgba(245,158,11,.12) !important;color:#FBBF24 !important}
+html[data-bo-theme="dark"] body.report-body .main-mod-form input,
+html[data-bo-theme="dark"] body.report-body .main-mod-form textarea,
+html[data-bo-theme="dark"] body.report-body .main-mod-form select{background:#2A2C36 !important;border-color:rgba(255,255,255,.12) !important;color:#F5F5F4 !important}
