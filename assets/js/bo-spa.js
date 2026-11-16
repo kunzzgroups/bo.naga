@@ -329,6 +329,25 @@
 
   /* Managed page sheets (see convergeSheets). Declared here, before seed() runs at load. */
   var SHEET_NODES = {};   // sheetKey -> <link> element this router may disable
+  /* The content frame is hidden from the moment its children are replaced until the swap has settled (stylesheets converged, body class and
+     attributes synced, two frames later - or 220ms at the latest, since a background tab never fires animation frames). Without it a frame could
+     be painted with the NEW page's markup against the OLD page's cascade (or with the target's sheets not yet re-enabled): unstyled links, blocks and
+     light-theme controls for a moment, the flash seen when switching between pages. Transitions are switched off inside the veiled frame too: the first style computation of the new markup (before the target's sheets are re-enabled) used to start a colour / background transition that then ran visibly after the swap (tab labels fading from link-blue to grey). Only the frame is veiled; the shell stays as it is. */
+  var VEIL_TIMER = 0;
+  try {
+    var veilStyle = document.createElement('style');
+    veilStyle.setAttribute('data-bo-spa-veil', '1');
+    veilStyle.textContent = 'html.bo-spa-veil .report-content{visibility:hidden!important}html.bo-spa-veil .report-content *{transition:none!important;animation:none!important}';
+    document.head.appendChild(veilStyle);
+  } catch (e) {}
+  function veil() { try { clearTimeout(VEIL_TIMER); document.documentElement.classList.add('bo-spa-veil'); VEIL_TIMER = setTimeout(unveil, 1500); } catch (e) {} }
+  function unveil() { try { clearTimeout(VEIL_TIMER); document.documentElement.classList.remove('bo-spa-veil'); } catch (e) {} }
+  function unveilSoon() {
+    var done = false;
+    function go() { if (done) return; done = true; unveil(); }
+    try { requestAnimationFrame(function () { requestAnimationFrame(go); }); } catch (e) {}
+    setTimeout(go, 220);
+  }
   var SHEET_CONVERGE_OFF = false;
   try { SHEET_CONVERGE_OFF = localStorage.getItem('bo_spa_sheets') === '0'; } catch (e) {}
   var SHELL_SHEETS = {
@@ -1119,6 +1138,7 @@
          The frame's replacement is a cut, and nothing the previous page put on `body` leaves
          with it - see the lock sweep below. */
       try { DOC.dispatchEvent(new CustomEvent('bo:spa:before', { detail: { url: u.href } })); } catch (e) {}
+      veil();
       if (from.tagName === to.tagName && sameAttributes(from, to)) {
         from.replaceChildren.apply(from, clone(to.childNodes));
       } else {
@@ -1134,6 +1154,7 @@
       convergeSheets(head.want);
       convergeExtras(doc);
       convergeTail(doc);
+      unveilSoon();
       /* Per-document marks that live on the body, which is never swapped, so they would
          otherwise suppress that work for every later page. */
       if (DOC.body && DOC.body.dataset) delete DOC.body.dataset.crudModalReady;

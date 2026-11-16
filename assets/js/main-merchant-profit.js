@@ -120,6 +120,7 @@
 
   function updateTrend() {
     const el = $('mprTrend');
+    if (!el) return;
     if (state.prevTotal == null || !Number.isFinite(state.prevTotal)) {
       el.className = 'mpr-kpi-trend is-flat';
       el.innerHTML = '<i class="bi bi-dash" aria-hidden="true"></i> —';
@@ -140,6 +141,9 @@
     el.innerHTML = `<i class="bi bi-arrow-${up ? 'up' : 'down'}-right" aria-hidden="true"></i> ${up ? '+' : ''}${pct.toFixed(1)}% vs prev`;
   }
 
+  /* The KPI figures live in the page header, which an SPA swap replaces AFTER this script has run, so the elements may not exist yet. */
+  function setText(id, text) { const el = $(id); if (el) el.textContent = text; }
+
   function updateKpis() {
     const rows = state.rows;
     const monthlyRows = rows.filter(isMonthly);
@@ -149,15 +153,15 @@
     );
     const pricingMerchants = new Set(state.pricing.map((x) => String(x.merchantId || '')).filter(Boolean));
 
-    $('mprTotal').textContent = money(state.total);
-    $('mprPricingTotal').textContent = money(state.pricingTotal);
-    $('mprManualTotal').textContent = money(state.manualTotal);
-    $('mprOneOffCount').textContent = `${oneOffRows.length} Entr${oneOffRows.length === 1 ? 'y' : 'ies'}`;
+    setText('mprTotal', money(state.total));
+    setText('mprPricingTotal', money(state.pricingTotal));
+    setText('mprManualTotal', money(state.manualTotal));
+    setText('mprOneOffCount', `${oneOffRows.length} Entr${oneOffRows.length === 1 ? 'y' : 'ies'}`);
     const mCount = pricingMerchants.size || merchants.size;
-    $('mprMerchantCount').textContent = `${mCount} Merchant${mCount === 1 ? '' : 's'}`;
-    $('mprSegAll').textContent = String(rows.length);
-    $('mprSegMonthly').textContent = String(monthlyRows.length);
-    $('mprSegOneOff').textContent = String(oneOffRows.length);
+    setText('mprMerchantCount', `${mCount} Merchant${mCount === 1 ? '' : 's'}`);
+    setText('mprSegAll', String(rows.length));
+    setText('mprSegMonthly', String(monthlyRows.length));
+    setText('mprSegOneOff', String(oneOffRows.length));
     updateTrend();
   }
 
@@ -654,4 +658,8 @@
   }
 
   bootstrap();
+  /* After an SPA swap the header (with the KPI figures) is replaced once this script has loaded its data; paint the figures into it. */
+  if (window.__boMprKpiSlot) document.removeEventListener('bo:spa:content', window.__boMprKpiSlot);
+  window.__boMprKpiSlot = function () { try { if (state && state.rows) updateKpis(); } catch (e) {} };
+  document.addEventListener('bo:spa:content', window.__boMprKpiSlot);
 })();

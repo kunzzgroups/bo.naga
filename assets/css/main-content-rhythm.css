@@ -133,3 +133,19 @@ html[data-bo-shell="main"][data-bo-theme="dark"]:not(#bo-sticky-off) body :is(.m
     max-width:390px!important;
   }
 }
+
+/* "Synced just now" lives on the title row, right after the page title, on every Main listing that shows it (it used to sit in the tab row, left of
+   Export, where it read as a button label). A quiet 12px status line: icon + text, vertically centred with the title. Hidden below 768px where the
+   title row has no room. The element keeps its id, so the sync timer that rewrites its text is unaffected. */
+html[data-bo-shell="main"] .report-topbar .user-title-wrap > .mad-sync{
+  display:inline-flex;align-items:center;gap:6px;
+  margin-left:14px;align-self:center;white-space:nowrap;
+  font-size:12px;font-weight:600;line-height:1;
+  color:var(--bo-muted,#A1A1AA);
+}
+html[data-bo-shell="main"] .report-topbar .user-title-wrap > .mad-sync i{font-size:13px}
+@media (max-width:767.98px){
+  html[data-bo-shell="main"] .report-topbar .user-title-wrap > .mad-sync{display:none}
+}
+/* Until the sync label has been moved up into the title row it must not show in the page content (it starts out as the first child of .report-content). */
+html[data-bo-shell="main"] .report-content > .mad-sync{display:none !important}

@@ -1,6 +1,11 @@
-/* The page's own tab row duplicates the module row above it; the module row is the navigation. */
-html body.menu-permission-page.report-body .mp-chrome .mad-tabs{display:none!important}
-/* Roles & Permissions. With the duplicate tab row gone, the bar above the role picker is just "Add Role": it was still a full-height chrome band with a
-   divider under it and its own top padding - a tall empty strip. It is now a compact row that keeps only its bottom spacing and the button. */
-html body.menu-permission-page.report-body .mp-chrome{min-height:0!important;height:auto!important;padding:0 0 12px!important;margin:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
-html body.menu-permission-page.report-body .mp-chrome .mad-chrome-actions{margin:0!important;padding:0!important}
+/* The page's own tab row (Administrators / Roles & Permissions / Security & Audit) is shown again. It had been hidden as a duplicate of a module row
+   above it, but this Main page has no such row any more (Roles & Permissions is reached from the Main sidebar), so hiding it left the page with no
+   way to the other Admin pages. With Add Role moved into the Role / Permission Group row below, the chrome band is just the tabs, like
+   Administrators and Security & Audit. */
+
+/* Add Role sits at the right end of the Role / Permission Group row (it used to be alone in a row above the card). The delete button and the
+   Assigned pill stay next to the select; the button takes the free space to its left with an auto margin. */
+html body.menu-permission-page.report-body:not(#mp-ar-1):not(#mp-ar-2) .mp-role-row > .mp-add-role-btn{
+  margin-left:auto !important;
+  flex:0 0 auto !important;
+}

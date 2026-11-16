@@ -144,9 +144,9 @@ body.main-merchant-profit-page .mpr-kpi-trend{
   font-weight:800;
   white-space:nowrap;
   flex:0 0 auto;
-  max-width:64px;
-  overflow:hidden;
-  text-overflow:ellipsis;
+  /* no 64px cap: "-100.0%" plus its arrow is wider than that and was cut off at the pill's edge */
+  max-width:none;
+  overflow:visible;
 }
 body.main-merchant-profit-page .mpr-kpi-trend.is-down{
   background:rgba(239,51,64,.12);
@@ -974,4 +974,40 @@ html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-repay-status.is-o
 }
 html[data-bo-theme="dark"] body.main-merchant-profit-page .mpr-repay-balance{
   color:#FCA5A5;
+}
+
+/* Record Profit sits in the ledger's own toolbar, at its right end (it used to float alone in the tab row above). From 1400px the row is
+   pills | filters | Record Profit; below that the filter strip (date, currency, search, Export CSV) is too wide to share a row with the pills and the
+   button, so the pills and the button take row one and the whole filter strip takes row two - the layout the other Main listings use. */
+html body.main-merchant-profit-page.report-body:not(#mpr-ra-1):not(#mpr-ra-2) .mpr-filter-row-main > .mpr-row-actions{display:flex;align-items:center;gap:8px;flex:0 0 auto;margin-left:0}
+html body.main-merchant-profit-page.report-body:not(#mpr-ra-1):not(#mpr-ra-2) .mpr-filter-bar{grid-template-columns:minmax(0,1fr) !important}
+html body.main-merchant-profit-page.report-body:not(#mpr-ra-1):not(#mpr-ra-2) .mpr-filter-bar > .mpr-filter-row-main{width:100% !important;justify-self:stretch !important}
+@media (min-width:640px) and (max-width:1399.98px){
+  html body.main-merchant-profit-page.report-body:not(#mpr-ra-1):not(#mpr-ra-2) .mpr-filter-row-main{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto !important;
+    grid-template-areas:"pills actions" "filters filters" !important;
+    align-items:center !important;
+    gap:10px 12px !important;
+  }
+  html body.main-merchant-profit-page.report-body:not(#mpr-ra-1):not(#mpr-ra-2) .mpr-filter-row-main > .mad-pills{grid-area:pills !important;width:auto !important;justify-self:start !important}
+  html body.main-merchant-profit-page.report-body:not(#mpr-ra-1):not(#mpr-ra-2) .mpr-filter-row-main > .mpr-filters-tools{grid-area:filters !important;width:100% !important;margin-left:0 !important;justify-content:flex-start !important;flex-wrap:wrap !important}
+  html body.main-merchant-profit-page.report-body:not(#mpr-ra-1):not(#mpr-ra-2) .mpr-filter-row-main > .mpr-row-actions{grid-area:actions !important;justify-self:end !important}
+}
+/* In the two-row layout the search keeps a normal length (340px) - stretching it across the whole second row made it far longer than anyone types into. */
+@media (min-width:640px) and (max-width:1399.98px){
+  html body.main-merchant-profit-page.report-body:not(#mpr-ra-1):not(#mpr-ra-2) .mpr-filter-row-main > .mpr-filters-tools .mad-search{flex:0 1 340px !important;min-width:200px !important;max-width:340px !important}
+}
+
+/* One row from 1400px: pills | date | currency | search | Export CSV | Record Profit. At 1440 the toolbar has ~1128px and the controls wanted
+   1200 (date pinned at 260, search at 200+), so the row used to break into two with a gap between the pills and the button. Here the date range and
+   the search give up width (they only need to stay readable) so everything fits on one line down to 1400. */
+@media (min-width:1400px){
+  html body.main-merchant-profit-page.report-body:not(#mpr-ra-1):not(#mpr-ra-2) .mpr-filter-row-main > .mad-pills{flex:0 0 auto !important}
+  html body.main-merchant-profit-page.report-body:not(#mpr-ra-1):not(#mpr-ra-2) .mpr-filter-row-main > .mpr-filters-tools{flex:1 1 0 !important;min-width:0 !important;margin-left:0 !important;flex-wrap:nowrap !important}
+  html body.main-merchant-profit-page.report-body:not(#mpr-ra-1):not(#mpr-ra-2) .mpr-filter-row-main > .mpr-filters-tools .mpr-date-field{width:auto !important;min-width:190px !important;max-width:240px !important;flex:0 1 220px !important}
+  html body.main-merchant-profit-page.report-body:not(#mpr-ra-1):not(#mpr-ra-2) .mpr-filter-row-main > .mpr-filters-tools .mpr-currency-filter{flex:0 0 auto !important}
+  html body.main-merchant-profit-page.report-body:not(#mpr-ra-1):not(#mpr-ra-2) .mpr-filter-row-main > .mpr-filters-tools .mad-search{flex:1 1 140px !important;min-width:130px !important;max-width:none !important}
+  html body.main-merchant-profit-page.report-body:not(#mpr-ra-1):not(#mpr-ra-2) .mpr-filter-row-main > .mpr-filters-tools .mad-btn{flex:0 0 auto !important}
+  html body.main-merchant-profit-page.report-body:not(#mpr-ra-1):not(#mpr-ra-2) .mpr-filter-row-main > .mpr-row-actions{margin-left:0 !important}
 }

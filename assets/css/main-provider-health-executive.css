@@ -614,3 +614,14 @@ html:not([data-bo-theme="dark"]) body.main-provider-stub-page .mad-table .mad-ti
 html[data-bo-theme="dark"] body.main-provider-stub-page .mad-table .mad-time{
   color:#D4D4D8; font-weight:600; font-variant-numeric:tabular-nums;
 }
+
+/* Activity Logs toolbar: Refresh sits right after the search / date filters, as on the settlement ledgers (it was pushed to the far right edge by the
+   filter group growing to fill the strip). */
+html body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head{justify-content:flex-start !important}
+html body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .settlement-ledger-head > div{flex:0 1 auto !important}
+/* The grey sub-labels under a provider / performer name ("Provider", "Main") are Bootstrap's .text-muted, rgba(33,37,41,.75) - dark grey that
+   disappears on the dark table. */
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table tbody td small,
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table tbody td .text-muted{color:#D4D4D8 !important}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table tbody td small,
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page.main-provider-family-page.main-provider-stub-page .mad-table tbody td .text-muted{color:#57534E !important}

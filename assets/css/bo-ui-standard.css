@@ -1077,3 +1077,17 @@ html:not(#bo-td-wrap-off) body.report-body:not(#bo-td-wrap-off-2) .report-main t
   overflow:hidden!important;
   line-height:1.35!important;
 }
+
+/* Shared confirm / alert / prompt dialog in dark. It was a cream card with dark ink in every theme (only the agent payout page had a dark copy), so on a
+   dark page - Carry Forward, Delete, Approve - the confirmation popped up as a bright light island. Same dark spec the payout page already uses. */
+html[data-bo-theme="dark"] body .bo-global-backdrop{background:rgba(15,23,42,.62) !important}
+html[data-bo-theme="dark"] body .bo-global-dialog{background:#383A46 !important;border:1px solid rgba(255,255,255,.14) !important;color:#F5F5F4 !important;box-shadow:0 24px 70px rgba(0,0,0,.5) !important}
+html[data-bo-theme="dark"] body .bo-global-dialog h3{color:#F5F5F4 !important}
+html[data-bo-theme="dark"] body .bo-global-message,html[data-bo-theme="dark"] body .bo-global-input-wrap span{color:#D4D4D8 !important}
+html[data-bo-theme="dark"] body .bo-global-icon{background:#2A2C36 !important;color:#D4D4D8 !important;border:1px solid rgba(255,255,255,.12) !important}
+html[data-bo-theme="dark"] body .bo-global-modal[data-type="warning"] .bo-global-icon{background:rgba(245,158,11,.16) !important;color:#FBBF24 !important;border-color:rgba(245,158,11,.3) !important}
+html[data-bo-theme="dark"] body .bo-global-modal[data-type="error"] .bo-global-icon,html[data-bo-theme="dark"] body .bo-global-modal[data-type="danger"] .bo-global-icon{background:rgba(239,68,68,.16) !important;color:#FCA5A5 !important;border-color:rgba(239,68,68,.3) !important}
+html[data-bo-theme="dark"] body .bo-global-modal[data-type="success"] .bo-global-icon{background:rgba(18,183,106,.16) !important;color:#6CE9A6 !important;border-color:rgba(18,183,106,.3) !important}
+html[data-bo-theme="dark"] body .bo-global-input{background:#2A2C36 !important;border:1px solid rgba(255,255,255,.12) !important;color:#F5F5F4 !important}
+html[data-bo-theme="dark"] body .bo-global-close,html[data-bo-theme="dark"] body .bo-global-secondary{background:#2A2C36 !important;border:1px solid rgba(255,255,255,.14) !important;color:#F5F5F4 !important}
+html[data-bo-theme="dark"] body .bo-global-primary{background:linear-gradient(180deg,#FBBF24 0%,#F59E0B 45%,#D97706 100%) !important;border:1px solid #F59E0B !important;color:#2A2C36 !important;box-shadow:none !important}

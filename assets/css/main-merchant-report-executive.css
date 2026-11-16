@@ -315,10 +315,38 @@ body.main-merchant-report-page[data-report-view="settlement"] .settlement-table 
 body.main-merchant-report-page[data-report-view="settlement"] .settlement-table td:nth-child(7){width:10%}
 body.main-merchant-report-page[data-report-view="settlement"] .settlement-table th:nth-child(8),
 body.main-merchant-report-page[data-report-view="settlement"] .settlement-table td:nth-child(8){
-  width:120px;
+  width:150px;
+  min-width:150px;
   text-align:center;
   overflow:visible;
 }
+/* The Actions head cell keeps its label, fill and rule like every other head cell (its rule and label were missing on the ledger), and the column is
+   150px: three 32px buttons + gaps + padding need ~140, the old 120px let them run past the table edge. */
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table thead th:nth-child(8){
+  visibility:visible !important;
+  opacity:1 !important;
+  color:inherit !important;
+  border-bottom:1px solid var(--bo-border) !important;
+  text-overflow:clip;
+}
+/* The Actions head is drawn by the stylesheet, not just the markup: on the live ledger the head cell above the buttons rendered empty (no label, no
+   rule), which made the last column look unfinished. The label is a pseudo-element so it is there whatever the cell's own text is, in the same
+   12px / 700 as the other heads; the real text is collapsed so it cannot double up. */
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table thead th:nth-child(8){
+  font-size:0 !important;
+  text-align:center;
+}
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-table thead th:nth-child(8)::after{
+  content:"Actions";
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.04em;
+  color:var(--bo-text);
+}
+html[data-bo-theme="dark"] body.main-merchant-report-page[data-report-view="settlement"] .settlement-table thead th:nth-child(8)::after{
+  color:#E7E5E4;
+}
+
 body.main-merchant-report-page[data-report-view="settlement"] .settlement-table td.msr-action-cell{
   overflow:visible;
 }
@@ -853,4 +881,16 @@ html[data-bo-theme="dark"] body.main-merchant-report-page .msr-pay-date-foot but
 }
 html[data-bo-theme="dark"] body.main-merchant-report-page .msr-history-table-wrap{
   border-color:var(--bo-border,#24374F);
+}
+
+/* Sync / Export sit at the right end of the ledger's own toolbar (date range | Refresh ........ Synced just now | Export) instead of floating in the
+   tab row above it, where they were the only thing on the right and nothing in the strip below used that corner. */
+body.main-merchant-report-page[data-report-view="settlement"] .settlement-ledger-head > .mad-chrome-actions{
+  margin-left:auto;
+  flex:0 0 auto;
+}
+@media (max-width:575.98px){
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-ledger-head{flex-wrap:wrap}
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-ledger-tools{flex-wrap:wrap;width:100%}
+  body.main-merchant-report-page[data-report-view="settlement"] .settlement-ledger-head > .mad-chrome-actions{margin-left:0;width:100%;justify-content:flex-start;flex-wrap:wrap}
 }
