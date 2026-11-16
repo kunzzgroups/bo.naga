@@ -265,4 +265,31 @@
      without this the chip came back into the header and the dock's own row was never re-checked.
      bo:spa:content is dispatched once the header is the target's. */
   document.addEventListener('bo:spa:content', boot);
+  /* "Synced just now" is drawn in the title row, but the element lives in the page's content (first child of .report-content) so the page's own
+     script can find #madSyncLabel / #reportSyncLabel the moment it runs. An SPA swap replaces the content first and the header afterwards, so a
+     label that sat in the page's header markup did not exist yet when the script ran ("Cannot set properties of null (setting 'innerHTML')" on the
+     Merchants list) and was then replaced with the header. After the header belongs to the target (bo:spa:content) - and once on a direct load -
+     the label is moved from the content into the title wrap, and any label left over from the previous page is dropped. One slot on window. */
+  function mountSyncLabel(){
+    try{
+      var wrap=document.querySelector('.report-topbar .user-title-wrap');
+      /* The header may not be built yet (bo-topbar.js mounts it); try again shortly, a few times, so the label never stays behind in the content. */
+      if(!wrap){ if((mountSyncLabel._n=(mountSyncLabel._n||0)+1)<=30) setTimeout(mountSyncLabel,100); return; }
+      mountSyncLabel._n=0;
+      var src=document.querySelector('.report-content .mad-sync');
+      Array.prototype.forEach.call(wrap.querySelectorAll('.mad-sync'),function(x){ if(x!==src && x.parentNode) x.parentNode.removeChild(x); });
+      if(src && src.parentNode!==wrap) wrap.appendChild(src);
+    }catch(e){}
+  }
+  if(window.__boMountSyncLabel){
+    document.removeEventListener('bo:spa:content',window.__boMountSyncLabel);
+    document.removeEventListener('DOMContentLoaded',window.__boMountSyncLabelDcl);
+  }
+  /* The router replays DOMContentLoaded (readyState is already 'complete') while the OLD header is still in place; moving the label then put it into a header
+     that was replaced a moment later. Only the real DOMContentLoaded of a direct load, and bo:spa:content after the header swap, count. */
+  var mountSyncLabelOnce=function(){ if(document.readyState==='complete') return; mountSyncLabel(); };
+  window.__boMountSyncLabel=mountSyncLabel;
+  window.__boMountSyncLabelDcl=mountSyncLabelOnce;
+  document.addEventListener('bo:spa:content',mountSyncLabel);
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',mountSyncLabelOnce); else mountSyncLabel();
 })(window);

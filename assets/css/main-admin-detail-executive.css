@@ -10210,46 +10210,6 @@ body.main-admin-detail-page:not(.main-admin-security-page) .mad-filter-bar > .ma
    toolbar stacked the filters and the pills as two full-width rows.
    Now: the chrome is a column - tabs 48px on their own row, the KPI strip below it as its own row - and
    the toolbar is one wrapping row: category pills first, then the filter strip. */
-body.main-admin-security-page .mad-chrome{
-  display:flex!important;
-  flex-direction:column!important;
-  align-items:stretch!important;
-  justify-content:flex-start!important;
-  height:auto!important;
-  min-height:0!important;
-  max-height:none!important;
-  row-gap:8px!important;
-  padding-bottom:6px!important;
-}
-body.main-admin-security-page .mad-tabs{
-  display:flex!important;
-  flex-wrap:nowrap!important;
-  align-items:stretch!important;
-  height:48px!important;
-  min-height:48px!important;
-  max-width:100%!important;
-  overflow-x:auto!important;
-  overflow-y:hidden!important;
-  scrollbar-width:none;
-}
-body.main-admin-security-page .mad-tabs::-webkit-scrollbar{display:none!important}
-body.main-admin-security-page .mad-tab{
-  height:48px!important;
-  min-height:48px!important;
-  flex:0 0 auto!important;
-  white-space:nowrap!important;
-}
-body.main-admin-security-page .mad-chrome-actions.mas-chrome-kpis{
-  align-self:stretch!important;
-  justify-self:start!important;
-  width:100%!important;
-  height:auto!important;
-  min-height:36px!important;
-}
-body.main-admin-security-page .mas-kpis{
-  flex-wrap:wrap!important;
-  justify-content:flex-start!important;
-}
 body.main-admin-security-page .mas-toolbar{
   flex-direction:row!important;
   flex-wrap:wrap!important;
@@ -10332,69 +10292,6 @@ body.main-admin-security-page .mas-filters{
     overflow-x:auto!important;
     -webkit-overflow-scrolling:touch;
   }
-}
-
-/* Security & Audit: the KPI block sits on the title row, immediately left of the dark-mode button.
-   ------------------------------------------------------------------------------------------
-   The block moved out of the tab bar into `.report-actions` (which is the flex row holding the theme
-   button, so the markup order puts it first = leftmost). In the topbar it has to behave like the other
-   header chips: one 32px line, no wrap, no card padding - it was built as a 36px block inside the
-   toolbar, where the cards had room. Below 1280 the labels are dropped and only the icon + figure stay,
-   because the title row also carries the hamburger, the title and three action buttons. */
-html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-chrome-kpis{
-  align-self:center!important;
-  flex:0 0 auto!important;
-  width:auto!important;
-  max-width:none!important;
-  height:auto!important;
-  min-height:0!important;
-  margin:0 4px 0 0!important;
-  padding:0!important;
-  order:-1;                    /* first in the actions row, left of the theme button */
-}
-html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpis{
-  display:flex!important;
-  flex-wrap:nowrap!important;
-  align-items:center!important;
-  gap:6px!important;
-  width:auto!important;
-}
-html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi{
-  height:32px!important;
-  min-height:32px!important;
-  padding:0 10px 0 8px!important;
-  border-radius:999px!important;
-  gap:8px!important;
-  background:var(--bo-surface)!important;
-  border:1px solid var(--bo-border)!important;
-  box-shadow:none!important;
-  white-space:nowrap;
-}
-html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi-icon{
-  width:20px!important;height:20px!important;min-width:20px!important;font-size:11px!important;border-radius:999px!important;
-}
-html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi-value{font-size:12.5px!important;line-height:1!important}
-html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi-label{font-size:11px!important;line-height:1!important}
-html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi-meta{font-size:10.5px!important;line-height:1!important}
-@media (max-width:1279.98px){
-  html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi-label,
-  html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi-meta{display:none!important}
-  html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi{padding:0 8px!important;gap:6px!important}
-}
-
-/* The mobile pass sized the KPI chips as a 150px-each strip because they lived in the toolbar, where a
-   horizontal scroller made sense. In the topbar that is 462px of chips in a row that also carries the
-   hamburger, the title, the theme button, the language switcher and the header counters - measured at
-   768 the title collapsed to 0px wide and the topbar grew to 280px tall. In the header the chips are
-   compact (icon + figure, 58px each) and they simply do not exist on phones, where the bar has no room
-   for them (the page's own numbers stay available in the table's counts). */
-@media (max-width:991.98px){
-  html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi{min-width:0!important}
-  html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpis{overflow:visible!important;flex-wrap:nowrap!important}
-  html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-chrome-kpis{max-width:none!important}
-}
-@media (max-width:767.98px){
-  html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-chrome-kpis{display:none!important}
 }
 
 /* Security & Audit toolbar: the category pills get their own row, the filter strip gets the next one.
@@ -10538,12 +10435,12 @@ html[data-bo-shell="main"]:not(#bo-pag-off):not(#bo-pag-off-2) body.main-admin-d
   text-align:center;
 }
 
-/* Admin Management toolbar on tablet / small laptop (640-1199px).
+/* Admin Management toolbar on tablet / small laptop (640-1359px).
    Below 1280 the bar stacked its three groups, one per row (pills / search / sync + Export + Add Account): 157-161px of toolbar, with the
    status pills and the action buttons each leaving the other half of their row empty. Two rows instead: the pills and the actions share
    the first (pills left, sync | Export | Add Account right), and the search takes the full width of the second. 65px less, and the
    primary action sits next to the filter it belongs with. >=1200 stays the single row, <640 stays stacked. */
-@media (min-width:640px) and (max-width:1199.98px){
+@media (min-width:640px) and (max-width:1359.98px){
   html body.main-admin-detail-page.report-body:not(#mad-fb-1):not(#mad-fb-2) .mad-panel > .mad-filter-bar{
     display:grid !important;
     grid-template-columns:minmax(0,1fr) auto !important;
@@ -10557,25 +10454,112 @@ html[data-bo-shell="main"]:not(#bo-pag-off):not(#bo-pag-off-2) body.main-admin-d
   html body.main-admin-detail-page.report-body:not(#mad-fb-1):not(#mad-fb-2) .mad-panel > .mad-filter-bar > .mad-chrome-actions{grid-area:actions !important;width:auto !important;justify-self:end !important;justify-content:flex-end !important;flex-wrap:nowrap !important}
 }
 
-/* Admin Management table on tablet / small laptop. The table kept a 1150px minimum below 1200, so at 1024 (a 746px panel) the last three
-   columns - including Actions, the edit / delete buttons - sat behind a sideways scroll and the first screen showed no way to act on a row.
-   Last Login / Last Logout are the least needed columns (Last Active says the same in words), so they drop first (<=1199px), Created By
-   next (<=1139px) and Last Active on a narrow tablet (<=719px); Username takes the slack, the rest are fixed, and Actions stays in view.
-   Desktop (>=1200) is the full 9-column table. Phones (<640) are untouched. */
-@media (min-width:640px) and (max-width:1199.98px){
-  html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table{min-width:0 !important;width:100% !important;table-layout:fixed !important}
-  html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table th:nth-child(7),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table td:nth-child(7),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table th:nth-child(8),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table td:nth-child(8){display:none !important}
-  html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table th:nth-child(1),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table td:nth-child(1){width:auto !important;min-width:150px !important;max-width:none !important}
-  html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table th:nth-child(2),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table td:nth-child(2){width:110px !important;min-width:110px !important;max-width:110px !important}
-  html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table th:nth-child(3),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table td:nth-child(3){width:100px !important;min-width:100px !important;max-width:100px !important}
-  html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table th:nth-child(4),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table td:nth-child(4){width:100px !important;min-width:100px !important;max-width:100px !important}
-  html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table th:nth-child(5),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table td:nth-child(5){width:90px !important;min-width:90px !important;max-width:90px !important}
-  html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table th:nth-child(6),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table td:nth-child(6){width:100px !important;min-width:100px !important;max-width:100px !important}
-  html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table th:nth-child(9),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table td:nth-child(9){width:148px !important;min-width:148px !important;max-width:148px !important}
+/* Security & Audit: the KPI chips sit on the title row, immediately left of the dark-mode button (they are first in .report-actions), and keep the
+   page's original chip look - 36px tall, 8px corners, 24px tinted icon, 15px figure (the base .mas-kpi rules above). Only the placement is set here:
+   one line, no wrap, no card padding. Below 1280 the labels drop and only icon + figure stay, because the row also carries the hamburger, the
+   title and the action buttons; on phones the chips are not shown (the table's own counts remain). */
+html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-chrome-kpis{
+  align-self:center !important;flex:0 0 auto !important;width:auto !important;max-width:none !important;
+  height:auto !important;min-height:0 !important;margin:0 4px 0 0 !important;padding:0 !important;
+  order:-1;
 }
-@media (min-width:640px) and (max-width:1139.98px){
-  html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table th:nth-child(6),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table td:nth-child(6){display:none !important}
+html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpis{
+  display:flex !important;flex-wrap:nowrap !important;align-items:center !important;gap:8px !important;width:auto !important;
 }
-@media (min-width:640px) and (max-width:719.98px){
-  html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table th:nth-child(4),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table td:nth-child(4){display:none !important}
+@media (max-width:1279.98px){
+  html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi-label,
+  html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi-meta{display:none !important}
+  html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi{padding:0 8px !important;gap:6px !important}
+}
+@media (max-width:991.98px){
+  html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi{min-width:0 !important}
+  html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpis{overflow:visible !important;flex-wrap:nowrap !important}
+}
+@media (max-width:767.98px){
+  html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-chrome-kpis{display:none !important}
+}
+
+/* Merchants / Providers toolbar, 1360-1799px. Their filter strip carries two selects (and Merchants a "+ Currency" button) next to the search, so
+   pills + filters + sync/Export/Add in one row need ~1480px of controls: at 1534 the "+ Currency" button ended up underneath Export and "Synced just
+   now" was cut off. The two-row layout used below 1360 applies up to 1799px for these two pages: pills and the action buttons share row one, the
+   whole filter strip takes row two. Admin Management (search only) keeps its single row from 1360. */
+@media (min-width:1360px) and (max-width:1799.98px){
+  html body.main-admin-detail-page.report-body:not(#mad-fw-1):not(#mad-fw-2) .mad-panel > .mad-filter-bar:has(> .mad-chrome-actions):has(.mad-filters .mad-select){
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto !important;
+    grid-template-areas:"pills actions" "filters filters" !important;
+    align-items:center !important;
+    gap:10px 12px !important;
+    flex-direction:row !important;
+  }
+  html body.main-admin-detail-page.report-body:not(#mad-fw-1):not(#mad-fw-2) .mad-panel > .mad-filter-bar:has(> .mad-chrome-actions):has(.mad-filters .mad-select) > .mad-pills{grid-area:pills !important;width:auto !important;justify-self:start !important;flex:none !important}
+  html body.main-admin-detail-page.report-body:not(#mad-fw-1):not(#mad-fw-2) .mad-panel > .mad-filter-bar:has(> .mad-chrome-actions):has(.mad-filters .mad-select) > .mad-filters{grid-area:filters !important;width:100% !important;margin:0 !important}
+  html body.main-admin-detail-page.report-body:not(#mad-fw-1):not(#mad-fw-2) .mad-panel > .mad-filter-bar:has(> .mad-chrome-actions):has(.mad-filters .mad-select) > .mad-chrome-actions{grid-area:actions !important;width:auto !important;justify-self:end !important;justify-content:flex-end !important;flex-wrap:nowrap !important}
+}
+
+/* Tab row + actions on pages whose chrome still carries the actions (Settlement, Balance, Transactions, Win/Lose, Reports, Profit, Repayments...).
+   Admin Management's "tabs only" rule - one grid column, written for a chrome that no longer holds the actions - applied at every width to every
+   page sharing .main-admin-detail-page, so on these pages the actions dropped to a second grid row, the tab row collapsed to 11px (the active
+   tab's underline ran through its label) and the sync / Export buttons floated below it. A chrome that holds the actions is tabs | actions again. */
+@media (min-width:1280px){
+  html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-ch-1):not(#mad-ch-2) .mad-chrome:has(> .mad-chrome-actions){
+    grid-template-columns:minmax(0,1fr) auto !important;
+    grid-template-rows:auto !important;
+    align-items:center !important;
+  }
+  html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-ch-1):not(#mad-ch-2) .mad-chrome:has(> .mad-chrome-actions) > .mad-tabs{
+    height:100% !important;min-height:0 !important;align-self:stretch !important;
+  }
+}
+
+/* 1280-1399px: the old "drop Last Logout first" rule hid every table's 8th HEADER cell (`th:nth-child(8)`), but only the Admin list's matching CELLS
+   (they are hidden by data-label="Last Logout"). On any other table the 8th header is something else - Actions on the settlement ledger, Created By
+   on Merchants - so its head vanished and the columns under it were shifted by one: the Actions label and the header rule above the buttons were
+   missing. (Below 1280 another rule already restores it; this closes the 1280-1399 band, which is what a 125-150% browser zoom lands in.) */
+@media (min-width:1280px) and (max-width:1399.98px){
+  html body.main-admin-detail-page.report-body:not([data-access-page="main_admin_detail"]):not(#mad-h8-1):not(#mad-h8-2) .mad-table thead th:nth-child(8){
+    display:table-cell !important;
+  }
+}
+
+/* The "Show details" chevron (.mad-more-btn) is left over from the card layout, where it opened the columns the card could not fit. From 640px up the
+   table is a real table that scrolls sideways with every column in it, so the chevron opens nothing the table is not already showing - and it sat in
+   the Actions cell as a tall, dark, differently-sized button next to the three icon buttons, crowding the cell (the Created By head was cut off beside
+   it). Phones (<640) keep the card layout and its expander. */
+@media (min-width:640px) and (max-width:1279.98px){
+  html body.main-admin-detail-page.report-body:not(#mad-mb-1):not(#mad-mb-2) .mad-more-btn{display:none !important}
+}
+
+/* Merchants list below 1280px: eleven columns. The tablet table was sized for the Admin list's nine (a 1150px table with nine px widths), so the
+   Merchants table's 10th and 11th columns - Last Logout and Actions - got no width at all (0px): the logout times stacked one digit per line and the
+   Actions header sat on top of them. Eleven px widths (1400px in all) so every column keeps its own space and the row runs to the end of the scroller. */
+@media (max-width:1279.98px){
+  html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)){width:1400px !important;min-width:1400px !important}
+  html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)) > thead th:nth-child(1),html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)) > tbody td:nth-child(1){width:190px !important;min-width:190px !important;max-width:190px !important}
+  html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)) > thead th:nth-child(2),html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)) > tbody td:nth-child(2){width:170px !important;min-width:170px !important;max-width:170px !important}
+  html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)) > thead th:nth-child(3),html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)) > tbody td:nth-child(3){width:130px !important;min-width:130px !important;max-width:130px !important}
+  html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)) > thead th:nth-child(4),html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)) > tbody td:nth-child(4){width:100px !important;min-width:100px !important;max-width:100px !important}
+  html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)) > thead th:nth-child(5),html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)) > tbody td:nth-child(5){width:120px !important;min-width:120px !important;max-width:120px !important}
+  html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)) > thead th:nth-child(6),html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)) > tbody td:nth-child(6){width:110px !important;min-width:110px !important;max-width:110px !important}
+  html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)) > thead th:nth-child(7),html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)) > tbody td:nth-child(7){width:100px !important;min-width:100px !important;max-width:100px !important}
+  html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)) > thead th:nth-child(8),html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)) > tbody td:nth-child(8){width:120px !important;min-width:120px !important;max-width:120px !important}
+  html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)) > thead th:nth-child(9),html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)) > tbody td:nth-child(9){width:110px !important;min-width:110px !important;max-width:110px !important}
+  html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)) > thead th:nth-child(10),html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)) > tbody td:nth-child(10){width:110px !important;min-width:110px !important;max-width:110px !important}
+  html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)) > thead th:nth-child(11),html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-m11-1):not(#mad-m11-2) .mad-table:has(> thead th:nth-child(11)) > tbody td:nth-child(11){width:150px !important;min-width:150px !important;max-width:150px !important}
+}
+
+/* Below 1280px the list card kept its content height (`flex:0 0 auto`) so on a tablet with a few rows it ended well above the bottom of the window,
+   leaving an empty band under it (the red box on the Admin list at 938x762). The card now grows to fill the content area - table area stretching, the
+   footer staying at the bottom, like the desktop layout - but still never shrinks below its content, so a long list still scrolls the page. */
+@media (max-width:1279.98px){
+  html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-fill-1):not(#mad-fill-2) .mad-workspace > .mad-panel{flex:1 0 auto !important}
+  html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-fill-1):not(#mad-fill-2) .mad-workspace > .mad-panel > .mad-table-wrap{flex:1 1 auto !important;min-height:0}
+}
+
+/* Button order in the toolbar's action group: Export, then the primary action (Add Merchant / Add Account / Add Provider) at the far right, at every width.
+   A tablet rule put the primary button first ("Add Account | Export | synced") for the old layout where the group sat left under the tabs; in the
+   toolbar the group is right-aligned, so that put Export at the right edge, the opposite of the desktop order and of the other pages. */
+@media (min-width:640px){
+  html body.main-admin-detail-page.report-body:not(#mad-ord-1):not(#mad-ord-2) .mad-chrome-actions .mad-btn-ghost{order:1 !important}
+  html body.main-admin-detail-page.report-body:not(#mad-ord-1):not(#mad-ord-2) .mad-chrome-actions .mad-btn-primary{order:2 !important}
 }

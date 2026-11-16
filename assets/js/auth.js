@@ -1967,10 +1967,10 @@
       if(!mainPortal && !isMainAccount && !/^main[-_]/i.test(file) && file !== 'menu-permission') return;
       var css = document.createElement('link');
       css.rel = 'stylesheet';
-      css.href = 'assets/css/main-sidebar-account.css?v=6119e3c5';
+      css.href = 'assets/css/main-sidebar-account.css?v=9466a9aa';
       (document.head || document.documentElement).appendChild(css);
       var js = document.createElement('script');
-      js.src = 'assets/js/main-sidebar-account.js?v=11a3bb9b';
+      js.src = 'assets/js/main-sidebar-account.js?v=bfd82090';
       (document.body || document.documentElement).appendChild(js);
     }catch(e){}
   })();

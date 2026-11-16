@@ -364,3 +364,8 @@ html[data-bo-theme="dark"] body.main-admin-detail-page.main-provider-family-page
   color:var(--bo-placeholder)!important;
   font-weight:700!important;
 }
+
+/* Light theme: the row action icons (Edit / settings) took the page's --bo-placeholder grey (#D4D4D8), which on the cream table is nearly invisible.
+   Same warm ink the provider family pages use for their icon buttons. Dark keeps its own light-grey ink. */
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page .mpv-actions .mad-icon-btn{color:#57534E !important}
+html:not([data-bo-theme="dark"]) body.main-admin-detail-page .mpv-actions .mad-icon-btn:hover{color:#18191C !important}

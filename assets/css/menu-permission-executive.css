@@ -1447,7 +1447,8 @@ html[data-bo-theme="dark"] body.menu-permission-page .report-sidebar .nav-group 
 html[data-bo-theme="dark"] body.menu-permission-page .report-sidebar .report-nav > a:not(.report-sub):hover,
 html[data-bo-theme="dark"] body.menu-permission-page .report-sidebar .report-nav > a:not(.report-sub):focus-visible,
 html[data-bo-theme="dark"] body.menu-permission-page .report-sidebar .nav-group .nav-group-btn:hover,
-html[data-bo-theme="dark"] body.menu-permission-page .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn{
+html[data-bo-theme="dark"] body.menu-permission-page .report-sidebar .nav-group.bo-flyout-hover > .nav-group-btn,
+html[data-bo-theme="dark"] body.menu-permission-page .report-sidebar .nav-group.open > .nav-group-btn{
   background:rgba(255,255,255,.04)!important;
   color:rgba(255,255,255,.95)!important;
 }
@@ -1867,4 +1868,10 @@ html:not(#bo-filter-standard-off):not(#bo-charcoal-off):not(#bo-input-fill-legac
   border:0!important;
   background:transparent!important;
   font-size:12px!important;
+}
+
+/* Add Role at the right end of the Role / Permission Group row (Roles & Permissions for Main and for Merchants share this sheet). */
+html body.menu-permission-page.report-body:not(#mp-ar-1):not(#mp-ar-2) .mp-role-row > .mp-add-role-btn{
+  margin-left:auto !important;
+  flex:0 0 auto !important;
 }

@@ -474,3 +474,19 @@ body.main-admin-security-page .mas-detail-reason{
   body.main-admin-security-page .mas-table th{white-space:normal!important;line-height:1.15!important}
   body.main-admin-security-page .mas-table-head{overflow-x:hidden!important}
 }
+
+/* Security & Audit filters on tablet / small laptop (640-1359px): search | date range | event types | status | Reset on ONE row.
+   At 1024 the controls added up to 240 + 240 + 162 + 160 + 78 = 880px in a 728px bar, so the status select and Reset dropped onto a second
+   row, Reset stranded at the far right. The two selects are sized to their widest option by main-admin-detail.js (inline, !important), so they
+   stay; the search and the date range give way, and from 1100px down Reset becomes an icon button (36px) - the label is in the title.
+   Below ~700px the row wraps as before. */
+@media (min-width:640px) and (max-width:1359.98px){
+  html body.main-admin-security-page.report-body:not(#mas-fr-1):not(#mas-fr-2) .mas-panel > .mad-filter-bar .mas-filters{flex-wrap:wrap !important;align-items:center !important;gap:10px !important}
+  html body.main-admin-security-page.report-body:not(#mas-fr-1):not(#mas-fr-2) .mas-panel > .mad-filter-bar .mas-filters > .mas-search{flex:1 1 120px !important;min-width:120px !important;max-width:none !important;width:auto !important}
+  html body.main-admin-security-page.report-body:not(#mas-fr-1):not(#mas-fr-2) .mas-panel > .mad-filter-bar .mas-filters > .mas-date-field{flex:0 1 196px !important;min-width:170px !important;width:auto !important}
+  html body.main-admin-security-page.report-body:not(#mas-fr-1):not(#mas-fr-2) .mas-panel > .mad-filter-bar .mas-filters > .mad-btn{flex:0 0 auto !important;margin-left:0 !important}
+}
+@media (min-width:640px) and (max-width:1099.98px){
+  html body.main-admin-security-page.report-body:not(#mas-fr-1):not(#mas-fr-2) .mas-panel > .mad-filter-bar .mas-filters > .mad-reset-btn{width:36px !important;min-width:36px !important;padding:0 !important;font-size:0 !important;gap:0 !important;justify-content:center !important}
+  html body.main-admin-security-page.report-body:not(#mas-fr-1):not(#mas-fr-2) .mas-panel > .mad-filter-bar .mas-filters > .mad-reset-btn i{font-size:14px !important;margin:0 !important}
+}

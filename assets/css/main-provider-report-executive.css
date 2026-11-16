@@ -898,3 +898,15 @@ body.main-report-exec-page .mre-table tbody td:nth-child(7){width:8%}
 /* The anchor wears the family's eye geometry (`.mad-actions > .mad-icon-btn`); only the
    underline is this page's to remove. */
 body.main-report-exec-page .mre-provider-open{text-decoration:none!important}
+
+/* Settlement ledgers in dark: the status chips (OPEN / PAID / PARTIAL) and the direction chips (To Collect / To Pay) kept the light theme's pastel fill
+   with dark ink on the merchant pages - bright islands on the dark table. Same tints the provider settlement page already uses in dark. */
+html[data-bo-theme="dark"] body.main-report-exec-page.main-admin-detail-page .settlement-status.success{background:rgba(18,183,106,.18) !important;color:#6CE9A6 !important}
+html[data-bo-theme="dark"] body.main-report-exec-page.main-admin-detail-page .settlement-status.warning{background:rgba(245,158,11,.18) !important;color:#FBBF24 !important}
+html[data-bo-theme="dark"] body.main-report-exec-page.main-admin-detail-page .settlement-status.primary{background:rgba(255,255,255,.08) !important;color:#D4D4D8 !important}
+html[data-bo-theme="dark"] body.main-report-exec-page.main-admin-detail-page .direction-chip.collect{background:rgba(18,183,106,.18) !important;color:#6CE9A6 !important}
+html[data-bo-theme="dark"] body.main-report-exec-page.main-admin-detail-page .direction-chip.pay{background:rgba(239,68,68,.18) !important;color:#FCA5A5 !important}
+/* The ledger's date / Refresh strip stays above its table: a sticky table head that ends up pinned over the strip (the table scrolled under it) no
+   longer covers the strip's lower half, and the panel itself can never be scrolled, so a row cannot end up clipped under the head. */
+html body.main-report-exec-page.main-admin-detail-page:not(#mre-dk-1):not(#mre-dk-2) .mre-panel{overflow:clip}
+html body.main-report-exec-page.main-admin-detail-page:not(#mre-dk-1):not(#mre-dk-2) .settlement-ledger-head{position:relative;z-index:5}
