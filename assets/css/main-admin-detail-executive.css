@@ -10537,3 +10537,45 @@ html[data-bo-shell="main"]:not(#bo-pag-off):not(#bo-pag-off-2) body.main-admin-d
   display:block;
   text-align:center;
 }
+
+/* Admin Management toolbar on tablet / small laptop (640-1199px).
+   Below 1280 the bar stacked its three groups, one per row (pills / search / sync + Export + Add Account): 157-161px of toolbar, with the
+   status pills and the action buttons each leaving the other half of their row empty. Two rows instead: the pills and the actions share
+   the first (pills left, sync | Export | Add Account right), and the search takes the full width of the second. 65px less, and the
+   primary action sits next to the filter it belongs with. >=1200 stays the single row, <640 stays stacked. */
+@media (min-width:640px) and (max-width:1199.98px){
+  html body.main-admin-detail-page.report-body:not(#mad-fb-1):not(#mad-fb-2) .mad-panel > .mad-filter-bar{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto !important;
+    grid-template-areas:"pills actions" "filters filters" !important;
+    align-items:center !important;
+    gap:10px 12px !important;
+    flex-direction:row !important;
+  }
+  html body.main-admin-detail-page.report-body:not(#mad-fb-1):not(#mad-fb-2) .mad-panel > .mad-filter-bar > .mad-pills{grid-area:pills !important;width:auto !important;justify-self:start !important;flex:none !important}
+  html body.main-admin-detail-page.report-body:not(#mad-fb-1):not(#mad-fb-2) .mad-panel > .mad-filter-bar > .mad-filters{grid-area:filters !important;width:100% !important;margin:0 !important}
+  html body.main-admin-detail-page.report-body:not(#mad-fb-1):not(#mad-fb-2) .mad-panel > .mad-filter-bar > .mad-chrome-actions{grid-area:actions !important;width:auto !important;justify-self:end !important;justify-content:flex-end !important;flex-wrap:nowrap !important}
+}
+
+/* Admin Management table on tablet / small laptop. The table kept a 1150px minimum below 1200, so at 1024 (a 746px panel) the last three
+   columns - including Actions, the edit / delete buttons - sat behind a sideways scroll and the first screen showed no way to act on a row.
+   Last Login / Last Logout are the least needed columns (Last Active says the same in words), so they drop first (<=1199px), Created By
+   next (<=1139px) and Last Active on a narrow tablet (<=719px); Username takes the slack, the rest are fixed, and Actions stays in view.
+   Desktop (>=1200) is the full 9-column table. Phones (<640) are untouched. */
+@media (min-width:640px) and (max-width:1199.98px){
+  html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table{min-width:0 !important;width:100% !important;table-layout:fixed !important}
+  html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table th:nth-child(7),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table td:nth-child(7),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table th:nth-child(8),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table td:nth-child(8){display:none !important}
+  html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table th:nth-child(1),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table td:nth-child(1){width:auto !important;min-width:150px !important;max-width:none !important}
+  html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table th:nth-child(2),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table td:nth-child(2){width:110px !important;min-width:110px !important;max-width:110px !important}
+  html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table th:nth-child(3),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table td:nth-child(3){width:100px !important;min-width:100px !important;max-width:100px !important}
+  html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table th:nth-child(4),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table td:nth-child(4){width:100px !important;min-width:100px !important;max-width:100px !important}
+  html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table th:nth-child(5),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table td:nth-child(5){width:90px !important;min-width:90px !important;max-width:90px !important}
+  html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table th:nth-child(6),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table td:nth-child(6){width:100px !important;min-width:100px !important;max-width:100px !important}
+  html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table th:nth-child(9),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table td:nth-child(9){width:148px !important;min-width:148px !important;max-width:148px !important}
+}
+@media (min-width:640px) and (max-width:1139.98px){
+  html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table th:nth-child(6),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table td:nth-child(6){display:none !important}
+}
+@media (min-width:640px) and (max-width:719.98px){
+  html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table th:nth-child(4),html body.main-admin-detail-page.report-body:not(#mad-tb-1):not(#mad-tb-2) .mad-table td:nth-child(4){display:none !important}
+}
