@@ -423,11 +423,13 @@ body.main-admin-security-page .mas-detail-reason{
 }
 
 @media(min-width:1440px){
-  body.main-admin-security-page .mas-workspace:has(> .mas-detail-panel:not([hidden])){
-    display:grid;
+  /* main-content-rhythm.css (every Main page, >=1024px) sets `.report-content{display:flex!important;flex-direction:column!important;gap:16px!important}`, which beat this
+     two-column grid: the detail panel stacked UNDER the list and squeezed it to a 48px strip. The grid is restated with !important at a weight that wins. */
+  html[data-bo-shell="main"] body.main-admin-security-page .mas-workspace:has(> .mas-detail-panel:not([hidden])){
+    display:grid!important;
     grid-template-columns:minmax(0,1fr) clamp(300px,20vw,380px);
     grid-template-rows:auto minmax(0,1fr);
-    gap:12px;
+    gap:12px!important;
   }
   body.main-admin-security-page .mas-workspace:has(> .mas-detail-panel:not([hidden])) > .mad-chrome{
     grid-column:1 / -1;
@@ -502,3 +504,19 @@ body.main-admin-security-page .mas-detail-reason{
   html body.main-admin-security-page.report-body:not(#mas-fr-1):not(#mas-fr-2) .mas-panel > .mad-filter-bar .mas-filters > .mad-reset-btn{width:36px !important;min-width:36px !important;padding:0 !important;font-size:0 !important;gap:0 !important;justify-content:center !important}
   html body.main-admin-security-page.report-body:not(#mas-fr-1):not(#mas-fr-2) .mas-panel > .mad-filter-bar .mas-filters > .mad-reset-btn i{font-size:14px !important;margin:0 !important}
 }
+
+/* The audit-event detail panel is a full-screen overlay (position:fixed; inset 0; z-index 10000) but it lives inside `.report-main`, which is `position:relative; z-index:1`:
+   a stacking context. The overlay's 10000 therefore only ranked inside that context, below the rail (z-index 1040), so with the sidebar expanded (1024px window) the
+   sidebar was drawn OVER the left ~230px of the panel and hid the left half of every field. While the panel is open the main frame no longer forms its own context, so the
+   overlay ranks against the rail and wins (the rail stays under it, as the Esc / Close controls say). */
+html body.main-admin-security-page:has(.mas-detail-panel:not([hidden])) .report-main{z-index:auto!important;}
+
+/* Detail panel head: title block on the left, the Esc hint and the close button TOGETHER on the right (it was `space-between` over three items, so the hint floated in the
+   middle of the bar); a little more air around the title; and the status chip readable in dark (#027A48 green on a dark bar was nearly invisible). */
+body.main-admin-security-page .mas-detail-head{justify-content:flex-start;gap:12px;padding:14px 16px;}
+body.main-admin-security-page .mas-detail-head .mad-modal-title{flex:1 1 auto;min-width:0;}
+body.main-admin-security-page .mas-esc-hint{margin-left:auto;flex:0 0 auto;}
+body.main-admin-security-page .mas-detail-body{padding-left:16px;padding-right:16px;}
+body.main-admin-security-page .mas-detail-foot{padding-left:16px;padding-right:16px;}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-head-status.is-ok{background:rgba(18,183,106,.18);color:#6CE9A6;}
+html[data-bo-theme="dark"] body.main-admin-security-page .mas-head-status.is-bad{background:rgba(239,68,68,.18);color:#FCA5A5;}

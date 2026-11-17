@@ -2131,3 +2131,18 @@ html body.page-game-provider .manage-list-card{
   width:100%;
   max-width:none;
 }
+
+/* The card the operator just came back from, for two and a half seconds.
+   ------------------------------------------------------------------------------------------
+   Saving an edit reloaded game-provider.html at the top; the list now returns to the card that was
+   being edited (assets/js/game-provider.js: rememberListPosition / restoreListPosition) and rings it, so
+   the eye lands on the row instead of having to find it again in a list of 40+ providers. */
+.provider-card.is-returned{
+  position:relative;
+  box-shadow:0 0 0 2px rgba(245,158,11,.55), 0 0 0 6px rgba(245,158,11,.10);
+  border-radius:14px;
+  transition:box-shadow .25s ease;
+}
+html:not([data-bo-theme="dark"]) .provider-card.is-returned{
+  box-shadow:0 0 0 2px rgba(217,119,6,.45), 0 0 0 6px rgba(217,119,6,.08);
+}

@@ -43,6 +43,37 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
   const providerSearchInput = document.getElementById('providerSearchInput');
   const CREATE_PAGE = 'game-provider-create.html';
   const LIST_PAGE = 'game-provider.html';
+  /* Where the operator was when they pressed Edit, so the list can come back to it (see
+     rememberListPosition / restoreListPosition at the bottom of this file). */
+  const RETURN_KEY = 'bo_gp_list_return';
+  function rememberListPosition(id){
+    try{
+      sessionStorage.setItem(RETURN_KEY, JSON.stringify({ id: String(id || ''), y: Math.round(window.scrollY || 0) }));
+    }catch(e){}
+  }
+  function restoreListPosition(){
+    if(!isListPage) return;
+    let saved = null;
+    try{ saved = JSON.parse(sessionStorage.getItem(RETURN_KEY) || 'null'); }catch(e){ saved = null; }
+    if(!saved) return;
+    try{ sessionStorage.removeItem(RETURN_KEY); }catch(e){}
+    /* Images and the sticky filter strip settle after the paint, and the cards carry their own heights,
+       so the scroll runs on the next frame and again shortly after - by then the target card exists. */
+    var settled = 0;
+    var apply = function(){
+      var card = saved.id
+        ? list.querySelector('.provider-card[data-provider-id="' + String(saved.id).replace(/"/g, '\\"') + '"]')
+        : null;
+      var targetY = card ? (card.getBoundingClientRect().top + (window.scrollY || 0) - 96) : Number(saved.y || 0);
+      window.scrollTo(0, Math.max(0, Math.round(targetY)));
+      if(card){
+        card.classList.add('is-returned');
+        setTimeout(function(){ card.classList.remove('is-returned'); }, 2600);
+      }
+      if(++settled < 2) requestAnimationFrame(function(){ setTimeout(apply, 160); });
+    };
+    requestAnimationFrame(function(){ setTimeout(apply, 60); });
+  }
   function editPageUrl(id){ return CREATE_PAGE + (id ? ('?id=' + encodeURIComponent(id)) : ''); }
   const ids = ['providerId','providerCode','providerName','providerType','providerCategoryIds','providerImageUrl','providerBrandImageUrl','walletMode','settlementCostPercent','settlementCostBasis','integrationType','httpMethod','currency','apiBaseUrl','operatorId','secretKey','keyEnvironment','boLoginUrl','boUsername','boPassword','providerVariables','apiActionConfigs','signatureType','signatureOutputCase','signatureTemplate','ukeyLength','ukeyPrefix','ukeyStaticValue','createPlayerPath','balancePath','depositPath','withdrawPath','launchPath','gameListPath','createPlayerRequestTemplate','balanceRequestTemplate','depositRequestTemplate','withdrawRequestTemplate','launchRequestTemplate','gameListRequestTemplate','responseBalancePath','responseLaunchUrlPath','responseGameListPath','responseGameCodePath','responseGameNamePath','responseGameImagePath','gameImageApiUrlTemplate','gameImageRemoteApiUrlTemplate','gameImageRemoteApiHttpMethod','gameImageRemoteApiRequestTemplate','gameImageRemoteApiResponsePath','gameImageFallbackUrlTemplate','frontendGameFallbackImageUrl','responseGameCategoryPath','responseSuccessPath','responseSuccessValue','responseErrorMessagePath','callbackMemberPath','callbackGameCodePath','callbackBetIdPath','callbackTxIdPath','callbackBetAmountPath','callbackWinAmountPath','callbackValidBetAmountPath','callbackRoundIdPath','callbackStatusPath','callbackEventTypePath','callbackSignaturePath','callbackSuccessResponse','callbackDuplicateResponse','sortOrder','providerStatus'];
   const el = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));
@@ -365,6 +396,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
     window.scrollTo({top:0, behavior:'smooth'}); }
   async function editFresh(id, button){
     if(isListPage && !isFormPage){
+      rememberListPosition(id);
       window.location.href = editPageUrl(id);
       return;
     }
@@ -498,8 +530,10 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       const card=document.createElement('div');
       card.className='manage-card provider-card is-vault-first is-fold-collapsed';
       card.innerHTML=`<header class="provider-card-head"><div class="manage-thumb game-thumb">${item.providerImageUrl ? `<img src="${escapeHtml(normalizeProviderMediaUrl(item.providerImageUrl))}" alt="${escapeHtml(item.name || item.code)}">` : `<i class="bi bi-hdd-network" aria-hidden="true"></i>`}</div><div class="provider-card-identity">${showCodeEyebrow ? `<p class="provider-card-code">${escapeHtml(codeLabel)}</p>` : ''}<div class="provider-title-row"><h3 class="provider-card-label">${escapeHtml(nameLabel || codeLabel)}</h3><span class="provider-status ${isActive ? 'is-on' : 'is-off'}"><i class="provider-status-dot" aria-hidden="true"></i>${isActive ? 'Active' : 'Inactive'}</span><span class="provider-env-pill ${env === 'LIVE' ? 'is-live' : 'is-staging'}">${env === 'LIVE' ? 'Live Key' : 'Staging'}</span></div></div><div class="slider-card-actions">${actionsHtml}</div></header><section class="provider-ready" aria-label="API readiness"><div class="provider-ready-top"><span class="provider-ready-count">${caps.onCount}/${caps.total} ready</span><span class="provider-ready-hint ${caps.onCount === caps.total && !caps.invalid ? 'is-complete' : 'is-gap'}">${escapeHtml(missingHint)}</span></div><div class="provider-ready-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${readyPct}"><span class="provider-ready-fill" style="width:${readyPct}%"></span></div></section><button type="button" class="provider-fold-toggle" data-provider-fold aria-expanded="false"><span class="provider-fold-icon" aria-hidden="true"><i class="bi bi-shield-lock"></i></span><span class="provider-fold-label">BO Login</span><span class="provider-fold-status ${(boUrl || boUsername || boPassword) ? 'is-set' : 'is-empty'}">${(boUrl || boUsername || boPassword) ? 'On file' : 'Empty'}</span><i class="bi bi-chevron-down provider-fold-chevron" aria-hidden="true"></i></button><div class="provider-fold-panel" data-provider-fold-panel hidden><section class="provider-vault"><div class="provider-cred-row"><div class="provider-cred-field"><span class="provider-k">URL</span><div class="provider-cred-well">${boUrl ? `<a href="${escapeHtml(boUrl)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(boUrl)}">${escapeHtml(boUrl)}</a>` : '<span class="provider-empty">—</span>'}${boUrl ? `<button type="button" class="provider-well-btn" data-copy-text="${escapeHtml(boUrl)}" title="Copy URL" aria-label="Copy URL"><i class="bi bi-copy" aria-hidden="true"></i></button>` : ''}</div></div><div class="provider-cred-field"><span class="provider-k">Username</span><div class="provider-cred-well"><code>${escapeHtml(boUsername || '—')}</code>${boUsername ? `<button type="button" class="provider-well-btn" data-copy-text="${escapeHtml(boUsername)}" title="Copy username" aria-label="Copy username"><i class="bi bi-copy" aria-hidden="true"></i></button>` : ''}</div></div><div class="provider-cred-field"><span class="provider-k">Password</span><div class="provider-cred-well provider-cred-password"><code data-provider-password-id="${escapeHtml(item.id)}">${escapeHtml(maskCredential(boPassword))}</code>${boPassword ? `<button type="button" class="provider-well-btn provider-reveal-btn" data-reveal-password-id="${escapeHtml(item.id)}" title="Reveal"><i class="bi bi-eye" aria-hidden="true"></i><span>Reveal</span></button><button type="button" class="provider-well-btn" data-copy-password-id="${escapeHtml(item.id)}" title="Copy"><i class="bi bi-copy" aria-hidden="true"></i><span>Copy</span></button>` : ''}</div></div></div></section><footer class="provider-card-foot"><p class="provider-meta-line">${metaLine}</p>${apiUrl ? `<button type="button" class="provider-endpoint-btn" data-copy-text="${escapeHtml(apiUrl)}" title="Copy API URL">${escapeHtml(apiUrl)}</button>` : ''}</footer></div>`;
+      card.dataset.providerId = String(item.id == null ? '' : item.id);
       list.appendChild(card);
     });
+    restoreListPosition();
   }
   async function ensureTenantContext(){if(tenantContextLoaded)return;tenantContextLoaded=true;try{const j=window.BO_BRAND?await BO_BRAND.context():null;tenantMode=!!(j&&j.data&&!j.data.master);}catch(_){tenantMode=false;}if(tenantMode){if(title) title.textContent='Add New Provider';if(resetBtn) resetBtn.textContent='Clear Form';}}
   /* Until the first response the list is a handful of skeleton cards instead of a blank panel. render() replaces them. */
