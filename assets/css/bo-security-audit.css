@@ -520,3 +520,15 @@ body.main-admin-security-page .mas-detail-body{padding-left:16px;padding-right:1
 body.main-admin-security-page .mas-detail-foot{padding-left:16px;padding-right:16px;}
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-head-status.is-ok{background:rgba(18,183,106,.18);color:#6CE9A6;}
 html[data-bo-theme="dark"] body.main-admin-security-page .mas-head-status.is-bad{background:rgba(239,68,68,.18);color:#FCA5A5;}
+
+/* >=1440px with the detail column open the list panel is only ~910px wide (sidebar open) and the filter row (search 200 + date 240 + three selects 418 + Reset 78) needs ~960:
+   Reset hung ~40px past the panel edge. While the detail is open the row gives way: the selects (data-bo-fluid-selects) and the search shrink, Reset is the 36px icon button. */
+@media(min-width:1440px){
+  html[data-bo-shell="main"] body.main-admin-security-page .mas-workspace:has(> .mas-detail-panel:not([hidden])) .mas-filters{flex-wrap:nowrap!important;}
+  html[data-bo-shell="main"] body.main-admin-security-page .mas-workspace:has(> .mas-detail-panel:not([hidden])) .mas-filters > .mas-search{flex:1 1 110px!important;min-width:110px!important;}
+  html[data-bo-shell="main"] body.main-admin-security-page .mas-workspace:has(> .mas-detail-panel:not([hidden])) .mas-filters > .mas-date-field{flex:0 1 196px!important;min-width:150px!important;width:auto!important;}
+  html[data-bo-shell="main"] body.main-admin-security-page .mas-workspace:has(> .mas-detail-panel:not([hidden])) .mas-filters > .rounded-select-wrap{flex:1 1 100px!important;min-width:96px!important;max-width:150px!important;width:auto!important;}
+  /* (the label is a bare text node: font-size:0 only wins at the weight of the page's own Reset rules, so this carries their :not(#id) chain) */
+  html[data-bo-shell="main"] body.main-admin-security-page.report-body:not(#mas-fr-1):not(#mas-fr-2) .mas-workspace:has(> .mas-detail-panel:not([hidden])) .mas-panel > .mad-filter-bar .mas-filters > .mad-reset-btn{width:36px!important;min-width:36px!important;padding:0!important;font-size:0!important;gap:0!important;justify-content:center!important;}
+  html[data-bo-shell="main"] body.main-admin-security-page.report-body:not(#mas-fr-1):not(#mas-fr-2) .mas-workspace:has(> .mas-detail-panel:not([hidden])) .mas-panel > .mad-filter-bar .mas-filters > .mad-reset-btn i{font-size:14px!important;margin:0!important;}
+}

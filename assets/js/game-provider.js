@@ -62,6 +62,25 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       return snap;
     }catch(e){ return null; }
   }
+  var formPaintedFromSnapshot = false;
+  /* Edit form: fill from the snapshot before the list request goes out. */
+  function paintFormFromSnapshotIfEdit(){
+    if(!isFormPage || !form) return false;
+    var editId = new URLSearchParams(window.location.search).get('id');
+    if(!editId) return false;
+    var snap = readListSnapshot();
+    if(!snap) return false;
+    var item = snap.rows.find(function(r){ return String(r.id) === String(editId); });
+    if(!item) return false;
+    if(Array.isArray(snap.categories) && snap.categories.length) categories = snap.categories;
+    renderCategoryOptions(item.categoryIds || '');
+    edit(item);
+    formPaintedFromSnapshot = true;
+    /* the operator typing before the network answers must not be overwritten by the refresh below */
+    form.addEventListener('input', function(){ formPaintedFromSnapshot = false; }, { once: true });
+    return true;
+  }
+
   /* Paints the snapshot before the first fetch when this load is a return from the edit form. */
   function paintFromSnapshotIfReturn(){
     if(!isListPage) return false;
@@ -115,7 +134,8 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
     card.classList.add('is-returned');
     setTimeout(function(){ card.classList.remove('is-returned'); }, 2600);
   }
-  window.addEventListener('pageshow', function(e){
+  if(window.__boGpPageshow) window.removeEventListener('pageshow', window.__boGpPageshow);
+  window.__boGpPageshow = function(e){
     if(!isListPage || !e.persisted) return;
     var y = window.scrollY || 0;
     try{
@@ -128,7 +148,8 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       requestAnimationFrame(function(){ window.scrollTo(0, y); });
       ringEditedCard();
     }).catch(function(){});
-  });
+  };
+  window.addEventListener('pageshow', window.__boGpPageshow);
 
   var pendingRestore = null;
   function readPendingReturn(){
@@ -139,7 +160,13 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
      where the operator left it - the saved offset is re-applied at the final layout (window load), because an
      earlier attempt is clamped by a shorter document while the rows are still skeletons. */
   function restoreListPosition(){
-    var reveal = function(){ document.documentElement.classList.remove('gp-restoring'); };
+    /* a swap keeps this document (and its shell) alive, so only the content frame is hidden */
+    var hidFrame = !document.documentElement.classList.contains('gp-restoring');
+    if(hidFrame) document.documentElement.classList.add('gp-restoring-frame');
+    var reveal = function(){
+      document.documentElement.classList.remove('gp-restoring');
+      document.documentElement.classList.remove('gp-restoring-frame');
+    };
     var saved = pendingRestore || pendingRestoreEarly || readPendingReturn();
     if(!saved){ reveal(); return; }
     try{ sessionStorage.removeItem(RETURN_KEY); }catch(e){}
@@ -667,7 +694,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
         const editId = params.get('id');
         if(editId){
           const item = rows.find(x => String(x.id) === String(editId));
-          if(item) edit(item);
+          if(item && !formPaintedFromSnapshot) edit(item);
           else setStatus('Provider #' + editId + ' not found.', 'error');
         } else {
           setStatus('', '');
@@ -971,13 +998,14 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       }
     }
   }); document.querySelectorAll('[data-wallet-action]').forEach(btn => btn.addEventListener('click', () => wallet(btn.dataset.walletAction))); const syncBtn=document.getElementById('syncSelectedProviderBtn'); if(syncBtn) syncBtn.addEventListener('click', syncGames); const debugBtn=document.getElementById('debugSelectedProviderBtn'); if(debugBtn) debugBtn.addEventListener('click', debugGames); const cbBtn=document.getElementById('callbackPreviewBtn'); if(cbBtn) cbBtn.addEventListener('click', callbackPreview); const reportBtn=document.getElementById('ledgerSummaryBtn'); if(reportBtn) reportBtn.addEventListener('click', ledgerSummary); if(form) reset(); paintFromSnapshotIfReturn();
+  paintFormFromSnapshotIfEdit();
   load();
 })();
 
 (function(){
   function api(pathKey){ return API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS[pathKey]; }
   function esc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-  document.addEventListener('DOMContentLoaded', function(){
+  function initPlayerLaunch(){
     const btn = document.getElementById('playerLaunchTestBtn');
     if(!btn) return;
     btn.addEventListener('click', async function(){
@@ -998,6 +1026,9 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
         result.textContent = JSON.stringify(json, null, 2);
       }catch(err){ result.textContent = err.message || 'Launch test failed'; }
     });
-  });
+  }
+  /* A swap-in runs this file while the document is already complete, so DOMContentLoaded never fires. */
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initPlayerLaunch, { once: true });
+  else initPlayerLaunch();
 })();
 })();

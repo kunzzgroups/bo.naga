@@ -1285,3 +1285,16 @@ html[data-bo-theme="dark"]:not(#bo-sticky-off) body .root-table-wrap table thead
 /* The topbar's action cluster (theme toggle | counters) is 12px apart everywhere; Deposit/Withdraw Approval's own sheet made it 8px, which moved
    the toggle 4px against the chips as you paged between listings. */
 .report-shell .report-main .report-topbar[data-bo-topbar] .report-actions{gap:12px!important}
+
+/* 0a. Programmatic scrolling is instant, everywhere.
+   ------------------------------------------------------------------------------------------
+   The pages load Bootstrap 5.3 from the CDN, and its reboot carries
+   `@media (prefers-reduced-motion: no-preference){ :root{ scroll-behavior: smooth } }`. That turns every
+   programmatic jump into a ~300-500ms animation - measured on game-provider.html: `window.scrollTo(0, 900)`
+   landed in six steps (29 / 322 / 502 / 573 / 606) instead of one. It is what made the SPA router's own
+   `scrollTo(0)` on every swap look like a glide, and what fought every "put the operator back where they were"
+   restore. The shell owns programmatic scrolling, so the root is pinned back to auto; components that want a
+   smooth container scroll (the module tab strip) still set it on themselves. */
+html:not(#bo-scroll-off):not(#bo-scroll-off-2){
+  scroll-behavior:auto!important;
+}
