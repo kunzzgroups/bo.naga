@@ -503,7 +503,7 @@
       /* Same account, same menus: the rail on screen is already correct. Rebuilding it is the flicker the
          owner sees on a heavy page ("sidebar 一起刷新"), so only rebuild when something really changed. A rail
          that was never painted (first visit, no cached user) always rebuilds - the signature differs. */
-      if(rebuildRail) this.renderSidebar(user);
+      if(rebuildRail || !window.__boRailPainted) this.renderSidebar(user);
       else this.mountSidebarToggle();
     },
     logout: function(){ try{ const t=localStorage.getItem(this.tokenKey); if(t) fetch(API_CONFIG.BASE_URL + '/auth/admin/logout',{method:'POST',headers:{'Authorization':'Bearer '+t},keepalive:true}).catch(()=>{}); }catch(e){} localStorage.removeItem(this.tokenKey); localStorage.removeItem(this.userKey); try{ localStorage.removeItem('bo_shell_nav_v1'); localStorage.removeItem('bo_shell_nav_user_v1'); for(var _i=localStorage.length-1;_i>=0;_i--){var _k=localStorage.key(_i);if(_k&&_k.indexOf('bo_shell_nav_v1_')===0){try{localStorage.removeItem(_k);}catch(e){}}} }catch(e){} try{ sessionStorage.removeItem('bo_operation_login_marker'); sessionStorage.removeItem('bo_operation_login_played'); sessionStorage.removeItem('bo_admin_me_refreshed_at'); sessionStorage.removeItem('bo_brand_context_cache_v3'); }catch(e){} window.location.href = 'login.html'; },
@@ -1307,6 +1307,7 @@
           }).join('')+'</div></div>';
       });
       nav.innerHTML=html;
+      window.__boRailPainted = 1;   /* the rail on screen is this user's */
 
       const sidebar=nav.closest('.report-sidebar');
       if(sidebar){
