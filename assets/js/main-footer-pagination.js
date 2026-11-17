@@ -72,7 +72,7 @@
       n++; sum += tr.getBoundingClientRect().height;
     }
     var rowH = n ? Math.max(38, Math.round(sum / n)) : 44;
-    return Math.max(5, Math.min(200, Math.floor(avail / rowH) || 10));
+    return Math.max(3, Math.min(200, Math.floor(avail / rowH) || 10));
   }
 
   window.boMad = {

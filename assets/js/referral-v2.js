@@ -17,7 +17,7 @@ const DEFAULT_PAGE_SIZE=10;
 const AUTO_PAGE_SIZE='auto';
 function tableData(id,records,render,colspan){
  let state=pageState.get(id);
- if(!state){const card=$(id)?.closest?.('.r2-table-panel');const multi=!card?.classList.contains('r2-table-panel-fit')&&!$(id)?.closest?.('.r2-stack-fit');state={page:1,size:multi?DEFAULT_PAGE_SIZE:AUTO_PAGE_SIZE,search:'',records:[],render:null,colspan};pageState.set(id,state);}
+ if(!state){const card=$(id)?.closest?.('.r2-table-panel');/* a panel that is a direct child of the page is viewport-locked (referral-v2-standard.css), like the fit panels: Show starts on `-` there too */const multi=!card?.classList.contains('r2-table-panel-fit')&&!$(id)?.closest?.('.r2-stack-fit')&&card?.parentElement?.id!=='r2FinancePage';state={page:1,size:multi?DEFAULT_PAGE_SIZE:AUTO_PAGE_SIZE,search:'',records:[],render:null,colspan};pageState.set(id,state);}
  state.records=records||[];state.render=render;state.colspan=colspan;
  paintTable(id);
 }
@@ -114,8 +114,8 @@ function setupTableTools(){
      All = 10000, the same cap the reference pages use. */
   /* `-` (fit the panel) only makes sense where the panel's height is fixed; in a multi-table panel the
      height follows the rows, so the select starts on the plain count of 10. */
-  const cardEl=wrapper.closest('.r2-table-panel');const multi=!(cardEl&&cardEl.classList.contains('r2-table-panel-fit'));
-  footer.innerHTML='<label class="r2-page-size">Show <select aria-label="Rows per page"><option value="auto"'+(multi?'':'" selected="selected')+'>-</option><option value="10"'+(multi?' selected="selected"':'')+'>10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option><option value="10000">All</option></select> entries</label><span data-r2-total></span><div class="r2-pager-pages" data-r2-pages></div>';
+  const cardEl=wrapper.closest('.r2-table-panel');const multi=!(cardEl&&(cardEl.classList.contains('r2-table-panel-fit')||cardEl.parentElement?.id==='r2FinancePage'));
+  footer.innerHTML='<label class="r2-page-size">Show <select aria-label="Rows per page"><option value="auto"'+(multi?'':' selected="selected"')+'>-</option><option value="10"'+(multi?' selected="selected"':'')+'>10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option><option value="10000">All</option></select> entries</label><span data-r2-total></span><div class="r2-pager-pages" data-r2-pages></div>';
   wrapper.after(footer);
   footer.querySelector('select').addEventListener('change',e=>{
    const state=pageState.get(id);if(!state)return;const raw=e.target.value;state.size=raw===AUTO_PAGE_SIZE?AUTO_PAGE_SIZE:(Number(raw)||DEFAULT_PAGE_SIZE);state.page=1;paintTable(id);
@@ -137,11 +137,22 @@ function setModal(id,show){
 const slotFor=el=>{const modal=el&&el.closest?el.closest('.r2-modal'):null;const own=modal?modal.querySelector('.r2-modal-feedback'):null;return own||$('r2Feedback');};
 const say=(node,message,isError=false)=>{if(!node)return;node.textContent=message;if(node.classList.contains('r2-modal-feedback')){node.classList.toggle('is-error',isError);}else{node.className=isError?'alert alert-danger':'alert alert-info';}};
 const feedback=(message,isError=false)=>say($('r2Feedback'),message,isError);
-async function request(path,opts={}){
+async function request(path,opts={},attempt=0){
  const token=window.BO_AUTH?.authHeader?.()||{};
  const response=await fetch(base()+apiRoot+path,{...opts,cache:'no-store',headers:{...token,...(opts.body?{'Content-Type':'application/json'}:{}),...(opts.headers||{})}});
  const data=await response.json().catch(()=>({}));
- if(!response.ok||data.status!=='success')throw Error(data.message||data.detail||('Request failed: '+response.status));
+ if(!response.ok||data.status!=='success'){
+  const message=data.message||data.detail||('Request failed: '+response.status);
+  /* The server answers a database deadlock ("Deadlock found when trying to get lock; try restarting transaction") when several of the page's
+     parallel reads sync the participant table at once. The server asks for a restart, so a READ is simply asked again (twice at most, short
+     backoff); writes and every other error are shown as they are. */
+  const isRead=!opts.method||String(opts.method).toUpperCase()==='GET';
+  if(isRead&&attempt<2&&/deadlock|lock wait timeout/i.test(String(message))){
+   await new Promise(r=>setTimeout(r,250*(attempt+1)+Math.floor(Math.random()*200)));
+   return request(path,opts,attempt+1);
+  }
+  throw Error(message);
+ }
  return data.data;
 }
 function read(form){const data={};new FormData(form).forEach((value,key)=>{if(String(value).trim()!=='')data[key]=String(value).trim()});return data;}

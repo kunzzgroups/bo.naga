@@ -1011,3 +1011,22 @@ html body.main-merchant-profit-page.report-body:not(#mpr-ra-1):not(#mpr-ra-2) .m
   html body.main-merchant-profit-page.report-body:not(#mpr-ra-1):not(#mpr-ra-2) .mpr-filter-row-main > .mpr-filters-tools .mad-btn{flex:0 0 auto !important}
   html body.main-merchant-profit-page.report-body:not(#mpr-ra-1):not(#mpr-ra-2) .mpr-filter-row-main > .mpr-row-actions{margin-left:0 !important}
 }
+
+/* Header chips (Period / Monthly / One-off) stay on the title row from 861px up to 1300px. The page forced them onto a row of their own below 1300 (flex:1 0 100%;
+   order:2), which doubled the header (64px -> ~109px) on a laptop-sized window. Now the title block gives way first (basis 220px, ellipsis), the chips are compact
+   (no period meta, tighter padding), and they only drop to a second line when even that does not fit. */
+@media (min-width:861px) and (max-width:1300px){
+  html[data-bo-shell="main"] body.main-merchant-profit-page.report-body[data-access-page] .report-topbar{flex-wrap:wrap!important;}
+  html[data-bo-shell="main"] body.main-merchant-profit-page.report-body[data-access-page] .report-topbar > .user-title-wrap{flex:1 1 220px!important;min-width:0!important;}
+  html[data-bo-shell="main"] body.main-merchant-profit-page.report-body[data-access-page] .report-topbar > .mpr-mini-kpis{flex:0 0 auto!important;order:0!important;width:auto!important;}
+  html[data-bo-shell="main"] body.main-merchant-profit-page.report-body[data-access-page] .report-topbar .mpr-mini{min-width:0!important;padding:0 10px!important;gap:6px!important;}
+  html[data-bo-shell="main"] body.main-merchant-profit-page.report-body[data-access-page] .report-topbar .mpr-mini-meta{display:none!important;}
+  html[data-bo-shell="main"] body.main-merchant-profit-page.report-body[data-access-page] .report-topbar .mpr-mini-icon{display:none!important;}
+}
+@media (min-width:861px) and (max-width:1300px){
+  /* tighter still, so it holds with the full sidebar open (~790px of header): the title keeps only its icon and a short name, the period chip loses its trend badge */
+  html[data-bo-shell="main"] body.main-merchant-profit-page.report-body[data-access-page] .report-topbar > .user-title-wrap{flex:1 1 130px!important;}
+  html[data-bo-shell="main"] body.main-merchant-profit-page.report-body[data-access-page] .report-topbar > .mpr-mini-kpis{gap:6px!important;}
+  html[data-bo-shell="main"] body.main-merchant-profit-page.report-body[data-access-page] .report-topbar .mpr-mini{padding:0 8px!important;gap:5px!important;}
+  html[data-bo-shell="main"] body.main-merchant-profit-page.report-body[data-access-page] .report-topbar .mpr-kpi-trend{display:none!important;}
+}

@@ -162,3 +162,9 @@ html[data-bo-theme="dark"][data-bo-shell="main"] .rounded-select-menu{background
 html[data-bo-theme="dark"][data-bo-shell="main"] .rounded-select-option{background:transparent;color:#F5F5F4}
 html[data-bo-theme="dark"][data-bo-shell="main"] .rounded-select-option:hover,
 html[data-bo-theme="dark"][data-bo-shell="main"] .rounded-select-option.active{background:rgba(245,158,11,.14);color:#FBBF24}
+
+/* Show `-` (fit): no vertical scroller on the table box - the rows are fitted to it (BO rule). Horizontal scrolling stays for tables wider than the
+   box. Marked by main-sidebar-account.js from the page-size select; a fixed size / All removes the mark. */
+html body [data-bo-fit]:is(.mad-table-wrap,.report-table-scroll,.mas-table-wrap,.mas-table-body-scroll,.main-mod-table-scroll,.main-mod-table-wrap,.table-wrap,.table-responsive){
+  overflow-y:hidden!important;
+}

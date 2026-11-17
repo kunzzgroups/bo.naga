@@ -83,7 +83,7 @@ window.__boMseUnbind=function(){ window.__boMseUnbinds.forEach(function(fn){fn()
       : tableScroll.clientHeight;
     /* Floor only — never add a row that would overflow and clip under the scroller.
        Leftover seam (< one row height) is stretched evenly by evenFillRowHeights(). */
-    return Math.max(5, Math.min(200, Math.floor(available / rowHeight) || PAGE_SIZE));
+    return Math.max(3, Math.min(200, Math.floor(available / rowHeight) || PAGE_SIZE));
   }
 
   function resetEvenFill(){
@@ -114,8 +114,8 @@ window.__boMseUnbind=function(){ window.__boMseUnbinds.forEach(function(fn){fn()
     const natural = rows.reduce((sum, tr) => sum + Math.ceil(tr.getBoundingClientRect().height), 0);
     const rowH = Math.max(36, Math.round(natural / rows.length) || 44);
     /* Painted rows overflow the box (measurement drift / borders) — drop one and re-render. */
-    if(natural > avail + 1 && autoPageSize != null && autoPageSize > 5){
-      autoPageSize = Math.max(5, autoPageSize - 1);
+    if(natural > avail + 1 && autoPageSize != null && autoPageSize > 3){
+      autoPageSize = Math.max(3, autoPageSize - 1);
       renderTable();
       return;
     }

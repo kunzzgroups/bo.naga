@@ -52,7 +52,9 @@
     global.__boThemeDelegateBound = 1;
     document.addEventListener('click', function(e){
       const t = e.target;
-      const btn = t && t.closest ? t.closest('#boThemeToggle,.bo-theme-btn') : null;
+      /* Only the real switch (#boThemeToggle) flips the theme. `.bo-theme-btn` is also the look of other header buttons (the language switcher,
+         Merchant Profit's "Repayments due" bell ...): matching the class flipped dark -> light, and saved it, every time one of them was clicked. */
+      const btn = t && t.closest ? t.closest('#boThemeToggle') : null;
       if(!btn) return;
       applyTheme(currentTheme() === 'dark' ? 'light' : 'dark');
     });

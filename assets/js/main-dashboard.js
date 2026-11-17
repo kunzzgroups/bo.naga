@@ -708,7 +708,8 @@
     window.__boThemeDelegateBound = 1;
     document.addEventListener('click', e => {
       const t = e.target;
-      const btn = t && t.closest ? t.closest('#boThemeToggle,.bo-theme-btn') : null;
+      /* only the real switch: `.bo-theme-btn` is also the look of the language switcher and other header buttons */
+      const btn = t && t.closest ? t.closest('#boThemeToggle') : null;
       if(!btn) return;
       applyTheme(currentTheme() === 'dark' ? 'light' : 'dark');
     });

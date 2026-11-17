@@ -683,3 +683,30 @@ html[data-bo-theme="dark"] body.main-win-lose-page .wl-row.is-open .wl-expand{
     max-width:120px;
   }
 }
+
+/* Show `-`: the rows are fitted to the box, so there is no vertical scroller (horizontal stays) - same rule as the BO lists. A fixed size or All
+   brings the vertical scroller back. */
+body.main-win-lose-page .wl-scroll-table[data-bo-fit]{overflow-y:hidden!important;overflow-x:auto!important}
+
+/* The Total row is pinned to the bottom edge of the table box: it stays in view whatever the row count, while the rows scroll (or are fitted) above it.
+   The cell backgrounds are opaque here (layered tint over the panel surface) because the rows scroll underneath it. */
+body.main-win-lose-page .wl-table tfoot td{
+  position:sticky!important;bottom:0!important;z-index:7!important;
+  box-shadow:0 -1px 0 var(--bo-border,#EADCC8)!important;
+}
+html:not([data-bo-theme="dark"]) body.main-win-lose-page .wl-table tfoot td{
+  background:linear-gradient(rgba(217,119,6,.10),rgba(217,119,6,.10)),#FFF8EB!important;
+}
+html[data-bo-theme="dark"] body.main-win-lose-page .wl-table tfoot td{
+  background:linear-gradient(rgba(245,158,11,.10),rgba(245,158,11,.10)),#383A46!important;
+}
+
+/* The shell's report sheet paints every Total cell `background:rgba(255,255,255,.06)!important` at a higher specificity than this page's rules, so the pinned
+   Total row was see-through and the rows scrolling under it showed through (text on text). The opaque floor is drawn as inset shadows instead - a
+   `background` rule cannot override it - with the amber tint on top; the 1px line above the row is the outer shadow. */
+html:not([data-bo-theme="dark"]) body.main-win-lose-page .wl-table tfoot td{
+  box-shadow:0 -1px 0 var(--bo-border,#EADCC8),inset 0 0 0 100vmax rgba(217,119,6,.10),inset 0 0 0 100vmax #FFF8EB!important;
+}
+html[data-bo-theme="dark"] body.main-win-lose-page .wl-table tfoot td{
+  box-shadow:0 -1px 0 var(--bo-border,rgba(255,255,255,.14)),inset 0 0 0 100vmax rgba(245,158,11,.10),inset 0 0 0 100vmax #383A46!important;
+}

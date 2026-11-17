@@ -18,6 +18,7 @@
   let page = 1;
   let showAll = false;
   let autoPageSize = null;
+  let fitPasses = 0;
   let resizeTimer = null;
 
   function isAutoPageSize(value){
@@ -31,8 +32,12 @@
     const head = wrap.querySelector('thead');
     const sample = wrap.querySelector('tbody tr:not(.mad-empty):not(.wl-total)');
     const rowHeight = sample ? Math.max(36, Math.round(sample.getBoundingClientRect().height)) : 52;
-    const available = Math.max(0, Math.floor(wrap.clientHeight) - (head ? Math.ceil(head.getBoundingClientRect().height) : 0));
-    return Math.max(5, Math.min(200, Math.floor(available / rowHeight) || 10));
+    /* The totals <tfoot> is sticky inside the scroller and part of what the panel shows: leave its height out of the room for rows (it was not, so the
+       last fitted row sat under it and the scroller grew a vertical bar in the `-` mode). */
+    const foot = wrap.querySelector('tfoot');
+    const footH = foot && !foot.hidden ? Math.ceil(foot.getBoundingClientRect().height) : 0;
+    const available = Math.max(0, Math.floor(wrap.clientHeight) - (head ? Math.ceil(head.getBoundingClientRect().height) : 0) - footH);
+    return Math.max(3, Math.min(200, Math.floor(available / rowHeight) || 10));
   }
 
   function pageSize() {
@@ -411,6 +416,8 @@
     // Unlock internal max-height when showing many/all rows so the page scrolls
     const pageScroll = showAll || pageSize() >= 20;
     if (wrap) wrap.classList.toggle('is-page-scroll', pageScroll);
+    /* `-` fits the rows to the box: no vertical scroller then (a sub-pixel of overflow painted a full-height thumb), like the BO lists. */
+    if (wrap) wrap.toggleAttribute('data-bo-fit', isAutoPageSize($('wlPageSize') && $('wlPageSize').value));
     if (panel) panel.classList.toggle('is-page-scroll', pageScroll);
   }
 
@@ -423,6 +430,7 @@
     if (!tbody) return;
 
     const total = filtered.length;
+    if (foot) foot.hidden = !total; /* before the `-` fit is measured: the totals row takes room from the rows */
     const perPage = pageSize();
     const totalPages = showAll ? 1 : Math.max(1, Math.ceil(total / perPage) || 1);
     if (page > totalPages) page = totalPages;
@@ -450,11 +458,12 @@
         : 'Showing 0 to 0 of 0 merchants';
     }
 
-    const sumBet = filtered.reduce((s, r) => s + r.totalBet, 0);
-    const sumValid = filtered.reduce((s, r) => s + r.validBet, 0);
-    const sumIn = filtered.reduce((s, r) => s + r.totalIn, 0);
-    const sumOut = filtered.reduce((s, r) => s + r.totalOut, 0);
-    const sumWl = filtered.reduce((s, r) => s + r.winLose, 0);
+    /* The Total row adds up the rows on screen: it follows Show N and the page. */
+    const sumBet = rows.reduce((s, r) => s + r.totalBet, 0);
+    const sumValid = rows.reduce((s, r) => s + r.validBet, 0);
+    const sumIn = rows.reduce((s, r) => s + r.totalIn, 0);
+    const sumOut = rows.reduce((s, r) => s + r.totalOut, 0);
+    const sumWl = rows.reduce((s, r) => s + r.winLose, 0);
 
     if ($('wlTotalBet')) $('wlTotalBet').textContent = money(sumBet);
     if ($('wlTotalValid')) $('wlTotalValid').textContent = money(sumValid);
@@ -498,6 +507,19 @@
         </div></td>
       </tr>`;
     }).join('');
+
+    /* Fit (`-`): the fitted rows plus the head and the sticky Total row must fit the box exactly. If anything is still behind the edge (a taller
+       row than the sample, the Total row not yet measured), drop a row and paint again - at most six times, never below 3 rows. */
+    if (!showAll && isAutoPageSize($('wlPageSize') && $('wlPageSize').value)) {
+      const box = document.querySelector('.wl-scroll-table');
+      if (box && box.scrollHeight > box.clientHeight + 1 && autoPageSize != null && autoPageSize > 3 && fitPasses < 6) {
+        fitPasses += 1;
+        autoPageSize -= 1;
+        render();
+        return;
+      }
+    }
+    fitPasses = 0;
   }
 
   let reportLoadSeq = 0;

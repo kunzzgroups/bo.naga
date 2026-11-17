@@ -934,20 +934,24 @@ body.main-report-exec-page .settlement-form-grid .rounded-select-btn{min-width:0
 body.main-report-exec-page .settlement-form-grid .rounded-select-btn > span:first-child,
 body.main-report-exec-page .settlement-form-grid .rounded-select-btn .rounded-select-label{min-width:0;flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-/* Report-family toolbar at tablet widths (640-1279): status pills / filters / Reset+Export used to stack as pills, two filter rows (date | search | select,
-   then select | Reset | Export) and the currency row - four bands before the table. Now: row 1 = pills with Reset + Export at the right end,
-   row 2 = date | search | selects, then the currency row. `.mad-filters` dissolves into the bar (display:contents) so its children can be placed
-   next to the pills; a zero-height ::before forces the line break after Export. */
-@media (min-width:640px) and (max-width:1279.98px){
-  html body.main-report-exec-page.main-admin-detail-page.report-body:not(#mre-tb-3):not(#mre-tb-4) .mad-panel > .mre-filter-bar{display:flex!important;grid-template-columns:none!important;flex-wrap:wrap!important;align-items:center;column-gap:8px;row-gap:8px}
+/* Report-family toolbar, two rows at every width from 640px up: row 1 = status pills on the left, Currency + Reset / Export as one group at the right end, row 2 = period | search |
+   selects. (Below that the existing small-screen rules stack it.) Before, the filters wrapped by width - Export alone on a second line at 1504 - and the
+   currency group was a third band under the toolbar. `.mad-filters` dissolves into the bar (display:contents) so its children can be placed next to the
+   pills; a zero-height ::after forces the line break after Export. */
+@media (min-width:640px){
+  html body.main-report-exec-page.main-admin-detail-page.report-body:not(#mre-tb-3):not(#mre-tb-4) .mad-panel > .mre-filter-bar{display:flex!important;grid-template-columns:none!important;flex-wrap:wrap!important;align-items:center;justify-content:flex-start!important;column-gap:8px;row-gap:8px}
   html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar > .mad-filters{display:contents!important}
   html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar > .mad-pills{order:1;flex:0 0 auto;margin-right:auto}
-  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar .mad-filters > .mad-reset-btn{order:2;flex:0 0 auto!important}
-  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar .mad-filters > .mad-export-btn{order:3;flex:0 0 auto!important}
-  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar::after{content:"";order:4;flex:0 0 100%;height:0;margin:-8px 0 0}
-  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar .mad-filters > .mre-period-group{order:5;flex:0 1 200px!important;min-width:0}
-  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar .mad-filters > .mad-search{order:6;flex:1 1 120px!important;min-width:120px!important}
-  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar .mad-filters > .rounded-select-wrap{order:7;flex:0 1 140px!important;min-width:110px;max-width:none!important} /* (the selects carry an inline 160px !important from the page script, so they stay 160) */
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar > .mre-currency-group{order:2;flex:0 0 auto;margin:0 12px 0 0}
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar .mad-filters > .mad-reset-btn{order:3;flex:0 0 auto!important}
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar .mad-filters > .mad-export-btn{order:4;flex:0 0 auto!important}
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar::after{content:"";order:5;flex:0 0 100%;height:0;margin:-8px 0 0}
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar .mad-filters > .mre-period-group{order:6;flex:0 0 264px!important;min-width:264px!important} /* the whole range ("17/11/2026 - 17/11/2026", "01 Jan 2026 - 31 Dec 2026") fits */
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar .mad-filters > .mre-period-group:has(> .mre-scope-label){flex-basis:340px!important;min-width:340px!important}
+  /* below 1280 the "PERIOD" caption goes (the group is then just the date range, 264px) so the second row still holds period + search + selects on one line */
+  @media (max-width:1279.98px){ html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar .mad-filters > .mre-period-group > .mre-scope-label{display:none!important} html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar .mad-filters > .mre-period-group:has(> .mre-scope-label){flex-basis:264px!important;min-width:264px!important} }
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar .mad-filters > .mad-search{order:7;flex:1 1 120px!important;min-width:120px!important;max-width:none!important;width:auto!important}
+  html body.main-report-exec-page.main-admin-detail-page:not(#mre-tb-3):not(#mre-tb-4) .mre-filter-bar .mad-filters > .rounded-select-wrap{order:8;flex:0 1 140px!important;min-width:110px;max-width:none!important} /* (the selects carry an inline 160px !important from the page script, so they stay 160) */
 }
 
 /* Transaction History toolbar at tablet widths: the status pills are 654px wide, so a labelled Reset (78px) no longer fits beside them and
@@ -964,6 +968,7 @@ body.main-report-exec-page .settlement-form-grid .rounded-select-btn .rounded-se
    which with the toolbar below made four bands. Tabs left, actions right on the same row. (Chromes with no actions keep one row.) */
 @media (min-width:640px) and (max-width:1279.98px){
   html body.main-report-exec-page.main-admin-detail-page.report-body:not(#mre-ch-1):not(#mre-ch-2) .mad-chrome.mre-chrome:has(> .mad-chrome-actions > *){
+    display:grid!important;
     grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:auto!important;align-items:center;column-gap:12px;
   }
   html body.main-report-exec-page.main-admin-detail-page.report-body:not(#mre-ch-1):not(#mre-ch-2) .mad-chrome.mre-chrome > .mad-chrome-actions{width:auto!important;justify-self:end;margin:0!important}

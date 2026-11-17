@@ -111,6 +111,9 @@
    data-bo-shell="main" scope is the carve-out check-shell-drift.js documents for the Main frame. */
 html[data-bo-shell="main"] body.referral-v2-page .report-main{height:100dvh;overflow:hidden;display:flex;flex-direction:column;}
 html[data-bo-shell="main"] body.referral-v2-page #r2FinancePage{flex:1 1 auto;min-height:0;overflow:auto;}
+/* Below 1024px the shell's column + 16px gap rhythm (main-content-rhythm.css) is off, so the KPI strip, the section tabs, the notice and the panel touched each other. Same rhythm here at every width. */
+html[data-bo-shell="main"] body.referral-v2-page #r2FinancePage{display:flex;flex-direction:column;gap:16px;}
+html[data-bo-shell="main"] body.referral-v2-page #r2FinancePage>.agent-admin-metrics,html[data-bo-shell="main"] body.referral-v2-page #r2FinancePage>.mad-tabs,html[data-bo-shell="main"] body.referral-v2-page #r2FinancePage>.alert{flex:0 0 auto;}
 html[data-bo-shell="main"] body.referral-v2-page .report-topbar{flex:0 0 auto;}
 html[data-bo-shell="main"] body.referral-v2-page #r2FinancePage>.r2-table-panel:not([hidden]){flex:1;min-height:320px;display:flex;flex-direction:column;overflow:hidden;}
 html[data-bo-shell="main"] body.referral-v2-page #r2FinancePage>.r2-table-panel:not([hidden])>.table-responsive{flex:1;min-height:0;overflow:auto;}
@@ -455,7 +458,45 @@ html:not([data-bo-theme="dark"])
 @media(max-width:1100px){
   #r2FinancePage .r2-fields,#r2FinancePage .r2-fields-3{grid-template-columns:repeat(2,minmax(0,1fr));}
 }
-@media(max-width:1023px){
+/* KPI strip: two rows of three down to 700px (it was 2 columns x 3 rows from 1023px, which put the section tabs a whole screen down); the tiles get compact
+   padding / type so three fit across. Two columns from 699px, one from 479px. */
+/* Compact KPI tiles up to 1279px: two rows of three at ~72px instead of ~130px, so the list below gets the height (the table is what the page is for;
+   the strip used to take ~290px of a 706px window). The panel keeps a 320px floor: on a really short window the content area scrolls instead. */
+@media(max-width:1279px),(max-height:820px){
+  #r2FinancePage .agent-admin-metrics{gap:10px;}
+  #r2FinancePage .r2-summary-metric{column-gap:12px;min-height:72px;padding:9px 14px;border-radius:12px!important;}
+  #r2FinancePage .r2-summary-metric>.bo-summary-icon{width:40px;height:40px;}
+  #r2FinancePage .r2-summary-metric>div>span{font-size:11.5px;}
+  #r2FinancePage .r2-summary-metric>div>strong{font-size:19px;margin:1px 0;}
+  #r2FinancePage .r2-summary-metric>div>.bo-summary-note{font-size:11px;}
+  html[data-bo-shell="main"] body.referral-v2-page #r2FinancePage>.r2-table-panel:not([hidden]){min-height:320px;}
+  #r2FinancePage .r2-table-panel.r2-table-panel-fit{min-height:320px;}
+}
+/* Below 992px bo-shell.css lets every `.table-card` that is not the last child of the content frame fall back to its content height (flex:0 0 auto; min-height:0)
+   at a specificity this page's lock cannot beat - the list panel collapsed to toolbar + one row (171px of a 706px window), `-` fitted ONE row, and the Show menu, which
+   opens upward inside the panel, was clipped. The page's list panel keeps its lock at every width. */
+html[data-bo-shell="main"] body.referral-v2-page #r2FinancePage>.r2-table-panel:not([hidden]){flex:1 1 0%!important;min-height:320px!important;}
+#r2FinancePage .r2-page-size .rounded-select-menu{max-height:236px;overflow-y:auto;}
+
+/* Short windows (<= 820px tall), any width: the strip is just label + amount (no icon, no note) - ~58px a tile - so the table gets the height, like the BO lists.
+   A tall window keeps the full tiles. */
+@media(max-height:820px){
+  #r2FinancePage .r2-summary-metric{grid-template-columns:minmax(0,1fr);min-height:0;padding:8px 14px;column-gap:0;}
+  #r2FinancePage .r2-summary-metric>.bo-summary-icon{display:none;}
+  #r2FinancePage .r2-summary-metric>div{grid-column:1;}
+  #r2FinancePage .r2-summary-metric>div>.bo-summary-note{display:none;}
+  #r2FinancePage .r2-summary-metric>div>strong{font-size:20px;}
+}
+/* 1100-1279px: three tiles per row, two rows, ~58px each - no icon and no note line, just the label and the amount, so a long amount is never cut (a row of six
+   made the tiles ~138px and clipped "RM 3,000.00"). Another ~100px for the table. Below 1100 the compact tiles with icons above stay. */
+@media(min-width:1100px) and (max-width:1279px){
+  #r2FinancePage .r2-summary-metric{grid-template-columns:minmax(0,1fr);min-height:0;padding:8px 14px;column-gap:0;}
+  #r2FinancePage .r2-summary-metric>.bo-summary-icon{display:none;}
+  #r2FinancePage .r2-summary-metric>div{grid-column:1;}
+  #r2FinancePage .r2-summary-metric>div>.bo-summary-note{display:none;}
+  #r2FinancePage .r2-summary-metric>div>strong{font-size:20px;}
+}
+@media(max-width:699px){
   #r2FinancePage .agent-admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}
 }
 @media(max-width:800px){
@@ -463,7 +504,7 @@ html:not([data-bo-theme="dark"])
   #r2FinancePage .r2-table-footer{grid-template-columns:1fr auto;}
   #r2FinancePage .r2-table-footer>[data-r2-total]{grid-column:1/-1;grid-row:2;text-align:center;}
     }
-@media(max-width:767px){
+@media(max-width:479px){
   #r2FinancePage .agent-admin-metrics{grid-template-columns:1fr;}
 }
 @media(max-width:700px){
@@ -558,3 +599,27 @@ body.referral-v2-page .r2-modal .form-select{width:100%;}
 [data-bo-theme="dark"] body.referral-v2-page .r2-modal .modal-clean-close{background:#2A2C36;border-color:rgba(255,255,255,.14);color:#E7E5E4;}
 [data-bo-theme="dark"] body.referral-v2-page .r2-modal-foot{border-top-color:rgba(255,255,255,.12);}
 [data-bo-theme="dark"] body.referral-v2-page .r2-modal .r2-label{color:#D4D4D8;}
+
+/* The real tiles are `.metric.agent-admin-metric.r2-summary-metric`, and agent-admin-management.css gives `.agent-admin-metric` `min-height:104px!important;padding:16px 18px!important`
+   (and its own label/value sizes), so the compact rules above - written without !important - never reached the real tiles: the strip stayed ~218px tall on a short window and the
+   frame scrolled. Same compact values, !important, last in the file. */
+@media(max-width:1279px),(max-height:820px){
+  #r2FinancePage .r2-summary-metric{min-height:72px!important;padding:9px 14px!important;}
+  #r2FinancePage .r2-summary-metric>.bo-summary-icon{width:40px!important;height:40px!important;}
+  #r2FinancePage .r2-summary-metric>div>span{font-size:11.5px!important;}
+  #r2FinancePage .r2-summary-metric>div>strong{font-size:19px!important;}
+}
+@media(max-height:820px),(min-width:1100px) and (max-width:1279px){
+  #r2FinancePage .r2-summary-metric{min-height:0!important;padding:8px 14px!important;}
+  #r2FinancePage .r2-summary-metric>div>.bo-summary-note{display:none!important;}
+  #r2FinancePage .r2-summary-metric>div>strong{font-size:20px!important;}
+}
+@media(max-height:820px),(min-width:1100px) and (max-width:1279px){
+  /* with the icon gone the text must span the tile: the real tile's grid is `52px 1fr` (the 52px is the icon column), which squeezed label and amount into 52px */
+  #r2FinancePage .r2-summary-metric{grid-template-columns:minmax(0,1fr)!important;column-gap:0!important;}
+  #r2FinancePage .r2-summary-metric>div{grid-column:1!important;}
+}
+
+/* Collections / Wallets / Reconciliation wrap their card in `.r2-stack.r2-stack-fit`. Below 992px bo-shell.css (`.report-content:has(> .table-card) > * {flex:0 0 auto}`)
+   made that wrapper content-high too, so the card stopped short and a blank band was left under it. The wrapper fills the frame at every width, like the direct panels. */
+html[data-bo-shell="main"] body.referral-v2-page #r2FinancePage>.r2-stack.r2-stack-fit:not([hidden]){flex:1 1 0%!important;min-height:320px!important;}
