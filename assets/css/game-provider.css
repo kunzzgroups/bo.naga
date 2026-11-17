@@ -2156,3 +2156,9 @@ html:not([data-bo-theme="dark"]) .provider-card.is-returned{
 html.gp-restoring body{
   visibility:hidden !important;
 }
+
+/* A swap-in of this list is positioned before it is shown (only the content frame is hidden - the shell stays,
+   the document is never rebuilt). game-provider.js adds the class while it restores the offset. */
+html.gp-restoring-frame .report-content{
+  visibility:hidden !important;
+}

@@ -158,7 +158,13 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
      where the operator left it - the saved offset is re-applied at the final layout (window load), because an
      earlier attempt is clamped by a shorter document while the rows are still skeletons. */
   function restoreListPosition(){
-    var reveal = function(){ document.documentElement.classList.remove('gp-restoring'); };
+    /* a swap keeps this document (and its shell) alive, so only the content frame is hidden */
+    var hidFrame = !document.documentElement.classList.contains('gp-restoring');
+    if(hidFrame) document.documentElement.classList.add('gp-restoring-frame');
+    var reveal = function(){
+      document.documentElement.classList.remove('gp-restoring');
+      document.documentElement.classList.remove('gp-restoring-frame');
+    };
     var saved = pendingRestore || pendingRestoreEarly || readPendingReturn();
     if(!saved){ reveal(); return; }
     try{ sessionStorage.removeItem(RETURN_KEY); }catch(e){}
