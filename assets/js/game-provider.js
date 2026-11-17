@@ -101,7 +101,6 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
     if(isListPage && sessionStorage.getItem(RETURN_KEY)){
       pendingRestoreEarly = JSON.parse(sessionStorage.getItem(RETURN_KEY) || 'null');
       if('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
-      document.documentElement.classList.add('gp-restoring');
     }
   }catch(e){}
   function rememberListPosition(id){
@@ -142,12 +141,22 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       var saved = JSON.parse(sessionStorage.getItem(RETURN_KEY) || 'null');
       if(saved && saved.id) editedCardId = String(saved.id);
     }catch(err){}
-    Promise.resolve(load()).then(function(){
-      /* the rows may have changed height: put the operator back on the pixel they left */
-      window.scrollTo(0, y);
-      requestAnimationFrame(function(){ window.scrollTo(0, y); });
+    /* Refresh the rows behind the operator's back: if the answer is the same as what is on screen, nothing is
+       re-rendered (no blink) - only the edited card is ringed. */
+    Promise.resolve(fetchProviderData()).then(function(fresh){
+      var same = JSON.stringify(fresh.rows) === JSON.stringify(rows);
+      if(!same){
+        rows = fresh.rows;
+        categories = fresh.categories;
+        render();
+      }
+      window.scrollTo({ top: y, left: 0, behavior: 'instant' });
+      requestAnimationFrame(function(){ window.scrollTo({ top: y, left: 0, behavior: 'instant' }); });
       ringEditedCard();
-    }).catch(function(){});
+    }).catch(function(){
+      window.scrollTo({ top: y, left: 0, behavior: 'instant' });
+      ringEditedCard();
+    });
   };
   window.addEventListener('pageshow', window.__boGpPageshow);
 
@@ -161,8 +170,6 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
      earlier attempt is clamped by a shorter document while the rows are still skeletons. */
   function restoreListPosition(){
     /* a swap keeps this document (and its shell) alive, so only the content frame is hidden */
-    var hidFrame = !document.documentElement.classList.contains('gp-restoring');
-    if(hidFrame) document.documentElement.classList.add('gp-restoring-frame');
     var reveal = function(){
       document.documentElement.classList.remove('gp-restoring');
       document.documentElement.classList.remove('gp-restoring-frame');
@@ -672,18 +679,28 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
     }
     list.innerHTML = html;
   }
+  /* The same two requests as load(), without touching the DOM - a bfcache return compares its answer with what
+     is already on screen and leaves the panel alone when nothing changed. */
+  async function fetchProviderData(){
+    await ensureTenantContext();
+    const [providerJson, categoryJson] = await Promise.all([
+      fetchJson(PROVIDER_API.list + (PROVIDER_API.list.includes('?') ? '&' : '?') + '_ts=' + Date.now(), { cache: 'no-store' }),
+      fetchJson(CATEGORY_API.list)
+    ]);
+    return {
+      rows: providerJson.data || providerJson || [],
+      categories: categoryJson.data || categoryJson || []
+    };
+  }
+
   async function load(){
     var keepY = snapshotPainted ? (window.scrollY || 0) : -1;
     showLoadingState();
-    await ensureTenantContext();
     setStatus('Loading...', '');
     try{
-      const [providerJson, categoryJson] = await Promise.all([
-        fetchJson(PROVIDER_API.list + (PROVIDER_API.list.includes('?') ? '&' : '?') + '_ts=' + Date.now(), { cache: 'no-store' }),
-        fetchJson(CATEGORY_API.list)
-      ]);
-      rows = providerJson.data || providerJson || [];
-      categories = categoryJson.data || categoryJson || [];
+      var fresh = await fetchProviderData();
+      rows = fresh.rows;
+      categories = fresh.categories;
       if(form && el.providerCategoryIds){
         renderCategoryOptions(el.providerId.value ? (rows.find(r => String(r.id) === String(el.providerId.value)) || {}).categoryIds : '');
       }
