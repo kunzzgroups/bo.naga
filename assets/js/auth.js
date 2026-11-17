@@ -480,7 +480,32 @@
     token: function(){ return localStorage.getItem(this.tokenKey) || ''; },
     user: function(){ try { return JSON.parse(localStorage.getItem(this.userKey) || '{}'); } catch(e){ return {}; } },
     save: function(json){ localStorage.setItem(this.tokenKey, json.token || ''); localStorage.setItem(this.userKey, JSON.stringify(json.data || {})); try{sessionStorage.setItem('bo_admin_me_refreshed_at',String(Date.now()));}catch(e){} },
-    saveUser: function(user){ localStorage.setItem(this.userKey, JSON.stringify(user || {})); this.renderProfile(); this.renderSidebar(user); },
+    /* Everything the rail is built from, in one comparable string. */
+    sidebarSignature: function(user){
+      var u = user || {};
+      var menus = Array.isArray(u.menus) ? u.menus : [];
+      try{
+        return JSON.stringify([
+          u.username || '', u.displayName || '', u.role || '', u.roleType || '',
+          u.roleName || '', u.brandId || '', u.mainAdmin === true || Number(u.mainAdmin) === 1,
+          menus.map(function(m){
+            return [m && m.id, m && m.menuKey, m && m.title, m && m.url, m && m.icon,
+                    m && m.parentKey, m && m.sortOrder, m && m.status, m && m.showInSidebar];
+          })
+        ]);
+      }catch(e){ return ''; }
+    },
+    saveUser: function(user){
+      var previous = this.user();
+      var rebuildRail = this.sidebarSignature(previous) !== this.sidebarSignature(user);
+      localStorage.setItem(this.userKey, JSON.stringify(user || {}));
+      this.renderProfile();
+      /* Same account, same menus: the rail on screen is already correct. Rebuilding it is the flicker the
+         owner sees on a heavy page ("sidebar 一起刷新"), so only rebuild when something really changed. A rail
+         that was never painted (first visit, no cached user) always rebuilds - the signature differs. */
+      if(rebuildRail) this.renderSidebar(user);
+      else this.mountSidebarToggle();
+    },
     logout: function(){ try{ const t=localStorage.getItem(this.tokenKey); if(t) fetch(API_CONFIG.BASE_URL + '/auth/admin/logout',{method:'POST',headers:{'Authorization':'Bearer '+t},keepalive:true}).catch(()=>{}); }catch(e){} localStorage.removeItem(this.tokenKey); localStorage.removeItem(this.userKey); try{ localStorage.removeItem('bo_shell_nav_v1'); localStorage.removeItem('bo_shell_nav_user_v1'); for(var _i=localStorage.length-1;_i>=0;_i--){var _k=localStorage.key(_i);if(_k&&_k.indexOf('bo_shell_nav_v1_')===0){try{localStorage.removeItem(_k);}catch(e){}}} }catch(e){} try{ sessionStorage.removeItem('bo_operation_login_marker'); sessionStorage.removeItem('bo_operation_login_played'); sessionStorage.removeItem('bo_admin_me_refreshed_at'); sessionStorage.removeItem('bo_brand_context_cache_v3'); }catch(e){} window.location.href = 'login.html'; },
     requireLogin: function(){
       if(!this.token() && pageName() !== 'login.html'){
