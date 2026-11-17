@@ -1307,7 +1307,9 @@
           }).join('')+'</div></div>';
       });
       nav.innerHTML=html;
-      window.__boRailPainted = 1;   /* the rail on screen is this user's */
+      window.__boRailPainted = 1;
+      /* Opt-in snapshot for pages whose head carries the inline first-paint script (game-provider-create.html): the complete rail, groups included, is replayed at parse time so the rail does not appear as 2 rows and then jump to 12. The live render still runs afterwards and replaces it. */
+      try{ if(document.querySelector("script[data-bo-rail-first-paint]") && nav.children.length){ localStorage.setItem("bo_rail_snap_v1_"+(location.pathname.split("/").pop()||"").toLowerCase(), JSON.stringify({u:String((user&&user.username)||""),h:html})); } }catch(e){}   /* the rail on screen is this user's */
 
       const sidebar=nav.closest('.report-sidebar');
       if(sidebar){

@@ -39,6 +39,10 @@
     var menus = Array.isArray(u && u.menus) ? u.menus : [];
     var nav = document.querySelector('.report-nav');
     if(!nav || !menus.length || nav.children.length) return;
+    try{
+      var snap = JSON.parse(localStorage.getItem('bo_rail_snap_v1_' + (location.pathname.split('/').pop() || '').toLowerCase()) || 'null');
+      if(snap && snap.h && snap.u === String(u.username || '')){ nav.innerHTML = snap.h; return; }
+    }catch(e){}
     var here = (location.pathname.split('/').pop() || '').toLowerCase();
     var esc = function(v){ return String(v == null ? '' : v).replace(/[&<>"]/g, function(c){
       return c === '&' ? '&amp;' : c === '<' ? '&lt;' : c === '>' ? '&gt;' : '&quot;';
@@ -63,7 +67,7 @@
 <script data-bo-early-auth="1">/* The rail is drawn by auth.js; loading it here, next to the sidebar markup it fills,
    is what puts the sidebar on screen with the first paint instead of after ~2.4MB of assets below. */</script>
 <script src="assets/js/config.js?v=e7312672"></script>
-<script src="assets/js/auth.js?v=5522581e"></script>
+<script src="assets/js/auth.js?v=f2499d7a"></script>
 <div class="sidebar-overlay" data-close-sidebar="" id="reportOverlay"></div>
 <main class="report-main">
 <header class="report-topbar" data-bo-topbar data-bo-title="Create Provider" data-bo-icon="bi-controller" data-bo-h1-id="providerFormTitle"></header>
