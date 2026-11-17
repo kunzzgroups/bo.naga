@@ -2080,6 +2080,19 @@
         if(logout){ e.preventDefault(); window.BO_AUTH.logout(); }
       });
     }
+    /* The rail is painted from the cached user FIRST, before the round trip below: the menus it needs are
+       already in localStorage, and waiting for /me meant the sidebar was empty for as long as the network took
+       - on the provider edit page (~2.4MB of assets) that is the "sidebar 需要加载" the owner sees. /me still
+       runs right after and rebuilds only if the menus it returns actually differ (saveUser compares a
+       signature), so nothing flickers when the answer matches. */
+    if(!window.__boRailPainted){
+      try{
+        var cachedRailUser = window.BO_AUTH.user();
+        if(cachedRailUser && Array.isArray(cachedRailUser.menus) && cachedRailUser.menus.length){
+          window.BO_AUTH.renderSidebar(cachedRailUser);
+        }
+      }catch(e){}
+    }
     // Sidebar is intentionally rendered only after fresh DB-backed /me + menu-group data returns.
     const now = Date.now();
     if(window.__boMenusRefreshedAt && now - window.__boMenusRefreshedAt < 30000) return;

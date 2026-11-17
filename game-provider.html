@@ -33,7 +33,41 @@
                       class="bi bi-x-lg"></i></button>
           </div>
           <nav class="report-nav"></nav>
+<script data-bo-rail-first-paint="1">
+/* First paint of the rail from the cached menus, before the stylesheets finish: an inline script does not wait
+   for the CSSOM, an external one does. auth.js renders the full rail (groups, pins, active state) a moment
+   later and this placeholder is replaced. */
+(function(){
+  try{
+    var u = JSON.parse(localStorage.getItem('bo_admin_user') || '{}');
+    var menus = Array.isArray(u && u.menus) ? u.menus : [];
+    var nav = document.querySelector('.report-nav');
+    if(!nav || !menus.length || nav.children.length) return;
+    var here = (location.pathname.split('/').pop() || '').toLowerCase();
+    var esc = function(v){ return String(v == null ? '' : v).replace(/[&<>"]/g, function(c){
+      return c === '&' ? '&amp;' : c === '<' ? '&lt;' : c === '>' ? '&gt;' : '&quot;';
+    }); };
+    var seen = {}, html = '';
+    for(var i = 0; i < menus.length; i++){
+      var m = menus[i] || {};
+      if(m.status !== 1 || !m.url || m.url === '#') continue;
+      if(String(m.parentKey || '').trim()) continue;
+      var file = String(m.url).split('/').pop().split('?')[0].toLowerCase();
+      if(seen[file]) continue;
+      seen[file] = 1;
+      html += '<a href="' + esc(m.url) + '" class="nav-group-btn nav-group-direct' + (file === here ? ' active' : '') +
+              '" data-menu-key="' + esc(m.menuKey) + '" data-rail-label="' + esc(m.title) + '">' +
+              '<span><i class="bi ' + esc(m.icon || 'bi-circle') + ' me-2"></i>' + esc(m.title) + '</span></a>';
+    }
+    if(html) nav.innerHTML = html;
+  }catch(e){}
+})();
+</script>
       </aside>
+<script data-bo-early-auth="1">/* The rail is drawn by auth.js; loading it here, next to the sidebar markup it fills,
+   is what puts the sidebar on screen with the first paint instead of after ~2.4MB of assets below. */</script>
+      <script src="assets/js/config.js?v=e7312672"></script>
+      <script src="assets/js/auth.js?v=5522581e"></script>
       <div class="sidebar-overlay" id="reportOverlay" data-close-sidebar></div>
       <main class="report-main">
         <header class="report-topbar" data-bo-topbar data-bo-title="Game Provider Management" data-bo-icon="bi-controller"></header>
@@ -81,11 +115,11 @@
       </div>
     </div>
 
-    <script src="assets/js/config.js?v=e7312672"></script>
+    
 <script src="assets/js/bo-loading-guard.js?v=63316c04"></script>
 <script src="assets/js/brand-context.js?v=27360386"></script>
 <script src="assets/js/main-currency-runtime.js?v=2b28e860"></script>
-<script src="assets/js/currency-runtime.js?v=b63c89fb"></script><script src="assets/js/auth.js?v=f65f6608"></script><script src="assets/js/reports.js?v=493c7124"></script><script src="assets/js/game-provider.js?v=5faed5c8"></script>
+<script src="assets/js/currency-runtime.js?v=b63c89fb"></script><script src="assets/js/reports.js?v=493c7124"></script><script src="assets/js/game-provider.js?v=5faed5c8"></script>
       
 
 <!-- Global live-chat listener: keeps the custom MP3 notification active throughout the BO. -->
