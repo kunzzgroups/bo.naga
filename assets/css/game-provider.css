@@ -2146,3 +2146,13 @@ html body.page-game-provider .manage-list-card{
 html:not([data-bo-theme="dark"]) .provider-card.is-returned{
   box-shadow:0 0 0 2px rgba(217,119,6,.45), 0 0 0 6px rgba(217,119,6,.08);
 }
+
+/* A return to the list is positioned before anything is shown.
+   ------------------------------------------------------------------------------------------
+   Owner: "我不要以滑动的形式回到原位 我要定死回到原位". The rows come from an API call, so the browser paints
+   the list at the top first and a restore afterwards reads as a slide. When a return is pending the document
+   is hidden (`gp-restoring`, set by game-provider.js before the first paint), the restore positions it with an
+   instant scroll, and the class is removed - the operator only ever sees the page already in place. */
+html.gp-restoring body{
+  visibility:hidden !important;
+}
