@@ -43,6 +43,10 @@
     var menus = Array.isArray(u && u.menus) ? u.menus : [];
     var nav = document.querySelector('.report-nav');
     if(!nav || !menus.length || nav.children.length) return;
+    try{
+      var snap = JSON.parse(localStorage.getItem('bo_rail_snap_v1_' + (location.pathname.split('/').pop() || '').toLowerCase()) || 'null');
+      if(snap && snap.h && snap.u === String(u.username || '')){ nav.innerHTML = snap.h; return; }
+    }catch(e){}
     var here = (location.pathname.split('/').pop() || '').toLowerCase();
     var esc = function(v){ return String(v == null ? '' : v).replace(/[&<>"]/g, function(c){
       return c === '&' ? '&amp;' : c === '<' ? '&lt;' : c === '>' ? '&gt;' : '&quot;';
