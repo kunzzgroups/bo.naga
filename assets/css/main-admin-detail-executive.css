@@ -10574,3 +10574,36 @@ html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi
 @media (min-width:992px) and (max-width:1279.98px){
   html body.main-admin-detail-page.report-body .mad-workspace{overflow-y:auto!important;overflow-x:hidden!important}
 }
+
+/* Small screens: the list card has ONE height - the space left in the content area - and only the table scrolls inside it, exactly like the BO
+   lists. Show N (entries) changes the number of rows, never the card: the toolbar and the footer (Show N / pager) stay put and the rows scroll
+   (both ways) in the table box between them. Before, below 1280 the card grew with its rows (`flex:1 0 auto`) and, from 992 down, dropped to
+   `height:auto; overflow:visible`, so a long list pushed the footer off the screen and the whole page had to scroll. The workspace keeps
+   `overflow-y:auto` only as a safety net for a toolbar so tall (phone) that the card would fall under 320px. */
+@media (max-width:1279.98px){
+  html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-fit-1):not(#mad-fit-2) .mad-workspace > .mad-panel:not(.d-none):not([hidden]){
+    flex:1 1 0!important;min-height:320px!important;height:auto!important;overflow:hidden!important;flex-direction:column!important;
+  }
+  html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-fit-1):not(#mad-fit-2) .mad-workspace > .mad-panel:not(.d-none):not([hidden]) > :is(.mad-table-wrap,.report-table-scroll){
+    flex:1 1 0!important;min-height:140px!important;max-height:none!important;overflow:auto!important;
+  }
+}
+
+/* List footer below 1280px: Show N | info | pager sat in three equal columns, so a pager wider than its third (first / prev / 1 2 3 ... 5 / next /
+   last = ~400px) spilled to the left over the "Showing 1 to 5 of N" text. The pager and the Show control keep their own width, the info takes
+   what is left (centred, one line, ellipsis) and the pager buttons are 34px. */
+@media (max-width:1279.98px){
+  html body.main-admin-detail-page .mad-footer:not(#mad-ft-1):not(#mad-ft-2){grid-template-columns:auto minmax(0,1fr) auto!important}
+  html body.main-admin-detail-page .mad-footer:not(#mad-ft-1):not(#mad-ft-2) .mad-footer-info{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}
+  html body.main-admin-detail-page .mad-footer:not(#mad-ft-1):not(#mad-ft-2) .mad-footer-right{min-width:0;justify-self:end}
+  html body.main-admin-detail-page .mad-footer:not(#mad-ft-1):not(#mad-ft-2) .mad-pager{flex-wrap:nowrap;gap:6px}
+  html body.main-admin-detail-page .mad-footer:not(#mad-ft-1):not(#mad-ft-2) .mad-pager > button{min-width:34px;width:auto;padding-left:8px;padding-right:8px}
+}
+
+/* Show `-` below 1280: the bounded table box above is `overflow:auto`; in fit mode its vertical scroller is off (horizontal stays). Same specificity
+   as that rule, later in the file. */
+@media (max-width:1279.98px){
+  html body.main-admin-detail-page.report-body:not(.main-admin-security-page):not(#mad-fit-1):not(#mad-fit-2) .mad-workspace > .mad-panel:not(.d-none):not([hidden]) > :is(.mad-table-wrap,.report-table-scroll)[data-bo-fit]{
+    overflow-y:hidden!important;overflow-x:auto!important;
+  }
+}

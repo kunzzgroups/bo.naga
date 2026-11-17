@@ -294,4 +294,33 @@
   window.__boMountSyncLabelDcl=mountSyncLabelOnce;
   document.addEventListener('bo:spa:content',mountSyncLabel);
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',mountSyncLabelOnce); else mountSyncLabel();
+
+  /* Show `-` (fit) = the rows are fitted to the table box, so the box has no vertical scroller (horizontal stays) - the BO lists' rule, for every Main
+     listing. A page-size select set to `-` marks the table scroller of its own panel with data-bo-fit; the stylesheet (main-content-rhythm.css) does
+     the rest. A fixed size or All removes the mark and the scroller is back. One slot on window: the listeners are replaced, never stacked. */
+  function syncFitMarks(){
+    try{
+      var sels=document.querySelectorAll('select[id*="PageSize" i],select.mad-page-size-select,select.main-mod-page-size,select.settlement-page-size,select.provider-page-size');
+      Array.prototype.forEach.call(sels,function(sel){
+        var panel=sel.closest('.mad-panel,.mas-panel,.main-mod-card,.main-mod-panel,.settlement-panel,.provider-settlement-card');
+        if(!panel) return;
+        var v=String(sel.value==null?'':sel.value).trim();
+        var fit=(v===''||v==='-'||/^auto$/i.test(v));
+        Array.prototype.forEach.call(panel.querySelectorAll('.mad-table-wrap,.report-table-scroll,.mas-table-wrap,.mas-table-body-scroll,.main-mod-table-scroll,.main-mod-table-wrap,.table-wrap'),function(w){
+          if(fit){ if(!w.hasAttribute('data-bo-fit')) w.setAttribute('data-bo-fit',''); }
+          else if(w.hasAttribute('data-bo-fit')) w.removeAttribute('data-bo-fit');
+        });
+      });
+    }catch(e){}
+  }
+  if(window.__boSyncFitMarks){
+    document.removeEventListener('change',window.__boSyncFitMarks,true);
+    document.removeEventListener('bo:spa:content',window.__boSyncFitMarks);
+    window.removeEventListener('load',window.__boSyncFitMarks);
+  }
+  window.__boSyncFitMarks=function(){ syncFitMarks(); setTimeout(syncFitMarks,60); };
+  document.addEventListener('change',window.__boSyncFitMarks,true);
+  document.addEventListener('bo:spa:content',window.__boSyncFitMarks);
+  window.addEventListener('load',window.__boSyncFitMarks);
+  syncFitMarks(); setTimeout(syncFitMarks,300); setTimeout(syncFitMarks,1200);
 })(window);

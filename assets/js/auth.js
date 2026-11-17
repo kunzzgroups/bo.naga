@@ -1970,7 +1970,7 @@
       css.href = 'assets/css/main-sidebar-account.css?v=7a782ab9';
       (document.head || document.documentElement).appendChild(css);
       var js = document.createElement('script');
-      js.src = 'assets/js/main-sidebar-account.js?v=17482149';
+      js.src = 'assets/js/main-sidebar-account.js?v=694ad044';
       (document.body || document.documentElement).appendChild(js);
     }catch(e){}
   })();

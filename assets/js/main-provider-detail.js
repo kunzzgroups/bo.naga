@@ -35,7 +35,7 @@
     const sample = tableWrap.querySelector('tbody tr:not(.mad-empty)');
     const rowHeight = sample ? Math.max(36, Math.round(sample.getBoundingClientRect().height)) : 52;
     const available = Math.max(0, Math.floor(tableWrap.clientHeight) - (head ? Math.ceil(head.getBoundingClientRect().height) : 0));
-    return Math.max(5, Math.min(200, Math.floor(available / rowHeight) || PAGE));
+    return Math.max(3, Math.min(200, Math.floor(available / rowHeight) || PAGE));
   }
 
   function resolvePageSize(){
@@ -76,8 +76,8 @@
     const avail = Math.max(0, Math.floor(tableWrap.clientHeight) - (head ? Math.ceil(head.getBoundingClientRect().height) : 0));
     const natural = rows.reduce((sum, tr) => sum + Math.ceil(tr.getBoundingClientRect().height), 0);
     const rowH = Math.max(36, Math.round(natural / rows.length) || 52);
-    if(natural > avail + 1 && autoPageSize != null && autoPageSize > 5){
-      autoPageSize = Math.max(5, autoPageSize - 1);
+    if(natural > avail + 1 && autoPageSize != null && autoPageSize > 3){
+      autoPageSize = Math.max(3, autoPageSize - 1);
       render();
       return;
     }

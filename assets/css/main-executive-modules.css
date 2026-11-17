@@ -78,3 +78,18 @@ html[data-bo-theme="dark"] .main-mod-footer{color:#A1A1AA}
 
 /* Tab buttons ("Vendor Settlement (Payouts)" / "Brand Settlement (Collections)") ran past the right edge on phones: they wrap onto a second line instead. */
 @media(max-width:640px){.main-mod-tabs,.main-mod-balance-tabs{flex-wrap:wrap}.main-mod-tab{height:auto;min-height:40px;padding-top:6px;padding-bottom:6px}}
+
+/* Small screens: the list card has one height (what is left under the header, KPIs and filters) and only the table scrolls inside it - like the
+   BO lists. The tables of these legacy Main pages sat straight in the card, so the card grew with its rows (40 rows = 2050px, the footer and the
+   page's bottom out of reach - the content area is clipped by the shell). Now the table has a scroller (.main-mod-table-scroll), the footer
+   stays under it, and the content area only scrolls as a safety net when the blocks above the card are so tall that it would drop under 360px. */
+.main-mod-table-scroll{min-width:0;max-width:100%}
+@media (max-width:1279.98px){
+  html body.main-mod-page .main-mod-workspace{display:flex!important;flex-direction:column!important;flex:1 1 0!important;height:auto!important;overflow-x:hidden!important;overflow-y:auto!important;min-height:0!important}
+  html body.main-mod-page .main-mod-workspace > *{flex-shrink:0}
+  html body.main-mod-page .main-mod-workspace > .main-mod-card:has(> .main-mod-table-scroll):not(.main-mod-hidden){
+    flex:1 1 0!important;min-height:360px!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;
+  }
+  html body.main-mod-page .main-mod-workspace > .main-mod-card > .main-mod-table-scroll{flex:1 1 0;min-height:120px;overflow:auto}
+  html body.main-mod-page .main-mod-workspace > .main-mod-card > .main-mod-footer{flex:0 0 auto}
+}

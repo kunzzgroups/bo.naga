@@ -5,7 +5,7 @@ const num=v=>Number(v||0).toLocaleString('en-MY');
 const add=(a,b)=>Number(a||0)+Number(b||0), pos=v=>Math.max(Number(v||0),0), neg=v=>Math.max(-Number(v||0),0);
 /** Rows per page — Show `-` fills available table height; fixed sizes use the select. */
 let pageSize=10;
-const MIN_PAGE_SIZE=5;
+const MIN_PAGE_SIZE=3;
 const MAX_PAGE_SIZE=200;
 const ROW_HEIGHT_EST=52;
 const pageSizeEl=$('mreEntriesPageSize');

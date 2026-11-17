@@ -137,11 +137,22 @@ function setModal(id,show){
 const slotFor=el=>{const modal=el&&el.closest?el.closest('.r2-modal'):null;const own=modal?modal.querySelector('.r2-modal-feedback'):null;return own||$('r2Feedback');};
 const say=(node,message,isError=false)=>{if(!node)return;node.textContent=message;if(node.classList.contains('r2-modal-feedback')){node.classList.toggle('is-error',isError);}else{node.className=isError?'alert alert-danger':'alert alert-info';}};
 const feedback=(message,isError=false)=>say($('r2Feedback'),message,isError);
-async function request(path,opts={}){
+async function request(path,opts={},attempt=0){
  const token=window.BO_AUTH?.authHeader?.()||{};
  const response=await fetch(base()+apiRoot+path,{...opts,cache:'no-store',headers:{...token,...(opts.body?{'Content-Type':'application/json'}:{}),...(opts.headers||{})}});
  const data=await response.json().catch(()=>({}));
- if(!response.ok||data.status!=='success')throw Error(data.message||data.detail||('Request failed: '+response.status));
+ if(!response.ok||data.status!=='success'){
+  const message=data.message||data.detail||('Request failed: '+response.status);
+  /* The server answers a database deadlock ("Deadlock found when trying to get lock; try restarting transaction") when several of the page's
+     parallel reads sync the participant table at once. The server asks for a restart, so a READ is simply asked again (twice at most, short
+     backoff); writes and every other error are shown as they are. */
+  const isRead=!opts.method||String(opts.method).toUpperCase()==='GET';
+  if(isRead&&attempt<2&&/deadlock|lock wait timeout/i.test(String(message))){
+   await new Promise(r=>setTimeout(r,250*(attempt+1)+Math.floor(Math.random()*200)));
+   return request(path,opts,attempt+1);
+  }
+  throw Error(message);
+ }
  return data.data;
 }
 function read(form){const data={};new FormData(form).forEach((value,key)=>{if(String(value).trim()!=='')data[key]=String(value).trim()});return data;}

@@ -111,6 +111,9 @@
    data-bo-shell="main" scope is the carve-out check-shell-drift.js documents for the Main frame. */
 html[data-bo-shell="main"] body.referral-v2-page .report-main{height:100dvh;overflow:hidden;display:flex;flex-direction:column;}
 html[data-bo-shell="main"] body.referral-v2-page #r2FinancePage{flex:1 1 auto;min-height:0;overflow:auto;}
+/* Below 1024px the shell's column + 16px gap rhythm (main-content-rhythm.css) is off, so the KPI strip, the section tabs, the notice and the panel touched each other. Same rhythm here at every width. */
+html[data-bo-shell="main"] body.referral-v2-page #r2FinancePage{display:flex;flex-direction:column;gap:16px;}
+html[data-bo-shell="main"] body.referral-v2-page #r2FinancePage>.agent-admin-metrics,html[data-bo-shell="main"] body.referral-v2-page #r2FinancePage>.mad-tabs,html[data-bo-shell="main"] body.referral-v2-page #r2FinancePage>.alert{flex:0 0 auto;}
 html[data-bo-shell="main"] body.referral-v2-page .report-topbar{flex:0 0 auto;}
 html[data-bo-shell="main"] body.referral-v2-page #r2FinancePage>.r2-table-panel:not([hidden]){flex:1;min-height:320px;display:flex;flex-direction:column;overflow:hidden;}
 html[data-bo-shell="main"] body.referral-v2-page #r2FinancePage>.r2-table-panel:not([hidden])>.table-responsive{flex:1;min-height:0;overflow:auto;}
@@ -455,7 +458,14 @@ html:not([data-bo-theme="dark"])
 @media(max-width:1100px){
   #r2FinancePage .r2-fields,#r2FinancePage .r2-fields-3{grid-template-columns:repeat(2,minmax(0,1fr));}
 }
+/* KPI strip: two rows of three down to 700px (it was 2 columns x 3 rows from 1023px, which put the section tabs a whole screen down); the tiles get compact
+   padding / type so three fit across. Two columns from 699px, one from 479px. */
 @media(max-width:1023px){
+  #r2FinancePage .r2-summary-metric{column-gap:12px;min-height:88px;padding:12px 14px;}
+  #r2FinancePage .r2-summary-metric>.bo-summary-icon{width:44px;height:44px;}
+  #r2FinancePage .r2-summary-metric>div>strong{font-size:20px;}
+}
+@media(max-width:699px){
   #r2FinancePage .agent-admin-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}
 }
 @media(max-width:800px){
@@ -463,7 +473,7 @@ html:not([data-bo-theme="dark"])
   #r2FinancePage .r2-table-footer{grid-template-columns:1fr auto;}
   #r2FinancePage .r2-table-footer>[data-r2-total]{grid-column:1/-1;grid-row:2;text-align:center;}
     }
-@media(max-width:767px){
+@media(max-width:479px){
   #r2FinancePage .agent-admin-metrics{grid-template-columns:1fr;}
 }
 @media(max-width:700px){
