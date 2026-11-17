@@ -45,34 +45,102 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
   const LIST_PAGE = 'game-provider.html';
   /* Where the operator was when they pressed Edit, so the list can come back to it (see
      rememberListPosition / restoreListPosition at the bottom of this file). */
+  var pendingRestoreEarly = null;
   const RETURN_KEY = 'bo_gp_list_return';
+  /* A return to this list is positioned by us, not by the browser's own restore - the two would otherwise
+     both run and the second one is visible as a jump. */
+  try{
+    if(isListPage && sessionStorage.getItem(RETURN_KEY)){
+      pendingRestoreEarly = JSON.parse(sessionStorage.getItem(RETURN_KEY) || 'null');
+      if('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
+      document.documentElement.classList.add('gp-restoring');
+    }
+  }catch(e){}
   function rememberListPosition(id){
     try{
       sessionStorage.setItem(RETURN_KEY, JSON.stringify({ id: String(id || ''), y: Math.round(window.scrollY || 0) }));
     }catch(e){}
   }
+  /* The list is the page the form was opened from -> go back, so the browser restores that entry with its
+     scroll position instead of loading the list again from the top. A direct visit to the form has no list
+     entry behind it, and then the plain navigation is still the right move. */
+  function backToListAndRefresh(){
+    var ref = '';
+    try{ ref = String(document.referrer || ''); }catch(e){}
+    var fromList = /\/game-provider\.html(?:[?#]|$)/.test(ref);
+    if(fromList && window.history.length > 1){
+      try{ window.history.back(); return; }catch(e){}
+    }
+    window.location.href = LIST_PAGE + '?saved=1';
+  }
+
+  /* Coming back from the edit form through the back/forward cache: the document is the one that was left, so
+     it still shows the pre-edit data but its scroll offset is exactly where the operator was. Refresh the
+     rows in place (no navigation, no scroll change) and ring the card that was just edited. */
+  var editedCardId = '';
+  function ringEditedCard(){
+    if(!isListPage || !editedCardId) return;
+    var card = list.querySelector('.provider-card[data-provider-id="' + String(editedCardId).replace(/"/g, '\\"') + '"]');
+    editedCardId = '';
+    if(!card) return;
+    card.classList.add('is-returned');
+    setTimeout(function(){ card.classList.remove('is-returned'); }, 2600);
+  }
+  window.addEventListener('pageshow', function(e){
+    if(!isListPage || !e.persisted) return;
+    var y = window.scrollY || 0;
+    try{
+      var saved = JSON.parse(sessionStorage.getItem(RETURN_KEY) || 'null');
+      if(saved && saved.id) editedCardId = String(saved.id);
+    }catch(err){}
+    Promise.resolve(load()).then(function(){
+      /* the rows may have changed height: put the operator back on the pixel they left */
+      window.scrollTo(0, y);
+      requestAnimationFrame(function(){ window.scrollTo(0, y); });
+      ringEditedCard();
+    }).catch(function(){});
+  });
+
+  var pendingRestore = null;
+  function readPendingReturn(){
+    if(!isListPage) return null;
+    try{ return JSON.parse(sessionStorage.getItem(RETURN_KEY) || 'null'); }catch(e){ return null; }
+  }
+  /* Positions the page before anything is shown (the document is hidden by `gp-restoring`), and puts it exactly
+     where the operator left it - the saved offset is re-applied at the final layout (window load), because an
+     earlier attempt is clamped by a shorter document while the rows are still skeletons. */
   function restoreListPosition(){
-    if(!isListPage) return;
-    let saved = null;
-    try{ saved = JSON.parse(sessionStorage.getItem(RETURN_KEY) || 'null'); }catch(e){ saved = null; }
-    if(!saved) return;
+    var reveal = function(){ document.documentElement.classList.remove('gp-restoring'); };
+    var saved = pendingRestore || pendingRestoreEarly || readPendingReturn();
+    if(!saved){ reveal(); return; }
     try{ sessionStorage.removeItem(RETURN_KEY); }catch(e){}
-    /* Images and the sticky filter strip settle after the paint, and the cards carry their own heights,
-       so the scroll runs on the next frame and again shortly after - by then the target card exists. */
-    var settled = 0;
-    var apply = function(){
-      var card = saved.id
-        ? list.querySelector('.provider-card[data-provider-id="' + String(saved.id).replace(/"/g, '\\"') + '"]')
-        : null;
-      var targetY = card ? (card.getBoundingClientRect().top + (window.scrollY || 0) - 96) : Number(saved.y || 0);
-      window.scrollTo(0, Math.max(0, Math.round(targetY)));
-      if(card){
-        card.classList.add('is-returned');
-        setTimeout(function(){ card.classList.remove('is-returned'); }, 2600);
-      }
-      if(++settled < 2) requestAnimationFrame(function(){ setTimeout(apply, 160); });
+    var targetY = Math.max(0, Number(saved.y || 0));
+    var place = function(){
+      try{ window.scrollTo({ top: targetY, left: 0, behavior: 'instant' }); }
+      catch(e){ window.scrollTo(0, targetY); }
     };
-    requestAnimationFrame(function(){ setTimeout(apply, 60); });
+    place();
+    requestAnimationFrame(place);
+    var ringed = false;
+    var finish = function(){
+      place();
+      requestAnimationFrame(function(){
+        place();
+        if(!ringed && saved.id){
+          var card = list.querySelector('.provider-card[data-provider-id="' + String(saved.id).replace(/"/g, '\\"') + '"]');
+          if(card){
+            ringed = true;
+            card.classList.add('is-returned');
+            setTimeout(function(){ card.classList.remove('is-returned'); }, 2600);
+          }
+        }
+        reveal();
+      });
+    };
+    if(document.readyState === 'complete') setTimeout(finish, 60);
+    else window.addEventListener('load', finish, { once: true });
+    /* nothing may leave the document hidden, whatever happens above */
+    setTimeout(reveal, 1400);
   }
   function editPageUrl(id){ return CREATE_PAGE + (id ? ('?id=' + encodeURIComponent(id)) : ''); }
   const ids = ['providerId','providerCode','providerName','providerType','providerCategoryIds','providerImageUrl','providerBrandImageUrl','walletMode','settlementCostPercent','settlementCostBasis','integrationType','httpMethod','currency','apiBaseUrl','operatorId','secretKey','keyEnvironment','boLoginUrl','boUsername','boPassword','providerVariables','apiActionConfigs','signatureType','signatureOutputCase','signatureTemplate','ukeyLength','ukeyPrefix','ukeyStaticValue','createPlayerPath','balancePath','depositPath','withdrawPath','launchPath','gameListPath','createPlayerRequestTemplate','balanceRequestTemplate','depositRequestTemplate','withdrawRequestTemplate','launchRequestTemplate','gameListRequestTemplate','responseBalancePath','responseLaunchUrlPath','responseGameListPath','responseGameCodePath','responseGameNamePath','responseGameImagePath','gameImageApiUrlTemplate','gameImageRemoteApiUrlTemplate','gameImageRemoteApiHttpMethod','gameImageRemoteApiRequestTemplate','gameImageRemoteApiResponsePath','gameImageFallbackUrlTemplate','frontendGameFallbackImageUrl','responseGameCategoryPath','responseSuccessPath','responseSuccessValue','responseErrorMessagePath','callbackMemberPath','callbackGameCodePath','callbackBetIdPath','callbackTxIdPath','callbackBetAmountPath','callbackWinAmountPath','callbackValidBetAmountPath','callbackRoundIdPath','callbackStatusPath','callbackEventTypePath','callbackSignaturePath','callbackSuccessResponse','callbackDuplicateResponse','sortOrder','providerStatus'];
@@ -592,7 +660,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
           })
         });
         setStatus(json.message||'Brand provider images saved.','success');
-        if(isFormPage){ window.location.href = LIST_PAGE + '?saved=1'; return; }
+        if(isFormPage){ backToListAndRefresh(); return; }
         reset(); await load();
       }catch(err){setStatus(err.message||'Save failed.','error');}finally{setBusy(false);}
       return;
@@ -613,7 +681,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
         body:JSON.stringify(payload())
       });
       setStatus(json.message || 'Saved.', 'success');
-      if(isFormPage){ window.location.href = LIST_PAGE + '?saved=1'; return; }
+      if(isFormPage){ backToListAndRefresh(); return; }
       reset();
       await load();
     }catch(err){
