@@ -134,7 +134,8 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
     card.classList.add('is-returned');
     setTimeout(function(){ card.classList.remove('is-returned'); }, 2600);
   }
-  window.addEventListener('pageshow', function(e){
+  if(window.__boGpPageshow) window.removeEventListener('pageshow', window.__boGpPageshow);
+  window.__boGpPageshow = function(e){
     if(!isListPage || !e.persisted) return;
     var y = window.scrollY || 0;
     try{
@@ -147,7 +148,8 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       requestAnimationFrame(function(){ window.scrollTo(0, y); });
       ringEditedCard();
     }).catch(function(){});
-  });
+  };
+  window.addEventListener('pageshow', window.__boGpPageshow);
 
   var pendingRestore = null;
   function readPendingReturn(){
@@ -1003,7 +1005,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
 (function(){
   function api(pathKey){ return API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS[pathKey]; }
   function esc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-  document.addEventListener('DOMContentLoaded', function(){
+  function initPlayerLaunch(){
     const btn = document.getElementById('playerLaunchTestBtn');
     if(!btn) return;
     btn.addEventListener('click', async function(){
@@ -1024,6 +1026,9 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
         result.textContent = JSON.stringify(json, null, 2);
       }catch(err){ result.textContent = err.message || 'Launch test failed'; }
     });
-  });
+  }
+  /* A swap-in runs this file while the document is already complete, so DOMContentLoaded never fires. */
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initPlayerLaunch, { once: true });
+  else initPlayerLaunch();
 })();
 })();
