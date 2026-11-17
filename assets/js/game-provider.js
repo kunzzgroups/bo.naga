@@ -51,6 +51,46 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       sessionStorage.setItem(RETURN_KEY, JSON.stringify({ id: String(id || ''), y: Math.round(window.scrollY || 0) }));
     }catch(e){}
   }
+  /* The list is the page the form was opened from -> go back, so the browser restores that entry with its
+     scroll position instead of loading the list again from the top. A direct visit to the form has no list
+     entry behind it, and then the plain navigation is still the right move. */
+  function backToListAndRefresh(){
+    var ref = '';
+    try{ ref = String(document.referrer || ''); }catch(e){}
+    var fromList = /\/game-provider\.html(?:[?#]|$)/.test(ref);
+    if(fromList && window.history.length > 1){
+      try{ window.history.back(); return; }catch(e){}
+    }
+    window.location.href = LIST_PAGE + '?saved=1';
+  }
+
+  /* Coming back from the edit form through the back/forward cache: the document is the one that was left, so
+     it still shows the pre-edit data but its scroll offset is exactly where the operator was. Refresh the
+     rows in place (no navigation, no scroll change) and ring the card that was just edited. */
+  var editedCardId = '';
+  function ringEditedCard(){
+    if(!isListPage || !editedCardId) return;
+    var card = list.querySelector('.provider-card[data-provider-id="' + String(editedCardId).replace(/"/g, '\\"') + '"]');
+    editedCardId = '';
+    if(!card) return;
+    card.classList.add('is-returned');
+    setTimeout(function(){ card.classList.remove('is-returned'); }, 2600);
+  }
+  window.addEventListener('pageshow', function(e){
+    if(!isListPage || !e.persisted) return;
+    var y = window.scrollY || 0;
+    try{
+      var saved = JSON.parse(sessionStorage.getItem(RETURN_KEY) || 'null');
+      if(saved && saved.id) editedCardId = String(saved.id);
+    }catch(err){}
+    Promise.resolve(load()).then(function(){
+      /* the rows may have changed height: put the operator back on the pixel they left */
+      window.scrollTo(0, y);
+      requestAnimationFrame(function(){ window.scrollTo(0, y); });
+      ringEditedCard();
+    }).catch(function(){});
+  });
+
   function restoreListPosition(){
     if(!isListPage) return;
     let saved = null;
@@ -592,7 +632,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
           })
         });
         setStatus(json.message||'Brand provider images saved.','success');
-        if(isFormPage){ window.location.href = LIST_PAGE + '?saved=1'; return; }
+        if(isFormPage){ backToListAndRefresh(); return; }
         reset(); await load();
       }catch(err){setStatus(err.message||'Save failed.','error');}finally{setBusy(false);}
       return;
@@ -613,7 +653,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
         body:JSON.stringify(payload())
       });
       setStatus(json.message || 'Saved.', 'success');
-      if(isFormPage){ window.location.href = LIST_PAGE + '?saved=1'; return; }
+      if(isFormPage){ backToListAndRefresh(); return; }
       reset();
       await load();
     }catch(err){
