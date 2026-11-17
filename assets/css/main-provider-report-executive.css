@@ -968,6 +968,7 @@ body.main-report-exec-page .settlement-form-grid .rounded-select-btn .rounded-se
    which with the toolbar below made four bands. Tabs left, actions right on the same row. (Chromes with no actions keep one row.) */
 @media (min-width:640px) and (max-width:1279.98px){
   html body.main-report-exec-page.main-admin-detail-page.report-body:not(#mre-ch-1):not(#mre-ch-2) .mad-chrome.mre-chrome:has(> .mad-chrome-actions > *){
+    display:grid!important;
     grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:auto!important;align-items:center;column-gap:12px;
   }
   html body.main-report-exec-page.main-admin-detail-page.report-body:not(#mre-ch-1):not(#mre-ch-2) .mad-chrome.mre-chrome > .mad-chrome-actions{width:auto!important;justify-self:end;margin:0!important}

@@ -10607,3 +10607,11 @@ html[data-bo-shell="main"] body.main-admin-security-page .report-topbar .mas-kpi
     overflow-y:hidden!important;overflow-x:auto!important;
   }
 }
+
+/* Section tabs (the strip under the page title) between 640 and 1599px: the chrome kept 8-10px of bottom padding, so its divider sat ~9px BELOW the tab strip and the active
+   underline floated above the line instead of sitting on it (at 1504px it sits on it), and every page had its own strip height (39 / 42 / 45 here, 47 on a wide screen).
+   Same strip as the wide layout: 47px, no padding under it, the divider right at the underline. */
+@media (min-width:640px) and (max-width:1599.98px){
+  html body.main-admin-detail-page.report-body .mad-chrome:not(#mad-tab-1):not(#mad-tab-2){padding-bottom:0!important;min-height:0!important;height:auto!important;}
+  html body.main-admin-detail-page.report-body .mad-chrome:not(#mad-tab-1):not(#mad-tab-2) > .mad-tabs{height:47px!important;min-height:47px!important;}
+}

@@ -445,3 +445,93 @@ html[data-bo-theme="dark"] body.main-merchant-repayments-page .mprd-status-msg.e
     flex-wrap:wrap;
   }
 }
+
+/* The Admin list's tablet rule (main-admin-detail-executive.css, "the table stays a table below 1280": `.mad-table{width:1150px!important}` + nine px widths
+   170/150/120/120/110/120/110/110/150 on th/td:nth-child) also caught THIS table, which is a different grid: the checkbox column came out 170px wide and every other
+   column got another page's width, so the ledger looked broken. This table keeps its own columns at every width (the widths written above, restated at a weight that wins). */
+@media (max-width:1279.98px){
+  html body.main-admin-detail-page.main-merchant-repayments-page:not(.main-admin-security-page):not(#mprd-w-1):not(#mprd-w-2) .mprd-table{width:100%!important;min-width:790px!important;max-width:none!important;table-layout:fixed!important}
+  /* px columns (the merchant column takes what is left): 100px holds "3,900.00" in bold on one line, which the old 10% columns did not */
+  html body.main-admin-detail-page.main-merchant-repayments-page:not(.main-admin-security-page):not(#mprd-w-1):not(#mprd-w-2) .mprd-table th:nth-child(1),html body.main-admin-detail-page.main-merchant-repayments-page:not(.main-admin-security-page):not(#mprd-w-1):not(#mprd-w-2) .mprd-table td:nth-child(1){width:44px!important}
+  html body.main-admin-detail-page.main-merchant-repayments-page:not(.main-admin-security-page):not(#mprd-w-1):not(#mprd-w-2) .mprd-table th:nth-child(2),html body.main-admin-detail-page.main-merchant-repayments-page:not(.main-admin-security-page):not(#mprd-w-1):not(#mprd-w-2) .mprd-table td:nth-child(2){width:76px!important}
+  html body.main-admin-detail-page.main-merchant-repayments-page:not(.main-admin-security-page):not(#mprd-w-1):not(#mprd-w-2) .mprd-table th:nth-child(3),html body.main-admin-detail-page.main-merchant-repayments-page:not(.main-admin-security-page):not(#mprd-w-1):not(#mprd-w-2) .mprd-table td:nth-child(3){width:auto!important}
+  html body.main-admin-detail-page.main-merchant-repayments-page:not(.main-admin-security-page):not(#mprd-w-1):not(#mprd-w-2) .mprd-table th:nth-child(4),html body.main-admin-detail-page.main-merchant-repayments-page:not(.main-admin-security-page):not(#mprd-w-1):not(#mprd-w-2) .mprd-table td:nth-child(4){width:80px!important}
+  html body.main-admin-detail-page.main-merchant-repayments-page:not(.main-admin-security-page):not(#mprd-w-1):not(#mprd-w-2) .mprd-table th:nth-child(5),html body.main-admin-detail-page.main-merchant-repayments-page:not(.main-admin-security-page):not(#mprd-w-1):not(#mprd-w-2) .mprd-table td:nth-child(5){width:100px!important}
+  html body.main-admin-detail-page.main-merchant-repayments-page:not(.main-admin-security-page):not(#mprd-w-1):not(#mprd-w-2) .mprd-table th:nth-child(6),html body.main-admin-detail-page.main-merchant-repayments-page:not(.main-admin-security-page):not(#mprd-w-1):not(#mprd-w-2) .mprd-table td:nth-child(6){width:100px!important}
+  html body.main-admin-detail-page.main-merchant-repayments-page:not(.main-admin-security-page):not(#mprd-w-1):not(#mprd-w-2) .mprd-table th:nth-child(7),html body.main-admin-detail-page.main-merchant-repayments-page:not(.main-admin-security-page):not(#mprd-w-1):not(#mprd-w-2) .mprd-table td:nth-child(7){width:100px!important}
+  html body.main-admin-detail-page.main-merchant-repayments-page:not(.main-admin-security-page):not(#mprd-w-1):not(#mprd-w-2) .mprd-table th:nth-child(8),html body.main-admin-detail-page.main-merchant-repayments-page:not(.main-admin-security-page):not(#mprd-w-1):not(#mprd-w-2) .mprd-table td:nth-child(8){width:144px!important}
+  html body.main-admin-detail-page.main-merchant-repayments-page:not(.main-admin-security-page):not(#mprd-w-1):not(#mprd-w-2) .mprd-table th:nth-child(9),html body.main-admin-detail-page.main-merchant-repayments-page:not(.main-admin-security-page):not(#mprd-w-1):not(#mprd-w-2) .mprd-table td:nth-child(9){width:52px!important}
+  html body.main-admin-detail-page.main-merchant-repayments-page:not(.main-admin-security-page):not(#mprd-w-1):not(#mprd-w-2) .mprd-table td.num{white-space:nowrap!important}
+}
+
+/* ==========================================================================
+   Repayments table - readable rows, one alignment per column, a checkbox that exists in both themes
+   (the page has no .bo-charcoal body class, so the shared .mad-row-check-box rules never reached it: the header box and the row boxes looked different).
+   Colours only through the page's own tokens + an amber tint, so light and dark share one rule set.
+   ========================================================================== */
+body.main-merchant-repayments-page .mprd-table-wrap{border-radius:12px;max-height:none;}
+/* head: compact (it was ~60px of padding around 12px text), small caps labels, sticks while the rows scroll */
+html body.main-admin-detail-page.main-merchant-repayments-page .mprd-table thead tr th{
+  padding:11px 12px!important;
+  font-size:11px!important;
+  font-weight:800!important;
+  letter-spacing:.06em!important;
+  text-transform:uppercase;
+  color:var(--bo-muted,#71717A)!important;
+  line-height:1.2;
+  position:sticky;top:0;z-index:2;
+  border-bottom:1px solid var(--bo-border,#EADCC8)!important;
+}
+/* rows: one height, a hairline between them, hover and selected states */
+html body.main-admin-detail-page.main-merchant-repayments-page .mprd-table tbody tr td{
+  padding:10px 12px!important;
+  height:60px;
+  border-top:1px solid rgba(120,80,20,.10)!important;
+  color:var(--bo-text,#18191C);
+  font-size:13px;
+}
+html body.main-admin-detail-page.main-merchant-repayments-page .mprd-table tbody tr:first-child td{border-top:0!important;}
+body.main-merchant-repayments-page .mprd-table tbody tr[data-repay-id]{transition:background-color .12s ease;}
+body.main-merchant-repayments-page .mprd-table tbody tr[data-repay-id]:hover td{background:rgba(217,119,6,.06);}
+body.main-merchant-repayments-page .mprd-table tbody tr[data-repay-id]:has(.mad-row-check-input:checked) td{background:rgba(217,119,6,.12);}
+html[data-bo-theme="dark"] body.main-admin-detail-page.main-merchant-repayments-page .mprd-table tbody tr td{border-top-color:rgba(255,255,255,.08)!important;}
+html[data-bo-theme="dark"] body.main-merchant-repayments-page .mprd-table tbody tr[data-repay-id]:hover td{background:rgba(245,158,11,.08);}
+html[data-bo-theme="dark"] body.main-merchant-repayments-page .mprd-table tbody tr[data-repay-id]:has(.mad-row-check-input:checked) td{background:rgba(245,158,11,.16);}
+/* columns: month and merchant read left, money reads right, both with the same padding in head and body */
+body.main-merchant-repayments-page .mprd-table tbody td:nth-child(2){font-variant-numeric:tabular-nums;color:var(--bo-text-secondary,#52525B);}
+body.main-merchant-repayments-page .mprd-merchant{font-size:13.5px;}
+body.main-merchant-repayments-page .mprd-merchant small{display:block;margin-top:2px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--bo-muted,#71717A);}
+body.main-merchant-repayments-page .mprd-table tbody td.num{font-size:13.5px;}
+/* "Paid 0.00" is the quiet figure; Balance is the one that matters */
+body.main-merchant-repayments-page .mprd-table tbody td:nth-child(6){color:var(--bo-text-secondary,#52525B);font-weight:700;}
+/* status pill */
+body.main-merchant-repayments-page .mprd-status{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11.5px;font-weight:800;letter-spacing:.02em;line-height:1.4;}
+body.main-merchant-repayments-page .mprd-status.is-open{background:rgba(217,119,6,.14);color:#B45309;}
+html[data-bo-theme="dark"] body.main-merchant-repayments-page .mprd-status.is-open{background:rgba(245,158,11,.18);color:#FBBF24;}
+/* amount input: a 36px field with the unit fused on, amber focus ring */
+body.main-merchant-repayments-page .mprd-table td > .mprd-row-amount{display:inline-flex;align-items:stretch;min-width:0;width:100%;max-width:170px;height:36px;border-radius:8px;overflow:hidden;box-shadow:0 0 0 1px var(--bo-border,#EADCC8);}
+body.main-merchant-repayments-page .mprd-table .mprd-row-unit{display:inline-flex;align-items:center;padding:0 9px;font-size:11px;font-weight:800;letter-spacing:.04em;color:var(--bo-muted,#71717A);background:rgba(120,80,20,.07);border:0;}
+body.main-merchant-repayments-page .mprd-table .mprd-amount-input{height:36px;min-width:0;border:0;border-radius:0;background:transparent;text-align:right;font-weight:800;font-variant-numeric:tabular-nums;box-shadow:none;}
+body.main-merchant-repayments-page .mprd-table .mprd-row-amount:focus-within{box-shadow:0 0 0 2px #D97706;}
+html[data-bo-theme="dark"] body.main-merchant-repayments-page .mprd-table td > .mprd-row-amount{box-shadow:0 0 0 1px rgba(255,255,255,.16);}
+html[data-bo-theme="dark"] body.main-merchant-repayments-page .mprd-table .mprd-row-unit{background:rgba(255,255,255,.07);}
+html[data-bo-theme="dark"] body.main-merchant-repayments-page .mprd-table .mprd-row-amount:focus-within{box-shadow:0 0 0 2px #F59E0B;}
+/* row action: a round icon button, danger on hover */
+body.main-merchant-repayments-page .mprd-row-del{display:inline-grid;place-items:center;width:32px;height:32px;border:0;border-radius:50%;background:transparent;color:var(--bo-muted,#71717A);cursor:pointer;transition:background-color .12s ease,color .12s ease;}
+body.main-merchant-repayments-page .mprd-row-del:hover{background:rgba(217,45,32,.12);color:#D92D20;}
+html[data-bo-theme="dark"] body.main-merchant-repayments-page .mprd-row-del:hover{background:rgba(239,68,68,.18);color:#FCA5A5;}
+/* checkbox: the page's own box, same in head and rows, amber when ticked */
+body.main-merchant-repayments-page .mprd-table .mad-row-check{position:relative;display:inline-grid;place-items:center;width:20px;height:20px;margin:0 auto;cursor:pointer;}
+body.main-merchant-repayments-page .mprd-table .mad-row-check-input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;}
+body.main-merchant-repayments-page .mprd-table .mad-row-check-box{width:18px;height:18px;border-radius:5px;border:1.5px solid rgba(120,80,20,.38);background:transparent;box-sizing:border-box;display:grid;place-items:center;transition:background-color .12s ease,border-color .12s ease;}
+body.main-merchant-repayments-page .mprd-table .mad-row-check-input:checked + .mad-row-check-box{background:#D97706;border-color:#D97706;}
+body.main-merchant-repayments-page .mprd-table .mad-row-check-input:checked + .mad-row-check-box::after{content:"";width:5px;height:9px;margin-top:-2px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);}
+body.main-merchant-repayments-page .mprd-table .mad-row-check-input:focus-visible + .mad-row-check-box{box-shadow:0 0 0 3px rgba(217,119,6,.35);}
+html[data-bo-theme="dark"] body.main-merchant-repayments-page .mprd-table .mad-row-check-box{border-color:rgba(255,255,255,.4);}
+html[data-bo-theme="dark"] body.main-merchant-repayments-page .mprd-table .mad-row-check-input:checked + .mad-row-check-box{background:#F59E0B;border-color:#F59E0B;}
+html[data-bo-theme="dark"] body.main-merchant-repayments-page .mprd-table .mad-row-check-input:checked + .mad-row-check-box::after{border-color:#18191C;}
+/* empty / loading line */
+html body.main-admin-detail-page.main-merchant-repayments-page .mprd-table tbody tr td.mad-empty{height:auto;padding:36px 12px!important;text-align:center!important;color:var(--bo-muted,#71717A);font-size:13px;white-space:normal;}
+/* the action column's own 8px / 14px side padding left 30px for a 32px icon button (it spilled 2-5px and gave the wrap a sideways scroll): even padding, 40px inside */
+html body.main-admin-detail-page.main-merchant-repayments-page .mprd-table thead tr th:nth-child(9),
+html body.main-admin-detail-page.main-merchant-repayments-page .mprd-table tbody tr td:nth-child(9){padding-left:6px!important;padding-right:6px!important;}

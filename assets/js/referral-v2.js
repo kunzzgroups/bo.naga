@@ -17,7 +17,7 @@ const DEFAULT_PAGE_SIZE=10;
 const AUTO_PAGE_SIZE='auto';
 function tableData(id,records,render,colspan){
  let state=pageState.get(id);
- if(!state){const card=$(id)?.closest?.('.r2-table-panel');const multi=!card?.classList.contains('r2-table-panel-fit')&&!$(id)?.closest?.('.r2-stack-fit');state={page:1,size:multi?DEFAULT_PAGE_SIZE:AUTO_PAGE_SIZE,search:'',records:[],render:null,colspan};pageState.set(id,state);}
+ if(!state){const card=$(id)?.closest?.('.r2-table-panel');/* a panel that is a direct child of the page is viewport-locked (referral-v2-standard.css), like the fit panels: Show starts on `-` there too */const multi=!card?.classList.contains('r2-table-panel-fit')&&!$(id)?.closest?.('.r2-stack-fit')&&card?.parentElement?.id!=='r2FinancePage';state={page:1,size:multi?DEFAULT_PAGE_SIZE:AUTO_PAGE_SIZE,search:'',records:[],render:null,colspan};pageState.set(id,state);}
  state.records=records||[];state.render=render;state.colspan=colspan;
  paintTable(id);
 }
@@ -114,8 +114,8 @@ function setupTableTools(){
      All = 10000, the same cap the reference pages use. */
   /* `-` (fit the panel) only makes sense where the panel's height is fixed; in a multi-table panel the
      height follows the rows, so the select starts on the plain count of 10. */
-  const cardEl=wrapper.closest('.r2-table-panel');const multi=!(cardEl&&cardEl.classList.contains('r2-table-panel-fit'));
-  footer.innerHTML='<label class="r2-page-size">Show <select aria-label="Rows per page"><option value="auto"'+(multi?'':'" selected="selected')+'>-</option><option value="10"'+(multi?' selected="selected"':'')+'>10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option><option value="10000">All</option></select> entries</label><span data-r2-total></span><div class="r2-pager-pages" data-r2-pages></div>';
+  const cardEl=wrapper.closest('.r2-table-panel');const multi=!(cardEl&&(cardEl.classList.contains('r2-table-panel-fit')||cardEl.parentElement?.id==='r2FinancePage'));
+  footer.innerHTML='<label class="r2-page-size">Show <select aria-label="Rows per page"><option value="auto"'+(multi?'':' selected="selected"')+'>-</option><option value="10"'+(multi?' selected="selected"':'')+'>10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option><option value="10000">All</option></select> entries</label><span data-r2-total></span><div class="r2-pager-pages" data-r2-pages></div>';
   wrapper.after(footer);
   footer.querySelector('select').addEventListener('change',e=>{
    const state=pageState.get(id);if(!state)return;const raw=e.target.value;state.size=raw===AUTO_PAGE_SIZE?AUTO_PAGE_SIZE:(Number(raw)||DEFAULT_PAGE_SIZE);state.page=1;paintTable(id);

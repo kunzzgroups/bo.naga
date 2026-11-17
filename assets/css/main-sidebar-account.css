@@ -284,3 +284,9 @@ html[data-bo-theme="dark"] .main-side-account-role{color:#F59E0B}
 @media (min-width:992px){
   body.sidebar-mini .report-sidebar .report-nav .nav-group-btn > .bi-chevron-down{display:none!important}
 }
+
+/* The Main panel's account card lives in the rail. auth.js still paints its chip into the topbar's [data-bo-profile] host first and main-sidebar-account.js
+   moves it out a moment later - so for a few frames of every load (and of every SPA swap) the OLD header, "boss / Main Account" + avatar at the top right,
+   flashed next to the new rail card. Hidden from the first paint, like the rail's old title above; the script still finds and moves the node (display:none
+   does not hide it from querySelector), and the pending-operation counters that share the host are not touched. Once moved the chip is no longer inside the topbar. */
+html[data-bo-shell="main"] .report-topbar [data-bo-profile] .bo-account-link{display:none!important;}

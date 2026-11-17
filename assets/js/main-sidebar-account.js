@@ -300,13 +300,15 @@
      the rest. A fixed size or All removes the mark and the scroller is back. One slot on window: the listeners are replaced, never stacked. */
   function syncFitMarks(){
     try{
-      var sels=document.querySelectorAll('select[id*="PageSize" i],select.mad-page-size-select,select.main-mod-page-size,select.settlement-page-size,select.provider-page-size');
+      var sels=document.querySelectorAll('select[id*="PageSize" i],select.mad-page-size-select,select.main-mod-page-size,select.settlement-page-size,select.provider-page-size,.r2-page-size select');
       Array.prototype.forEach.call(sels,function(sel){
-        var panel=sel.closest('.mad-panel,.mas-panel,.main-mod-card,.main-mod-panel,.settlement-panel,.provider-settlement-card');
+        var panel=sel.closest('.mad-panel,.mas-panel,.main-mod-card,.main-mod-panel,.settlement-panel,.provider-settlement-card,.r2-table-panel');
         if(!panel) return;
         var v=String(sel.value==null?'':sel.value).trim();
         var fit=(v===''||v==='-'||/^auto$/i.test(v));
-        Array.prototype.forEach.call(panel.querySelectorAll('.mad-table-wrap,.report-table-scroll,.mas-table-wrap,.mas-table-body-scroll,.main-mod-table-scroll,.main-mod-table-wrap,.table-wrap'),function(w){
+        /* a panel with several datasets (Referral V2: invoices / receipts ...) has one page-size select per dataset: each marks only its own */
+        var scope=sel.closest('.r2-dataset')||panel;
+        Array.prototype.forEach.call(scope.querySelectorAll('.mad-table-wrap,.report-table-scroll,.mas-table-wrap,.mas-table-body-scroll,.main-mod-table-scroll,.main-mod-table-wrap,.table-wrap,.r2-table-panel>.table-responsive,.r2-dataset>.table-responsive'),function(w){
           if(fit){ if(!w.hasAttribute('data-bo-fit')) w.setAttribute('data-bo-fit',''); }
           else if(w.hasAttribute('data-bo-fit')) w.removeAttribute('data-bo-fit');
         });
