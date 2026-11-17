@@ -62,6 +62,25 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       return snap;
     }catch(e){ return null; }
   }
+  var formPaintedFromSnapshot = false;
+  /* Edit form: fill from the snapshot before the list request goes out. */
+  function paintFormFromSnapshotIfEdit(){
+    if(!isFormPage || !form) return false;
+    var editId = new URLSearchParams(window.location.search).get('id');
+    if(!editId) return false;
+    var snap = readListSnapshot();
+    if(!snap) return false;
+    var item = snap.rows.find(function(r){ return String(r.id) === String(editId); });
+    if(!item) return false;
+    if(Array.isArray(snap.categories) && snap.categories.length) categories = snap.categories;
+    renderCategoryOptions(item.categoryIds || '');
+    edit(item);
+    formPaintedFromSnapshot = true;
+    /* the operator typing before the network answers must not be overwritten by the refresh below */
+    form.addEventListener('input', function(){ formPaintedFromSnapshot = false; }, { once: true });
+    return true;
+  }
+
   /* Paints the snapshot before the first fetch when this load is a return from the edit form. */
   function paintFromSnapshotIfReturn(){
     if(!isListPage) return false;
@@ -667,7 +686,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
         const editId = params.get('id');
         if(editId){
           const item = rows.find(x => String(x.id) === String(editId));
-          if(item) edit(item);
+          if(item && !formPaintedFromSnapshot) edit(item);
           else setStatus('Provider #' + editId + ' not found.', 'error');
         } else {
           setStatus('', '');
@@ -971,6 +990,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
       }
     }
   }); document.querySelectorAll('[data-wallet-action]').forEach(btn => btn.addEventListener('click', () => wallet(btn.dataset.walletAction))); const syncBtn=document.getElementById('syncSelectedProviderBtn'); if(syncBtn) syncBtn.addEventListener('click', syncGames); const debugBtn=document.getElementById('debugSelectedProviderBtn'); if(debugBtn) debugBtn.addEventListener('click', debugGames); const cbBtn=document.getElementById('callbackPreviewBtn'); if(cbBtn) cbBtn.addEventListener('click', callbackPreview); const reportBtn=document.getElementById('ledgerSummaryBtn'); if(reportBtn) reportBtn.addEventListener('click', ledgerSummary); if(form) reset(); paintFromSnapshotIfReturn();
+  paintFormFromSnapshotIfEdit();
   load();
 })();
 
