@@ -46,6 +46,35 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
   /* Where the operator was when they pressed Edit, so the list can come back to it (see
      rememberListPosition / restoreListPosition at the bottom of this file). */
   var pendingRestoreEarly = null;
+  /* The last painted list, so a return can draw it synchronously instead of showing skeletons while the API
+     answers again. Only the fields the list renders are kept (the whole provider objects are ~40 items). */
+  const SNAP_KEY = 'bo_gp_list_snapshot';
+  var snapshotPainted = false;
+  function saveListSnapshot(){
+    if(!isListPage || !rows.length) return;
+    try{ sessionStorage.setItem(SNAP_KEY, JSON.stringify({ at: Date.now(), rows: rows, categories: categories })); }catch(e){}
+  }
+  function readListSnapshot(){
+    try{
+      var snap = JSON.parse(sessionStorage.getItem(SNAP_KEY) || 'null');
+      if(!snap || !Array.isArray(snap.rows) || !snap.rows.length) return null;
+      if(Date.now() - Number(snap.at || 0) > 10 * 60 * 1000) return null;
+      return snap;
+    }catch(e){ return null; }
+  }
+  /* Paints the snapshot before the first fetch when this load is a return from the edit form. */
+  function paintFromSnapshotIfReturn(){
+    if(!isListPage) return false;
+    var saved = pendingRestoreEarly || readPendingReturn();
+    if(!saved) return false;
+    var snap = readListSnapshot();
+    if(!snap) return false;
+    rows = snap.rows;
+    if(Array.isArray(snap.categories) && snap.categories.length) categories = snap.categories;
+    snapshotPainted = true;
+    render();
+    return true;
+  }
   const RETURN_KEY = 'bo_gp_list_return';
   /* A return to this list is positioned by us, not by the browser's own restore - the two would otherwise
      both run and the second one is visible as a jump. */
@@ -617,6 +646,7 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
     list.innerHTML = html;
   }
   async function load(){
+    var keepY = snapshotPainted ? (window.scrollY || 0) : -1;
     showLoadingState();
     await ensureTenantContext();
     setStatus('Loading...', '');
@@ -646,6 +676,16 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
         setStatus('Latest provider and category data loaded.', 'success');
       }
     }catch(err){ setStatus(err.message || 'Failed to load.', 'error'); if(isListPage) render(); }
+    /* the refresh above re-renders; a snapshot-painted page must not move under the operator */
+    if(isListPage && keepY >= 0){
+      var restore = function(){
+        try{ window.scrollTo({ top: keepY, left: 0, behavior: 'instant' }); }catch(e){ window.scrollTo(0, keepY); }
+      };
+      restore();
+      requestAnimationFrame(restore);
+    }
+    snapshotPainted = false;
+    saveListSnapshot();
   }
 
   async function save(e){
@@ -930,7 +970,8 @@ const CALLBACK_API = { previewBase: API_CONFIG.BASE_URL + API_CONFIG.ENDPOINTS.P
         catch(_){ setStatus('Unable to copy.', 'error'); }
       }
     }
-  }); document.querySelectorAll('[data-wallet-action]').forEach(btn => btn.addEventListener('click', () => wallet(btn.dataset.walletAction))); const syncBtn=document.getElementById('syncSelectedProviderBtn'); if(syncBtn) syncBtn.addEventListener('click', syncGames); const debugBtn=document.getElementById('debugSelectedProviderBtn'); if(debugBtn) debugBtn.addEventListener('click', debugGames); const cbBtn=document.getElementById('callbackPreviewBtn'); if(cbBtn) cbBtn.addEventListener('click', callbackPreview); const reportBtn=document.getElementById('ledgerSummaryBtn'); if(reportBtn) reportBtn.addEventListener('click', ledgerSummary); if(form) reset(); load();
+  }); document.querySelectorAll('[data-wallet-action]').forEach(btn => btn.addEventListener('click', () => wallet(btn.dataset.walletAction))); const syncBtn=document.getElementById('syncSelectedProviderBtn'); if(syncBtn) syncBtn.addEventListener('click', syncGames); const debugBtn=document.getElementById('debugSelectedProviderBtn'); if(debugBtn) debugBtn.addEventListener('click', debugGames); const cbBtn=document.getElementById('callbackPreviewBtn'); if(cbBtn) cbBtn.addEventListener('click', callbackPreview); const reportBtn=document.getElementById('ledgerSummaryBtn'); if(reportBtn) reportBtn.addEventListener('click', ledgerSummary); if(form) reset(); paintFromSnapshotIfReturn();
+  load();
 })();
 
 (function(){
