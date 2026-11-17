@@ -307,7 +307,7 @@
   pageSizeEl && pageSizeEl.addEventListener('change', () => { currentPage = 1; renderAdmins(); });
   prevBtn && prevBtn.addEventListener('click', () => { currentPage--; renderAdmins(); });
   nextBtn && nextBtn.addEventListener('click', () => { currentPage++; renderAdmins(); });
-  pageNoEl && pageNoEl.addEventListener('click', e => { const b=e.target.closest('[data-page]'); if(!b)return; const pageSize=Number(pageSizeEl&&pageSizeEl.value||10); const totalPages=Math.max(1,Math.ceil(filteredAdmins.length/pageSize)); const n=Number(b.dataset.page); if(n>=1&&n<=totalPages&&n!==currentPage){currentPage=n;renderAdmins();} });
+  pageNoEl && pageNoEl.addEventListener('click', e => { const b=e.target.closest('[data-page],[data-ac-page]'); if(!b)return; const pageSize=Number(pageSizeEl&&pageSizeEl.value||10); const totalPages=Math.max(1,Math.ceil(filteredAdmins.length/pageSize)); const n=Number(b.dataset.page||b.dataset.acPage); if(n>=1&&n<=totalPages&&n!==currentPage){currentPage=n;renderAdmins();} });
   selectAll && selectAll.addEventListener('change', () => document.querySelectorAll('.admin-row-check').forEach(cb => cb.checked = selectAll.checked));
   const remark = document.getElementById('newAdminRemark');
   remark && remark.addEventListener('input', () => { const rc=document.getElementById('adminRemarkCount'); if(rc) rc.textContent = remark.value.length; });
