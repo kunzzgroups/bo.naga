@@ -128,7 +128,7 @@
     });
     if (status) status.addEventListener('change', apply);
   })();
-  document.getElementById('loginLogPager').onclick=e=>{const b=e.target.closest('[data-page]');if(!b||b.disabled)return;page=Number(b.dataset.page)||1;render();};
+  document.getElementById('loginLogPager').onclick=e=>{const b=e.target.closest('[data-page],[data-ac-page]');if(!b||b.disabled)return;page=Number(b.dataset.page||b.dataset.acPage)||1;render();};
   search.onkeydown=e=>{if(e.key==='Enter')apply();}; ip.onkeydown=e=>{if(e.key==='Enter')apply();};
   initDatePicker();load();
 })();
