@@ -5379,3 +5379,102 @@ html:not(#bo-mw-fit-off) body.bo-wallet-tx.member-wallet-page:not(#bo-mw-fit-off
 html:not(#bo-mw-fit-off) body.bo-wallet-tx.member-wallet-page:not(#bo-mw-fit-off-2) .bo-tx-head-table th,
 html:not(#bo-mw-fit-off) body.bo-wallet-tx.member-wallet-page:not(#bo-mw-fit-off-2) .bo-tx-head-table th .bo-tx-sort-btn{white-space:normal!important;line-height:1.25!important}
 html:not(#bo-mw-fit-off) body.bo-wallet-tx.member-wallet-page:not(#bo-mw-fit-off-2) .bo-tx-body-table td:nth-child(n+2):nth-child(-n+15){white-space:nowrap!important}
+
+/* Approve / Reject confirmation popup (#bankApprovalPopup, built by member-deposit.js and member-withdraw.js).
+   The scripts inject the light card (#fff, slate greys) and the page theme only recoloured the TEXT, so in dark
+   the card stayed white under near-white text. The dark surfaces are restated here, and the card no longer clips
+   (overflow:visible) so the open bank list is not cut off at the dialog's bottom edge - the head/foot carry the
+   corner radius instead. */
+#bankApprovalPopup .bank-approval-dialog{overflow:visible!important}
+#bankApprovalPopup .bank-approval-head{border-radius:16px 16px 0 0}
+#bankApprovalPopup .bank-approval-foot{border-radius:0 0 16px 16px}
+#bankApprovalPopup .rounded-select-menu{z-index:5!important;max-height:min(260px,40vh)!important;overflow-y:auto!important}
+html[data-bo-theme="dark"] #bankApprovalPopup .bank-approval-dialog{background:#2A2C36!important;border:1px solid rgba(255,255,255,.08)!important;box-shadow:0 24px 70px rgba(0,0,0,.55)!important}
+html[data-bo-theme="dark"] #bankApprovalPopup .bank-approval-head,
+html[data-bo-theme="dark"] #bankApprovalPopup .bank-approval-foot{border-color:rgba(255,255,255,.08)!important}
+html[data-bo-theme="dark"] #bankApprovalPopup .bank-approval-head h3{color:#F5F5F4!important}
+html[data-bo-theme="dark"] #bankApprovalPopup .bank-approval-head small,
+html[data-bo-theme="dark"] #bankApprovalPopup .bank-approval-head button,
+html[data-bo-theme="dark"] #bankApprovalPopup .player-bank-detail span,
+html[data-bo-theme="dark"] #bankApprovalPopup .deposit-proof-label{color:#A8A29E!important}
+html[data-bo-theme="dark"] #bankApprovalPopup .bank-approval-summary{background:#383A46!important;border-color:rgba(255,255,255,.08)!important;color:#F5F5F4!important}
+html[data-bo-theme="dark"] #bankApprovalPopup .player-bank-detail,
+html[data-bo-theme="dark"] #bankApprovalPopup .deposit-proof-confirm{border-top-color:rgba(255,255,255,.1)!important}
+html[data-bo-theme="dark"] #bankApprovalPopup .player-bank-detail b,
+html[data-bo-theme="dark"] #bankApprovalPopup .bank-approval-label{color:#F5F5F4!important}
+html[data-bo-theme="dark"] #bankApprovalPopup .deposit-proof-thumb{background:#383A46!important;border-color:rgba(255,255,255,.12)!important;color:#FBBF24!important}
+html[data-bo-theme="dark"] #bankApprovalPopup .deposit-proof-thumb:hover{border-color:#F59E0B!important;background:#42444F!important}
+html[data-bo-theme="dark"] #bankApprovalPopup .deposit-proof-thumb img{border-color:rgba(255,255,255,.12)!important;background:#2A2C36!important}
+html[data-bo-theme="dark"] #bankApprovalPopup .bank-approval-warning{color:#FBBF24!important}
+
+/* Approval popup - layout polish (deposit + withdraw). Key facts (member / amount / player's bank) read as a
+   labelled strip with the amount as the focal number; the close button is a real 34px control instead of the
+   cream square the global button style gave it; the warning is a notice, not loose text. */
+#bankApprovalPopup .bank-approval-dialog{width:min(560px,100%)!important}
+#bankApprovalPopup .bank-approval-head{padding:18px 20px 16px!important;align-items:flex-start}
+#bankApprovalPopup .bank-approval-head h3{font-size:17px!important;font-weight:800!important;letter-spacing:-.01em}
+#bankApprovalPopup .bank-approval-head small{font-size:12.5px;display:block;margin-top:2px}
+html body #bankApprovalPopup .bank-approval-head button[data-close]{
+  flex:0 0 auto;width:34px!important;min-width:34px!important;height:34px!important;padding:0!important;border-radius:8px!important;
+  display:inline-flex!important;align-items:center;justify-content:center;font-size:20px!important;line-height:1!important;box-shadow:none!important;
+  background:transparent!important;border:1px solid #DCC9A8!important;color:#6b5a45!important;transition:background .15s,border-color .15s,color .15s}
+html body #bankApprovalPopup .bank-approval-head button[data-close]:hover{background:#FFE8CC!important;border-color:#F59E0B!important;color:#18191C!important}
+html[data-bo-theme="dark"] body #bankApprovalPopup .bank-approval-head button[data-close]{background:#383A46!important;border-color:rgba(255,255,255,.12)!important;color:#D6D3D1!important}
+html[data-bo-theme="dark"] body #bankApprovalPopup .bank-approval-head button[data-close]:hover{background:#42444F!important;border-color:#F59E0B!important;color:#FBBF24!important}
+#bankApprovalPopup .bank-approval-body{padding:16px 20px 6px!important}
+#bankApprovalPopup .bank-approval-summary{padding:14px 16px!important;margin-bottom:14px!important;line-height:1.4!important}
+#bankApprovalPopup .bas-key{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,1fr);gap:8px 16px;align-items:end}
+#bankApprovalPopup .bas-key:has(> :nth-child(2):last-child){grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}
+#bankApprovalPopup .bas-key>div{display:flex;flex-direction:column;gap:3px;min-width:0}
+#bankApprovalPopup .bas-key span{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#78716C}
+#bankApprovalPopup .bas-key b{font-size:14px;font-weight:700;overflow-wrap:anywhere}
+#bankApprovalPopup .bas-key b em{font-style:normal;font-weight:600;color:#78716C;font-size:12px}
+#bankApprovalPopup .bas-amount b{font-size:20px;font-weight:800;color:#B45309;font-variant-numeric:tabular-nums}
+html[data-bo-theme="dark"] #bankApprovalPopup .bas-key span,
+html[data-bo-theme="dark"] #bankApprovalPopup .bas-key b em{color:#A8A29E!important}
+html[data-bo-theme="dark"] #bankApprovalPopup .bas-amount b{color:#FBBF24!important}
+#bankApprovalPopup .player-bank-detail{margin-top:12px!important;padding-top:12px!important;gap:10px 16px!important}
+#bankApprovalPopup .player-bank-detail span{font-size:11px!important;font-weight:600;letter-spacing:.02em}
+#bankApprovalPopup .bank-approval-label{font-size:12px!important;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px!important}
+#bankApprovalPopup .bank-approval-label.mt-3{margin-top:14px!important}
+#bankApprovalPopup .bank-approval-body textarea{min-height:76px;font-size:14px!important;resize:vertical}
+#bankApprovalPopup .bank-approval-warning{margin:12px 0 10px!important;padding:9px 12px;border-radius:8px;background:rgba(217,119,6,.10);border:1px solid rgba(217,119,6,.28);font-size:12px!important;line-height:1.45}
+#bankApprovalPopup .bank-approval-warning:empty{display:none}
+html[data-bo-theme="dark"] #bankApprovalPopup .bank-approval-warning{background:rgba(245,158,11,.10)!important;border-color:rgba(245,158,11,.30)!important}
+#bankApprovalPopup .bank-approval-foot{padding:14px 20px!important}
+@media(max-width:560px){#bankApprovalPopup .bas-key,#bankApprovalPopup .bas-key:has(> :nth-child(2):last-child){grid-template-columns:1fr 1fr}#bankApprovalPopup .bas-key>div:first-child{grid-column:1/-1}}
+
+/* Approval popup - alignment pass: the key strip's labels share one top line (the 20px amount no longer pushes
+   its label up), and the bank-detail grid below uses the same three columns and the same label style. */
+#bankApprovalPopup .bas-key,
+#bankApprovalPopup .bas-key:has(> :nth-child(2):last-child){align-items:start!important}
+#bankApprovalPopup .bas-amount b{line-height:1.15}
+#bankApprovalPopup .player-bank-detail{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,1fr)!important;gap:12px 16px!important}
+#bankApprovalPopup .player-bank-detail span{font-size:11px!important;font-weight:700!important;letter-spacing:.04em!important;text-transform:uppercase!important;color:#78716C!important}
+html[data-bo-theme="dark"] #bankApprovalPopup .player-bank-detail span{color:#A8A29E!important}
+#bankApprovalPopup .player-bank-detail b{font-size:14px!important}
+@media(max-width:560px){#bankApprovalPopup .player-bank-detail{grid-template-columns:1fr 1fr!important}}
+
+/* Approval popup - close button: an icon (bi-x-lg) in a quiet 32px control. The &times; glyph sat low and heavy in the
+   page font; the border now only appears on hover, and the control lines up with the title's first line. */
+html body #bankApprovalPopup .bank-approval-head button[data-close]{width:32px!important;min-width:32px!important;height:32px!important;margin-top:-2px;border-color:transparent!important;background:transparent!important;font-size:0!important}
+html body #bankApprovalPopup .bank-approval-head button[data-close] i{font-size:14px;line-height:1;pointer-events:none}
+html[data-bo-theme="dark"] body #bankApprovalPopup .bank-approval-head button[data-close]{background:transparent!important;border-color:transparent!important;color:#A8A29E!important}
+html body #bankApprovalPopup .bank-approval-head button[data-close]:hover,
+html body #bankApprovalPopup .bank-approval-head button[data-close]:focus-visible{background:#FFE8CC!important;border-color:#F59E0B!important;color:#18191C!important;outline:none}
+html[data-bo-theme="dark"] body #bankApprovalPopup .bank-approval-head button[data-close]:hover,
+html[data-bo-theme="dark"] body #bankApprovalPopup .bank-approval-head button[data-close]:focus-visible{background:#383A46!important;border-color:#F59E0B!important;color:#FBBF24!important}
+
+/* Approval popup - the amount column sizes to its number (never wraps or clips a long figure); member / bank share the rest. */
+#bankApprovalPopup .bas-key{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important}
+#bankApprovalPopup .bas-key:has(> :nth-child(2):last-child){grid-template-columns:minmax(0,1fr) auto!important}
+#bankApprovalPopup .bas-amount b{white-space:nowrap!important;overflow-wrap:normal!important}
+
+/* Approval popup - final summary layout: the amount owns the first row (any length, never competes for width),
+   Member / Player Selected and the bank details below share the SAME two columns so every row lines up. */
+#bankApprovalPopup .bas-key,
+#bankApprovalPopup .bas-key:has(> :nth-child(2):last-child){grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:12px 20px!important;align-items:start!important}
+#bankApprovalPopup .bas-amount{grid-column:1/-1;order:-1}
+#bankApprovalPopup .bas-amount b{font-size:28px!important;line-height:1.1!important;white-space:nowrap!important}
+#bankApprovalPopup .player-bank-detail{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:12px 20px!important;margin-top:14px!important;padding-top:12px!important}
+@media(max-width:560px){#bankApprovalPopup .bas-key>div:first-child{grid-column:auto}}
