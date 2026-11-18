@@ -198,8 +198,8 @@
     // 3. Transaction
     'member-deposit.html':{label:'Deposit Approval',order:1,module:'transaction'},
     'bulk-adjustment.html':{order:2,module:'transaction',sections:[
-      {label:'Win/Lose Adjustment',href:'bulk-adjustment.html?tab=winlose'},
-      {label:'Bonus Adjustment',href:'bulk-adjustment.html?tab=bonus'}
+      {label:'Points Adjustment',href:'bulk-adjustment.html?tab=winlose'},
+      {label:'Promo Adjustment',href:'bulk-adjustment.html?tab=bonus'}
     ]},
     'bank-deposit-usage.html':{label:'Bank Deposit Usage',order:3,module:'transaction'},
     // Payment Gateway is the Transaction workspace's payment-configuration page. It keeps its
