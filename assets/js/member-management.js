@@ -630,16 +630,16 @@
     const lock = val('memberSearchLock');
     const from = val('memberFrom');
     const to = val('memberTo');
-    const hay = [
+    // Search only the member's own name, username and mobile, not referral or bank metadata.
+    const searchText = String(q || '').trim().toLocaleLowerCase().replace(/\s+/g, ' ');
+    const identityFields = [
       first(m,['username'], ''),
       first(m,['fullName','name','displayName'], ''),
-      first(m,['mobile','phone','mobileNo'], ''),
-      first(m,['referrerName','referrerFullName','referrerUsername','agentName','referrer'], ''),
-      first(m,['bank','bankName'], '')
-    ].join(' ').toLowerCase();
+      first(m,['mobile','phone','mobileNo'], '')
+    ].map(v => String(v ?? '').toLocaleLowerCase().replace(/\s+/g, ' ').trim());
     const rowStatus = memberStatus(m).toLowerCase();
     const rowLock = rowStatus === 'locked' ? 'locked' : 'normal';
-    if(q && !hay.includes(q)) return false;
+    if(searchText && !identityFields.some(field => field.includes(searchText))) return false;
     if(status && rowStatus !== status) return false;
     if(lock && rowLock !== lock) return false;
     if(from || to){
