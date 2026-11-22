@@ -792,7 +792,7 @@
   function currentFilteredMembers(){ return allMembers.filter(memberMatches); }
   function downloadCsv(filename, rows){
     // Export only data columns. UI checkbox/action columns are never useful in CSV.
-    // Name is username on screen; export still splits Name + Username for Excel.
+    // Keep full name and login username distinct from mobile in the table and export.
     const visible = MEMBER_TABLE_COLUMNS.filter(c=>isColVisible(c.key) && !['select','action'].includes(c.key));
     const exportCols=[];
     visible.forEach(c=>{
@@ -868,7 +868,7 @@
         ${cell('select', `<input class="member-row-select" type="checkbox" data-member-select="${esc(id)}" ${bulkSelectedMemberIds.has(String(id))?'checked':''}>`, 'member-select-col')}
         ${cell('no', ((memberCurrentPage-1)*memberPageSize)+idx+1, 'col-no')}
         ${cell('registerDate', dtCell(first(m,['createdAt','registerDate','created_at'], '')))}
-        ${cell('name', esc(first(m,['username'], '-')), 'member-name-cell')}
+        ${cell('name', `<div class="member-identity"><div><small>Name:</small> <strong>${esc(first(m,['fullName','name','displayName'], '-'))}</strong></div><div><small>Username:</small> ${esc(first(m,['username'], '-'))}</div></div>`, 'member-name-cell')}
         ${cell('mobile', esc(first(m,['mobile','phone','mobileNo'], '-')))}
         ${cell('mainWallet', money(first(m,['mainWalletBalance','mainBalance','balance'],0)), 'money-strong')}
         ${cell('status', `<small class="status-pill ${locked?'off':''}">${esc(status)}</small>`)}
@@ -900,8 +900,8 @@
         const locked = status === 'LOCKED';
         const id = first(m,['id','memberId','userId'], '');
         return `<div class="member-card">
-          <div class="member-card-head"><label><input class="member-row-select" type="checkbox" data-member-select="${esc(id)}" ${bulkSelectedMemberIds.has(String(id))?'checked':''}> <h3 style="display:inline">${esc(first(m,['username'], '-'))}</h3></label><span class="status-pill ${locked?'off':''}">${esc(status)}</span></div>
-          <div class="meta">${esc(first(m,['fullName','name','displayName'], '-'))} • ${esc(first(m,['mobile','phone','mobileNo'], '-'))}</div>
+          <div class="member-card-head"><label><input class="member-row-select" type="checkbox" data-member-select="${esc(id)}" ${bulkSelectedMemberIds.has(String(id))?'checked':''}> <h3 style="display:inline">${esc(first(m,['fullName','name','displayName'], '-'))}</h3></label><span class="status-pill ${locked?'off':''}">${esc(status)}</span></div>
+          <div class="meta">Username: ${esc(first(m,['username'], '-'))} • Mobile: ${esc(first(m,['mobile','phone','mobileNo'], '-'))}</div>
           ${first(m,['adminRemark'],'') ? `<div class="member-card-remark"><i class="bi bi-chat-left-text-fill me-1"></i>${esc(first(m,['adminRemark'],''))}</div>` : ''}
           <div class="meta">Registered: ${esc(dtParts(first(m,['createdAt','registerDate','created_at'], '')).day)}</div>
           <div class="member-grid">
